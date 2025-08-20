@@ -76,7 +76,7 @@ public class Vault {
         if (Files.exists(path)) {
             try (InputStream inputStream = Files.newInputStream(path, StandardOpenOption.READ)) {
                 keyStore.load(inputStream, secret);
-                LOG.info("Successfully loaded existing key store from {}", path);
+                LOG.info("Loaded existing vault from {}", path);
             } catch (Exception e) {
                 throw new IllegalStateException("Failed to load existing keystore", e);
             }
@@ -97,7 +97,7 @@ public class Vault {
 
                 createCertificate();
                 createSecrets();
-                LOG.info("Successfully created new key store at {}", path);
+                LOG.info("Created new vault at {}", path);
             } catch (Exception e) {
                 throw new IllegalStateException("Failed to create keystore", e);
             }
