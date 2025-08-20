@@ -60,7 +60,7 @@ class ConfigTest {
 
     @BeforeAll
     public static void setup(){
-        Vault vault = new Vault();
+        Vault vault = Application.getInstance(Vault.class);
         vault.put("application.foo", "admin");
         vault.put("application.admin.username", "admin");
         vault.put("application.admin.password", "admin");
@@ -69,9 +69,8 @@ class ConfigTest {
     }
 
     @AfterAll
-    public static void cleanUp(){
+    public static void cleanUp() throws IOException {
         System.clearProperty(Key.APPLICATION_CONFIG);
-        Vault vault = new Vault();
     }
 
     @Test

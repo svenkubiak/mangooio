@@ -49,7 +49,7 @@ import java.util.stream.Stream;
 @Singleton
 public class Vault {
     private static final Logger LOG = LogManager.getLogger(Vault.class);
-    private static final String PKCS_12 = "pkcs12";
+    private static final String KEYSTORE_TYPE = "PKCS12";
     private final KeyStore keyStore;
     private Path path;
     private String prefix = Strings.EMPTY;
@@ -59,7 +59,7 @@ public class Vault {
     public Vault() {
         Security.addProvider(new BouncyCastleProvider());
         try {
-            this.keyStore = KeyStore.getInstance(PKCS_12);
+            this.keyStore = KeyStore.getInstance(KEYSTORE_TYPE);
         } catch (KeyStoreException e) {
             throw new IllegalStateException("Failed to acquire PKCS12 keystore", e);
         }
@@ -244,7 +244,7 @@ public class Vault {
             java.security.Key key = keyStore.getKey(alias, secret);
             Certificate[] chain = keyStore.getCertificateChain(alias);
 
-            KeyStore tempKeyStore = KeyStore.getInstance("PKCS12");
+            KeyStore tempKeyStore = KeyStore.getInstance(KEYSTORE_TYPE);
             tempKeyStore.load(null, null);
             tempKeyStore.setKeyEntry(alias, key, secret, chain);
 

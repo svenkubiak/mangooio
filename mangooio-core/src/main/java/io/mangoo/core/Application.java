@@ -538,7 +538,6 @@ public final class Application {
         }
 
         if (!config.getAuthenticationCookieSameSiteMode().equals("Strict") && !config.getAuthenticationCookieSameSiteMode().equals("Lax")) {
-            System.out.println("found " + config.getAuthenticationCookieSameSiteMode());
             LOG.error("Only 'Strict' or 'Lax' is allowed in authentication.cookie.samesitemode is allowed");
             failsafe();
         }
