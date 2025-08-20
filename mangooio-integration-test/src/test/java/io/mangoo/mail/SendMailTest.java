@@ -119,10 +119,10 @@ class SendMailTest {
     }
     
     @Test
-    void testConcurrentBody() throws MangooMailerException, IOException, FolderException, InterruptedException {
+    void testConcurrentBody() {
         MatcherAssert.assertThat(t -> {
             //given
-            String domain = MangooUtils.randomString(16) + ".com";
+            String domain = MangooUtils.randomString(22) + ".com";
             String subject = MangooUtils.randomString(32);
             
             //when

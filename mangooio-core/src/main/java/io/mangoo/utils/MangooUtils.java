@@ -5,7 +5,6 @@ import com.google.common.io.Resources;
 import com.google.common.reflect.ClassPath;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.NotNull;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,8 +33,8 @@ public final class MangooUtils {
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
     private static final char[] CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
-    private static final int MAX_LENGTH = 256;
-    private static final int MIN_LENGTH = 0;
+    private static final int MAX_LENGTH = 512;
+    private static final int MIN_LENGTH = 22;
     private static final int CONVERSION = 1024;
 
     private MangooUtils() {
@@ -99,10 +98,15 @@ public final class MangooUtils {
      * @return A random String
      */
     public static String randomString(int length) {
-        Preconditions.checkArgument(length > MIN_LENGTH, "random string length must be at least 1 character");
-        Preconditions.checkArgument(length <= MAX_LENGTH, "random string length must be at most 256 character");
+        Preconditions.checkArgument(length >= MIN_LENGTH, "Length must be at least " + MIN_LENGTH + " characters for security");
+        Preconditions.checkArgument(length <= MAX_LENGTH, "Length must not exceed " + MAX_LENGTH + " characters");
 
-        return RandomStringUtils.random(length, 0, CHARACTERS.length, false, false, CHARACTERS, SECURE_RANDOM);
+        int bytesNeeded = (int) Math.ceil(length * 6 / 8.0);
+        byte[] randomBytes = new byte[bytesNeeded];
+        SECURE_RANDOM.nextBytes(randomBytes);
+
+        String token = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+        return token.substring(0, length);
     }
 
     /**
