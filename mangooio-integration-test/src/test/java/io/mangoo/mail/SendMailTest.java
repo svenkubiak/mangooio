@@ -10,6 +10,7 @@ import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.test.email.SmtpMock;
+import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.MangooUtils;
 import jakarta.mail.MessagingException;
 import org.hamcrest.MatcherAssert;
@@ -45,7 +46,7 @@ class SendMailTest {
     private static SmtpMock smtp;
 
     @BeforeAll
-    public static void init() throws FolderException {
+    public static void init() {
         smtp = Application.getInstance(SmtpMock.class);
         smtp.start();
         greenMail = smtp.getGreenMail();
@@ -122,7 +123,7 @@ class SendMailTest {
     void testConcurrentBody() {
         MatcherAssert.assertThat(t -> {
             //given
-            String domain = MangooUtils.randomString(22) + ".com";
+            String domain = CodecUtils.uuidV6() + ".com";
             String subject = MangooUtils.randomString(32);
             
             //when

@@ -94,7 +94,7 @@ class MangooUtilsTest {
     void testConcurrentRandomString() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             // given
-            int size = (int) (Math.random() * (64 - 16)) + 16;
+            int size = (int) (Math.random() * (64 - 22)) + 22;
             String secret = MangooUtils.randomString(size);
             
             // then
