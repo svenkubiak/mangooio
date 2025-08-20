@@ -11,12 +11,15 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -249,12 +252,33 @@ public final class MangooUtils {
 
     private static boolean isRootPom(File pomFile) {
         try {
-            DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = dBuilder.parse(pomFile);
-            NodeList modules = doc.getElementsByTagName("modules");
-            NodeList parentNodes = doc.getElementsByTagName("parent");
-            return modules.getLength() > 0 || parentNodes.getLength() == 0;
-        } catch (Exception e) { }
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
+            dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
+            DocumentBuilder dBuilder = dbf.newDocumentBuilder();
+
+            dBuilder.setEntityResolver((publicId, systemId) ->
+                    new InputSource(new StringReader("")));
+
+            Path path = pomFile.toPath();
+            try (var in = Files.newInputStream(path)) {
+                Document doc = dBuilder.parse(in);
+                NodeList modules = doc.getElementsByTagName("modules");
+                NodeList parentNodes = doc.getElementsByTagName("parent");
+                return modules.getLength() > 0 || parentNodes.getLength() == 0;
+            }
+        } catch (Exception e) {
+            LOG.error("Failed to find pom.xml", e);
+        }
+
         return false;
     }
 
@@ -262,6 +286,6 @@ public final class MangooUtils {
         File startDir = Path.of(System.getProperty("user.dir")).toFile();
         File root = findRoot(startDir);
 
-        return root.getAbsolutePath();
+        return root!= null ? root.getAbsolutePath() : StringUtils.EMPTY;
     }
 }
