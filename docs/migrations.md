@@ -1,3 +1,34 @@
+## From 9.x to 10.0.0
+mangoo I/O 9.0.0 is a major release and contains code that will break API compatibility. These are the changes you need to consider when upgrading from 9.x:
+
+**Removed cryptex{}**
+
+cryptex{} usage in the config.yml has been replace by a new vault implementation based on Java KeyStore. Up on first
+start the application will create a new vault.p12 files with already predefined keys. See the documentation on
+how to use the new vault features with config.yaml.
+
+**Switched Paseto to JWT**
+The Paseto based implementation for cookie has been replaced by JWT. If you have previously used the Paseto library
+you need to either use the library directly or adopt to the new JWT handling based on Nimbus JOSE+JWT.
+
+## From 9.9.0 to 9.10.0
+This is a drop-in replacement.
+
+## From 9.8.0 to 9.9.0
+This is a drop-in replacement.
+
+## From 9.7.0 to 9.8.0
+This is a drop-in replacement.
+
+## From 9.6.0 to 9.7.0
+This is a drop-in replacement.
+
+## From 9.5.0 to 9.6.0
+This is a drop-in replacement.
+
+## From 9.4.0 to 9.5.0
+This is a drop-in replacement.
+
 ## From 9.3.0 to 9.4.0
 This is a drop-in replacement.
 
