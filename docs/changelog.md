@@ -1,8 +1,21 @@
+## Version 10.0.0
+
+Unreleased
+
+* Added new vault functionality for storing secrets based on Java Keystore (svenkubiak)
+* Added HTTPS connector (svenkubiak)
+* Removed cryptex{} from configuration in favour of new vault (svenkubiak)
+* Removed all deprecated methods and classed (svenkubiak)
+* Removed AJP connector (svenkubiak)
+* Switched from Paseto to JWT (svenkubiak)
+* Upgraded to Java 25 (svenkubiak)
+* Sonar refactorings (svenkubiak)
+* Version bumps (svenkubiak)
+
 ## Version 9.9.0
 
 Unreleased
 
-* Switched from Paseto to JWT (svenkubiak)
 * Version bumps (svenkubiak)
   * mockito 5.18.0 -&gt; 5.19.0
 
