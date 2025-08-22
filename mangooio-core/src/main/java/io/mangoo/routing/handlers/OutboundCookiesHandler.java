@@ -90,7 +90,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                 exchange.setResponseCookie(cookie);
             } catch (Exception e) { //NOSONAR Intentionally catching exception here
-                LOG.error("Failed to generate session cookie", e);
+                LOG.error("Failed to generate session cookie -> {}", e.getCause(), e);
             }
         }
     }
@@ -147,7 +147,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                     exchange.setResponseCookie(cookie);
                 } catch (Exception e) { //NOSONAR Intentionally catching exception here
-                    LOG.error("Failed to generate authentication cookie", e);
+                    LOG.error("Failed to generate authentication cookie -> {}", e.getCause(), e);
                 }
             }
         } else {
@@ -203,7 +203,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 
                 exchange.setResponseCookie(cookie);
             } catch (Exception e) { //NOSONAR Intentionally catching exception here
-                LOG.error("Failed to generate flash cookie", e); 
+                LOG.error("Failed to generate flash cookie -> {}", e.getCause(), e);
             }
         } else {
             //Ignore and send no cookie to the client
