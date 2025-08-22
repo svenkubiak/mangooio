@@ -109,7 +109,11 @@ public class Vault {
     }
 
     private void loadSecret() {
-        String providedSecret = System.getProperty(Key.APPLICATION_VAULT_SECRET);
+        String providedSecret = System.getenv("APPLICATION_VAULT_SECRET");
+
+        if (Strings.isBlank(providedSecret)) {
+            providedSecret = System.getProperty(Key.APPLICATION_VAULT_SECRET);
+        }
 
         if (StringUtils.isBlank(providedSecret)) {
             providedSecret = config.get(Key.APPLICATION_VAULT_SECRET);
@@ -133,7 +137,11 @@ public class Vault {
         if (!Application.inProdMode()) {
             path = MangooUtils.getRootFolder();
         } else {
-            path = System.getProperty(Key.APPLICATION_VAULT_PATH);
+            path = System.getenv("APPLICATION_VAULT_PATH");
+
+            if (Strings.isBlank(path)) {
+                path = System.getProperty(Key.APPLICATION_VAULT_PATH);
+            }
 
             if (StringUtils.isBlank(path)) {
                 path = config.get(Key.APPLICATION_VAULT_PATH);
