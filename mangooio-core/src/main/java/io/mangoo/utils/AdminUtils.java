@@ -35,12 +35,12 @@ public final class AdminUtils {
                username.equals(form.get("username")) && password.equals(form.get("password"));
     }
 
-    public static Cookie getAdminCookie(boolean includeTwoFactor) throws MangooJwtException {
+    public static Cookie getAdminCookie(boolean requireTwoFactor) throws MangooJwtException {
         Config config = getInstance(Config.class);
         Map<String, String> claims = new HashMap<>();
         claims.put("uuid", MangooUtils.randomString(32));
 
-        if (includeTwoFactor && StringUtils.isNotBlank(config.getApplicationAdminSecret())) {
+        if (requireTwoFactor && StringUtils.isNotBlank(config.getApplicationAdminSecret())) {
             claims.put("twofactor", "true");
         }
 

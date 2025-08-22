@@ -47,7 +47,7 @@ public class AdminFilter implements PerRequestFilter {
                             .withTtlSeconds(1800);
 
                     var jwtClaimSet = JwtUtils.parseJwt(value, jwtData);
-                    if (jwtClaimSet.getClaim(ClaimKey.TWO_FACTOR) != null && jwtClaimSet.getBooleanClaim(ClaimKey.TWO_FACTOR)) {
+                    if (jwtClaimSet.getClaim(ClaimKey.TWO_FACTOR) != null && jwtClaimSet.getClaimAsString(ClaimKey.TWO_FACTOR).equals("true")) {
                         return Response.redirect("/@admin/twofactor").end();
                     }
 

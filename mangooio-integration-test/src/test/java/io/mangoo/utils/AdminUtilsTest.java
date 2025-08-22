@@ -18,7 +18,7 @@ public class AdminUtilsTest {
         boolean twofactor = false;
 
         //when
-        Cookie cookie = AdminUtils.getAdminCookie(twofactor);
+        Cookie cookie = AdminUtils.getAdminCookie(true);
 
         //then
         assertThat(cookie, not(nullValue()));
