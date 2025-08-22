@@ -12,10 +12,13 @@ import io.mangoo.utils.JwtUtils;
 import io.mangoo.utils.MangooUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.ParseException;
 
 public class AdminFilter implements PerRequestFilter {
+    private static final Logger LOG = LogManager.getLogger(AdminFilter.class);
     private static final String VERSION_TAG = MangooUtils.getVersion();
     private static final String[] ALLOWED = {
             "/@admin/login",
@@ -47,14 +50,14 @@ public class AdminFilter implements PerRequestFilter {
                             .withTtlSeconds(1800);
 
                     var jwtClaimSet = JwtUtils.parseJwt(value, jwtData);
-                    if (jwtClaimSet.getClaim(ClaimKey.TWO_FACTOR) != null && jwtClaimSet.getClaimAsString(ClaimKey.TWO_FACTOR).equals("true")) {
+                    if (("true").equals(jwtClaimSet.getClaimAsString(ClaimKey.TWO_FACTOR))) {
                         return Response.redirect("/@admin/twofactor").end();
                     }
 
                     response.render("version", VERSION_TAG);
                     return response;
                 } catch (ParseException | MangooJwtException e) {
-                    //NOSONAR Ignore catch
+                    LOG.error("Failed to parse admin cookie -> {}", e.getCause(), e);
                 }
             }
         }
