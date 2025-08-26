@@ -68,8 +68,19 @@ public class Vault {
         loadSecret();
         loadKeyStore();
         loadPrefix();
+        createSecrets();
+        createCertificate();
 
         cleanUp();
+    }
+
+    private boolean exists(String key) {
+        Objects.requireNonNull(key, NotNull.KEY);
+        try {
+            return keyStore.containsAlias(key);
+        } catch (KeyStoreException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void loadKeyStore() {
@@ -94,9 +105,6 @@ public class Vault {
 
                 keyStore.load(null, secret);
                 keyStore.store(outputStream, secret);
-
-                createCertificate();
-                createSecrets();
                 LOG.info("Created new vault at {}", path);
             } catch (Exception e) {
                 throw new IllegalStateException("Failed to create keystore", e);
@@ -183,16 +191,32 @@ public class Vault {
     }
 
     private void createSecrets() {
+        String[] keys = {
+                Key.AUTHENTICATION_COOKIE_SECRET,
+                Key.AUTHENTICATION_COOKIE_KEY,
+                Key.SESSION_COOKIE_SECRET,
+                Key.SESSION_COOKIE_KEY,
+                Key.FLASH_COOKIE_SECRET,
+                Key.FLASH_COOKIE_KEY
+        };
+
+        for (String key : keys) {
+            if (!exists(key)) {
+                put(key, MangooUtils.randomString(64));
+            }
+        }
+
         Stream.of(Mode.values())
-               .forEach(value -> {
-                   String mode = value.toString().toLowerCase(Locale.ENGLISH) + ".";
-                   put(mode + Key.AUTHENTICATION_COOKIE_SECRET, MangooUtils.randomString(64));
-                   put(mode + Key.AUTHENTICATION_COOKIE_KEY, MangooUtils.randomString(64));
-                   put(mode + Key.SESSION_COOKIE_SECRET, MangooUtils.randomString(64));
-                   put(mode + Key.SESSION_COOKIE_KEY, MangooUtils.randomString(64));
-                   put(mode + Key.FLASH_COOKIE_SECRET, MangooUtils.randomString(64));
-                   put(mode + Key.FLASH_COOKIE_KEY, MangooUtils.randomString(64));
-               });
+                .forEach(value -> {
+                    String mode = value.toString().toLowerCase(Locale.ENGLISH) + ".";
+                    for (String suffix : keys) {
+                        String fullKey = mode + suffix;
+                        if (!exists(fullKey)) {
+                            put(fullKey, MangooUtils.randomString(64));
+                        }
+                    }
+                });
+
     }
 
     public String get(String key) {
@@ -213,7 +237,7 @@ public class Vault {
         return null;
     }
 
-    public void remove(String key) {
+    private void remove(String key) {
         Objects.requireNonNull(key, NotNull.KEY);
         key = prefix + key;
 
@@ -268,42 +292,49 @@ public class Vault {
         }
     }
 
-    private void createCertificate()
-            throws NoSuchAlgorithmException, NoSuchProviderException, CertIOException,
-            OperatorCreationException, CertificateException, KeyStoreException {
+    private void createCertificate() {
 
-        KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA", "BC");
-        keyPairGen.initialize(2048, new SecureRandom());
-        KeyPair keyPair = keyPairGen.generateKeyPair();
+        String alias = Optional
+                .ofNullable(config.get(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS))
+                .orElse(Default.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
 
-        X500Name dnName = new X500Name("CN=localhost");
-        BigInteger certSerialNumber = BigInteger.valueOf(System.currentTimeMillis());
-        Date startDate = new Date(System.currentTimeMillis() - 1000L * 60 * 60 * 24);
-        Date endDate = new Date(System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000)); // 1 year validity
+        if (!exists(alias)) {
+            try {
+                KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA", "BC");
+                keyPairGen.initialize(2048, new SecureRandom());
+                KeyPair keyPair = keyPairGen.generateKeyPair();
 
-        JcaX509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(
-                dnName,
-                certSerialNumber,
-                startDate,
-                endDate,
-                dnName,
-                keyPair.getPublic()
-        );
+                X500Name dnName = new X500Name("CN=localhost");
+                BigInteger certSerialNumber = BigInteger.valueOf(System.currentTimeMillis());
+                Date startDate = new Date(System.currentTimeMillis() - 1000L * 60 * 60 * 24);
+                Date endDate = new Date(System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000)); // 1 year validity
 
-        certBuilder.addExtension(Extension.basicConstraints, true, new BasicConstraints(false));
+                JcaX509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(
+                        dnName,
+                        certSerialNumber,
+                        startDate,
+                        endDate,
+                        dnName,
+                        keyPair.getPublic()
+                );
 
-        ContentSigner contentSigner = new JcaContentSignerBuilder("SHA256withRSA")
-                .setProvider("BC")
-                .build(keyPair.getPrivate());
+                certBuilder.addExtension(Extension.basicConstraints, true, new BasicConstraints(false));
 
-        X509CertificateHolder certHolder = certBuilder.build(contentSigner);
+                ContentSigner contentSigner = new JcaContentSignerBuilder("SHA256withRSA")
+                        .setProvider("BC")
+                        .build(keyPair.getPrivate());
 
-        X509Certificate certificate = new JcaX509CertificateConverter()
-                .setProvider("BC")
-                .getCertificate(certHolder);
+                X509CertificateHolder certHolder = certBuilder.build(contentSigner);
 
-        String alias = Optional.ofNullable(config.get(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS)).orElse(Default.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
+                X509Certificate certificate = new JcaX509CertificateConverter()
+                        .setProvider("BC")
+                        .getCertificate(certHolder);
 
-        keyStore.setKeyEntry(alias, keyPair.getPrivate(), secret, new X509Certificate[]{certificate});
+                keyStore.setKeyEntry(alias, keyPair.getPrivate(), secret, new X509Certificate[]{certificate});
+            } catch (CertIOException | OperatorCreationException | CertificateException | KeyStoreException |
+                     NoSuchAlgorithmException | NoSuchProviderException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
