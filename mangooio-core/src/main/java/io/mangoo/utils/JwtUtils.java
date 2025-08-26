@@ -41,12 +41,12 @@ public final class JwtUtils {
                     .jwtID(CodecUtils.uuidV6());
 
             if (jwtData.claims() != null && !jwtData.claims().isEmpty()) {
-                for (Map.Entry<String, String> e : jwtData.claims().entrySet()) {
-                    String key = Objects.requireNonNull(e.getKey(), "extra claim key must not be null");
+                for (Map.Entry<String, String> entry : jwtData.claims().entrySet()) {
+                    String key = Objects.requireNonNull(entry.getKey(), "extra claim key must not be null");
                     if (RESERVED.contains(key)) {
                         throw new MangooJwtException("Extra claim '" + key + "' conflicts with a reserved claim");
                     }
-                    claimsBuilder.claim(key, e.getValue());
+                    claimsBuilder.claim(key, entry.getValue());
                 }
             }
 
@@ -75,7 +75,7 @@ public final class JwtUtils {
             jweObject.encrypt(encrypter);
 
             return jweObject.serialize();
-        } catch (Exception e) {
+        } catch (JOSEException e) {
             throw new MangooJwtException(e);
         }
     }
@@ -157,6 +157,17 @@ public final class JwtUtils {
         } catch (Exception e) {
             throw new MangooJwtException(e);
         }
+    }
+
+    public static JWTClaimsSet cleanup(JWTClaimsSet claims) {
+        JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
+        claims.getClaims().forEach((key, value) -> {
+            if (!RESERVED.contains(key)) {
+                builder.claim(key, value);
+            }
+        });
+
+        return builder.build();
     }
 
     private static <T> T require(T v, String name) throws JOSEException {
