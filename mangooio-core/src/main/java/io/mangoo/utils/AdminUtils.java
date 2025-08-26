@@ -60,6 +60,7 @@ public final class AdminUtils {
                     .setValue(jwt)
                     .setHttpOnly(true)
                     .setSecure(Application.inProdMode())
+                    .setExpires(DateUtils.localDateTimeToDate(LocalDateTime.now().plusSeconds(1800)))
                     .setPath("/")
                     .setSameSiteMode("Strict");
         } catch (MangooJwtException e) {
