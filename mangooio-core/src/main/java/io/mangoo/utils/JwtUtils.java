@@ -65,6 +65,7 @@ public final class JwtUtils {
             JWEHeader jweHeader = new JWEHeader.Builder(
                     JWEAlgorithm.PBES2_HS512_A256KW,
                     EncryptionMethod.A256GCM)
+                    .compressionAlgorithm(CompressionAlgorithm.DEF)
                     .contentType(JWT)
                     .build();
 
@@ -159,7 +160,7 @@ public final class JwtUtils {
         }
     }
 
-    public static JWTClaimsSet cleanup(JWTClaimsSet claims) {
+    public static JWTClaimsSet removeReservedClaims(JWTClaimsSet claims) {
         JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
         claims.getClaims().forEach((key, value) -> {
             if (!RESERVED.contains(key)) {

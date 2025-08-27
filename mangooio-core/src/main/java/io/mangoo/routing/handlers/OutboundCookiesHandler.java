@@ -200,7 +200,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setPath("/")
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setExpires(DateUtils.localDateTimeToDate(LocalDateTime.now().plusSeconds(SIXTY)));
-                
+
                 exchange.setResponseCookie(cookie);
             } catch (Exception e) { //NOSONAR Intentionally catching exception here
                 LOG.error("Failed to generate flash cookie -> {}", e.getMessage(), e);

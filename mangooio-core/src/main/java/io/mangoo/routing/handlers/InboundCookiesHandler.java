@@ -74,7 +74,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
 
                 session = Session.create()
-                        .withContent(MangooUtils.toStringMap(JwtUtils.cleanup(jwtClaimsSet).getClaims()))
+                        .withContent(MangooUtils.toStringMap(JwtUtils.removeReservedClaims(jwtClaimsSet).getClaims()))
                         .withCsrf(jwtClaimsSet.getClaimAsString(Const.CSRF_TOKEN))
                         .withExpires(LocalDateTime.ofInstant(
                                 jwtClaimsSet.getExpirationTime().toInstant(),

@@ -61,7 +61,6 @@ public class AdminController {
         boolean enabled = config.isMetricsEnable();
         var stream = Application.getInstance(EventBus.class);
 
-        
         if (enabled) {
             var metrics = Application.getInstance(Metrics.class);
             long totalRequests = 0;

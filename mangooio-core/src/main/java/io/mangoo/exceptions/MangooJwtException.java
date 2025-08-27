@@ -11,5 +11,6 @@ public class MangooJwtException extends Exception {
     }
 
     public MangooJwtException(String message) {
+        super(message);
     }
 }
