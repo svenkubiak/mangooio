@@ -12,6 +12,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.filters.AdminFilter;
+import io.mangoo.filters.CsrfFilter;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
@@ -153,7 +154,8 @@ public class AdminController {
         
         return Response.redirect(ADMIN_INDEX).cookie(cookie);
     }
-    
+
+    @FilterWith(CsrfFilter.class)
     public Response authenticate(Form form) {
         form.expectValue("username");
         form.expectValue("password");
@@ -176,6 +178,7 @@ public class AdminController {
         return Response.redirect("/@admin/login");
     }
 
+    @FilterWith(CsrfFilter.class)
     public Response verify(Form form) {
         form.expectValue("code");
         form.expectNumeric("code");
