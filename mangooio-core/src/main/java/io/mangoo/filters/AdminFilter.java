@@ -1,13 +1,13 @@
 package io.mangoo.filters;
 
 import io.mangoo.constants.ClaimKey;
-import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
+import io.mangoo.utils.AdminUtils;
 import io.mangoo.utils.JwtUtils;
 import io.mangoo.utils.MangooUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +37,7 @@ public class AdminFilter implements PerRequestFilter {
             return response;
         }
 
-        var cookie = request.getCookie(Default.APPLICATION_ADMIN_COOKIE_NAME);
+        var cookie = request.getCookie(AdminUtils.getAdminCookieName());
         if (cookie != null) {
             String value = cookie.getValue();
             if (StringUtils.isNotBlank(value)) {
@@ -46,7 +46,7 @@ public class AdminFilter implements PerRequestFilter {
                             .withKey(config.getApplicationSecret())
                             .withSecret(config.getApplicationSecret())
                             .withIssuer(config.getApplicationName())
-                            .withAudience(Default.APPLICATION_ADMIN_COOKIE_NAME)
+                            .withAudience(AdminUtils.getAdminCookieName())
                             .withTtlSeconds(1800);
 
                     var jwtClaimSet = JwtUtils.parseJwt(value, jwtData);

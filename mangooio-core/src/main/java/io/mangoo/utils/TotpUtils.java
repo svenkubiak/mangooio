@@ -97,11 +97,11 @@ public class TotpUtils {
      * 
      * @return True if the TOTP is valid, false otherwise
      */
-    public static boolean verifiedTotp(String secret, String totp) {
+    public static boolean verifyTotp(String secret, String totp) {
         Objects.requireNonNull(secret, NotNull.SECRET);
         Objects.requireNonNull(totp, NotNull.TOTP);
 
-        return verifiedTotp(secret, totp, ALGORITHM, DIGITS, PERIOD);
+        return verifyTotp(secret, totp, ALGORITHM, DIGITS, PERIOD);
     }
 
     /**
@@ -114,7 +114,7 @@ public class TotpUtils {
      *
      * @return The totp value or null if generation failed
      */
-    public static boolean verifiedTotp(String secret, String totp, HMACAlgorithm algorithm, int digits, int period) {
+    public static boolean verifyTotp(String secret, String totp, HMACAlgorithm algorithm, int digits, int period) {
         Objects.requireNonNull(secret, NotNull.SECRET);
         Objects.requireNonNull(totp, NotNull.TOTP);
         Objects.requireNonNull(algorithm, NotNull.ALGORITHM);

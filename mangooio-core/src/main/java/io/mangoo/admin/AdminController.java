@@ -142,7 +142,7 @@ public class AdminController {
     }
     
     public Response logout() {
-        var cookie = new CookieImpl(Default.APPLICATION_ADMIN_COOKIE_NAME)
+        var cookie = new CookieImpl(AdminUtils.getAdminCookieName())
                 .setValue(Strings.EMPTY)
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())
@@ -178,10 +178,12 @@ public class AdminController {
 
     public Response verify(Form form) {
         form.expectValue("code");
-        form.expectRegex("code", CODE_PATTERN);
+        form.expectNumeric("code");
+        form.expectMaxLength("code", 6);
+        form.expectMinLength("code", 6);
 
         if (AdminUtils.isNotLocked() && form.isValid()) {
-            if (TotpUtils.verifiedTotp(config.getApplicationAdminSecret(), form.get("code"))) {
+            if (TotpUtils.verifyTotp(config.getApplicationAdminSecret(), form.get("code"))) {
                 try {
                     return Response.redirect(ADMIN_INDEX).cookie(AdminUtils.getAdminCookie(false));
                 } catch (MangooJwtException e) {

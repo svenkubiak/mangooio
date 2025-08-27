@@ -189,7 +189,7 @@ public class Authentication {
         Objects.requireNonNull(secret, NotNull.SECRET);
         Objects.requireNonNull(number, NotNull.TOTP);
         
-        return TotpUtils.verifiedTotp(secret, number);
+        return TotpUtils.verifyTotp(secret, number);
     }
 
     /**

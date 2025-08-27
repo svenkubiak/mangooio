@@ -73,7 +73,7 @@ class TotpUtilsTest {
 		String totp = TotpUtils.getTotp(secret);
 		
         //then
-        assertThat(true, equalTo(TotpUtils.verifiedTotp(secret, totp)));
+        assertThat(true, equalTo(TotpUtils.verifyTotp(secret, totp)));
 	}
 	
 	@Test
@@ -84,7 +84,7 @@ class TotpUtilsTest {
             String totp = TotpUtils.getTotp(secret);
         
             // then
-            return TotpUtils.verifiedTotp(secret, totp);
+            return TotpUtils.verifyTotp(secret, totp);
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 	

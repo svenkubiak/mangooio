@@ -49,14 +49,14 @@ public final class AdminUtils {
                     .withKey(config.getApplicationSecret())
                     .withSecret(config.getApplicationSecret())
                     .withIssuer(config.getApplicationName())
-                    .withAudience(Default.APPLICATION_ADMIN_COOKIE_NAME)
+                    .withAudience(getAdminCookieName())
                     .withSubject(CodecUtils.uuidV6())
                     .withTtlSeconds(1800)
                     .withClaims(claims);
 
             var jwt = JwtUtils.createJwt(jwtData);
 
-            return new CookieImpl(Application.inProdMode() ? "__Host-" + Default.APPLICATION_ADMIN_COOKIE_NAME : Default.APPLICATION_ADMIN_COOKIE_NAME)
+            return new CookieImpl(getAdminCookieName())
                     .setValue(jwt)
                     .setHttpOnly(true)
                     .setSecure(Application.inProdMode())
@@ -67,6 +67,10 @@ public final class AdminUtils {
             LOG.error("Failed to create admin cookie", e);
             throw new MangooJwtException(e);
         }
+    }
+
+    public static String getAdminCookieName() {
+        return Application.inProdMode() ? "__Host-" + Default.APPLICATION_ADMIN_COOKIE_NAME : Default.APPLICATION_ADMIN_COOKIE_NAME;
     }
 
     public static void invalidAuthentication() {
