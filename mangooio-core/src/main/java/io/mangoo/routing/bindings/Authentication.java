@@ -6,7 +6,7 @@ import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.utils.CodecUtils;
-import io.mangoo.utils.totp.TotpUtils;
+import io.mangoo.utils.TotpUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;

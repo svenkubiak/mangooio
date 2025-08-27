@@ -19,7 +19,7 @@ import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.AdminUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.MangooUtils;
-import io.mangoo.utils.totp.TotpUtils;
+import io.mangoo.utils.TotpUtils;
 import io.undertow.server.handlers.CookieImpl;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +40,7 @@ import static io.mangoo.utils.AdminUtils.resetLockCounter;
 public class AdminController {
     private static final Logger LOG = LogManager.getLogger(AdminController.class);
     private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
+    private static final Pattern CODE_PATTERN = Pattern.compile("[^0-9]");
     private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
     private static final String PERIOD = "30";
@@ -177,7 +178,8 @@ public class AdminController {
 
     public Response verify(Form form) {
         form.expectValue("code");
-        
+        form.expectRegex("code", CODE_PATTERN);
+
         if (AdminUtils.isNotLocked() && form.isValid()) {
             if (TotpUtils.verifiedTotp(config.getApplicationAdminSecret(), form.get("code"))) {
                 try {

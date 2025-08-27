@@ -7,6 +7,7 @@ Unreleased
 * Removed cryptex{} from configuration in favour of new vault (svenkubiak)
 * Removed all deprecated methods and classed (svenkubiak)
 * Removed AJP connector (svenkubiak)
+* Replaced internal TOTP implementation with external library (svenkubiak)
 * Switched from Paseto to JWT (svenkubiak)
 * Upgraded to Java 25 (svenkubiak)
 * Sonar refactorings (svenkubiak)
