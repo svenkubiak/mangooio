@@ -3,7 +3,6 @@ package io.mangoo.utils;
 import io.mangoo.TestExtension;
 import io.mangoo.constants.Hmac;
 import io.mangoo.test.concurrent.ConcurrentRunner;
-import io.mangoo.utils.totp.TotpUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
