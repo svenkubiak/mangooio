@@ -207,50 +207,38 @@ public class Vault {
         }
 
         Stream.of(Mode.values())
-                .forEach(value -> {
-                    String mode = value.toString().toLowerCase(Locale.ENGLISH) + ".";
-                    for (String suffix : keys) {
-                        String fullKey = mode + suffix;
-                        if (!exists(fullKey)) {
-                            put(fullKey, MangooUtils.randomString(64));
-                        }
+            .forEach(value -> {
+                String mode = value.toString().toLowerCase(Locale.ENGLISH) + ".";
+                for (String suffix : keys) {
+                    String fullKey = mode + suffix;
+                    if (!exists(fullKey)) {
+                        put(fullKey, MangooUtils.randomString(64));
                     }
-                });
-
+                }
+            });
     }
 
     public String get(String key) {
         Objects.requireNonNull(key, NotNull.KEY);
-        key = prefix + key;
+        String prefixed = prefix + key;
 
         try {
             KeyStore.SecretKeyEntry entry = (KeyStore.SecretKeyEntry)
-                    keyStore.getEntry(key, new KeyStore.PasswordProtection(secret));
+                    keyStore.getEntry(prefixed, new KeyStore.PasswordProtection(secret));
+            if (entry != null) {
+                byte[] raw = entry.getSecretKey().getEncoded();
+                return new String(raw, StandardCharsets.UTF_8);
+            }
+            entry = (KeyStore.SecretKeyEntry) keyStore.getEntry(key, new KeyStore.PasswordProtection(secret));
             if (entry != null) {
                 byte[] raw = entry.getSecretKey().getEncoded();
                 return new String(raw, StandardCharsets.UTF_8);
             }
         } catch (Exception e) {
-            LOG.error("Failed to get value for key: {}", key, e);
+            LOG.error("Failed to get environment value for key: {} or default value for key {}", key, prefixed, e);
         }
 
         return null;
-    }
-
-    private void remove(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
-        key = prefix + key;
-
-        try {
-            if (keyStore.containsAlias(key)) {
-                keyStore.deleteEntry(key);
-                try (OutputStream outputStream = Files.newOutputStream(path)) {
-                    keyStore.store(outputStream, secret);
-                }
-            }
-        } catch (Exception e) {
-            LOG.error("Failed to remove key", e);
-        }
     }
 
     public void put(String key, String value) {
@@ -293,7 +281,6 @@ public class Vault {
     }
 
     private void createCertificate() {
-
         String alias = Optional
                 .ofNullable(config.get(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS))
                 .orElse(Default.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
