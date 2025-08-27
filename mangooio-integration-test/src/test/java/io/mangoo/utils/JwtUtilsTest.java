@@ -5,6 +5,8 @@ import io.mangoo.TestExtension;
 import io.mangoo.exceptions.MangooJwtException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.text.ParseException;
 import java.util.List;
@@ -36,6 +38,30 @@ public class JwtUtilsTest {
 
         //then
         assertThat(jwt, not(nullValue()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"iss", "aud", "sub", "iat", "nbf", "exp", "jti"})
+    void testReservedException(String reserved) throws MangooJwtException {
+        //given
+        String secret = MangooUtils.randomString(64);
+        String key = MangooUtils.randomString(64);
+        var jwtData = JwtUtils.jwtData()
+                .withSecret(secret)
+                .withKey(key)
+                .withIssuer("foo")
+                .withAudience("bar")
+                .withSubject(CodecUtils.uuidV6())
+                .withTtlSeconds(120)
+                .withClaims(Map.of(reserved, CodecUtils.uuidV6()));
+
+        //when
+        Exception exception = assertThrows(MangooJwtException.class, () -> {
+            JwtUtils.createJwt(jwtData);
+        });
+
+        //then
+        assertThat(exception.getMessage(), equalTo("Extra claim '" + reserved + "' conflicts with a reserved claim"));
     }
 
     @Test
