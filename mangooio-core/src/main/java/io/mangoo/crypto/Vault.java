@@ -64,14 +64,21 @@ public class Vault {
             throw new IllegalStateException("Failed to acquire PKCS12 keystore", e);
         }
         loadConfig();
-        loadPath();
-        loadSecret();
-        loadKeyStore();
-        loadPrefix();
-        createSecrets();
-        createCertificate();
 
-        cleanUp();
+        if (enabled()) {
+            loadPath();
+            loadSecret();
+            loadKeyStore();
+            loadPrefix();
+            createSecrets();
+            createCertificate();
+
+            cleanUp();
+        }
+    }
+
+    private boolean enabled() {
+        return config.get(Key.APPLICATION_VAULT_ENABLE) != null && ("true").equals(config.get(Key.APPLICATION_VAULT_ENABLE));
     }
 
     private boolean exists(String key) {

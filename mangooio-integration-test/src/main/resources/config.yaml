@@ -8,6 +8,8 @@ default:
     minify:
       js: true
       css: true
+    vault:
+      enable: true
     encrypted: arg{}
     named: shouldnotbedisplayed
     admin:
