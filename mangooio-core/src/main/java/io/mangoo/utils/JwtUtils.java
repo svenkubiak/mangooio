@@ -29,9 +29,8 @@ public final class JwtUtils {
         validate(jwtData);
 
         try {
-            Instant now = Instant.now();
-
-            JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder()
+            var now = Instant.now();
+            var claimsBuilder = new JWTClaimsSet.Builder()
                     .issuer(jwtData.issuer())
                     .audience(jwtData.audience())
                     .subject(jwtData.subject())
@@ -53,25 +52,25 @@ public final class JwtUtils {
             JWTClaimsSet claimsSet = claimsBuilder.build();
 
             // Step 1: Sign JWT
-            JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.HS512)
+            var jwsHeader = new JWSHeader.Builder(JWSAlgorithm.HS512)
                     .type(JOSEObjectType.JWT)
                     .build();
 
             SignedJWT signedJWT = new SignedJWT(jwsHeader, claimsSet);
-            JWSSigner signer = new MACSigner(jwtData.secret());
+            var signer = new MACSigner(jwtData.secret());
             signedJWT.sign(signer);
 
             // Step 2: Encrypt the signed JWT compact serialization string (nested JWT)
-            JWEHeader jweHeader = new JWEHeader.Builder(
+            var jweHeader = new JWEHeader.Builder(
                     JWEAlgorithm.PBES2_HS512_A256KW,
                     EncryptionMethod.A256GCM)
                     .compressionAlgorithm(CompressionAlgorithm.DEF)
                     .contentType(JWT)
                     .build();
 
-            JWEObject jweObject = new JWEObject(jweHeader, new Payload(signedJWT.serialize()));
+            var jweObject = new JWEObject(jweHeader, new Payload(signedJWT.serialize()));
 
-            PasswordBasedEncrypter encrypter = new PasswordBasedEncrypter(jwtData.secret(), SALT_LENGTH, ITERATIONS);
+            var encrypter = new PasswordBasedEncrypter(jwtData.secret(), SALT_LENGTH, ITERATIONS);
             encrypter.getJCAContext().setSecureRandom(new SecureRandom());
             jweObject.encrypt(encrypter);
 
@@ -87,9 +86,9 @@ public final class JwtUtils {
 
         try {
             // Step 1: Parse the encrypted JWT (JWE)
-            JWEObject jweObject = JWEObject.parse(jwt);
+            var jweObject = JWEObject.parse(jwt);
 
-            JWEHeader jweHeader = jweObject.getHeader();
+            var jweHeader = jweObject.getHeader();
             if (!JWEAlgorithm.PBES2_HS512_A256KW.equals(jweHeader.getAlgorithm())) {
                 throw new JOSEException("Unexpected JWE algorithm: " + jweHeader.getAlgorithm());
             }
@@ -98,33 +97,33 @@ public final class JwtUtils {
             }
 
             // Decrypt JWE
-            PasswordBasedDecrypter decrypter = new PasswordBasedDecrypter(jwtData.secret());
+            var decrypter = new PasswordBasedDecrypter(jwtData.secret());
             jweObject.decrypt(decrypter);
 
             // Step 2: Extract the nested signed JWT compact serialization string
-            String signedJwtString = jweObject.getPayload().toString();
+            var signedJwtString = jweObject.getPayload().toString();
 
             // Step 3: Parse the signed JWT
-            SignedJWT signedJWT = SignedJWT.parse(signedJwtString);
+            var signedJWT = SignedJWT.parse(signedJwtString);
 
-            JWSHeader jwsHeader = signedJWT.getHeader();
+            var jwsHeader = signedJWT.getHeader();
             if (!JWSAlgorithm.HS512.equals(jwsHeader.getAlgorithm())) {
                 throw new JOSEException("Unexpected JWS algorithm: " + jwsHeader.getAlgorithm());
             }
 
             // Verify signature
-            JWSVerifier verifier = new MACVerifier(jwtData.secret());
+            var verifier = new MACVerifier(jwtData.secret());
             if (!signedJWT.verify(verifier)) {
                 throw new JOSEException("JWT signature verification failed");
             }
 
             // Validate claims
-            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+            var claims = signedJWT.getJWTClaimsSet();
 
-            Instant now = Instant.now();
-            Date exp = Objects.requireNonNull(claims.getExpirationTime(), "exp claim is required");
-            Date iat = Objects.requireNonNull(claims.getIssueTime(), "iat claim is required");
-            Date nbf = Objects.requireNonNull(claims.getNotBeforeTime(), "nbf claim is required");
+            var now = Instant.now();
+            var exp = Objects.requireNonNull(claims.getExpirationTime(), "exp claim is required");
+            var iat = Objects.requireNonNull(claims.getIssueTime(), "iat claim is required");
+            var nbf = Objects.requireNonNull(claims.getNotBeforeTime(), "nbf claim is required");
 
             if (!Objects.equals(jwtData.issuer(), claims.getIssuer())) {
                 throw new JOSEException("Issuer mismatch");
@@ -169,11 +168,6 @@ public final class JwtUtils {
         });
 
         return builder.build();
-    }
-
-    private static <T> T require(T v, String name) throws JOSEException {
-        if (v == null) throw new JOSEException("Missing '" + name + "' claim");
-        return v;
     }
 
     private static void validate(JwtData jwtData) {

@@ -532,12 +532,12 @@ public final class Application {
             failsafe();
         }
 
-        if (!config.getSessionCookieSameSiteMode().equals("Strict") && !config.getSessionCookieSameSiteMode().equals("Lax")) {
+        if (!("Strict").equals(config.getSessionCookieSameSiteMode()) && !("Lax").equals(config.getSessionCookieSameSiteMode())) {
             LOG.error("Only 'Strict' or 'Lax' is allowed in session.cookie.samesitemode is allowed");
             failsafe();
         }
 
-        if (!config.getAuthenticationCookieSameSiteMode().equals("Strict") && !config.getAuthenticationCookieSameSiteMode().equals("Lax")) {
+        if (!("Strict").equals(config.getAuthenticationCookieSameSiteMode()) && !("Lax").equals(config.getAuthenticationCookieSameSiteMode())) {
             LOG.error("Only 'Strict' or 'Lax' is allowed in authentication.cookie.samesitemode is allowed");
             failsafe();
         }

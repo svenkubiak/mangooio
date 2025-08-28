@@ -14,7 +14,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.Closeable;
 import java.io.File;
@@ -35,7 +34,6 @@ public final class MangooUtils {
     private static final String [] UNITS = new String[] { "B", "kB", "MB", "GB", "TB" };
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
-    private static final char[] CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
     private static final int MAX_LENGTH = 512;
     private static final int MIN_LENGTH = 22;
     private static final int CONVERSION = 1024;
@@ -105,10 +103,10 @@ public final class MangooUtils {
         Preconditions.checkArgument(length <= MAX_LENGTH, "Length must not exceed " + MAX_LENGTH + " characters");
 
         int bytesNeeded = (int) Math.ceil(length * 6 / 8.0);
-        byte[] randomBytes = new byte[bytesNeeded];
+        var randomBytes = new byte[bytesNeeded];
         SECURE_RANDOM.nextBytes(randomBytes);
 
-        String token = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+        var token = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
         return token.substring(0, length);
     }
 
@@ -241,7 +239,7 @@ public final class MangooUtils {
 
     private static File findRoot(File current) {
         while (current != null) {
-            File pom = current.toPath().resolve("pom.xml").toFile();
+            var pom = current.toPath().resolve("pom.xml").toFile();
             if (pom.exists() && isRootPom(pom)) {
                 return current;
             }
@@ -252,7 +250,7 @@ public final class MangooUtils {
 
     private static boolean isRootPom(File pomFile) {
         try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            var dbf = DocumentBuilderFactory.newInstance();
 
             dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -263,12 +261,11 @@ public final class MangooUtils {
             dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
-            DocumentBuilder dBuilder = dbf.newDocumentBuilder();
-
+            var dBuilder = dbf.newDocumentBuilder();
             dBuilder.setEntityResolver((publicId, systemId) ->
                     new InputSource(new StringReader("")));
 
-            Path path = pomFile.toPath();
+            var path = pomFile.toPath();
             try (var in = Files.newInputStream(path)) {
                 Document doc = dBuilder.parse(in);
                 NodeList modules = doc.getElementsByTagName("modules");
@@ -284,7 +281,7 @@ public final class MangooUtils {
 
     public static String getRootFolder() {
         File startDir = Path.of(System.getProperty("user.dir")).toFile();
-        File root = findRoot(startDir);
+        var root = findRoot(startDir);
 
         return root!= null ? root.getAbsolutePath() : StringUtils.EMPTY;
     }

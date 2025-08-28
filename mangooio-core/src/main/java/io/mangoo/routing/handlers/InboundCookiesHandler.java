@@ -81,7 +81,7 @@ public class InboundCookiesHandler implements HttpHandler {
                                 ZoneId.systemDefault()
                         ));
             } catch (ParseException | MangooJwtException e) {
-                LOG.error("Failed to parse session cookie -> {}", e.getMessage(), e);
+                LOG.error("Failed to parse session cookie", e);
                 session.invalidate();
             }
         }
@@ -120,7 +120,7 @@ public class InboundCookiesHandler implements HttpHandler {
                             ZoneId.systemDefault()
                         ));
             } catch (ParseException | MangooJwtException e) {
-                LOG.error("Failed to parse authentication cookie -> {}", e.getMessage(), e);
+                LOG.error("Failed to parse authentication cookie", e);
                 authentication.invalidate();
             }
         }
@@ -147,8 +147,7 @@ public class InboundCookiesHandler implements HttpHandler {
                         .withTtlSeconds(60);
 
                 var jwtClaimSet = JwtUtils.parseJwt(cookieValue, jwtData);
-
-                String formClaim = jwtClaimSet.getClaimAsString(ClaimKey.FORM);
+                var formClaim = jwtClaimSet.getClaimAsString(ClaimKey.FORM);
                 if (StringUtils.isNotBlank(formClaim)) {
                     form = CodecUtils.deserializeFromBase64(formClaim);
                 }
@@ -157,7 +156,7 @@ public class InboundCookiesHandler implements HttpHandler {
                         .withContent(MangooUtils.toStringMap(jwtClaimSet.getClaims()))
                         .setDiscard(true);
             } catch (ParseException | MangooJwtException e) {
-                LOG.error("Failed to parse flash cookie -> {}", e.getMessage(), e);
+                LOG.error("Failed to parse flash cookie", e);
                 flash.invalidate();
             }
         }

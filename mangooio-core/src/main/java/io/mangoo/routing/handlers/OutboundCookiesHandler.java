@@ -89,8 +89,8 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setSecure(config.isSessionCookieSecure());
 
                 exchange.setResponseCookie(cookie);
-            } catch (Exception e) { //NOSONAR Intentionally catching exception here
-                LOG.error("Failed to generate session cookie -> {}", e.getMessage(), e);
+            } catch (Exception e) {
+                LOG.error("Failed to generate session cookie", e);
             }
         }
     }
@@ -116,7 +116,7 @@ public class OutboundCookiesHandler implements HttpHandler {
         } else if (authentication.isValid()) {
             var authCookie = exchange.getRequestCookie(config.getAuthenticationCookieName());
             if (authCookie == null || authentication.isUpdate()) {
-                LocalDateTime now = LocalDateTime.now();
+                var now = LocalDateTime.now();
                 if (authentication.isRememberMe()) {
                     authentication.withExpires(now.plusSeconds(config.getAuthenticationCookieRememberExpires()));
                 }
@@ -146,8 +146,8 @@ public class OutboundCookiesHandler implements HttpHandler {
                             .setSameSiteMode(config.getAuthenticationCookieSameSiteMode());
 
                     exchange.setResponseCookie(cookie);
-                } catch (Exception e) { //NOSONAR Intentionally catching exception here
-                    LOG.error("Failed to generate authentication cookie -> {}", e.getMessage(), e);
+                } catch (Exception e) {
+                    LOG.error("Failed to generate authentication cookie", e);
                 }
             }
         } else {
@@ -203,7 +203,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                 exchange.setResponseCookie(cookie);
             } catch (Exception e) { //NOSONAR Intentionally catching exception here
-                LOG.error("Failed to generate flash cookie -> {}", e.getMessage(), e);
+                LOG.error("Failed to generate flash cookie", e);
             }
         } else {
             //Ignore and send no cookie to the client

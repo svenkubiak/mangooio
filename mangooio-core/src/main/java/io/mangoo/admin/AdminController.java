@@ -24,8 +24,6 @@ import io.mangoo.utils.TotpUtils;
 import io.undertow.server.handlers.CookieImpl;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.Date;
@@ -39,9 +37,7 @@ import static io.mangoo.utils.AdminUtils.resetLockCounter;
 
 @FilterWith(AdminFilter.class)
 public class AdminController {
-    private static final Logger LOG = LogManager.getLogger(AdminController.class);
     private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
-    private static final Pattern CODE_PATTERN = Pattern.compile("[^0-9]");
     private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
     private static final String PERIOD = "30";

@@ -21,7 +21,6 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.yaml.snakeyaml.Yaml;
@@ -31,8 +30,6 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -50,6 +47,18 @@ import java.util.stream.Stream;
 public class Vault {
     private static final Logger LOG = LogManager.getLogger(Vault.class);
     private static final String KEYSTORE_TYPE = "PKCS12";
+    private static final String[] KEYS;
+    static {
+        KEYS = new String[] {
+                Key.AUTHENTICATION_COOKIE_SECRET,
+                Key.AUTHENTICATION_COOKIE_KEY,
+                Key.SESSION_COOKIE_SECRET,
+                Key.SESSION_COOKIE_KEY,
+                Key.FLASH_COOKIE_SECRET,
+                Key.FLASH_COOKIE_KEY
+        };
+    }
+
     private final KeyStore keyStore;
     private Path path;
     private String prefix = Strings.EMPTY;
@@ -86,20 +95,21 @@ public class Vault {
         try {
             return keyStore.containsAlias(key);
         } catch (KeyStoreException e) {
-            throw new RuntimeException(e);
+            //Intentionally throwing no exception
+            return false;
         }
     }
 
     private void loadKeyStore() {
         if (Files.exists(path)) {
-            try (InputStream inputStream = Files.newInputStream(path, StandardOpenOption.READ)) {
+            try (var inputStream = Files.newInputStream(path, StandardOpenOption.READ)) {
                 keyStore.load(inputStream, secret);
                 LOG.info("Loaded existing vault from {}", path);
             } catch (Exception e) {
                 throw new IllegalStateException("Failed to load existing keystore", e);
             }
         } else {
-            try (OutputStream outputStream = Files.newOutputStream(path,
+            try (var outputStream = Files.newOutputStream(path,
                     StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
                 try {
                     Set<PosixFilePermission> perms = EnumSet.of(
@@ -198,16 +208,7 @@ public class Vault {
     }
 
     private void createSecrets() {
-        String[] keys = {
-                Key.AUTHENTICATION_COOKIE_SECRET,
-                Key.AUTHENTICATION_COOKIE_KEY,
-                Key.SESSION_COOKIE_SECRET,
-                Key.SESSION_COOKIE_KEY,
-                Key.FLASH_COOKIE_SECRET,
-                Key.FLASH_COOKIE_KEY
-        };
-
-        for (String key : keys) {
+        for (String key : KEYS) {
             if (!exists(key)) {
                 put(key, MangooUtils.randomString(64));
             }
@@ -216,7 +217,7 @@ public class Vault {
         Stream.of(Mode.values())
             .forEach(value -> {
                 String mode = value.toString().toLowerCase(Locale.ENGLISH) + ".";
-                for (String suffix : keys) {
+                for (String suffix : KEYS) {
                     String fullKey = mode + suffix;
                     if (!exists(fullKey)) {
                         put(fullKey, MangooUtils.randomString(64));
@@ -253,7 +254,7 @@ public class Vault {
         Objects.requireNonNull(value, NotNull.VALUE);
         key = prefix + key;
 
-        try (OutputStream outputStream = Files.newOutputStream(path)) {
+        try (var outputStream = Files.newOutputStream(path)) {
             SecretKey secretKey = new SecretKeySpec(value.getBytes(StandardCharsets.UTF_8), "AES");
 
             KeyStore.SecretKeyEntry secretKeyEntry = new KeyStore.SecretKeyEntry(secretKey);
@@ -268,18 +269,17 @@ public class Vault {
 
     public SSLContext getSSLContext(String alias) {
           try {
-            java.security.Key key = keyStore.getKey(alias, secret);
+            var key = keyStore.getKey(alias, secret);
             Certificate[] chain = keyStore.getCertificateChain(alias);
 
-            KeyStore tempKeyStore = KeyStore.getInstance(KEYSTORE_TYPE);
+            var tempKeyStore = KeyStore.getInstance(KEYSTORE_TYPE);
             tempKeyStore.load(null, null);
             tempKeyStore.setKeyEntry(alias, key, secret, chain);
 
-            KeyManagerFactory keyManagerFactory =
-                    KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            var keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             keyManagerFactory.init(tempKeyStore, secret);
 
-            SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
+            var sslContext = SSLContext.getInstance("TLSv1.3");
             sslContext.init(keyManagerFactory.getKeyManagers(), null, new SecureRandom());
             return sslContext;
         } catch (Exception e) {
@@ -294,16 +294,16 @@ public class Vault {
 
         if (!exists(alias)) {
             try {
-                KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA", "BC");
+                var keyPairGen = KeyPairGenerator.getInstance("RSA", "BC");
                 keyPairGen.initialize(2048, new SecureRandom());
-                KeyPair keyPair = keyPairGen.generateKeyPair();
+                var keyPair = keyPairGen.generateKeyPair();
 
-                X500Name dnName = new X500Name("CN=localhost");
-                BigInteger certSerialNumber = BigInteger.valueOf(System.currentTimeMillis());
-                Date startDate = new Date(System.currentTimeMillis() - 1000L * 60 * 60 * 24);
-                Date endDate = new Date(System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000)); // 1 year validity
+                var dnName = new X500Name("CN=localhost");
+                var certSerialNumber = BigInteger.valueOf(System.currentTimeMillis());
+                var startDate = new Date(System.currentTimeMillis() - 1000L * 60 * 60 * 24);
+                var endDate = new Date(System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000)); // 1 year validity
 
-                JcaX509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(
+                var certBuilder = new JcaX509v3CertificateBuilder(
                         dnName,
                         certSerialNumber,
                         startDate,
@@ -314,7 +314,7 @@ public class Vault {
 
                 certBuilder.addExtension(Extension.basicConstraints, true, new BasicConstraints(false));
 
-                ContentSigner contentSigner = new JcaContentSignerBuilder("SHA256withRSA")
+                var contentSigner = new JcaContentSignerBuilder("SHA256withRSA")
                         .setProvider("BC")
                         .build(keyPair.getPrivate());
 
