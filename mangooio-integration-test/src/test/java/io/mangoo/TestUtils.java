@@ -34,9 +34,6 @@ public final class TestUtils {
         try {
             JWTClaimsSet jwtClaimsSet = JwtUtils.parseJwt(cookie.getValue(), jwtData);
 
-            System.out.println("cookie value: " + cookie);
-            System.out.println("jwt claim: " + jwtClaimsSet.getClaimAsString(Const.CSRF_TOKEN));
-
             return new Csrf(cookie, jwtClaimsSet.getClaimAsString(Const.CSRF_TOKEN));
         } catch (ParseException | MangooJwtException e) {
             throw new RuntimeException(e);

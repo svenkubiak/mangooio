@@ -280,7 +280,7 @@ public final class MangooUtils {
     }
 
     public static String getRootFolder() {
-        File startDir = Path.of(System.getProperty("user.dir")).toFile();
+        var startDir = Path.of(System.getProperty("user.dir")).toFile();
         var root = findRoot(startDir);
 
         return root!= null ? root.getAbsolutePath() : StringUtils.EMPTY;

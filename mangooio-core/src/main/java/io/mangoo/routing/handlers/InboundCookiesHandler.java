@@ -148,6 +148,7 @@ public class InboundCookiesHandler implements HttpHandler {
                         .withTtlSeconds(60);
 
                 var jwtClaimSet = JwtUtils.parseJwt(cookieValue, jwtData);
+
                 var formClaim = jwtClaimSet.getClaimAsString(ClaimKey.FORM);
                 if (StringUtils.isNotBlank(formClaim)) {
                     form = CodecUtils.deserializeFromBase64(formClaim);

@@ -230,5 +230,38 @@ public final class JwtUtils {
                 Arrays.fill(secret, (byte) 0);
             }
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof JwtData other)) return false;
+            return ttlSeconds == other.ttlSeconds
+                    && Arrays.equals(secret, other.secret)
+                    && Objects.equals(key, other.key)
+                    && Objects.equals(issuer, other.issuer)
+                    && Objects.equals(audience, other.audience)
+                    && Objects.equals(subject, other.subject)
+                    && Objects.equals(claims, other.claims);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hash(key, issuer, audience, subject, ttlSeconds, claims);
+            result = 31 * result + Arrays.hashCode(secret);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "JwtData[" +
+                    "secret=***hidden***" +
+                    ", key=" + key +
+                    ", issuer=" + issuer +
+                    ", audience=" + audience +
+                    ", subject=" + subject +
+                    ", ttlSeconds=" + ttlSeconds +
+                    ", claims=" + claims +
+                    ']';
+        }
     }
 }

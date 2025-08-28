@@ -186,9 +186,6 @@ class AdminControllerTest {
                 .withForm(parameters)
                 .execute();
 
-        System.out.println(csrf.cookie());
-        System.out.println(execute.getStatusCode());
-
         return TestRequest.post("/@admin/authenticate")
                 .withCookie(csrf.cookie())
                 .withForm(parameters)

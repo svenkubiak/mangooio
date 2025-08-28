@@ -160,7 +160,7 @@ public class TestResponse {
         int port =  config.getConnectorHttpPort();
 
         try {
-            URI requestUri = new URI("http://" + host + ":" + port);
+            var requestUri = new URI("http://" + host + ":" + port);
             this.cookieManager.getCookieStore().add(requestUri, cookie);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
@@ -202,7 +202,7 @@ public class TestResponse {
     /**
      * Disables redirects when the request is executed by setting
      * followReditects to HttpClient.Redirect.NEVER
-     * 
+     *
      * Default is HttpClient.Redirect.ALWAYS
      *
      * @return TestResponse instance
