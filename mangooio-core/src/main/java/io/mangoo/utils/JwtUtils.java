@@ -12,6 +12,7 @@ import io.mangoo.exceptions.MangooJwtException;
 import org.apache.fury.util.Preconditions;
 
 import java.security.SecureRandom;
+import java.text.ParseException;
 import java.time.Instant;
 import java.util.*;
 
@@ -56,7 +57,7 @@ public final class JwtUtils {
                     .type(JOSEObjectType.JWT)
                     .build();
 
-            SignedJWT signedJWT = new SignedJWT(jwsHeader, claimsSet);
+            var signedJWT = new SignedJWT(jwsHeader, claimsSet);
             var signer = new MACSigner(jwtData.secret());
             signedJWT.sign(signer);
 
@@ -154,13 +155,13 @@ public final class JwtUtils {
             }
 
             return claims;
-        } catch (Exception e) {
+        } catch (JOSEException | ParseException e) {
             throw new MangooJwtException(e);
         }
     }
 
     public static JWTClaimsSet removeReservedClaims(JWTClaimsSet claims) {
-        JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
+        var builder = new JWTClaimsSet.Builder();
         claims.getClaims().forEach((key, value) -> {
             if (!RESERVED.contains(key)) {
                 builder.claim(key, value);

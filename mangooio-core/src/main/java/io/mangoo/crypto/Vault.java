@@ -30,6 +30,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -105,25 +106,22 @@ public class Vault {
             try (var inputStream = Files.newInputStream(path, StandardOpenOption.READ)) {
                 keyStore.load(inputStream, secret);
                 LOG.info("Loaded existing vault from {}", path);
-            } catch (Exception e) {
+            } catch (IllegalStateException | IOException | NoSuchAlgorithmException | CertificateException e) {
                 throw new IllegalStateException("Failed to load existing keystore", e);
             }
         } else {
             try (var outputStream = Files.newOutputStream(path,
                     StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
-                try {
-                    Set<PosixFilePermission> perms = EnumSet.of(
-                            PosixFilePermission.OWNER_READ,
-                            PosixFilePermission.OWNER_WRITE);
-                    Files.setPosixFilePermissions(path, perms);
-                } catch (UnsupportedOperationException ignored) {
-                    // likely running on Windows
-                }
+                Set<PosixFilePermission> perms = EnumSet.of(
+                        PosixFilePermission.OWNER_READ,
+                        PosixFilePermission.OWNER_WRITE);
+                Files.setPosixFilePermissions(path, perms);
 
                 keyStore.load(null, secret);
                 keyStore.store(outputStream, secret);
                 LOG.info("Created new vault at {}", path);
-            } catch (Exception e) {
+            } catch (IllegalStateException | IOException | NoSuchAlgorithmException | CertificateException |
+                     KeyStoreException e) {
                 throw new IllegalStateException("Failed to create keystore", e);
             }
         }
@@ -158,30 +156,30 @@ public class Vault {
     }
 
     private void loadPath() {
-        String path;
+        String vaultPath;
         if (!Application.inProdMode()) {
-            path = MangooUtils.getRootFolder();
+            vaultPath = MangooUtils.getRootFolder();
         } else {
-            path = System.getenv("APPLICATION_VAULT_PATH");
+            vaultPath = System.getenv("APPLICATION_VAULT_PATH");
 
-            if (Strings.isBlank(path)) {
-                path = System.getProperty(Key.APPLICATION_VAULT_PATH);
+            if (Strings.isBlank(vaultPath)) {
+                vaultPath = System.getProperty(Key.APPLICATION_VAULT_PATH);
             }
 
-            if (StringUtils.isBlank(path)) {
-                path = config.get(Key.APPLICATION_VAULT_PATH);
+            if (StringUtils.isBlank(vaultPath)) {
+                vaultPath = config.get(Key.APPLICATION_VAULT_PATH);
             }
         }
 
-        if (StringUtils.isBlank(path)) {
-            path = Const.KEYSTORE_FILENAME;
-        } else if (path.charAt(path.length() - 1) != File.separatorChar) {
-            path += File.separator + Const.KEYSTORE_FILENAME;
+        if (StringUtils.isBlank(vaultPath)) {
+            vaultPath = Const.KEYSTORE_FILENAME;
+        } else if (vaultPath.charAt(vaultPath.length() - 1) != File.separatorChar) {
+            vaultPath += File.separator + Const.KEYSTORE_FILENAME;
         } else {
-            path = path + Const.KEYSTORE_FILENAME;
+            vaultPath = vaultPath + Const.KEYSTORE_FILENAME;
         }
 
-        this.path = Path.of(path);
+        this.path = Path.of(vaultPath);
     }
 
     @SuppressWarnings("unchecked")
@@ -257,8 +255,8 @@ public class Vault {
         try (var outputStream = Files.newOutputStream(path)) {
             SecretKey secretKey = new SecretKeySpec(value.getBytes(StandardCharsets.UTF_8), "AES");
 
-            KeyStore.SecretKeyEntry secretKeyEntry = new KeyStore.SecretKeyEntry(secretKey);
-            KeyStore.ProtectionParameter protectionParam = new KeyStore.PasswordProtection(secret);
+            var secretKeyEntry = new KeyStore.SecretKeyEntry(secretKey);
+            var protectionParam = new KeyStore.PasswordProtection(secret);
 
             keyStore.setEntry(key, secretKeyEntry, protectionParam);
             keyStore.store(outputStream, secret);
@@ -282,7 +280,8 @@ public class Vault {
             var sslContext = SSLContext.getInstance("TLSv1.3");
             sslContext.init(keyManagerFactory.getKeyManagers(), null, new SecureRandom());
             return sslContext;
-        } catch (Exception e) {
+        } catch (IllegalStateException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException |
+                 IOException | CertificateException | KeyManagementException e) {
             throw new IllegalStateException("Failed to create SSLContext", e);
         }
     }
@@ -327,7 +326,7 @@ public class Vault {
                 keyStore.setKeyEntry(alias, keyPair.getPrivate(), secret, new X509Certificate[]{certificate});
             } catch (CertIOException | OperatorCreationException | CertificateException | KeyStoreException |
                      NoSuchAlgorithmException | NoSuchProviderException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
     }
