@@ -196,17 +196,6 @@ public final class CodecUtils {
 
     /**
      * Creates a UUIDv6 random String
-     * @deprecated Use {@link #uuidV6()} instead.
-     *
-     * @return UUIDv6 String
-     */
-    @Deprecated(since="9.6.0", forRemoval = true)
-    public static String uuid() {
-        return Generators.timeBasedReorderedGenerator().generate().toString();
-    }
-
-    /**
-     * Creates a UUIDv6 random String
      *
      * @return UUIDv6 String
      */
