@@ -2,7 +2,10 @@ package io.mangoo.controllers;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import io.mangoo.Csrf;
 import io.mangoo.TestExtension;
+import io.mangoo.TestUtils;
+import io.mangoo.constants.Const;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.test.http.TestRequest;
@@ -27,7 +30,40 @@ class AdminControllerTest {
     private static final String SECURITY = "security";
     private static final String CACHE = "cache";
     private static final String CONTROL_PANEL = "Dashboard";
-    
+
+    @Test
+    void testLoginWithoutCsrf() {
+        Multimap<String, String> parameters = ArrayListMultimap.create();
+        parameters.put("username", Application.getInstance(Config.class).getApplicationAdminUsername());
+        parameters.put("password", Application.getInstance(Config.class).getApplicationAdminPassword());
+
+        TestResponse response = TestRequest.post("/@admin/authenticate")
+                .withForm(parameters)
+                .execute();
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
+        assertThat(response.getContent(), not(containsString(CONTROL_PANEL)));
+    }
+
+    @Test
+    void testLoginWithCsrf() {
+        Csrf csrf = TestUtils.getCsrf();
+        Multimap<String, String> parameters = ArrayListMultimap.create();
+        parameters.put("username", Application.getInstance(Config.class).getApplicationAdminUsername());
+        parameters.put("password", Application.getInstance(Config.class).getApplicationAdminPassword());
+        parameters.put(Const.CSRF_TOKEN, csrf.token());
+
+        TestResponse response = TestRequest.post("/@admin/authenticate")
+                .withCookie(csrf.cookie())
+                .withForm(parameters)
+                .execute();
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), containsString(CONTROL_PANEL));
+    }
+
     @Test
     void testDashboardUnauthorized() {
         //given
@@ -139,10 +175,22 @@ class AdminControllerTest {
     }
     
     private TestResponse login() {
+        Csrf csrf = TestUtils.getCsrf();
         Multimap<String, String> parameters = ArrayListMultimap.create();
         parameters.put("username", Application.getInstance(Config.class).getApplicationAdminUsername());
         parameters.put("password", Application.getInstance(Config.class).getApplicationAdminPassword());
+        parameters.put(Const.CSRF_TOKEN, csrf.token());
+
+        TestResponse execute = TestRequest.post("/@admin/authenticate")
+                .withCookie(csrf.cookie())
+                .withForm(parameters)
+                .execute();
+
+        System.out.println(csrf.cookie());
+        System.out.println(execute.getStatusCode());
+
         return TestRequest.post("/@admin/authenticate")
+                .withCookie(csrf.cookie())
                 .withForm(parameters)
                 .execute();
     }

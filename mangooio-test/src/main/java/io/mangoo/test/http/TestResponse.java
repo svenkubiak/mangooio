@@ -155,9 +155,17 @@ public class TestResponse {
      */
     public TestResponse withCookie(HttpCookie cookie) {
         Objects.requireNonNull(cookie, NotNull.COOKIE);
+        Config config = Application.getInstance(Config.class);
+        String host = config.getConnectorHttpHost();
+        int port =  config.getConnectorHttpPort();
 
-        this.cookieManager.getCookieStore().add(null, cookie);
-        
+        try {
+            URI requestUri = new URI("http://" + host + ":" + port);
+            this.cookieManager.getCookieStore().add(requestUri, cookie);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
         return this;
     }
     
@@ -247,7 +255,7 @@ public class TestResponse {
             if (this.authenticator != null ) {
                 this.httpClient.authenticator(this.authenticator);
             }
-            
+
             this.httpResponse = this.httpClient
                     .build()
                     .send(this.httpRequest.build(), HttpResponse.BodyHandlers.ofString());
