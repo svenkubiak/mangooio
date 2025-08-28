@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +48,7 @@ public final class AdminUtils {
         try {
             var jwtData = JwtUtils.JwtData.create()
                     .withKey(config.getApplicationSecret())
-                    .withSecret(config.getApplicationSecret())
+                    .withSecret(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
                     .withIssuer(config.getApplicationName())
                     .withAudience(getAdminCookieName())
                     .withSubject(CodecUtils.uuidV6())

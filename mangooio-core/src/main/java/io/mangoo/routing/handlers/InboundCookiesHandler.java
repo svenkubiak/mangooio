@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -66,7 +67,7 @@ public class InboundCookiesHandler implements HttpHandler {
             try {
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getSessionCookieKey())
-                        .withSecret(config.getSessionCookieSecret())
+                        .withSecret(config.getSessionCookieSecret().getBytes(StandardCharsets.UTF_8))
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getSessionCookieName())
                         .withTtlSeconds(config.getSessionCookieTokenExpires());
@@ -74,7 +75,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
 
                 session = Session.create()
-                        .withContent(MangooUtils.toStringMap(JwtUtils.removeReservedClaims(jwtClaimsSet).getClaims()))
+                        .withContent(MangooUtils.toStringMap(JwtUtils.extractCustomClaims(jwtClaimsSet).getClaims()))
                         .withCsrf(jwtClaimsSet.getClaimAsString(Const.CSRF_TOKEN))
                         .withExpires(LocalDateTime.ofInstant(
                                 jwtClaimsSet.getExpirationTime().toInstant(),
@@ -104,7 +105,7 @@ public class InboundCookiesHandler implements HttpHandler {
             try {
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getAuthenticationCookieKey())
-                        .withSecret(config.getAuthenticationCookieSecret())
+                        .withSecret(config.getAuthenticationCookieSecret().getBytes(StandardCharsets.UTF_8))
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getAuthenticationCookieName())
                         .withTtlSeconds(config.getAuthenticationCookieRememberExpires());
@@ -141,7 +142,7 @@ public class InboundCookiesHandler implements HttpHandler {
             try {
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getFlashCookieKey())
-                        .withSecret(config.getFlashCookieSecret())
+                        .withSecret(config.getFlashCookieSecret().getBytes(StandardCharsets.UTF_8))
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getFlashCookieName())
                         .withTtlSeconds(60);

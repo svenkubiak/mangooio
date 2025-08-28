@@ -160,7 +160,7 @@ public final class JwtUtils {
         }
     }
 
-    public static JWTClaimsSet removeReservedClaims(JWTClaimsSet claims) {
+    public static JWTClaimsSet extractCustomClaims(JWTClaimsSet claims) {
         var builder = new JWTClaimsSet.Builder();
         claims.getClaims().forEach((key, value) -> {
             if (!RESERVED.contains(key)) {
@@ -184,7 +184,7 @@ public final class JwtUtils {
     }
 
     public record JwtData(
-            String secret,
+            byte[] secret,
             String key,
             String issuer,
             String audience,
@@ -197,7 +197,7 @@ public final class JwtUtils {
             return new JwtData(null, null, null, null, null, 0L, Map.of());
         }
 
-        public JwtData withSecret(String secret) {
+        public JwtData withSecret(byte[] secret) {
             return new JwtData(secret, key, issuer, audience, subject, ttlSeconds, claims);
         }
 
@@ -223,6 +223,12 @@ public final class JwtUtils {
 
         public JwtData withClaims(Map<String, String> claims) {
             return new JwtData(secret, key, issuer, audience, subject, ttlSeconds, claims);
+        }
+
+        public void clearSecret() {
+            if (secret != null) {
+                Arrays.fill(secret, (byte) 0);
+            }
         }
     }
 }

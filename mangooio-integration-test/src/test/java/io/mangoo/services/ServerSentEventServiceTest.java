@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -75,7 +76,7 @@ class ServerSentEventServiceTest {
 
         var jwtData = JwtUtils.JwtData.create()
                 .withKey(MangooUtils.randomString(64))
-                .withSecret(MangooUtils.randomString(64))
+                .withSecret(MangooUtils.randomString(64).getBytes(StandardCharsets.UTF_8))
                 .withIssuer(config.getApplicationName())
                 .withAudience(config.getAuthenticationCookieName())
                 .withSubject("foo")

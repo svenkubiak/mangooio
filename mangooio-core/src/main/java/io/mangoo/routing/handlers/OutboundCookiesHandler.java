@@ -17,6 +17,7 @@ import jakarta.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getSessionCookieKey())
-                        .withSecret(config.getSessionCookieSecret())
+                        .withSecret(config.getSessionCookieSecret().getBytes(StandardCharsets.UTF_8))
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getSessionCookieName())
                         .withSubject(CodecUtils.uuidV6())
@@ -128,7 +129,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                     var jwtData = JwtUtils.jwtData()
                             .withKey(config.getAuthenticationCookieKey())
-                            .withSecret(config.getAuthenticationCookieSecret())
+                            .withSecret(config.getAuthenticationCookieSecret().getBytes(StandardCharsets.UTF_8))
                             .withIssuer(config.getApplicationName())
                             .withAudience(config.getAuthenticationCookieName())
                             .withSubject(authentication.getSubject())
@@ -184,7 +185,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getFlashCookieKey())
-                        .withSecret(config.getFlashCookieSecret())
+                        .withSecret(config.getFlashCookieSecret().getBytes(StandardCharsets.UTF_8))
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getFlashCookieName())
                         .withSubject(CodecUtils.uuidV6())

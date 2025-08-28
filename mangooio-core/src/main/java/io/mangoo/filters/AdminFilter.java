@@ -15,6 +15,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 
 public class AdminFilter implements PerRequestFilter {
@@ -44,7 +45,7 @@ public class AdminFilter implements PerRequestFilter {
                 try {
                     var jwtData = JwtUtils.JwtData.create()
                             .withKey(config.getApplicationSecret())
-                            .withSecret(config.getApplicationSecret())
+                            .withSecret(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
                             .withIssuer(config.getApplicationName())
                             .withAudience(AdminUtils.getAdminCookieName())
                             .withTtlSeconds(1800);

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class JwtUtilsTest {
         String secret = MangooUtils.randomString(64);
         String key = MangooUtils.randomString(64);
         var jwtData = JwtUtils.jwtData()
-                .withSecret(secret)
+                .withSecret(secret.getBytes(StandardCharsets.UTF_8))
                 .withKey(key)
                 .withIssuer("foo")
                 .withAudience("bar")
@@ -47,7 +48,7 @@ public class JwtUtilsTest {
         String secret = MangooUtils.randomString(64);
         String key = MangooUtils.randomString(64);
         var jwtData = JwtUtils.jwtData()
-                .withSecret(secret)
+                .withSecret(secret.getBytes(StandardCharsets.UTF_8))
                 .withKey(key)
                 .withIssuer("foo")
                 .withAudience("bar")
@@ -74,7 +75,7 @@ public class JwtUtilsTest {
         //then
         for (String value : reserved) {
             var jwtData = JwtUtils.jwtData()
-                    .withSecret(secret)
+                    .withSecret(secret.getBytes(StandardCharsets.UTF_8))
                     .withKey(key)
                     .withIssuer("foo")
                     .withAudience("bar")
@@ -92,7 +93,7 @@ public class JwtUtilsTest {
         String secret = MangooUtils.randomString(64);
         String key = MangooUtils.randomString(64);
         var jwtData = JwtUtils.jwtData()
-                .withSecret(secret)
+                .withSecret(secret.getBytes(StandardCharsets.UTF_8))
                 .withKey(key)
                 .withIssuer("foo")
                 .withAudience("bar")
