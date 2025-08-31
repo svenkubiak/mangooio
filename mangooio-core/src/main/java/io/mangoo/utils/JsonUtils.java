@@ -1,6 +1,6 @@
 package io.mangoo.utils;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +30,9 @@ public final class JsonUtils {
             .build()
             .registerModule(new JavaTimeModule())
             .registerModule(new BlackbirdModule())
-            .setSerializationInclusion(Include.NON_NULL)
+            .setDefaultPropertyInclusion(JsonInclude.Value.construct(
+                    JsonInclude.Include.NON_NULL,
+                    JsonInclude.Include.ALWAYS))
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private JsonUtils(){
