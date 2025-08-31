@@ -28,9 +28,9 @@
 		<log4j.version>2.25.1</log4j.version>
 		<maven.version>4.0.0-rc-4</maven.version>
 		<required.maven.version>3.9.0</required.maven.version>
-		<junit.version>6.0.0-RC1</junit.version>
+		<junit.version>6.0.0-RC2</junit.version>
 		<enforcer.version>1.10.0</enforcer.version>
-		<jackson.version>2.20.0-rc1</jackson.version>
+		<jackson.version>2.20.0</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<javadoc.version>3.11.3</javadoc.version>
 		<modernizer.version>3.2.0</modernizer.version>
@@ -134,7 +134,7 @@
 				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>5.1.0.4751</version>
+					<version>5.2.0.4988</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
