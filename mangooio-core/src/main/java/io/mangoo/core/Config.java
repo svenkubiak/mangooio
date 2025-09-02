@@ -29,6 +29,7 @@ public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
     private static final String VAULT_TAG = "vault{}";
     private static final String ARG_TAG = "arg{}";
+    private static final String ENV_TAG = "env{}";
     private final Map<String, String> values = new ConcurrentHashMap<>();
     private final Vault vault;
     private Pattern corsUrl;
@@ -95,7 +96,24 @@ public class Config {
      * @param value The property value
      */
     private void parse(String key, String value) {
-        if (ARG_TAG.equals(value)) {
+        if (ENV_TAG.equals(value)) {
+            String envKey = key.toLowerCase(Locale.ENGLISH)
+                    .replace("_", ".")
+                    .replace("-", "")
+                    .trim();
+
+            String propertyValue = System.getenv(envKey);
+
+            if (StringUtils.isNotBlank(propertyValue)) {
+                values.put(key, propertyValue);
+            }
+        } else if (value.startsWith("env{")) {
+            value = StringUtils.substringBetween(value, "env{", "}");
+
+            if (StringUtils.isNotBlank(value)) {
+                values.put(key, value);
+            }
+        } else if (ARG_TAG.equals(value)) {
             String propertyValue = System.getProperty(key);
 
             if (StringUtils.isNotBlank(propertyValue)) {
