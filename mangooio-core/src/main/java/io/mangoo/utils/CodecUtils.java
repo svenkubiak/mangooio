@@ -5,6 +5,7 @@ import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import org.apache.commons.codec.binary.Base32;
 import org.apache.fury.Fury;
 import org.apache.fury.ThreadSafeFury;
 import org.apache.fury.config.Language;
@@ -24,6 +25,7 @@ import java.util.Objects;
 
 public final class CodecUtils {
     private static final Logger LOG = LogManager.getLogger(CodecUtils.class);
+    private static final Base32 BASE32ENCODER = new Base32();
     private static final Base64.Encoder BASE64ENCODER = Base64.getEncoder();
     private static final Base64.Decoder BASE64DECODER = Base64.getDecoder();
     private static final ThreadSafeFury FURY = Fury.builder()
@@ -170,6 +172,17 @@ public final class CodecUtils {
     public static byte[] encodeToBase64(String data) {
         Objects.requireNonNull(data, NotNull.DATA);
         return BASE64ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Encodes a given string to a Base32 string
+     *
+     * @param data The data to convert
+     * @return The converted byte array
+     */
+    public static String encodeToBase32(String data) {
+        Objects.requireNonNull(data, NotNull.DATA);
+        return BASE32ENCODER.encodeToString(data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

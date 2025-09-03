@@ -1,7 +1,6 @@
 package io.mangoo.utils;
 
 import io.mangoo.TestExtension;
-import io.mangoo.constants.Hmac;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
@@ -19,30 +18,9 @@ class TotpUtilsTest {
 	private static final int SECRET_LENGTH = 64;
 
 	@Test
-	void testCreateKey() {
-        //given
-        String secret = TotpUtils.createSecret();
-        
-        //then
-        assertThat(secret, not(nullValue()));
-        assertThat(secret.length(), equalTo(SECRET_LENGTH));
-	}
-	
-	@Test
-	void testCreateKeyConcurrent() throws InterruptedException {
-        MatcherAssert.assertThat(t -> {
-            //given
-            String secret = TotpUtils.createSecret();
-            
-            // then
-            return secret.length() == SECRET_LENGTH;
-        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
-	}
-	
-	@Test
 	void testGetTotp() {
         //given
-		String secret = TotpUtils.createSecret();
+        String secret = MangooUtils.randomString(SECRET_LENGTH);
 		
 		//when
         String totp = TotpUtils.getTotp(secret);
@@ -56,7 +34,7 @@ class TotpUtilsTest {
 	void testGetTotpConcurrent() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
-            String secret = TotpUtils.createSecret();
+            String secret = MangooUtils.randomString(SECRET_LENGTH);
         
             //when
             String totp = TotpUtils.getTotp(secret);
@@ -69,7 +47,7 @@ class TotpUtilsTest {
 	@Test
 	void testVerifyTotp() {
         //given
-		String secret = TotpUtils.createSecret();
+        String secret = MangooUtils.randomString(SECRET_LENGTH);
 		String totp = TotpUtils.getTotp(secret);
 		
         //then
@@ -80,7 +58,7 @@ class TotpUtilsTest {
 	void testVerifyTotpConcurrent() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
-            String secret = TotpUtils.createSecret();
+            String secret = MangooUtils.randomString(SECRET_LENGTH);
             String totp = TotpUtils.getTotp(secret);
         
             // then
@@ -92,33 +70,44 @@ class TotpUtilsTest {
 	void testGetQRCode() {
         //given
 		String secret = "My voice is my secret";
-		String qr = TotpUtils.getQRCode("test", "issuer", secret, Hmac.SHA512, "6", "30");
+		String qr = TotpUtils.getQRCode("test", "issuer", secret);
 		
         //then
 		assertThat(qr, not(nullValue()));
-        assertThat(qr, equalTo("iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6AQAAAACgl2eQAAACl0lEQVR4Xu2YQW7qQBBE2/LCSx+Bm8DFkLDExeAmPoKXXiD6v+qB4CRStpS+mEUS97xI062e6rIj/16X+Bn5sT5AWx+gLRfgFqxTrvtxivWwnDJinHYK7owAfi9HRfo57yP8gdjQNnyA6JbTXFnEnrOzd87hEkc34MgfC7W98tdAKjtH4JRZZ7+P54Tqf2XxdkD9UFWOyiI64F8N82aADU48sLf5oaAR0NacrdSE0YD+GXYByKJbItZOTXuJExoQx+Cinb2A4IEuQD4P5NOEVI8+QM6rbhZ7lFqtwCNZgD6y8ADyMiYApV6RfOVDZq9SmwBXHbtTFonuS0g1Qb9ulgUwZE5BqwYaJerCcNoIqQPAiavA2JBZTZtU+UbRKb8PkO3Y1LbkE8Okfqh8jICZshIWsO5DlBK4E/MBHidmbtKvumPVHsN1I2LvB7JaQceOSLWqUJlkbbkAGA2ykOG8ycadWz9sNMoFYJqXkIJO2kuyePWDBcBVxwaXPKW8pqhvhtMBUHjmyBOGXUL/ul42QGoGpeZ6r86V4eSfQpkZAVnWnQl/VqASYE9vQj6ADKda9aBSX4VfaV8V3Qgoh9Trt/pBhjii3ikV8gFkLpnrjKRW6k5C7wXQoMqirn9Zd31H0ARFsoyAfGhAaCT1NTfVGZMXQHhe5eVKnqi8xHU7DgyAVuAWHiX5jNHcXD0LQPKJ/VAC8ko15vUmZATUKsuhaTki/nqnJItnPzgAt5YA8hSynlX5p6T6ABx20YcNEgi16lCxTRYWQH3ArJdcdW7INenbjCaAGSAhnSVUVHmpd6L4noUFgHzypMeq97YfHADZJJ29b5+Cy5A01+QDcGpZjosG5Z0E4qGmX1kYAH+uD9DWB2jrPwH+ARzYRlt+C7KXAAAAAElFTkSuQmCC"));
+        assertThat(qr, equalTo("iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6AQAAAACgl2eQAAACOElEQVR4Xu2YMY6DQAxFHaWg5AjcBC6GBFIuRm4yR6CkiPD+/51d7SSrtFgrXKCEecWM8/3tifnnWOz1zUucQMQJRJxAxH8CDNH5fcVjt6lswzry1ZQKaNwfXXP3h9klqLFzX5MBS7zBY29v3tzxCWhCAG+uxQat4VA5gW1gvne7Fp0nH0A9WA+dxlrfPrp3wRwMqLKkgp/HH6V3MKDYrPWC88wGI+CaIg+AHWPbfXsryjK+XsvWt8mACx4N9w75TjgKagxGkAsIe7ojy2GpSzvjUJUejgdscJbXOmHvkK8vrKw9GcBtR9+UUUEKaE5V30wB4Av7JowUWcabW2GhpQK4d9sggCL5Oi2fX1MBxh2r3pH0m7PD5wO2C+29R5b5iS1T5p8L0PAhjwflHDiRaiU9EYDK57YhCnqoNxw4t6qyUgBO5SLfzr6JQrvyKLkA2ZNUQKpDlmcO8bkAuX3MwkaPYvOE5XMpEcB6ioFYls/RU+aaCWho7xw5YvjAGuJFMIcDkgJOYSY9YM040OUC6PHMMisfR+Err/SQAuAYx1KCfYJC0jEmVXpIAazP6y6VoeZOikupgNHkTJrljNHUqT4eULD8nTfdMHp1gEwAd80scwLxmfPxyHv6lApoePWBfeImpL7JWaQ6RQpAfxYNLC+MSbiiM373zTwAcwu3f8oXlsBIBnzPclIGfLXyqAwA9UABFN7UOvHvf3kdDPDn79SXNrXMAWh1igzAhziBiBOIOIGIE4hYvgC1Hygim2deZAAAAABJRU5ErkJggg=="));
 	}
 	
 	@Test
 	void testGetTotpURL() {
         //given
 		String secret = "foo";
-		String qr = TotpUtils.getOtpauthURL("test", "issuer", secret, Hmac.SHA512, "6", "30");
+		String qr = TotpUtils.getOtpauthURL("test", "issuer", secret);
 
         //then
 		assertThat(qr, not(nullValue()));
-        assertThat(qr, equalTo("otpauth://totp/test?secret=MZXW6&algorithm=SHA512&issuer=issuer&digits=6&period=30"));
+        assertThat(qr, equalTo("otpauth://totp/test?secret=foo&algorithm=SHA512&issuer=issuer&digits=6&period=30"));
 	}
+
+    @Test
+    void testGetTotpURLWithSecret() {
+        //given
+        String secret = TotpUtils.createSecret();
+        String qr = TotpUtils.getOtpauthURL("test", "issuer", secret);
+
+        //then
+        assertThat(qr, not(nullValue()));
+        assertThat(qr, equalTo("otpauth://totp/test?secret="+ secret + "&algorithm=SHA512&issuer=issuer&digits=6&period=30"));
+    }
 	
 	@Test
 	void testGetTotpURLConcurrent() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String secret = "foo";
-            String qr = TotpUtils.getOtpauthURL("test", "issuer", secret, Hmac.SHA512, "6", "30");
+            String qr = TotpUtils.getOtpauthURL("test", "issuer", secret);
         
             // then
-            return qr.equals(TotpUtils.getOtpauthURL("test", "issuer", secret, Hmac.SHA512, "6", "30"));
+            return qr.equals(TotpUtils.getOtpauthURL("test", "issuer", secret));
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 }

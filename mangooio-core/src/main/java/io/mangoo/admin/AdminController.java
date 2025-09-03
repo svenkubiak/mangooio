@@ -7,7 +7,10 @@ import io.mangoo.async.EventBus;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheImpl;
 import io.mangoo.cache.CacheProvider;
-import io.mangoo.constants.*;
+import io.mangoo.constants.CacheName;
+import io.mangoo.constants.Key;
+import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Template;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
@@ -40,8 +43,6 @@ public class AdminController {
     private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
-    private static final String PERIOD = "30";
-    private static final String DIGITS = "6";
     private static final String METRICS = "metrics";
     private static final double HUNDRED_PERCENT = 100.0;
     private final CacheProvider cacheProvider;
@@ -123,8 +124,8 @@ public class AdminController {
         String qrCode = null;
 
         if (StringUtils.isBlank(secret)) {
-            secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret, Hmac.SHA512, DIGITS, PERIOD);
+            secret = MangooUtils.randomString(64);
+            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret);
         }
 
         return Response.ok()
