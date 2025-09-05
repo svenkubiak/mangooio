@@ -98,7 +98,7 @@ public class Authentication {
      * @param hash The previously hashed password to check
      * @return True if the new hashed password matches the hash, false otherwise
      */
-    public boolean validLogin(String identifier, String password, String salt, String hash) {
+    public boolean isValidLogin(String identifier, String password, String salt, String hash) {
         Objects.requireNonNull(identifier, NotNull.USERNAME);
         Objects.requireNonNull(password, NotNull.PASSWORD);
         Objects.requireNonNull(password, NotNull.SALT);
@@ -182,14 +182,14 @@ public class Authentication {
      * Checks if a given number for 2FA is valid for the given secret
      * 
      * @param secret The plaintext secret to use for checking
-     * @param number The number entered by the user
+     * @param totp The number entered by the user
      * @return True if number is valid, false otherwise
      */
-    public boolean validSecondFactor(String secret, String number) {
+    public boolean isValidSecondFactor(String secret, String totp) {
         Objects.requireNonNull(secret, NotNull.SECRET);
-        Objects.requireNonNull(number, NotNull.TOTP);
+        Objects.requireNonNull(totp, NotNull.TOTP);
         
-        return TotpUtils.verifyTotp(secret, number);
+        return TotpUtils.verifyTotp(secret, totp);
     }
 
     /**
