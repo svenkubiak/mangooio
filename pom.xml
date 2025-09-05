@@ -98,17 +98,17 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>versions-maven-plugin</artifactId>
-					<version>2.18.0</version>
-					<configuration>
-						<ruleSet>
-							<ignoreVersions>
-								<ignoreVersion>
-									<type>regex</type>
-									<version>.*(beta|Beta|alpha|Alpha).*</version>
-								</ignoreVersion>
-							</ignoreVersions>
-						</ruleSet>
-					</configuration>
+                    <version>2.19.0</version>
+                    <configuration>
+                        <ruleSet>
+                            <ignoreVersions>
+                                <ignoreVersion>
+                                    <type>regex</type>
+                                    <version>.*(beta|Beta|alpha|Alpha|rc|RC).*</version>
+                                </ignoreVersion>
+                            </ignoreVersions>
+                        </ruleSet>
+                    </configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
