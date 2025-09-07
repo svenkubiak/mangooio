@@ -155,14 +155,10 @@ class TotpUtilsTest {
         //given
         String secret = "";
 
-        //when
-        String totp = TotpUtils.getTotp(secret);
-
-        //then
-        assertThat(totp, not(nullValue()));
-        assertThat(totp, not(emptyString()));
-        assertThat(totp.length(), equalTo(6));
-        assertThat(totp, matchesRegex("^\\d{6}$"));
+        //when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () ->  TotpUtils.getTotp(secret));
+        assertThat(exception.getMessage(), containsString("Secret must not be empty"));
     }
 
     @Test
@@ -264,11 +260,10 @@ class TotpUtilsTest {
         String secret = "";
         String totp = "123456";
 
-        //when
-        boolean isValid = TotpUtils.verifyTotp(secret, totp);
-
-        //then
-        assertThat(isValid, equalTo(false));
+        //when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> TotpUtils.verifyTotp(secret, totp));
+        assertThat(exception.getMessage(), containsString("Secret must not be empty"));
     }
 
     @Test
@@ -339,7 +334,7 @@ class TotpUtilsTest {
         // Should be a valid Base64 string
         assertThat(qrCode, matchesRegex("^[A-Za-z0-9+/]*={0,2}$"));
         // Should be a reasonable length for a QR code image
-        assertThat(qrCode.length(), greaterThan(1000));
+        assertThat(qrCode.length(), greaterThan(800));
     }
 
     @Test

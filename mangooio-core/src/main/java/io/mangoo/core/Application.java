@@ -16,7 +16,7 @@ import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.crypto.Vault;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Sort;
@@ -102,7 +102,7 @@ public final class Application {
 
     @SuppressWarnings({"StatementWithEmptyBody", "LoopConditionNotUpdatedInsideLoop"})
     public static void start(Mode mode) {
-        Objects.requireNonNull(mode, NotNull.MODE);
+        Objects.requireNonNull(mode, Required.MODE);
 
         if (!started) {
             userCheck();
@@ -422,7 +422,7 @@ public final class Application {
      * @return An instance of the requested class
      */
     public static <T> T getInstance(Class<T> clazz) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
+        Objects.requireNonNull(clazz, Required.CLASS);
 
         return injector.getInstance(clazz);
     }
@@ -643,8 +643,8 @@ public final class Application {
      * @return True if the method exists, false otherwise
      */
     private static boolean methodExists(String controllerMethod, Class<?> controllerClass) {
-        Objects.requireNonNull(controllerMethod, NotNull.CONTROLLER_METHOD);
-        Objects.requireNonNull(controllerClass, NotNull.CONTROLLER_CLASS);
+        Objects.requireNonNull(controllerMethod, Required.CONTROLLER_METHOD);
+        Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS);
 
         return Arrays.stream(controllerClass.getMethods()).anyMatch(method -> method.getName().equals(controllerMethod));
     }
@@ -773,7 +773,7 @@ public final class Application {
     }
 
     private static int getBitLength(String secret) {
-        Objects.requireNonNull(secret, NotNull.SECRET);
+        Objects.requireNonNull(secret, Required.SECRET);
 
         return CommonUtils.bitLength(RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", Strings.EMPTY));
     }

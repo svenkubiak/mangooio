@@ -3,7 +3,7 @@ package controllers;
 import com.google.common.io.Resources;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.filters.ApiKeyFilter;
 import io.mangoo.filters.OriginFilter;
@@ -26,7 +26,7 @@ public class ApplicationController {
 
     @Inject
     public ApplicationController(@Named(Key.APPLICATION_NAMED) String named) {
-        this.named = Objects.requireNonNull(named, NotNull.NAMED);
+        this.named = Objects.requireNonNull(named, Required.NAMED);
     }
 
     public Response index() {

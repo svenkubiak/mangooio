@@ -1,6 +1,6 @@
 package io.mangoo.routing.bindings;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +28,7 @@ public class Flash {
     }
     
     public Flash withContent(Map<String, String> values) {
-        Objects.requireNonNull(values, NotNull.VALUES);
+        Objects.requireNonNull(values, Required.VALUES);
         this.values = values;
         
         return this;

@@ -1,7 +1,7 @@
 package io.mangoo.filters;
 
 import io.mangoo.constants.Key;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
@@ -17,7 +17,7 @@ public class ApiKeyFilter implements PerRequestFilter {
 
     @Inject
     public ApiKeyFilter(@Named(Key.APPLICATION_API_KEY) String key) {
-        this.key = Objects.requireNonNull(key, NotNull.KEY);
+        this.key = Objects.requireNonNull(key, Required.KEY);
     }
 
     @Override

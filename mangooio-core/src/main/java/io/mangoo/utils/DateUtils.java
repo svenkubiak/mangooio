@@ -1,6 +1,6 @@
 package io.mangoo.utils;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.time.LocalDate;
@@ -22,7 +22,7 @@ public final class DateUtils {
      * @return The converted Date
      */
     public static Date localDateTimeToDate(LocalDateTime localDateTime) {
-        Objects.requireNonNull(localDateTime, NotNull.LOCAL_DATE_TIME);
+        Objects.requireNonNull(localDateTime, Required.LOCAL_DATE_TIME);
 
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
@@ -34,7 +34,7 @@ public final class DateUtils {
      * @return The converted Date
      */
     public static Date localDateToDate(LocalDate localDate) {
-        Objects.requireNonNull(localDate, NotNull.LOCAL_DATE);
+        Objects.requireNonNull(localDate, Required.LOCAL_DATE);
 
         return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
@@ -46,7 +46,7 @@ public final class DateUtils {
      * @return timestamps like "moments ago"
      */
     public static String getPrettyTime(LocalDateTime localDateTime) {
-        Objects.requireNonNull(localDateTime, NotNull.LOCAL_DATE_TIME);
+        Objects.requireNonNull(localDateTime, Required.LOCAL_DATE_TIME);
 
         return PRETTY_TIME.format(localDateTime);
     }
@@ -59,8 +59,8 @@ public final class DateUtils {
      * @return timestamps like "moments ago"
      */
     public static String getPrettyTime(Locale locale, LocalDateTime localDateTime) {
-        Objects.requireNonNull(locale, NotNull.LOCALE);
-        Objects.requireNonNull(localDateTime, NotNull.LOCAL_DATE_TIME);
+        Objects.requireNonNull(locale, Required.LOCALE);
+        Objects.requireNonNull(localDateTime, Required.LOCAL_DATE_TIME);
 
         return new PrettyTime(locale).format(localDateTime);
     }

@@ -1,6 +1,6 @@
 package io.mangoo.utils;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
@@ -23,12 +23,12 @@ public final class FileUtils {
     private FileUtils() {}
 
     public static String getMimeType(byte[] data) {
-        Objects.requireNonNull(data, NotNull.DATA);
+        Objects.requireNonNull(data, Required.DATA);
         return TIKA.detect(data);
     }
 
     public static String getMimeType(InputStream data) {
-        Objects.requireNonNull(data, NotNull.DATA);
+        Objects.requireNonNull(data, Required.DATA);
         try {
             return TIKA.detect(data);
         } catch (IOException e) {
@@ -73,7 +73,7 @@ public final class FileUtils {
      * @return The content of the file or null
      */
     public static String readFileToString(Path path) {
-        Objects.requireNonNull(path, NotNull.PATH);
+        Objects.requireNonNull(path, Required.PATH);
 
         var content = Strings.EMPTY;
         try {
@@ -92,7 +92,7 @@ public final class FileUtils {
      * @return The content of the file or null
      */
     public static String readFileToString(String path) {
-        Objects.requireNonNull(path, NotNull.PATH);
+        Objects.requireNonNull(path, Required.PATH);
 
         return readFileToString(Path.of(path));
     }

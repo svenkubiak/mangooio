@@ -4,10 +4,11 @@ import com.fasterxml.uuid.Generators;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import org.apache.commons.codec.binary.Base32;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.fury.Fury;
 import org.apache.fury.ThreadSafeFury;
 import org.apache.fury.config.Language;
@@ -54,8 +55,8 @@ public final class CommonUtils {
      * @return A Base64 encoded String
      */
     public static String hashArgon2(String cleartext, String salt) {
-        Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
-        Objects.requireNonNull(salt, NotNull.SALT);
+        Objects.requireNonNull(cleartext, Required.CLEARTEXT);
+        Objects.requireNonNull(salt, Required.SALT);
 
         var argon2 = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
                 .withVersion(Argon2Parameters.ARGON2_VERSION_13)
@@ -82,7 +83,7 @@ public final class CommonUtils {
      * @return A Base64 encoded String
      */
     public static String hashArgon2(String cleartext) {
-        Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
+        Objects.requireNonNull(cleartext, Required.CLEARTEXT);
 
         var salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
         return hashArgon2(cleartext, salt);
@@ -98,9 +99,9 @@ public final class CommonUtils {
      * @return True if hashes match, false otherwise
      */
     public static boolean matchArgon2(String cleartext, String salt, String hash) {
-        Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
-        Objects.requireNonNull(salt, NotNull.SALT);
-        Objects.requireNonNull(hash, NotNull.HASH);
+        Objects.requireNonNull(cleartext, Required.CLEARTEXT);
+        Objects.requireNonNull(salt, Required.SALT);
+        Objects.requireNonNull(hash, Required.HASH);
 
         return Arrays.areEqual(hashArgon2(cleartext, salt).getBytes(StandardCharsets.UTF_8), hash.getBytes(StandardCharsets.UTF_8));
     }
@@ -114,8 +115,8 @@ public final class CommonUtils {
      * @return True if hashes match, false otherwise
      */
     public static boolean matchArgon2(String cleartext, String hash) {
-        Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
-        Objects.requireNonNull(hash, NotNull.HASH);
+        Objects.requireNonNull(cleartext, Required.CLEARTEXT);
+        Objects.requireNonNull(hash, Required.HASH);
 
         var salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
 
@@ -130,7 +131,7 @@ public final class CommonUtils {
      * @return SHA512 hashed value or null if hashing failed
      */
     public static String hexSHA512(String data) {
-        Objects.requireNonNull(data, NotNull.DATA);
+        Objects.requireNonNull(data, Required.DATA);
 
         try {
             var digest = MessageDigest.getInstance("SHA3-512");
@@ -151,7 +152,7 @@ public final class CommonUtils {
      * @return The base64 encoded data string
      */
     public static String serializeToBase64(Serializable object)  {
-        Objects.requireNonNull(object, NotNull.OBJECT);
+        Objects.requireNonNull(object, Required.OBJECT);
         
         byte[] serialize = FURY.serialize(object);
         return BASE64ENCODER.encodeToString(serialize);
@@ -166,7 +167,7 @@ public final class CommonUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T deserializeFromBase64(String data) {
-        Objects.requireNonNull(data, NotNull.DATA);
+        Objects.requireNonNull(data, Required.DATA);
         
         byte[] bytes = BASE64DECODER.decode(data);
         return (T) FURY.deserialize(bytes);
@@ -179,7 +180,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static byte[] encodeToBase64(String data) {
-        Objects.requireNonNull(data, NotNull.DATA);
+        Objects.requireNonNull(data, Required.DATA);
         return BASE64ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -190,7 +191,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static String encodeToBase32(String data) {
-        Objects.requireNonNull(data, NotNull.DATA);
+        Objects.requireNonNull(data, Required.DATA);
         return BASE32ENCODER.encodeToString(data.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -201,7 +202,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static byte[] encodeToBase64(byte[] data) {
-        Objects.requireNonNull(data, NotNull.DATA);
+        Objects.requireNonNull(data, Required.DATA);
         return BASE64ENCODER.encode(data);
     }
     
@@ -212,7 +213,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static byte[] decodeFromBase64(String data) {
-        Objects.requireNonNull(data, NotNull.DATA);
+        Objects.requireNonNull(data, Required.DATA);
         return BASE64DECODER.decode(data);
     }
 
@@ -242,7 +243,7 @@ public final class CommonUtils {
      * @return The number of bit
      */
     public static int bitLength(byte[] bytes) {
-        Objects.requireNonNull(bytes, NotNull.BYTES);
+        Objects.requireNonNull(bytes, Required.BYTES);
         int byteLength = bytes.length;
 
         var length = 0;
@@ -260,7 +261,7 @@ public final class CommonUtils {
      * @return The number of bit
      */
     public static int bitLength(String string) {
-        Objects.requireNonNull(string, NotNull.STRING);
+        Objects.requireNonNull(string, Required.STRING);
         return bitLength(string.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -271,7 +272,7 @@ public final class CommonUtils {
      * @return A new Map instance with value from originalMap
      */
     public static Map<String, String> copyMap(Map<String, String> originalMap) {
-        Objects.requireNonNull(originalMap, NotNull.MAP);
+        Objects.requireNonNull(originalMap, Required.MAP);
 
         return new HashMap<>(originalMap);
     }
@@ -283,7 +284,7 @@ public final class CommonUtils {
      * @return A new Map instance with value from originalMap
      */
     public static Map<String, String> toStringMap(Map<String, Object> originalMap) {
-        Objects.requireNonNull(originalMap, NotNull.MAP);
+        Objects.requireNonNull(originalMap, Required.MAP);
 
         Map<String, String> result = new HashMap<>();
         for (Map.Entry<String, Object> entry : originalMap.entrySet()) {
@@ -327,7 +328,7 @@ public final class CommonUtils {
      * @return True if the resources exists, false otherwise
      */
     public static boolean resourceExists(String name) {
-        Objects.requireNonNull(name, NotNull.NAME);
+        Objects.requireNonNull(name, Required.NAME);
 
         URL resource = null;
         try {
@@ -348,7 +349,7 @@ public final class CommonUtils {
      * @return The content of the resource or null
      */
     public static String readResourceToString(String resource) {
-        Objects.requireNonNull(resource, NotNull.RESOURCE);
+        Objects.requireNonNull(resource, Required.RESOURCE);
 
         var content = Strings.EMPTY;
         try {
@@ -358,5 +359,11 @@ public final class CommonUtils {
         }
 
         return content;
+    }
+
+    public static void requireNoneBlank(String string, String message) {
+        if (StringUtils.isBlank(string)) {
+            throw new IllegalArgumentException(message);
+        }
     }
 }

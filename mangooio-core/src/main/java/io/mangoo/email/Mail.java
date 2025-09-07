@@ -1,7 +1,7 @@
 package io.mangoo.email;
 
 import com.google.common.base.Preconditions;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.templating.TemplateContext;
@@ -41,7 +41,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail to(String... tos) {
-        Objects.requireNonNull(tos, NotNull.TOS);
+        Objects.requireNonNull(tos, Required.TOS);
         mailTos.addAll(Arrays.asList(tos));
         
         return this;
@@ -54,7 +54,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail cc(String... ccs) {
-        Objects.requireNonNull(ccs, NotNull.CCS);
+        Objects.requireNonNull(ccs, Required.CCS);
         mailCcs.addAll(Arrays.asList(ccs));
         
         return this;
@@ -67,7 +67,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail bcc(String... bccs) {
-        Objects.requireNonNull(bccs, NotNull.BCCS);
+        Objects.requireNonNull(bccs, Required.BCCS);
         mailBccs.addAll(Arrays.asList(bccs));
         
         return this;
@@ -81,7 +81,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail subject(String subject) {
-        Objects.requireNonNull(subject, NotNull.SUBJECT);
+        Objects.requireNonNull(subject, Required.SUBJECT);
         mailSubject = subject;
             
         return this;
@@ -95,8 +95,8 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail from(String fromName, String fromAddress) {
-        Objects.requireNonNull(fromName, NotNull.FROM);
-        Objects.requireNonNull(fromAddress, NotNull.NAME);
+        Objects.requireNonNull(fromName, Required.FROM);
+        Objects.requireNonNull(fromAddress, Required.NAME);
         mailFromName = fromName;
         mailFromAddress = fromAddress;
         
@@ -110,7 +110,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail from(String fromAddress) {
-        Objects.requireNonNull(fromAddress, NotNull.FROM);
+        Objects.requireNonNull(fromAddress, Required.FROM);
         mailFromAddress = fromAddress;
         
         return this;
@@ -124,8 +124,8 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail header(String name, String value) {
-        Objects.requireNonNull(name, NotNull.NAME);
-        Objects.requireNonNull(value, NotNull.VALUE);
+        Objects.requireNonNull(name, Required.NAME);
+        Objects.requireNonNull(value, Required.VALUE);
         mailHeaders.put(name, value);
         
         return this;
@@ -138,7 +138,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail replyTo(String replyTo) {
-        Objects.requireNonNull(replyTo, NotNull.REPLY_TO);
+        Objects.requireNonNull(replyTo, Required.REPLY_TO);
         mailReplyTo = replyTo;
         
         return this;
@@ -152,7 +152,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail priority(int priority) {
-        Preconditions.checkArgument(priority >= HIGHEST_PRIORITY && priority <= LOWEST_PRIORITY, NotNull.PRIORITY);
+        Preconditions.checkArgument(priority >= HIGHEST_PRIORITY && priority <= LOWEST_PRIORITY, Required.PRIORITY);
         mailHeaders.put("X-Priority", String.valueOf(priority));
         
         return this;
@@ -165,8 +165,8 @@ public class Mail {
      * @return A mail object instance   
      */
     public Mail attachment(Path path) {
-        Objects.requireNonNull(path, NotNull.PATH);
-        Preconditions.checkArgument(path.toFile().length() != 0, NotNull.CONTENT);
+        Objects.requireNonNull(path, Required.PATH);
+        Preconditions.checkArgument(path.toFile().length() != 0, Required.CONTENT);
         
         mailAttachments.add(path);
         
@@ -180,10 +180,10 @@ public class Mail {
      * @return A mail object instance   
      */
     public Mail attachments(List<Path> paths) {
-        Objects.requireNonNull(paths, NotNull.PATH);
+        Objects.requireNonNull(paths, Required.PATH);
         paths.forEach(path -> {
-            Objects.requireNonNull(path, NotNull.PATH);
-            Preconditions.checkArgument(path.toFile().length() != 0, NotNull.PATH);
+            Objects.requireNonNull(path, Required.PATH);
+            Preconditions.checkArgument(path.toFile().length() != 0, Required.PATH);
         });
         
         mailAttachments.addAll(paths);
@@ -226,7 +226,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail textMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
-        Objects.requireNonNull(template, NotNull.TEMPLATE);
+        Objects.requireNonNull(template, Required.TEMPLATE);
         mailText = render(template, content);
         
         return this;
@@ -242,7 +242,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail htmlMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
-        Objects.requireNonNull(template, NotNull.TEMPLATE);
+        Objects.requireNonNull(template, Required.TEMPLATE);
         mailText = render(template, content);
         mailHtml = true;
         
@@ -254,8 +254,8 @@ public class Mail {
     }
     
     private String render(String template, Map<String, Object> content) throws MangooTemplateEngineException {
-        Objects.requireNonNull(template, NotNull.TEMPLATE);
-        Objects.requireNonNull(template, NotNull.CONTENT);
+        Objects.requireNonNull(template, Required.TEMPLATE);
+        Objects.requireNonNull(template, Required.CONTENT);
         
         if (template.charAt(0) == '/' || template.startsWith("\\")) {
             template = template.substring(1, template.length());

@@ -1,6 +1,6 @@
 package io.mangoo.routing.routes;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.enums.Http;
 import io.mangoo.interfaces.MangooRoute;
 
@@ -17,12 +17,12 @@ public class RequestRoute implements MangooRoute {
     private boolean authentication;
 
     public RequestRoute(Http method) {
-        Objects.requireNonNull(method, NotNull.HTTP_METHOD);
+        Objects.requireNonNull(method, Required.HTTP_METHOD);
         this.method = method;
     }
     
     public RequestRoute(Http... methods) {
-        Objects.requireNonNull(methods, NotNull.HTTP_METHOD);
+        Objects.requireNonNull(methods, Required.HTTP_METHOD);
         this.methods = Arrays.copyOf(methods, methods.length);
     }
 
@@ -34,7 +34,7 @@ public class RequestRoute implements MangooRoute {
      * @return RequestRoute instance
      */
     public RequestRoute to(String url) {
-        Objects.requireNonNull(url, NotNull.URL);
+        Objects.requireNonNull(url, Required.URL);
         
         if ('/' != url.charAt(0)) {
             url = "/" + url;
@@ -52,7 +52,7 @@ public class RequestRoute implements MangooRoute {
      * @return RequestRoute instance
      */
     public RequestRoute respondeWith(String method) {
-        Objects.requireNonNull(method, NotNull.CONTROLLER_METHOD);
+        Objects.requireNonNull(method, Required.CONTROLLER_METHOD);
         this.controllerMethod = method;
         return this;
     }
@@ -63,7 +63,7 @@ public class RequestRoute implements MangooRoute {
      * @param clazz The controller class
      */
     public void withControllerClass(Class<?> clazz) {
-        Objects.requireNonNull(clazz, NotNull.CONTROLLER_CLASS);
+        Objects.requireNonNull(clazz, Required.CONTROLLER_CLASS);
         this.controllerClass = clazz;
     }
     
@@ -73,7 +73,7 @@ public class RequestRoute implements MangooRoute {
      * @param method The controller method
      */
     public void withHttpMethod(Http method) {
-        Objects.requireNonNull(method, NotNull.METHOD);
+        Objects.requireNonNull(method, Required.METHOD);
         this.method = method;
     }
 

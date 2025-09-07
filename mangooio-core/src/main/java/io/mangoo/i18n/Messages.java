@@ -2,7 +2,7 @@ package io.mangoo.i18n;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Default;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import jakarta.inject.Singleton;
 import org.apache.logging.log4j.util.Strings;
 
@@ -31,7 +31,7 @@ public class Messages implements Serializable {
      * @param locale The locale to use
      */
     public void reload(Locale locale) {
-        Objects.requireNonNull(locale, NotNull.LOCALE);
+        Objects.requireNonNull(locale, Required.LOCALE);
 
         Locale.setDefault(Locale.ROOT); //NOSONAR
         bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME, locale);

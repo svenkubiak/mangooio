@@ -9,7 +9,7 @@ import io.mangoo.cache.CacheImpl;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.constants.Template;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -46,9 +46,9 @@ public class AdminController {
 
     @Inject
     public AdminController(Config config, CacheProvider cacheProvider) {
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
+        this.config = Objects.requireNonNull(config, Required.CONFIG);
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
-        this.cacheProvider = Objects.requireNonNull(cacheProvider, NotNull.CACHE_PROVIDER);
+        this.cacheProvider = Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER);
     }
 
     public Response index() {

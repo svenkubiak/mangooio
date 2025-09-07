@@ -2,7 +2,7 @@ package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.Const;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
@@ -35,7 +35,7 @@ public class InboundCookiesHandler implements HttpHandler {
 
     @Inject
     public InboundCookiesHandler(Config config) {
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
+        this.config = Objects.requireNonNull(config, Required.CONFIG);
     }
     
     @Override

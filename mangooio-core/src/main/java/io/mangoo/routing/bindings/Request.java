@@ -1,7 +1,7 @@
 package io.mangoo.routing.bindings;
 
 import io.mangoo.constants.Header;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -29,7 +29,7 @@ public class Request {
     }
 
     public Request(HttpServerExchange httpServerExchange) {
-        Objects.requireNonNull(httpServerExchange, NotNull.HTTP_SERVER_EXCHANGE);
+        Objects.requireNonNull(httpServerExchange, Required.HTTP_SERVER_EXCHANGE);
 
         this.httpServerExchange = httpServerExchange;
         this.httpServerExchange.requestCookies().forEach(cookie -> this.cookies.put(cookie.getName(), cookie));
@@ -234,7 +234,7 @@ public class Request {
      * @param value The value to store
      */
     public void addAttribute(String key, Object value) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
         attributes.put(key, value);
     }
 
@@ -277,7 +277,7 @@ public class Request {
      */
     @SuppressWarnings("unchecked")
     public <T> T getAttribute(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
         return (T) attributes.get(key);
     }
     
@@ -288,7 +288,7 @@ public class Request {
      * @return String the value from the attributes map
      */
     public String getAttributeAsString(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
         var object = attributes.get(key);
         
         return object != null ? (String) object : null;

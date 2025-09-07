@@ -3,7 +3,7 @@ package io.mangoo.utils;
 import com.bastiaanjansen.otp.HMACAlgorithm;
 import com.bastiaanjansen.otp.TOTPGenerator;
 import io.mangoo.constants.Hmac;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import net.glxn.qrgen.QRCode;
 
 import java.io.ByteArrayOutputStream;
@@ -53,7 +53,7 @@ public class TotpUtils {
      * @return The totp value or null if generation failed
      */
     public static String getTotp(String secret) {
-        Objects.requireNonNull(secret, NotNull.SECRET);
+        Objects.requireNonNull(secret, Required.SECRET);
 
         TOTPGenerator totp = new TOTPGenerator.Builder(secret)
                 .withHOTPGenerator(builder -> {
@@ -76,8 +76,8 @@ public class TotpUtils {
      * @return True if the TOTP is valid, false otherwise
      */
     public static boolean verifyTotp(String secret, String totp) {
-        Objects.requireNonNull(secret, NotNull.SECRET);
-        Objects.requireNonNull(totp, NotNull.TOTP);
+        Objects.requireNonNull(secret, Required.SECRET);
+        Objects.requireNonNull(totp, Required.TOTP);
 
         TOTPGenerator expected = new TOTPGenerator.Builder(secret)
                 .withHOTPGenerator(builder -> {
@@ -100,9 +100,9 @@ public class TotpUtils {
      * @return The QR code as a base64 PNG image
      */
     public static String getQRCode(String name, String issuer, String secret) {
-        Objects.requireNonNull(name, NotNull.NAME);
-        Objects.requireNonNull(issuer, NotNull.ISSUER);
-        Objects.requireNonNull(secret, NotNull.SECRET);
+        Objects.requireNonNull(name, Required.NAME);
+        Objects.requireNonNull(issuer, Required.ISSUER);
+        Objects.requireNonNull(secret, Required.SECRET);
 
         String text = getOtpauthURL(name, issuer, secret);
         ByteArrayOutputStream qrCodeOutputStream = QRCode.from(text)
@@ -124,9 +124,9 @@ public class TotpUtils {
      * @return An otpauth url
      */
     public static String getOtpauthURL(String name, String issuer, String secret) {
-        Objects.requireNonNull(name, NotNull.ACCOUNT_NAME);
-        Objects.requireNonNull(secret, NotNull.SECRET);
-        Objects.requireNonNull(issuer, NotNull.ISSUER);
+        Objects.requireNonNull(name, Required.ACCOUNT_NAME);
+        Objects.requireNonNull(secret, Required.SECRET);
+        Objects.requireNonNull(issuer, Required.ISSUER);
 
         var buffer = new StringBuilder();
         buffer.append("otpauth://totp/")

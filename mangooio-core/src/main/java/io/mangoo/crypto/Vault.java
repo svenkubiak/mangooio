@@ -3,7 +3,7 @@ package io.mangoo.crypto;
 import io.mangoo.constants.Const;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Mode;
 import io.mangoo.utils.CommonUtils;
@@ -92,7 +92,7 @@ public class Vault {
     }
 
     private boolean exists(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
         try {
             return keyStore.containsAlias(key);
         } catch (KeyStoreException e) {
@@ -225,7 +225,7 @@ public class Vault {
     }
 
     public String get(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
         String prefixed = prefix + key;
 
         try {
@@ -248,8 +248,8 @@ public class Vault {
     }
 
     public void put(String key, String value) {
-        Objects.requireNonNull(key, NotNull.KEY);
-        Objects.requireNonNull(value, NotNull.VALUE);
+        Objects.requireNonNull(key, Required.KEY);
+        Objects.requireNonNull(value, Required.VALUE);
         key = prefix + key;
 
         try (var outputStream = Files.newOutputStream(path)) {

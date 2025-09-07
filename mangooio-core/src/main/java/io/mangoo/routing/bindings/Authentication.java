@@ -2,7 +2,7 @@ package io.mangoo.routing.bindings;
 
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.CacheName;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.utils.CommonUtils;
@@ -27,7 +27,7 @@ public class Authentication {
     }
     
     public Authentication withExpires(LocalDateTime expires) {
-        Objects.requireNonNull(expires, NotNull.EXPIRES);
+        Objects.requireNonNull(expires, Required.EXPIRES);
         this.expires = expires;
 
         return this;
@@ -99,10 +99,10 @@ public class Authentication {
      * @return True if the new hashed password matches the hash, false otherwise
      */
     public boolean isValidLogin(String identifier, String password, String salt, String hash) {
-        Objects.requireNonNull(identifier, NotNull.USERNAME);
-        Objects.requireNonNull(password, NotNull.PASSWORD);
-        Objects.requireNonNull(password, NotNull.SALT);
-        Objects.requireNonNull(hash, NotNull.HASH);
+        Objects.requireNonNull(identifier, Required.USERNAME);
+        Objects.requireNonNull(password, Required.PASSWORD);
+        Objects.requireNonNull(password, Required.SALT);
+        Objects.requireNonNull(hash, Required.HASH);
 
         var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         var authenticated = false;
@@ -165,7 +165,7 @@ public class Authentication {
      * @return true if the user has a lock, false otherwise
      */
     public boolean userHasLock(String username) {
-        Objects.requireNonNull(username, NotNull.USERNAME);
+        Objects.requireNonNull(username, Required.USERNAME);
         var lock = false;
         
         var config = Application.getInstance(Config.class);
@@ -186,8 +186,8 @@ public class Authentication {
      * @return True if number is valid, false otherwise
      */
     public boolean isValidSecondFactor(String secret, String totp) {
-        Objects.requireNonNull(secret, NotNull.SECRET);
-        Objects.requireNonNull(totp, NotNull.TOTP);
+        Objects.requireNonNull(secret, Required.SECRET);
+        Objects.requireNonNull(totp, Required.TOTP);
         
         return TotpUtils.verifyTotp(secret, totp);
     }

@@ -3,7 +3,7 @@ package io.mangoo.cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.CacheName;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
@@ -26,7 +26,7 @@ public class CacheProvider implements Provider<Cache> {
     @Inject
     @SuppressFBWarnings(value = "FII_USE_FUNCTION_IDENTITY", justification = "Required by cache creation function")
     public CacheProvider(Config config) {
-        Objects.requireNonNull(config, NotNull.CONFIG);
+        Objects.requireNonNull(config, Required.CONFIG);
         
         initApplicationCache();
         initAuthenticationCache();
@@ -64,7 +64,7 @@ public class CacheProvider implements Provider<Cache> {
      * @return A Cache instance
      */
     public Cache getCache(String name) {
-        Objects.requireNonNull(name, NotNull.NAME);
+        Objects.requireNonNull(name, Required.NAME);
         return caches.get(name);
     }
     

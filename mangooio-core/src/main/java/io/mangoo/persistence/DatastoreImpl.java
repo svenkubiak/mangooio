@@ -10,7 +10,7 @@ import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import io.mangoo.constants.Default;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.persistence.interfaces.BaseEntity;
@@ -43,12 +43,12 @@ public class DatastoreImpl implements Datastore {
     
     @Inject
     public DatastoreImpl(Config config) {
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
+        this.config = Objects.requireNonNull(config, Required.CONFIG);
         connect();
     }
 
     public DatastoreImpl(String prefix) {
-        Objects.requireNonNull(prefix, NotNull.PREFIX);
+        Objects.requireNonNull(prefix, Required.PREFIX);
         this.config = Application.getInstance(Config.class);
         this.prefix = Default.PERSISTENCE_PREFIX + prefix + ".";
         connect();
@@ -109,8 +109,8 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings({"unchecked" })
     public <T> T find(Class<T> clazz, Bson query) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
-        Objects.requireNonNull(query, NotNull.KEY);
+        Objects.requireNonNull(clazz, Required.CLASS);
+        Objects.requireNonNull(query, Required.KEY);
 
         return (T) query(clazz)
                 .find(query)
@@ -120,8 +120,8 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings({"unchecked" })
     public <T> T findFirst(Class<T> clazz, Bson sort) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
-        Objects.requireNonNull(sort, NotNull.SORT);
+        Objects.requireNonNull(clazz, Required.CLASS);
+        Objects.requireNonNull(sort, Required.SORT);
 
         return (T) query(clazz)
                 .find()
@@ -133,9 +133,9 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes", "DataFlowIssue"})
     public <T> List<T> findAll(Class<T> clazz, Bson query, Bson sort) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
-        Objects.requireNonNull(query, NotNull.KEY);
-        Objects.requireNonNull(sort, NotNull.SORT);
+        Objects.requireNonNull(clazz, Required.CLASS);
+        Objects.requireNonNull(query, Required.KEY);
+        Objects.requireNonNull(sort, Required.SORT);
 
         List<Object> result = new ArrayList<>();
         MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
@@ -149,9 +149,9 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes", "DataFlowIssue"})
     public <T> List<T> findAll(Class<T> clazz, Bson query, Bson sort, int limit) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
-        Objects.requireNonNull(query, NotNull.KEY);
-        Objects.requireNonNull(sort, NotNull.SORT);
+        Objects.requireNonNull(clazz, Required.CLASS);
+        Objects.requireNonNull(query, Required.KEY);
+        Objects.requireNonNull(sort, Required.SORT);
         Preconditions.checkArgument(limit > 0, "limit must be greater than 0");
 
         List<Object> result = new ArrayList<>();
@@ -166,7 +166,7 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings({"rawtypes", "unchecked", "DataFlowIssue"})
     public <T> List<T> findAll(Class<T> clazz) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
+        Objects.requireNonNull(clazz, Required.CLASS);
         
         List<Object> result = new ArrayList<>();
         MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
@@ -180,8 +180,8 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings({"rawtypes", "unchecked", "DataFlowIssue"})
     public <T> List<T> findAll(Class<T> clazz, Bson sort) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
-        Objects.requireNonNull(sort, NotNull.SORT);
+        Objects.requireNonNull(clazz, Required.CLASS);
+        Objects.requireNonNull(sort, Required.SORT);
 
         List<Object> result = new ArrayList<>();
         MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
@@ -195,8 +195,8 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings({"rawtypes", "DataFlowIssue"})
     public <T> long countAll(Class<T> clazz, Bson query) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
-        Objects.requireNonNull(clazz, NotNull.QUERY);
+        Objects.requireNonNull(clazz, Required.CLASS);
+        Objects.requireNonNull(clazz, Required.QUERY);
         
         long count = -1;
         MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
@@ -210,7 +210,7 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings({"rawtypes", "DataFlowIssue"})
     public <T> long countAll(Class<T> clazz) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
+        Objects.requireNonNull(clazz, Required.CLASS);
 
         long count = -1;
         MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
@@ -224,7 +224,7 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public String save(Object object) {
-        Objects.requireNonNull(object, NotNull.OBJECT);
+        Objects.requireNonNull(object, Required.OBJECT);
         
         MongoCollection collection = getCollection(object.getClass()).orElse(null);
         if (collection != null) {
@@ -246,7 +246,7 @@ public class DatastoreImpl implements Datastore {
     
     @Override
     public <T> void saveAll(List<T> objects) {
-        Objects.requireNonNull(objects, NotNull.OBJECTS);
+        Objects.requireNonNull(objects, Required.OBJECTS);
 
         objects.forEach(this::save);
     }
@@ -254,7 +254,7 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings("rawtypes")
     public <T> MongoCollection query(Class<T> clazz) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
+        Objects.requireNonNull(clazz, Required.CLASS);
         
         return getCollection(clazz).orElse(null);
     }
@@ -262,14 +262,14 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings("rawtypes")
     public MongoCollection query(String collection) {
-        Objects.requireNonNull(collection, NotNull.COLLECTION);
+        Objects.requireNonNull(collection, Required.COLLECTION);
 
         return mongoDatabase.getCollection(collection);
     }
 
     @Override
     public DeleteResult delete(Object object) {
-        Objects.requireNonNull(object, NotNull.OBJECT);
+        Objects.requireNonNull(object, Required.OBJECT);
         var baseEntity = (BaseEntity) object;
 
         return query(object.getClass()).deleteOne(eq("_id", baseEntity.getId()));
@@ -277,7 +277,7 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     public void deleteAll(List<Object> objects) {
-        Objects.requireNonNull(objects, NotNull.OBJECTS);
+        Objects.requireNonNull(objects, Required.OBJECTS);
         objects.forEach(this::delete);
     }
 
@@ -288,32 +288,32 @@ public class DatastoreImpl implements Datastore {
     
     @Override
     public <T> void dropCollection(Class<T> clazz) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
+        Objects.requireNonNull(clazz, Required.CLASS);
         
         getCollection(clazz).ifPresent(MongoCollection::drop);
     }
 
     @Override
     public <T> void addIndex(Class<T> clazz, Bson... indexes) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
-        Objects.requireNonNull(indexes, NotNull.INDEXES);
+        Objects.requireNonNull(clazz, Required.CLASS);
+        Objects.requireNonNull(indexes, Required.INDEXES);
         
         getCollection(clazz).ifPresent(collection -> Stream.of(indexes).forEach(collection::createIndex));
     }
 
     @Override
     public <T> void addIndex(Class<T> clazz, Bson index, IndexOptions indexOptions) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
-        Objects.requireNonNull(index, NotNull.INDEX);
-        Objects.requireNonNull(indexOptions, NotNull.INDEX_OPTIONS);
+        Objects.requireNonNull(clazz, Required.CLASS);
+        Objects.requireNonNull(index, Required.INDEX);
+        Objects.requireNonNull(indexOptions, Required.INDEX_OPTIONS);
         
         getCollection(clazz).ifPresent(collection -> collection.createIndex(index, indexOptions));
     }
 
     @Override
     public <T> void dropIndex(Class<T> clazz, Bson... indexes) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
-        Objects.requireNonNull(indexes, NotNull.INDEXES);
+        Objects.requireNonNull(clazz, Required.CLASS);
+        Objects.requireNonNull(indexes, Required.INDEXES);
 
         getCollection(clazz).ifPresent(collection -> Stream.of(indexes).forEach(collection::dropIndex));
     }
@@ -330,7 +330,7 @@ public class DatastoreImpl implements Datastore {
 
     @SuppressWarnings("rawtypes")
     private <T> Optional<MongoCollection> getCollection(Class<T> clazz) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
+        Objects.requireNonNull(clazz, Required.CLASS);
 
         MongoCollection mongoCollection = null;
         String name = PersistenceUtils.getCollectionName(clazz);

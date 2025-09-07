@@ -1,7 +1,7 @@
 package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.Header;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Server;
 import io.mangoo.routing.Response;
 import io.mangoo.utils.FileUtils;
@@ -17,7 +17,7 @@ public class BinaryHandler implements HttpHandler {
 
     public BinaryHandler withResponse(Response response) {
         if (this.response == null) {
-            this.response = Objects.requireNonNull(response, NotNull.RESPONSE);
+            this.response = Objects.requireNonNull(response, Required.RESPONSE);
         }
 
         return this;

@@ -1,6 +1,6 @@
 package io.mangoo.routing.routes;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.enums.Http;
 import io.mangoo.interfaces.MangooRoute;
 import io.mangoo.routing.Router;
@@ -18,7 +18,7 @@ public class ControllerRoute {
      * @param clazz The controller class to bind to
      */
     public ControllerRoute(Class<?> clazz) {
-        Objects.requireNonNull(clazz, NotNull.CONTROLLER_CLASS);
+        Objects.requireNonNull(clazz, Required.CONTROLLER_CLASS);
         
         controllerClass = clazz;
     }
@@ -29,7 +29,7 @@ public class ControllerRoute {
      * @param routes The routes to be configured for the controller
      */
     public void withRoutes(MangooRoute... routes) {
-        Objects.requireNonNull(routes, NotNull.ROUTE);
+        Objects.requireNonNull(routes, Required.ROUTE);
         
         for (MangooRoute route : routes) {
             var requestRoute = (RequestRoute) route;

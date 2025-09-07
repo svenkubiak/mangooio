@@ -1,6 +1,6 @@
 package io.mangoo.routing.bindings;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -28,7 +28,7 @@ public class Form extends Validator {
      * @return Optional of String
      */
     public Optional<String> getString(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -45,7 +45,7 @@ public class Form extends Validator {
      * @return String with the value of the form element or an empty value if blank
      */
     public String getValue(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -68,7 +68,7 @@ public class Form extends Validator {
      */
     @SuppressWarnings("fb-contrib:BL_BURYING_LOGIC")
     public Optional<Boolean> getBoolean(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -89,7 +89,7 @@ public class Form extends Validator {
      * @return Optional of Integer
      */
     public Optional<Integer> getInteger(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -106,7 +106,7 @@ public class Form extends Validator {
      * @return Optional of Double
      */
     public Optional<Double> getDouble(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -123,7 +123,7 @@ public class Form extends Validator {
      * @return Optional of Float
      */
     public Optional<Float> getFloat(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -140,7 +140,7 @@ public class Form extends Validator {
      * @return File or null if no file is present
      */
     public Optional<InputStream> getFile(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
         if (!files.isEmpty()) {
             return Optional.of(files.get(key));
         }
@@ -165,8 +165,8 @@ public class Form extends Validator {
      * @param inputStream The InputStream to add
      */
     public void addFile(String key, InputStream inputStream) {
-        Objects.requireNonNull(key, NotNull.KEY);
-        Objects.requireNonNull(inputStream, NotNull.INPUT_STREAM);
+        Objects.requireNonNull(key, Required.KEY);
+        Objects.requireNonNull(inputStream, Required.INPUT_STREAM);
 
         files.put(key, inputStream);
     }

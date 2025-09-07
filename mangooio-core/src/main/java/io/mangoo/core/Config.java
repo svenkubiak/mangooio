@@ -6,7 +6,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Const;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.crypto.Vault;
 import io.mangoo.utils.CoreUtils;
 import jakarta.inject.Inject;
@@ -38,7 +38,7 @@ public class Config {
 
     @Inject
     public Config(Vault vault) {
-        this.vault = Objects.requireNonNull(vault, NotNull.VAULT);
+        this.vault = Objects.requireNonNull(vault, Required.VAULT);
         load();
     }
 

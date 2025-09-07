@@ -1,6 +1,6 @@
 package io.mangoo.persistence;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.persistence.interfaces.Datastore;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
@@ -17,11 +17,11 @@ public class DatastoreProvider implements Provider<Datastore> {
 
     @Inject
     private DatastoreProvider(DatastoreImpl defaultDatastore) {
-        this.defaultDatastore = Objects.requireNonNull(defaultDatastore, NotNull.DATASTORE);
+        this.defaultDatastore = Objects.requireNonNull(defaultDatastore, Required.DATASTORE);
     }
     
     public Datastore getDatastore(String prefix) {
-        Objects.requireNonNull(prefix, NotNull.PREFIX);
+        Objects.requireNonNull(prefix, Required.PREFIX);
 
         return dataStores.computeIfAbsent(prefix, key -> new DatastoreImpl(prefix));
     }

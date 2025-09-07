@@ -4,7 +4,7 @@ import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,9 +24,9 @@ public class CronTask implements Runnable {
     private final ExecutionTime executionTime;
     
     public CronTask(Class<?> clazz, String methodName, String cron) {
-        Objects.requireNonNull(cron, NotNull.CRON);
-        this.clazz = Objects.requireNonNull(clazz, NotNull.CLASS);
-        this.methodName = Objects.requireNonNull(methodName, NotNull.METHOD);
+        Objects.requireNonNull(cron, Required.CRON);
+        this.clazz = Objects.requireNonNull(clazz, Required.CLASS);
+        this.methodName = Objects.requireNonNull(methodName, Required.METHOD);
         this.executionTime = ExecutionTime.forCron(new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX)).parse(cron));
     }
 

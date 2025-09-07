@@ -3,7 +3,7 @@ package io.mangoo.utils;
 import com.google.common.net.MediaType;
 import com.google.re2j.Pattern;
 import io.mangoo.constants.Header;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
@@ -42,7 +42,7 @@ public final class RequestUtils {
      * @return A single map contain both request and query parameter
      */
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
-        Objects.requireNonNull(exchange, NotNull.HTTP_SERVER_EXCHANGE);
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
         final Map<String, String> requestParameter = new HashMap<>();
         final Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
@@ -59,7 +59,7 @@ public final class RequestUtils {
      * @return True if the request is a POST, PUT or PATCH request, false otherwise
      */
     public static boolean isPostPutPatch(HttpServerExchange exchange) {
-        Objects.requireNonNull(exchange, NotNull.HTTP_SERVER_EXCHANGE);
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
         return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod()) || (Methods.PATCH).equals(exchange.getRequestMethod());
     }
@@ -71,7 +71,7 @@ public final class RequestUtils {
      * @return True if the request content-type contains application/json, false otherwise
      */
     public static boolean isJsonRequest(HttpServerExchange exchange) {
-        Objects.requireNonNull(exchange, NotNull.HTTP_SERVER_EXCHANGE);
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
         var headerMap = exchange.getRequestHeaders();
         return headerMap != null && headerMap.get(Header.CONTENT_TYPE) != null &&
@@ -118,7 +118,7 @@ public final class RequestUtils {
     }
 
     public static Optional<String> getAuthorizationHeader(Request request) {
-        Objects.requireNonNull(request, NotNull.REQUEST);
+        Objects.requireNonNull(request, Required.REQUEST);
 
         String authorization = request.getHeader(Header.AUTHORIZATION);
         if (StringUtils.isNotBlank(authorization)) {

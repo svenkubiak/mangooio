@@ -2,7 +2,7 @@ package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Header;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.routing.Attachment;
@@ -22,7 +22,7 @@ public class LocaleHandler implements HttpHandler {
     
     @Inject
     public LocaleHandler(Config config) {
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
+        this.config = Objects.requireNonNull(config, Required.CONFIG);
     }
     
     @Override

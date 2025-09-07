@@ -1,6 +1,6 @@
 package io.mangoo.routing.bindings;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,21 +25,21 @@ public class Session {
     }
     
     public Session withContent(Map<String, String> values) {
-        Objects.requireNonNull(values, NotNull.VALUES);
+        Objects.requireNonNull(values, Required.VALUES);
         
         this.values = values;
         return this;
     }
     
     public Session withExpires(LocalDateTime expires) {
-        Objects.requireNonNull(expires, NotNull.EXPIRES);
+        Objects.requireNonNull(expires, Required.EXPIRES);
         
         this.expires = expires;
         return this;
     }
 
     public Session withCsrf(String csrf) {
-        Objects.requireNonNull(csrf, NotNull.CSRF);
+        Objects.requireNonNull(csrf, Required.CSRF);
 
         this.csrf = csrf;
         return this;

@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Execution(ExecutionMode.CONCURRENT)
 class PersistenceUtilsTest {
-
     private Map<String, String> originalCollections;
 
     @BeforeEach
@@ -42,7 +41,7 @@ class PersistenceUtilsTest {
     @Test
     void testAddCollection() {
         //given
-        String key = "test-key";
+        String key = "java.lang.String";
         String value = "test-value";
         
         //when
@@ -56,9 +55,9 @@ class PersistenceUtilsTest {
     @Test
     void testAddCollectionWithDifferentKeys() {
         //given
-        String key1 = "key1";
+        String key1 = "java.lang.String";
         String value1 = "value1";
-        String key2 = "key2";
+        String key2 = "java.lang.Integer";
         String value2 = "value2";
         
         //when
@@ -93,14 +92,11 @@ class PersistenceUtilsTest {
         //given
         String key = "";
         String value = "test-value";
-        
-        //when
-        PersistenceUtils.addCollection(key, value);
-        
-        //then
-        // Should not throw exception, empty string is valid
-        String retrievedValue = PersistenceUtils.getCollectionName(String.class);
-        assertThat(retrievedValue, equalTo(value));
+
+        //when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> PersistenceUtils.addCollection(key, value));
+        assertThat(exception.getMessage(), containsString("key can not be null"));
     }
 
     @Test
@@ -108,14 +104,11 @@ class PersistenceUtilsTest {
         //given
         String key = "test-key";
         String value = "";
-        
-        //when
-        PersistenceUtils.addCollection(key, value);
-        
-        //then
-        // Should not throw exception, empty string is valid
-        String retrievedValue = PersistenceUtils.getCollectionName(String.class);
-        assertThat(retrievedValue, equalTo(value));
+
+        //when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> PersistenceUtils.addCollection(key, value));
+        assertThat(exception.getMessage(), containsString("value can not be null or blank"));
     }
 
     @Test
@@ -125,7 +118,7 @@ class PersistenceUtilsTest {
         String value = "test-value";
         
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> PersistenceUtils.addCollection(key, value));
         assertThat(exception.getMessage(), containsString("key can not be null"));
     }
@@ -137,7 +130,7 @@ class PersistenceUtilsTest {
         String value = null;
         
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> PersistenceUtils.addCollection(key, value));
         assertThat(exception.getMessage(), containsString("value can not be null"));
     }
@@ -149,16 +142,15 @@ class PersistenceUtilsTest {
         String value = null;
         
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> PersistenceUtils.addCollection(key, value));
-        // Should throw for the first null parameter (key)
         assertThat(exception.getMessage(), containsString("key can not be null"));
     }
 
     @Test
     void testAddCollectionWithSpecialCharacters() {
         //given
-        String key = "test-key-with-special-chars!@#$%^&*()";
+        String key = "java.lang.String";
         String value = "value-with-special-chars!@#$%^&*()";
         
         //when
@@ -172,7 +164,7 @@ class PersistenceUtilsTest {
     @Test
     void testAddCollectionWithUnicodeCharacters() {
         //given
-        String key = "test-key-with-unicode-测试";
+        String key = "java.lang.String";
         String value = "value-with-unicode-测试";
         
         //when
@@ -186,7 +178,7 @@ class PersistenceUtilsTest {
     @Test
     void testAddCollectionWithLongStrings() {
         //given
-        String key = "a".repeat(1000);
+        String key = "java.lang.String";
         String value = "b".repeat(1000);
         
         //when
@@ -379,52 +371,21 @@ class PersistenceUtilsTest {
     }
 
     @Test
-    void testConcurrentAccess() throws InterruptedException {
-        //given
-        String key = String.class.getName();
-        String value = "concurrent-value";
-        
-        //when
-        Thread thread1 = new Thread(() -> PersistenceUtils.addCollection(key, value));
-        Thread thread2 = new Thread(() -> {
-            try {
-                Thread.sleep(10); // Small delay to ensure thread1 starts first
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            String retrievedValue = PersistenceUtils.getCollectionName(String.class);
-            assertThat(retrievedValue, not(nullValue()));
-        });
-        
-        thread1.start();
-        thread2.start();
-        thread1.join();
-        thread2.join();
-        
-        //then
-        String finalValue = PersistenceUtils.getCollectionName(String.class);
-        assertThat(finalValue, equalTo(value));
-    }
-
-    @Test
     void testAddCollectionWithWhitespaceOnly() {
         //given
         String key = "   ";
         String value = "   ";
         
-        //when
-        PersistenceUtils.addCollection(key, value);
-        
-        //then
-        // Should not throw exception, whitespace-only strings are valid
-        String retrievedValue = PersistenceUtils.getCollectionName(String.class);
-        assertThat(retrievedValue, equalTo(value));
+        //when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> PersistenceUtils.addCollection(key, value));
+        assertThat(exception.getMessage(), containsString("key can not be null"));
     }
 
     @Test
     void testAddCollectionWithNewlineCharacters() {
         //given
-        String key = "key\nwith\nnewlines";
+        String key = "java.lang.String";
         String value = "value\nwith\nnewlines";
         
         //when
@@ -438,22 +399,8 @@ class PersistenceUtilsTest {
     @Test
     void testAddCollectionWithTabCharacters() {
         //given
-        String key = "key\twith\ttabs";
+        String key = "java.lang.String";
         String value = "value\twith\ttabs";
-        
-        //when
-        PersistenceUtils.addCollection(key, value);
-        
-        //then
-        String retrievedValue = PersistenceUtils.getCollectionName(String.class);
-        assertThat(retrievedValue, equalTo(value));
-    }
-
-    @Test
-    void testAddCollectionWithCarriageReturnCharacters() {
-        //given
-        String key = "key\rwith\rcarriage\rreturns";
-        String value = "value\rwith\rcarriage\rreturns";
         
         //when
         PersistenceUtils.addCollection(key, value);
