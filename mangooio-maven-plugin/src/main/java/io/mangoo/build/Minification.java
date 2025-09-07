@@ -2,7 +2,6 @@ package io.mangoo.build;
 
 import io.mangoo.constants.Default;
 import io.mangoo.enums.Suffix;
-import io.mangoo.utils.MangooUtils;
 import net.jawr.web.minification.CSSMinifier;
 import net.jawr.web.minification.JSMin;
 import net.jawr.web.minification.JSMin.JSMinException;
@@ -90,8 +89,8 @@ public final class Minification {
         } catch (IOException | JSMinException e) {
             LOG.error("Failed to minify JS", e);
         } finally {
-            MangooUtils.closeQuietly(fileInputStream);
-            MangooUtils.closeQuietly(fileOutputStream);
+            io.mangoo.utils.FileUtils.closeQuietly(fileInputStream);
+            io.mangoo.utils.FileUtils.closeQuietly(fileOutputStream);
         }
     }
 

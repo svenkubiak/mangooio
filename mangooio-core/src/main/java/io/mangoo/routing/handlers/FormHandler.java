@@ -8,12 +8,9 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.form.FormData.FormValue;
 import io.undertow.server.handlers.form.FormParserFactory;
-import io.undertow.util.HttpString;
-import org.apache.commons.lang3.Strings;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Deque;
 
 public class FormHandler implements HttpHandler {
@@ -45,23 +42,16 @@ public class FormHandler implements HttpHandler {
                 if (formDataParser != null) {
                     exchange.startBlocking();
                     var formData = formDataParser.parseBlocking();
-                    for (String data : formData) {
-                        Deque<FormValue> deque = formData.get(data);
+                    for (String name : formData) {
+                        Deque<FormValue> deque = formData.get(name);
                         if (deque != null) {
                             var formValue = deque.element();
                             if (formValue != null) {
-                                if (formValue.isFileItem() && formValue.getFileItem().getFile() != null) {
-                                    form.addFile(Files.newInputStream(formValue.getFileItem().getFile()));
-                                } else {
-                                    if (data.contains("[]")) {
-                                        var key = Strings.CI.replace(data, "[]", "");
-                                        for (FormValue value : deque) {
-                                            form.addValueList(new HttpString(key).toString(), value.getValue());
-                                        }
-                                    } else {
-                                        form.addValue(new HttpString(data).toString(), formValue.getValue());
-                                    }
-                                }    
+                                if (formValue.isFileItem()) {
+                                    form.addFile(name, formValue.getFileItem().getInputStream());
+                                } else if (!name.contains("[]")) {
+                                    form.addValue(name, formValue.getValue());
+                                }
                             }
                         }
                     }

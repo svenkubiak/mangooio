@@ -12,8 +12,8 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.manager.ServerSentEventManager;
+import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.JwtUtils;
-import io.mangoo.utils.MangooUtils;
 import okhttp3.Headers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -75,8 +75,8 @@ class ServerSentEventServiceTest {
         Config config = Application.getInstance(Config.class);
 
         var jwtData = JwtUtils.JwtData.create()
-                .withKey(MangooUtils.randomString(64))
-                .withSecret(MangooUtils.randomString(64).getBytes(StandardCharsets.UTF_8))
+                .withKey(CommonUtils.randomString(64))
+                .withSecret(CommonUtils.randomString(64).getBytes(StandardCharsets.UTF_8))
                 .withIssuer(config.getApplicationName())
                 .withAudience(config.getAuthenticationCookieName())
                 .withSubject("foo")

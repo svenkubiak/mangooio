@@ -1,6 +1,8 @@
 package io.mangoo.utils;
 
 import com.fasterxml.uuid.Generators;
+import com.google.common.base.Preconditions;
+import com.google.common.io.Resources;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
@@ -11,29 +13,36 @@ import org.apache.fury.ThreadSafeFury;
 import org.apache.fury.config.Language;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.bouncycastle.util.Arrays;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.HexFormat;
-import java.util.Objects;
+import java.security.SecureRandom;
+import java.util.*;
 
-public final class CodecUtils {
-    private static final Logger LOG = LogManager.getLogger(CodecUtils.class);
+public final class CommonUtils {
+    private static final Logger LOG = LogManager.getLogger(CommonUtils.class);
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final int MAX_LENGTH = 512;
+    private static final int MIN_LENGTH = 22;
     private static final Base32 BASE32ENCODER = new Base32();
     private static final Base64.Encoder BASE64ENCODER = Base64.getEncoder();
     private static final Base64.Decoder BASE64DECODER = Base64.getDecoder();
+    private static final int BYTES = 8;
+    private static final int MAX_BYTE_LENGTH = Integer.MAX_VALUE / 8;
     private static final ThreadSafeFury FURY = Fury.builder()
             .withLanguage(Language.JAVA)
             .requireClassRegistration(false)
             .buildThreadSafeFury();
 
-    private CodecUtils() {
+    private CommonUtils() {
     }
     
     /**
@@ -223,5 +232,131 @@ public final class CodecUtils {
      */
     public static String uuidV4() {
         return Generators.randomBasedGenerator().generate().toString();
+    }
+
+
+    /**
+     * Calculates the bit length of a given byte array
+     *
+     * @param bytes The byte array
+     * @return The number of bit
+     */
+    public static int bitLength(byte[] bytes) {
+        Objects.requireNonNull(bytes, NotNull.BYTES);
+        int byteLength = bytes.length;
+
+        var length = 0;
+        if (byteLength <= MAX_BYTE_LENGTH && byteLength > 0) {
+            length = byteLength * BYTES;
+        }
+
+        return length;
+    }
+
+    /**
+     * Calculates the bit length of a given string
+     *
+     * @param string The string
+     * @return The number of bit
+     */
+    public static int bitLength(String string) {
+        Objects.requireNonNull(string, NotNull.STRING);
+        return bitLength(string.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Copies a given map to a new map instance
+     *
+     * @param originalMap The map to copy
+     * @return A new Map instance with value from originalMap
+     */
+    public static Map<String, String> copyMap(Map<String, String> originalMap) {
+        Objects.requireNonNull(originalMap, NotNull.MAP);
+
+        return new HashMap<>(originalMap);
+    }
+
+    /**
+     * Copies a given map to a new map instance
+     *
+     * @param originalMap The map to copy
+     * @return A new Map instance with value from originalMap
+     */
+    public static Map<String, String> toStringMap(Map<String, Object> originalMap) {
+        Objects.requireNonNull(originalMap, NotNull.MAP);
+
+        Map<String, String> result = new HashMap<>();
+        for (Map.Entry<String, Object> entry : originalMap.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            result.put(key, value == null ? null : value.toString());
+        }
+        return result;
+    }
+
+    /**
+     * Generates a random string with the given length.
+     * <p>
+     * Based on commons-lang3 RandomStringUtils using SecureRandom
+     * <p>
+     * Uses: uppercase letters, lowercase letters and numbers 0-9
+     *
+     * @param length The length of the random string
+     * @return A random String
+     */
+    public static String randomString(int length) {
+        Preconditions.checkArgument(length >= MIN_LENGTH, "Length must be at least " + MIN_LENGTH + " characters for security");
+        Preconditions.checkArgument(length <= MAX_LENGTH, "Length must not exceed " + MAX_LENGTH + " characters");
+
+        int bytesNeeded = (int) Math.ceil(length * 6 / 8.0);
+        var randomBytes = new byte[bytesNeeded];
+        SECURE_RANDOM.nextBytes(randomBytes);
+
+        var token = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+        return token.substring(0, length);
+    }
+
+
+
+
+
+    /**
+     * Checks if a resource exists in the classpath
+     *
+     * @param name The name of the resource
+     * @return True if the resources exists, false otherwise
+     */
+    public static boolean resourceExists(String name) {
+        Objects.requireNonNull(name, NotNull.NAME);
+
+        URL resource = null;
+        try {
+            resource = Resources.getResource(name);
+        } catch (IllegalArgumentException e) { // NOSONAR Intentionally not logging or throwing this exception
+            // Intentionally left blank
+        }
+
+        return resource != null;
+    }
+
+
+
+    /**
+     * Reads the content of a local resource to String
+     *
+     * @param resource The resource path
+     * @return The content of the resource or null
+     */
+    public static String readResourceToString(String resource) {
+        Objects.requireNonNull(resource, NotNull.RESOURCE);
+
+        var content = Strings.EMPTY;
+        try {
+            content = Resources.toString(Resources.getResource(resource), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            // Intentionally left blank
+        }
+
+        return content;
     }
 }

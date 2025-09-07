@@ -34,8 +34,8 @@ import io.mangoo.scheduler.CronTask;
 import io.mangoo.scheduler.Schedule;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.scheduler.Task;
-import io.mangoo.utils.ByteUtils;
-import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.CommonUtils;
+import io.mangoo.utils.CoreUtils;
 import io.mangoo.utils.PersistenceUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -755,7 +755,7 @@ public final class Application {
         var logo = '\n' +
                 LOGO +
                 "\n\nhttps://github.com/svenkubiak/mangooio | " +
-                MangooUtils.getVersion() +
+                CoreUtils.getVersion() +
                 '\n';
 
         LOG.info(logo);
@@ -775,7 +775,7 @@ public final class Application {
     private static int getBitLength(String secret) {
         Objects.requireNonNull(secret, NotNull.SECRET);
 
-        return ByteUtils.bitLength(RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", Strings.EMPTY));
+        return CommonUtils.bitLength(RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", Strings.EMPTY));
     }
 
     private static List<Module> getModules() {

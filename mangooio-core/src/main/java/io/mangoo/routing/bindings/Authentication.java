@@ -5,7 +5,7 @@ import io.mangoo.constants.CacheName;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.utils.CodecUtils;
+import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.TotpUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -106,7 +106,7 @@ public class Authentication {
 
         var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         var authenticated = false;
-        if (!userHasLock(identifier) && CodecUtils.matchArgon2(password, salt, hash)) {
+        if (!userHasLock(identifier) && CommonUtils.matchArgon2(password, salt, hash)) {
             authenticated = true;
         } else {
             cache.getAndIncrementCounter(identifier);

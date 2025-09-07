@@ -69,7 +69,6 @@ public class Bootstrap implements MangooBootstrap {
         // FormController
         Bind.controller(FormController.class).withRoutes(
                 On.post().to("/form").respondeWith("form"),
-                On.post().to("/multivalued").respondeWith("multivalued"),
                 On.post().to("/submit").respondeWith("submit"),
                 On.get().to("/flashify").respondeWith("flashify"),
                 On.post().to("/singlefile").respondeWith("singlefile"),

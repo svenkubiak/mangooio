@@ -2,15 +2,14 @@ package io.mangoo.constants;
 
 public final class NotNull {
     public static final String ACCOUNT_NAME = "account name can not be null";
+    public static final String ALLOWED_MIME_TYPES = "allowedMimeTypes can not be null";
     public static final String AUDIENCE = "audience can not be null ";
-    public static final String ALGORITHM = "algorithm can not be null";
     public static final String BCCS = "bccs can not be null";
     public static final String BYTES = "bytes can not be null";
     public static final String CACHE = "cache can not be null";
     public static final String CACHE_PROVIDER = "cacheProvider can not be null";
     public static final String CCS = "ccs can not be null";
     public static final String CLASS = "class can not be null";
-    public static final String CLAIMS = "claims can not be null";
     public static final String CLEARTEXT = "cleartext can not be null";
     public static final String CONFIG = "config can not be null";
     public static final String CONNECTION = "connection can not be null";
@@ -23,11 +22,9 @@ public final class NotNull {
     public static final String COOKIE = "cookie can not be null";
     public static final String COLLECTION = "collection can not be null";
     public static final String CRON = "cron can no be null";
-    public static final String CRYPTO = "crypto can not be null";
     public static final String CSRF = "csrf can not be null";
     public static final String DATA = "data can not be null";
     public static final String DATASTORE = "datastore can not be null";
-    public static final String DIGITS = "digits can not be null";
     public static final String ENCRYPTED_TEXT = "encrypted text can not be null";
     public static final String EXPIRES = "expires can not be null";
     public static final String FALLBACK = "fallback can not be null";
@@ -37,10 +34,10 @@ public final class NotNull {
     public static final String HEADERS = "headers can not be null";
     public static final String HTTP_METHOD = "HTTP method can not be null";
     public static final String HTTP_SERVER_EXCHANGE = "httpServerExchange can not be null";
-    public static final String ID = "id can not be null";
     public static final String INDEX = "index can not be null";
     public static final String INDEX_OPTIONS = "indexOptions can not be null";
     public static final String INDEXES = "indexes van not be null";
+    public static final String INPUT_STREAM = "InputStream can not be null";
     public static final String ISSUER = "issuer can not be null";
     public static final String JSON = "json can not be null";
     public static final String JWT = "jwt can not be null";
@@ -65,7 +62,6 @@ public final class NotNull {
     public static final String PASSWORD = "password can not be null";
     public static final String PATH = "path can not be null";
     public static final String PAYLOAD = "payload can not be null";
-    public static final String PERIOD = "period can not be null";
     public static final String PLAIN_TEXT = "plain text can not be null";
     public static final String PREFIX = "prefix can not be null";
     public static final String PRIORITY = "Priority of 1 through 5 are acceptable, with 1 being the highest priority, 3 = normal and 5 = lowest priority";
@@ -102,7 +98,6 @@ public final class NotNull {
     public static final String VALUE = "value can not be null";
     public static final String VALUES = "values can not be null";
     public static final String RESPONSE = "response can not be null";
-    public static final String DATASTORE_FACTORY = "datastoreFactory can not be null";
 
     private NotNull() {
     }

@@ -75,6 +75,8 @@ public final class Default {
         messages.put(Validation.REGEX_KEY, Validation.REGEX);
         messages.put(Validation.NUMERIC_KEY, Validation.NUMERIC);
         messages.put(Validation.DOMAIN_NAME_KEY, Validation.DOMAIN_NAME);
+        messages.put(Validation.MIME_TYPE_KEY, Validation.MIME_TYPE);
+        messages.put(Validation.FILE_SIZE_KEY, Validation.FILE_SIZE);
     }
 
     private Default() {

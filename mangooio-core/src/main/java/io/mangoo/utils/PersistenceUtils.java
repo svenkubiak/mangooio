@@ -33,7 +33,7 @@ public final class PersistenceUtils {
      */
     public static String getCollectionName(Class<?> clazz) {
         Objects.requireNonNull(clazz, NotNull.CLASS);
-
+        System.out.println(clazz.getName());
         return COLLECTIONS.get(clazz.getName());
     }
 }

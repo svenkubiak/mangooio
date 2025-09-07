@@ -6,8 +6,8 @@ import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Mode;
-import io.mangoo.utils.ConfigUtils;
-import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.CommonUtils;
+import io.mangoo.utils.CoreUtils;
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -158,7 +158,7 @@ public class Vault {
     private void loadPath() {
         String vaultPath;
         if (!Application.inProdMode()) {
-            vaultPath = MangooUtils.getRootFolder();
+            vaultPath = CoreUtils.getRootFolder();
         } else {
             vaultPath = System.getenv("APPLICATION_VAULT_PATH");
 
@@ -185,7 +185,7 @@ public class Vault {
     @SuppressWarnings("unchecked")
     private void loadConfig() {
         var yaml = new Yaml();
-        Map<String, Object> loaded = yaml.load(MangooUtils.readResourceToString(Const.CONFIG_FILE));
+        Map<String, Object> loaded = yaml.load(CommonUtils.readResourceToString(Const.CONFIG_FILE));
 
         Map<String, Object> defaultConfig = (Map<String, Object>) loaded.get("default");
         Map<String, Object> environments = (Map<String, Object>) loaded.get("environments");
@@ -195,9 +195,9 @@ public class Vault {
         Map<String, Object> activeEnvironment = (Map<String, Object>) environments.get(activeEnv);
         if (activeEnvironment != null) {
             Map<String, Object> mergedConfig = new HashMap<>(defaultConfig);
-            ConfigUtils.mergeMaps(mergedConfig, activeEnvironment);
+            CoreUtils.mergeMaps(mergedConfig, activeEnvironment);
 
-            this.config = ConfigUtils.flattenMap(mergedConfig);
+            this.config = CoreUtils.flattenMap(mergedConfig);
         }
     }
 
@@ -208,7 +208,7 @@ public class Vault {
     private void createSecrets() {
         for (String key : KEYS) {
             if (!exists(key)) {
-                put(key, MangooUtils.randomString(64));
+                put(key, CommonUtils.randomString(64));
             }
         }
 
@@ -218,7 +218,7 @@ public class Vault {
                 for (String suffix : KEYS) {
                     String fullKey = mode + suffix;
                     if (!exists(fullKey)) {
-                        put(fullKey, MangooUtils.randomString(64));
+                        put(fullKey, CommonUtils.randomString(64));
                     }
                 }
             });

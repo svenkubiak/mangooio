@@ -408,13 +408,12 @@ class FormTest {
         
         //when
         InputStream stream = new FileInputStream(file);
-        form.addFile(stream);
+        form.addFile("foo", stream);
         
         //then
-        assertThat(form.getFile(), not(nullValue()));
-        assertThat(form.getFile().isPresent(), equalTo(true));
-        assertThat(form.getFiles().size(), equalTo(1));
-        
+        assertThat(form.getFile("foo"), not(nullValue()));
+        assertThat(form.getFile("foo").isPresent(), equalTo(true));
+
         file.delete();
     }
 }

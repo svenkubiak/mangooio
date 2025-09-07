@@ -26,8 +26,8 @@ public final class JwtUtils {
     }
 
     public static String createJwt(JwtData jwtData) throws MangooJwtException {
-        Objects.requireNonNull(jwtData.subject(), NotNull.SUBJECT);
         validate(jwtData);
+        Objects.requireNonNull(jwtData.subject(), NotNull.SUBJECT);
 
         try {
             var now = Instant.now();
@@ -38,7 +38,7 @@ public final class JwtUtils {
                     .issueTime(Date.from(now))
                     .notBeforeTime(Date.from(now.minusSeconds(30)))
                     .expirationTime(Date.from(now.plusSeconds(jwtData.ttlSeconds())))
-                    .jwtID(CodecUtils.uuidV6());
+                    .jwtID(CommonUtils.uuidV6());
 
             if (jwtData.claims() != null && !jwtData.claims().isEmpty()) {
                 for (Map.Entry<String, String> entry : jwtData.claims().entrySet()) {
@@ -249,7 +249,7 @@ public final class JwtUtils {
         public String toString() {
             return "JwtData[" +
                     "secret=***hidden***" +
-                    ", key=" + key +
+                    ", key=***hidden***" +
                     ", issuer=" + issuer +
                     ", audience=" + audience +
                     ", subject=" + subject +

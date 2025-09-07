@@ -6,7 +6,7 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.crypto.Vault;
 import io.mangoo.enums.Mode;
-import io.mangoo.utils.CodecUtils;
+import io.mangoo.utils.CommonUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -1682,7 +1682,7 @@ class ConfigTest {
     }
 
     private void createTempConfig(Map<String, String> values) {
-        Path configTempFile = tempDir.resolve(CodecUtils.uuidV6());
+        Path configTempFile = tempDir.resolve(CommonUtils.uuidV6());
 
         try {
             // Create the main configuration map

@@ -10,14 +10,11 @@ import io.undertow.util.HttpString;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 
-import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Request extends Validator {
-    @Serial
-    private static final long serialVersionUID = 5589488716007844048L;
+public class Request {
     private transient HttpServerExchange httpServerExchange;
     private transient Session session;
     private transient Authentication authentication;
@@ -55,7 +52,6 @@ public class Request extends Validator {
     
     public Request withParameter(Map<String, String> parameter) {
         this.parameter = parameter;
-        this.setValues(this.parameter);
         return this;
     }
     

@@ -111,7 +111,7 @@ public class TotpUtils {
 
         byte[] qrCodeBytes = qrCodeOutputStream.toByteArray();
 
-        return new String(CodecUtils.encodeToBase64(qrCodeBytes), StandardCharsets.UTF_8);
+        return new String(CommonUtils.encodeToBase64(qrCodeBytes), StandardCharsets.UTF_8);
     }
 
     /**

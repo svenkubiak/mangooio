@@ -6,7 +6,7 @@ import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.routing.Attachment;
-import io.mangoo.utils.CodecUtils;
+import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.JwtUtils;
 import io.mangoo.utils.RequestUtils;
@@ -75,7 +75,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .withSecret(config.getSessionCookieSecret().getBytes(StandardCharsets.UTF_8))
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getSessionCookieName())
-                        .withSubject(CodecUtils.uuidV6())
+                        .withSubject(CommonUtils.uuidV6())
                         .withTtlSeconds(Duration.between(LocalDateTime.now(), session.getExpires()).getSeconds())
                         .withClaims(claims);
 
@@ -180,7 +180,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             try {
                 Map<String, String> claims = new HashMap<>(flash.getValues());
                 if (form.isKept()) {
-                    claims.put(ClaimKey.FORM, CodecUtils.serializeToBase64(form));
+                    claims.put(ClaimKey.FORM, CommonUtils.serializeToBase64(form));
                 }
 
                 var jwtData = JwtUtils.jwtData()
@@ -188,7 +188,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .withSecret(config.getFlashCookieSecret().getBytes(StandardCharsets.UTF_8))
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getFlashCookieName())
-                        .withSubject(CodecUtils.uuidV6())
+                        .withSubject(CommonUtils.uuidV6())
                         .withTtlSeconds(SIXTY)
                         .withClaims(claims);
 

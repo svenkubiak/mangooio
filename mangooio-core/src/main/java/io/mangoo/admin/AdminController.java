@@ -20,10 +20,7 @@ import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.scheduler.Scheduler;
-import io.mangoo.utils.AdminUtils;
-import io.mangoo.utils.DateUtils;
-import io.mangoo.utils.MangooUtils;
-import io.mangoo.utils.TotpUtils;
+import io.mangoo.utils.*;
 import io.undertow.server.handlers.CookieImpl;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
@@ -35,8 +32,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
-
-import static io.mangoo.utils.AdminUtils.resetLockCounter;
 
 @FilterWith(AdminFilter.class)
 public class AdminController {
@@ -82,7 +77,7 @@ public class AdminController {
                     .render(METRICS, metrics.getResponseMetrics())
                     .render("uptime", DateUtils.getPrettyTime(Application.getStart()))
                     .render("warnings", cache.get(Key.MANGOOIO_WARNINGS))
-                    .render("dataSend", MangooUtils.readableFileSize(metrics.getDataSend()))
+                    .render("dataSend", FileUtils.readableFileSize(metrics.getDataSend()))
                     .render("totalRequests", totalRequests)
                     .render("minRequestTime", metrics.getMinRequestTime())
                     .render("avgRequestTime", metrics.getAvgRequestTime())
@@ -124,7 +119,7 @@ public class AdminController {
         String qrCode = null;
 
         if (StringUtils.isBlank(secret)) {
-            secret = MangooUtils.randomString(64);
+            secret = CommonUtils.randomString(64);
             qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret);
         }
 
@@ -140,7 +135,7 @@ public class AdminController {
     }
     
     public Response logout() {
-        var cookie = new CookieImpl(AdminUtils.getAdminCookieName())
+        var cookie = new CookieImpl(CoreUtils.getAdminCookieName())
                 .setValue(Strings.EMPTY)
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())
@@ -157,16 +152,16 @@ public class AdminController {
         form.expectValue("username");
         form.expectValue("password");
         
-        if (AdminUtils.isNotLocked() && form.isValid()) {
-            if (AdminUtils.isValidAuthentication(form)) {
-                resetLockCounter();
+        if (CoreUtils.isNotLocked() && form.isValid()) {
+            if (CoreUtils.isValidAuthentication(form)) {
+                CoreUtils.resetLockCounter();
                 try {
-                    return Response.redirect(ADMIN_INDEX).cookie(AdminUtils.getAdminCookie(true));
+                    return Response.redirect(ADMIN_INDEX).cookie(CoreUtils.getAdminCookie(true));
                 } catch (MangooJwtException e) {
-                    AdminUtils.invalidAuthentication();
+                    CoreUtils.invalidAuthentication();
                 }
             } else {
-                AdminUtils.invalidAuthentication();
+                CoreUtils.invalidAuthentication();
             }
         }
         form.invalidate();
@@ -182,15 +177,15 @@ public class AdminController {
         form.expectMaxLength("code", 6);
         form.expectMinLength("code", 6);
 
-        if (AdminUtils.isNotLocked() && form.isValid()) {
+        if (CoreUtils.isNotLocked() && form.isValid()) {
             if (TotpUtils.verifyTotp(config.getApplicationAdminSecret(), form.get("code"))) {
                 try {
-                    return Response.redirect(ADMIN_INDEX).cookie(AdminUtils.getAdminCookie(false));
+                    return Response.redirect(ADMIN_INDEX).cookie(CoreUtils.getAdminCookie(false));
                 } catch (MangooJwtException e) {
-                    AdminUtils.invalidAuthentication();
+                    CoreUtils.invalidAuthentication();
                 }
             } else {
-                AdminUtils.invalidAuthentication();
+                CoreUtils.invalidAuthentication();
             }
         }
         form.invalidate();

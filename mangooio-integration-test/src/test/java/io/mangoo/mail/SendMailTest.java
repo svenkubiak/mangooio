@@ -10,8 +10,7 @@ import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.test.email.SmtpMock;
-import io.mangoo.utils.CodecUtils;
-import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.CommonUtils;
 import jakarta.mail.MessagingException;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
@@ -123,8 +122,8 @@ class SendMailTest {
     void testConcurrentBody() {
         MatcherAssert.assertThat(t -> {
             //given
-            String domain = CodecUtils.uuidV6() + ".com";
-            String subject = MangooUtils.randomString(32);
+            String domain = CommonUtils.uuidV6() + ".com";
+            String subject = CommonUtils.randomString(32);
             
             //when
             Mail.newMail()

@@ -8,7 +8,7 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
 import io.mangoo.crypto.Vault;
-import io.mangoo.utils.ConfigUtils;
+import io.mangoo.utils.CoreUtils;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
@@ -60,9 +60,9 @@ public class Config {
             Map<String, Object> activeEnvironment = (Map<String, Object>) environments.get(activeEnv);
             if (activeEnvironment != null) {
                 Map<String, Object> mergedConfig = new HashMap<>(defaultConfig);
-                ConfigUtils.mergeMaps(mergedConfig, activeEnvironment);
+                CoreUtils.mergeMaps(mergedConfig, activeEnvironment);
 
-                Map<String, String> falttenedMap = ConfigUtils.flattenMap(mergedConfig);
+                Map<String, String> falttenedMap = CoreUtils.flattenMap(mergedConfig);
                 falttenedMap.forEach(this::parse);
 
                 valid = true;

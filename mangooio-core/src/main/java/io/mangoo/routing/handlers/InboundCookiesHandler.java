@@ -11,9 +11,8 @@ import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
-import io.mangoo.utils.CodecUtils;
+import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.JwtUtils;
-import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -59,7 +58,7 @@ public class InboundCookiesHandler implements HttpHandler {
     protected Session getSessionCookie(HttpServerExchange exchange) {
         var session = Session.create()
             .withContent(new HashMap<>())
-            .withCsrf(MangooUtils.randomString(32))
+            .withCsrf(CommonUtils.randomString(32))
             .withExpires(LocalDateTime.now().plusSeconds(config.getSessionCookieTokenExpires()));
 
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
@@ -75,7 +74,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
 
                 session = Session.create()
-                        .withContent(MangooUtils.toStringMap(JwtUtils.extractCustomClaims(jwtClaimsSet).getClaims()))
+                        .withContent(CommonUtils.toStringMap(JwtUtils.extractCustomClaims(jwtClaimsSet).getClaims()))
                         .withCsrf(jwtClaimsSet.getClaimAsString(Const.CSRF_TOKEN))
                         .withExpires(LocalDateTime.ofInstant(
                                 jwtClaimsSet.getExpirationTime().toInstant(),
@@ -151,11 +150,11 @@ public class InboundCookiesHandler implements HttpHandler {
 
                 var formClaim = jwtClaimSet.getClaimAsString(ClaimKey.FORM);
                 if (StringUtils.isNotBlank(formClaim)) {
-                    form = CodecUtils.deserializeFromBase64(formClaim);
+                    form = CommonUtils.deserializeFromBase64(formClaim);
                 }
 
                 flash = Flash.create()
-                        .withContent(MangooUtils.toStringMap(jwtClaimSet.getClaims()))
+                        .withContent(CommonUtils.toStringMap(jwtClaimSet.getClaims()))
                         .setDiscard(true);
             } catch (ParseException | MangooJwtException e) {
                 LOG.error("Failed to parse flash cookie", e);

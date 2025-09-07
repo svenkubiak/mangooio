@@ -1,19 +1,19 @@
 package io.mangoo.routing.bindings;
 
 import io.mangoo.constants.NotNull;
-import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.InputStream;
 import java.io.Serial;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class Form extends Validator {
     @Serial
     private static final long serialVersionUID = 2228639200039277653L;
-    private transient List<InputStream> files = new ArrayList<>();
-    private Map<String, List<String>> valueMap = new HashMap<>();
     private boolean submitted;
     private boolean keep;
     
@@ -134,23 +134,15 @@ public class Form extends Validator {
     }
 
     /**
-     * Retrieves all attachment files of the form
-     *
-     * @return List of files or an empty list
-     */
-    public List<InputStream> getFiles() {
-        return new ArrayList<>(files);
-    }
-
-    /**
      * Retrieves a single file of the form. If the form
      * has multiple files, the first will be returned
      *
      * @return File or null if no file is present
      */
-    public Optional<InputStream> getFile() {
+    public Optional<InputStream> getFile(String key) {
+        Objects.requireNonNull(key, NotNull.KEY);
         if (!files.isEmpty()) {
-            return Optional.of(files.getFirst());
+            return Optional.of(files.get(key));
         }
 
         return Optional.empty();
@@ -172,8 +164,11 @@ public class Form extends Validator {
      *  
      * @param inputStream The InputStream to add
      */
-    public void addFile(InputStream inputStream) {
-        files.add(inputStream);
+    public void addFile(String key, InputStream inputStream) {
+        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(inputStream, NotNull.INPUT_STREAM);
+
+        files.put(key, inputStream);
     }
  
     /**
@@ -182,38 +177,7 @@ public class Form extends Validator {
     public void keep() {
         keep = true;
     }
-    
-    /**
-     * Adds an item to the value list
-     * @param key The name of the form element
-     * @param value The value to store
-     */
-    public void addValueList(String key, String value) {
-        Objects.requireNonNull(key, NotNull.KEY);
 
-        List<String> values;
-        if (!valueMap.containsKey(key)) {
-            values = new ArrayList<>();
-        } else {
-            values = valueMap.get(key);
-        }
-
-        values.add(value);
-        valueMap.put(key, values);
-    }
-    
-    /**
-     * Retrieves the value list for a given key
-     * 
-     * @param key The name of the form element
-     * @return A value list with elements
-     */
-    public List<String> getValueList(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
-        
-        return valueMap.get(key);
-    }
-    
     /**
      * Checks if the form values are to put in the flash scope
      * 
@@ -228,9 +192,9 @@ public class Form extends Validator {
      */
     public void discard() {
         if (files != null) {
-            files.forEach(MangooUtils::closeQuietly);            
+            files.forEach((name, stream) -> FileUtils.closeQuietly(stream));
+            files.clear();
         }
-        valueMap = new HashMap<>();
     }
     
     public boolean isSubmitted() {

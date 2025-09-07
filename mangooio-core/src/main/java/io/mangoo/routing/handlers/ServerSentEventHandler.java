@@ -5,7 +5,7 @@ import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.manager.ServerSentEventManager;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
-import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.FileUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
@@ -37,7 +37,7 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
             if (RequestUtils.hasValidAuthentication(header)) {
                 Thread.ofVirtual().start(addConnectionTask);
             } else {
-                MangooUtils.closeQuietly(connection);
+                FileUtils.closeQuietly(connection);
             }
         } else {
             Thread.ofVirtual().start(addConnectionTask);

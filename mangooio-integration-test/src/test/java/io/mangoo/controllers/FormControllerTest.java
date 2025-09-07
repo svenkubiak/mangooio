@@ -20,7 +20,6 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -81,27 +80,7 @@ class FormControllerTest {
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(username + ";" + password);
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
-	
-    @Test
-    void testMultiValue() {
-        // given
-        Multimap<String, String> parameter = ArrayListMultimap.create();
-        parameter.put("foo[]", "1");
-        parameter.put("foo[]", "2");
-        parameter.put("foo[]", "3");
-        
-        // when
-        TestResponse response = TestRequest.post("/multivalued")
-                .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
-                .withForm(parameter)
-                .execute();
 
-        // then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), Matchers.anyOf(equalTo("1\n2\n3\n"), equalTo("1\r\n2\r\n3\r\n")));
-    }
-    
 	@Test
 	void testSingleFileUpload(@TempDir Path tempDir) throws IOException {
 	    // given

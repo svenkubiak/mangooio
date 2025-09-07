@@ -7,6 +7,8 @@ public final class Validation {
     public static final String EMAIL_KEY = "validation.email";
     public static final String EXACT_MATCH = "{0} must exactly match {1}";
     public static final String EXACT_MATCH_KEY = "validation.exactmatch";
+    public static final String FILE_SIZE = "{0} exceeds allowed filesize";
+    public static final String FILE_SIZE_KEY = "validation.filesize";
     public static final String FALSE_KEY = "validation.false";
     public static final String IPV4 = "{0} must be a valid IPv4 address";
     public static final String IPV4_KEY = "validation.ipv4";
@@ -28,6 +30,8 @@ public final class Validation {
     public static final String NULL_KEY = "validation.null";
     public static final String NUMERIC = "{0} must be a numeric value";
     public static final String NUMERIC_KEY = "validation.numeric";
+    public static final String MIME_TYPE_KEY = "validation.mimetype";
+    public static final String MIME_TYPE = "{0} does not have an allowed MimeType";
     public static final String RANGE_LENGTH = "{0} must be a length between {1} and {2}";
     public static final String RANGE_LENGTH_KEY = "validation.range.length";
     public static final String RANGE_VALUE = "{0} must be value between {1} and {2}";
