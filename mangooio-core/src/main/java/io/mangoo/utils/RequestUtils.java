@@ -92,15 +92,17 @@ public final class RequestUtils {
             String value = null;
             String [] contents = cookie.split(";");
             for (String content : contents) {
-                if (StringUtils.isNotBlank(content) && content.startsWith(config.getAuthenticationCookieName())) {
+                content = content.trim();
+                if (content.startsWith(config.getAuthenticationCookieName())) {
                     value = StringUtils.substringAfter(content, config.getAuthenticationCookieName() + "=");
                     value = PATTERN.matcher(value).replaceAll("");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(value)) {
                 try {
                     var jwtData = JwtUtils.JwtData.create()
+                                    .withKey(config.getAuthenticationCookieKey())
                                     .withSecret(config.getAuthenticationCookieSecret().getBytes(StandardCharsets.UTF_8))
                                     .withIssuer(config.getApplicationName())
                                     .withAudience(config.getAuthenticationCookieName())

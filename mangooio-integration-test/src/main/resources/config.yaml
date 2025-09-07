@@ -29,10 +29,12 @@ default:
     cookie:
       name: test-session
       secret: o5orE4lGoOM66HpOxuE9VVt1xuIefbmi7D6HFTpcDCwt4PoXH41wSi50jy8NkAcL
+      key: o5orE4lGoOM66HpOxuE9VVt1xuIefbmi7D6HFTpcDCwt4PoXH41wSi50jy8NkAcL
   flash:
     cookie:
       name: test-flash
       secret: lbJ4VKPcAeyqGmHjGt2YiQKTLRRxdHHKbrL2cEwPGIgfoHWGjViNLkOYGpPJ8dI3
+      key: lbJ4VKPcAeyqGmHjGt2YiQKTLRRxdHHKbrL2cEwPGIgfoHWGjViNLkOYGpPJ8dI3
   metrics:
     enable: true
   authentication:
@@ -41,6 +43,7 @@ default:
     cookie:
       name: test-authentication
       secret: oObVaXmpokhImaLyCtg8lzL1PC4pBuDe9zSCH2Suvv2eSN2b4UUDtBcFlyq5JEHB
+      key: oObVaXmpokhImaLyCtg8lzL1PC4pBuDe9zSCH2Suvv2eSN2b4UUDtBcFlyq5JEHB
   smtp:
     host: localhost
     port: 25

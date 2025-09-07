@@ -128,11 +128,8 @@ public class CacheImpl implements Cache {
     @Override
     public AtomicInteger resetCounter(String key) {
         Objects.requireNonNull(key, Required.KEY);
-        
-        AtomicInteger counter = get(key);
-        if (counter == null) {
-            counter = new AtomicInteger(0);
-        }
+
+        AtomicInteger counter = new AtomicInteger(0);
         put(key, counter);
         
         return counter;

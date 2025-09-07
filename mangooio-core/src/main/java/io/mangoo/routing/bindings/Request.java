@@ -150,7 +150,12 @@ public class Request {
      * @return The value of the header or null if none found
      */
     public String getHeader(HttpString headerName) {
-        return (httpServerExchange.getRequestHeaders().get(headerName) == null) ? null : httpServerExchange.getRequestHeaders().get(headerName).element();
+        if (httpServerExchange != null && httpServerExchange.getRequestHeaders() != null) {
+            if (httpServerExchange.getRequestHeaders().get(headerName) != null) {
+                return httpServerExchange.getRequestHeaders().get(headerName).element();
+            }
+        }
+        return null;
     }
     
     /**

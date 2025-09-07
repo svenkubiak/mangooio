@@ -5,6 +5,7 @@ import com.google.common.reflect.ClassPath;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.cache.Cache;
 import io.mangoo.constants.Default;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
@@ -193,6 +194,9 @@ public final class CoreUtils {
     }
 
     public static void mergeMaps(Map<String, Object> baseMap, Map<String, Object> overrideMap) {
+        Objects.requireNonNull(baseMap, Required.MAP);
+        Objects.requireNonNull(overrideMap, Required.MAP);
+
         overrideMap.forEach((key, value) -> {
             if (value instanceof Map && baseMap.get(key) instanceof Map) {
                 mergeMaps((Map<String, Object>) baseMap.get(key), (Map<String, Object>) value);
@@ -203,6 +207,8 @@ public final class CoreUtils {
     }
 
     public static Map<String, String> flattenMap(Map<String, Object> map) {
+        Objects.requireNonNull(map, Required.MAP);
+
         Map<String, String> flatMap = new HashMap<>();
         flattenMapHelper(map, "", flatMap);
         return flatMap;
@@ -210,6 +216,10 @@ public final class CoreUtils {
 
     @SuppressWarnings("unchecked")
     public static void flattenMapHelper(Map<String, Object> map, String prefix, Map<String, String> flatMap) {
+        Objects.requireNonNull(map, Required.MAP);
+        Objects.requireNonNull(prefix, Required.MAP);
+        Objects.requireNonNull(map, Required.MAP);
+
         map.forEach((key, value) -> {
             String newKey = prefix.isEmpty() ? key : prefix + "." + key;
 

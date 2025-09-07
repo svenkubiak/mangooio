@@ -1,10 +1,6 @@
 package io.mangoo.utils;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -13,7 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Execution(ExecutionMode.CONCURRENT)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 class PersistenceUtilsTest {
     private Map<String, String> originalCollections;
 
@@ -343,7 +339,7 @@ class PersistenceUtilsTest {
     @Test
     void testAddCollectionOverwriteExisting() {
         //given
-        String key = String.class.getName();
+        String key = "java.lang.String";
         String value1 = "original-value";
         String value2 = "updated-value";
         

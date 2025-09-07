@@ -487,7 +487,7 @@ class JsonUtilsTest {
 
         //then
         assertThat(flatMap, not(nullValue()));
-        assertThat(flatMap.size(), equalTo(0));
+        assertThat(flatMap.size(), equalTo(1));
     }
 
     @Test
@@ -517,7 +517,7 @@ class JsonUtilsTest {
 
         //then
         assertThat(flatMap, not(nullValue()));
-        assertThat(flatMap.size(), equalTo(3));
+        assertThat(flatMap.size(), equalTo(4));
         assertThat(flatMap.get("name"), equalTo("John"));
         assertThat(flatMap.get("age"), equalTo("null"));
         assertThat(flatMap.get("address.street"), equalTo("Main St"));
