@@ -1,4 +1,4 @@
-package io.mangoo.utils;
+package io.mangoo.utils.internal;
 
 import com.google.common.io.Resources;
 import com.google.common.reflect.ClassPath;
@@ -10,6 +10,9 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.routing.bindings.Form;
+import io.mangoo.utils.CommonUtils;
+import io.mangoo.utils.DateUtils;
+import io.mangoo.utils.JwtUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -34,15 +37,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.mangoo.core.Application.getInstance;
 
-public final class CoreUtils {
-    private static final Logger LOG = LogManager.getLogger(CoreUtils.class);
+public final class MangooUtils {
+    private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
     private static final int ADMIN_LOGIN_MAX_RETRIES = 10;
     private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
 
-    private CoreUtils() {}
+    private MangooUtils() {}
 
     @SuppressFBWarnings(justification = "Only used to retrieve the version of mangoo I/O", value = "URLCONNECTION_SSRF_FD")
     public static String getVersion() {

@@ -27,7 +27,7 @@ public final class JwtUtils {
 
     public static String createJwt(JwtData jwtData) throws MangooJwtException {
         validate(jwtData);
-        Objects.requireNonNull(jwtData.subject(), Required.SUBJECT);
+        Arguments.requireNonBlank(jwtData.subject(), Required.SUBJECT);
 
         try {
             var now = Instant.now();
@@ -82,7 +82,7 @@ public final class JwtUtils {
     }
 
     public static JWTClaimsSet parseJwt(String jwt, JwtData jwtData) throws MangooJwtException {
-        Objects.requireNonNull(jwt, Required.JWT);
+        Arguments.requireNonBlank(jwt, Required.JWT);
         validate(jwtData);
 
         try {
@@ -173,10 +173,10 @@ public final class JwtUtils {
 
     private static void validate(JwtData jwtData) {
         Objects.requireNonNull(jwtData, Required.JWT_DATA);
-        Objects.requireNonNull(jwtData.key(), Required.KEY);
         Objects.requireNonNull(jwtData.secret(), Required.SECRET);
-        Objects.requireNonNull(jwtData.issuer(), Required.ISSUER);
-        Objects.requireNonNull(jwtData.audience(), Required.AUDIENCE);
+        Arguments.requireNonBlank(jwtData.key(), Required.KEY);
+        Arguments.requireNonBlank(jwtData.issuer(), Required.ISSUER);
+        Arguments.requireNonBlank(jwtData.audience(), Required.AUDIENCE);
         Preconditions.checkArgument(jwtData.ttlSeconds() > 0, "TTL must be greater than 0.");
     }
     public static JwtData jwtData() {

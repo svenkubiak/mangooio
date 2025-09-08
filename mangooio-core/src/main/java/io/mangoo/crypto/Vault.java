@@ -7,7 +7,7 @@ import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Mode;
 import io.mangoo.utils.CommonUtils;
-import io.mangoo.utils.CoreUtils;
+import io.mangoo.utils.internal.MangooUtils;
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -158,7 +158,7 @@ public class Vault {
     private void loadPath() {
         String vaultPath;
         if (!Application.inProdMode()) {
-            vaultPath = CoreUtils.getRootFolder();
+            vaultPath = MangooUtils.getRootFolder();
         } else {
             vaultPath = System.getenv("APPLICATION_VAULT_PATH");
 
@@ -195,9 +195,9 @@ public class Vault {
         Map<String, Object> activeEnvironment = (Map<String, Object>) environments.get(activeEnv);
         if (activeEnvironment != null) {
             Map<String, Object> mergedConfig = new HashMap<>(defaultConfig);
-            CoreUtils.mergeMaps(mergedConfig, activeEnvironment);
+            MangooUtils.mergeMaps(mergedConfig, activeEnvironment);
 
-            this.config = CoreUtils.flattenMap(mergedConfig);
+            this.config = MangooUtils.flattenMap(mergedConfig);
         }
     }
 

@@ -5,6 +5,7 @@ import io.mangoo.cache.Cache;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.routing.bindings.Form;
+import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.server.handlers.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -43,7 +44,7 @@ class CoreUtilsTest {
         // No setup needed for static method
 
         //when
-        String version = CoreUtils.getVersion();
+        String version = MangooUtils.getVersion();
 
         //then
         assertThat(version, not(nullValue()));
@@ -56,7 +57,7 @@ class CoreUtilsTest {
         // No setup needed for static method
 
         //when
-        Set<String> languages = CoreUtils.getLanguages();
+        Set<String> languages = MangooUtils.getLanguages();
 
         //then
         assertThat(languages, not(nullValue()));
@@ -69,7 +70,7 @@ class CoreUtilsTest {
         // No setup needed for static method
 
         //when
-        String rootFolder = CoreUtils.getRootFolder();
+        String rootFolder = MangooUtils.getRootFolder();
 
         //then
         assertThat(rootFolder, not(nullValue()));
@@ -83,7 +84,7 @@ class CoreUtilsTest {
         form.addValue("password", config.getApplicationAdminPassword());
 
         //when
-        boolean isValid = CoreUtils.isValidAuthentication(form);
+        boolean isValid = MangooUtils.isValidAuthentication(form);
 
         //then
         assertThat(isValid, is(true));
@@ -97,7 +98,7 @@ class CoreUtilsTest {
         form.addValue("password", config.getApplicationAdminPassword());
 
         //when
-        boolean isValid = CoreUtils.isValidAuthentication(form);
+        boolean isValid = MangooUtils.isValidAuthentication(form);
 
         //then
         assertThat(isValid, is(false));
@@ -111,7 +112,7 @@ class CoreUtilsTest {
         form.addValue("password", "invalid");
 
         //when
-        boolean isValid = CoreUtils.isValidAuthentication(form);
+        boolean isValid = MangooUtils.isValidAuthentication(form);
 
         //then
         assertThat(isValid, is(false));
@@ -125,7 +126,7 @@ class CoreUtilsTest {
         form.addValue("password", "");
 
         //when
-        boolean isValid = CoreUtils.isValidAuthentication(form);
+        boolean isValid = MangooUtils.isValidAuthentication(form);
 
         //then
         assertThat(isValid, is(false));
@@ -139,7 +140,7 @@ class CoreUtilsTest {
         form.addValue("password", null);
 
         //when
-        boolean isValid = CoreUtils.isValidAuthentication(form);
+        boolean isValid = MangooUtils.isValidAuthentication(form);
 
         //then
         assertThat(isValid, is(false));
@@ -151,11 +152,11 @@ class CoreUtilsTest {
         // No setup needed for static method
 
         //when
-        Cookie cookie = CoreUtils.getAdminCookie(false);
+        Cookie cookie = MangooUtils.getAdminCookie(false);
 
         //then
         assertThat(cookie, not(nullValue()));
-        assertThat(cookie.getName(), equalTo(CoreUtils.getAdminCookieName()));
+        assertThat(cookie.getName(), equalTo(MangooUtils.getAdminCookieName()));
         assertThat(cookie.isHttpOnly(), is(true));
         assertThat(cookie.getPath(), equalTo("/"));
         assertThat(cookie.getSameSiteMode(), equalTo("Strict"));
@@ -169,11 +170,11 @@ class CoreUtilsTest {
         // No setup needed for static method
 
         //when
-        Cookie cookie = CoreUtils.getAdminCookie(true);
+        Cookie cookie = MangooUtils.getAdminCookie(true);
 
         //then
         assertThat(cookie, not(nullValue()));
-        assertThat(cookie.getName(), equalTo(CoreUtils.getAdminCookieName()));
+        assertThat(cookie.getName(), equalTo(MangooUtils.getAdminCookieName()));
         assertThat(cookie.isHttpOnly(), is(true));
         assertThat(cookie.getPath(), equalTo("/"));
         assertThat(cookie.getSameSiteMode(), equalTo("Strict"));
@@ -187,7 +188,7 @@ class CoreUtilsTest {
         // No setup needed for static method
 
         //when
-        String cookieName = CoreUtils.getAdminCookieName();
+        String cookieName = MangooUtils.getAdminCookieName();
 
         //then
         assertThat(cookieName, not(nullValue()));
@@ -197,10 +198,10 @@ class CoreUtilsTest {
     @Test
     void testInvalidAuthentication() {
         //given
-        CoreUtils.resetLockCounter();
+        MangooUtils.resetLockCounter();
 
         //when
-        CoreUtils.invalidAuthentication();
+        MangooUtils.invalidAuthentication();
 
         //then
         AtomicInteger counter = cache.get(MANGOOIO_ADMIN_LOCK_COUNT);
@@ -211,15 +212,15 @@ class CoreUtilsTest {
     @Test
     void testInvalidAuthenticationMaxRetries() {
         //given
-        CoreUtils.resetLockCounter();
+        MangooUtils.resetLockCounter();
 
         //when
         for (int i = 0; i < 10; i++) {
-            CoreUtils.invalidAuthentication();
+            MangooUtils.invalidAuthentication();
         }
 
         //then
-        assertThat(CoreUtils.isNotLocked(), is(false));
+        assertThat(MangooUtils.isNotLocked(), is(false));
         LocalDateTime lockedUntil = cache.get(MANGOOIO_ADMIN_LOCKED_UNTIL);
         assertThat(lockedUntil, not(nullValue()));
         assertThat(lockedUntil.isAfter(LocalDateTime.now()), is(true));
@@ -231,7 +232,7 @@ class CoreUtilsTest {
         cache.remove(MANGOOIO_ADMIN_LOCKED_UNTIL);
 
         //when
-        boolean notLocked = CoreUtils.isNotLocked();
+        boolean notLocked = MangooUtils.isNotLocked();
 
         //then
         assertThat(notLocked, is(true));
@@ -244,7 +245,7 @@ class CoreUtilsTest {
         cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, futureTime);
 
         //when
-        boolean notLocked = CoreUtils.isNotLocked();
+        boolean notLocked = MangooUtils.isNotLocked();
 
         //then
         assertThat(notLocked, is(false));
@@ -257,7 +258,7 @@ class CoreUtilsTest {
         cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, pastTime);
 
         //when
-        boolean notLocked = CoreUtils.isNotLocked();
+        boolean notLocked = MangooUtils.isNotLocked();
 
         //then
         assertThat(notLocked, is(true));
@@ -269,7 +270,7 @@ class CoreUtilsTest {
         cache.put(MANGOOIO_ADMIN_LOCK_COUNT, new AtomicInteger(5));
 
         //when
-        CoreUtils.resetLockCounter();
+        MangooUtils.resetLockCounter();
 
         //then
         AtomicInteger counter = cache.get(MANGOOIO_ADMIN_LOCK_COUNT);
@@ -289,7 +290,7 @@ class CoreUtilsTest {
         overrideMap.put("key3", "value3");
 
         //when
-        CoreUtils.mergeMaps(baseMap, overrideMap);
+        MangooUtils.mergeMaps(baseMap, overrideMap);
 
         //then
         assertThat(baseMap.get("key1"), equalTo("value1"));
@@ -314,7 +315,7 @@ class CoreUtilsTest {
         overrideMap.put("nested", nestedOverride);
 
         //when
-        CoreUtils.mergeMaps(baseMap, overrideMap);
+        MangooUtils.mergeMaps(baseMap, overrideMap);
 
         //then
         @SuppressWarnings("unchecked")
@@ -334,7 +335,7 @@ class CoreUtilsTest {
         Map<String, Object> overrideMap = new HashMap<>();
 
         //when
-        CoreUtils.mergeMaps(baseMap, overrideMap);
+        MangooUtils.mergeMaps(baseMap, overrideMap);
 
         //then
         assertThat(baseMap.get("key1"), equalTo("value1"));
@@ -349,7 +350,7 @@ class CoreUtilsTest {
 
         //when & then
         NullPointerException exception = assertThrows(NullPointerException.class,
-                () -> CoreUtils.mergeMaps(baseMap, null));
+                () -> MangooUtils.mergeMaps(baseMap, null));
         assertThat(exception.getMessage(), containsString("map can not be null or blank"));
     }
 
@@ -362,7 +363,7 @@ class CoreUtilsTest {
         map.put("key3", 123);
 
         //when
-        Map<String, String> flattened = CoreUtils.flattenMap(map);
+        Map<String, String> flattened = MangooUtils.flattenMap(map);
 
         //then
         assertThat(flattened.get("key1"), equalTo("value1"));
@@ -382,7 +383,7 @@ class CoreUtilsTest {
         map.put("simple", "value");
 
         //when
-        Map<String, String> flattened = CoreUtils.flattenMap(map);
+        Map<String, String> flattened = MangooUtils.flattenMap(map);
 
         //then
         assertThat(flattened.get("parent.nested1"), equalTo("value1"));
@@ -402,7 +403,7 @@ class CoreUtilsTest {
         map.put("level1", level1);
 
         //when
-        Map<String, String> flattened = CoreUtils.flattenMap(map);
+        Map<String, String> flattened = MangooUtils.flattenMap(map);
 
         //then
         assertThat(flattened.get("level1.level2.deep"), equalTo("value"));
@@ -417,7 +418,7 @@ class CoreUtilsTest {
         map.put("key2", null);
 
         //when
-        Map<String, String> flattened = CoreUtils.flattenMap(map);
+        Map<String, String> flattened = MangooUtils.flattenMap(map);
 
         //then
         assertThat(flattened.get("key1"), equalTo("value1"));
@@ -431,7 +432,7 @@ class CoreUtilsTest {
         Map<String, Object> map = new HashMap<>();
 
         //when
-        Map<String, String> flattened = CoreUtils.flattenMap(map);
+        Map<String, String> flattened = MangooUtils.flattenMap(map);
 
         //then
         assertThat(flattened, not(nullValue()));
@@ -445,7 +446,7 @@ class CoreUtilsTest {
 
         //when & then
         NullPointerException exception = assertThrows(NullPointerException.class,
-                () -> CoreUtils.flattenMap(null));
+                () -> MangooUtils.flattenMap(null));
         assertThat(exception.getMessage(), containsString("map can not be null or blank"));
     }
 
@@ -459,7 +460,7 @@ class CoreUtilsTest {
         Map<String, String> flatMap = new HashMap<>();
 
         //when
-        CoreUtils.flattenMapHelper(map, "", flatMap);
+        MangooUtils.flattenMapHelper(map, "", flatMap);
 
         //then
         assertThat(flatMap.get("key1"), equalTo("value1"));
@@ -476,7 +477,7 @@ class CoreUtilsTest {
         Map<String, String> flatMap = new HashMap<>();
 
         //when
-        CoreUtils.flattenMapHelper(map, "prefix", flatMap);
+        MangooUtils.flattenMapHelper(map, "prefix", flatMap);
 
         //then
         assertThat(flatMap.get("prefix.key1"), equalTo("value1"));
@@ -494,7 +495,7 @@ class CoreUtilsTest {
         Map<String, String> flatMap = new HashMap<>();
 
         //when
-        CoreUtils.flattenMapHelper(map, "", flatMap);
+        MangooUtils.flattenMapHelper(map, "", flatMap);
 
         //then
         assertThat(flatMap.get("parent.nested1"), equalTo("value1"));
@@ -511,7 +512,7 @@ class CoreUtilsTest {
         Map<String, String> flatMap = new HashMap<>();
 
         //when
-        CoreUtils.flattenMapHelper(map, "", flatMap);
+        MangooUtils.flattenMapHelper(map, "", flatMap);
 
         //then
         assertThat(flatMap.get("key1"), equalTo("value1"));
@@ -527,7 +528,7 @@ class CoreUtilsTest {
         Map<String, String> flatMap = new HashMap<>();
 
         //when
-        CoreUtils.flattenMapHelper(map, "", flatMap);
+        MangooUtils.flattenMapHelper(map, "", flatMap);
 
         //then
         assertThat(flatMap.isEmpty(), is(true));
@@ -540,7 +541,7 @@ class CoreUtilsTest {
 
         //when & then
         NullPointerException exception = assertThrows(NullPointerException.class,
-                () -> CoreUtils.flattenMapHelper(null, "", flatMap));
+                () -> MangooUtils.flattenMapHelper(null, "", flatMap));
         assertThat(exception.getMessage(), containsString("map can not be null or blank"));
     }
 }

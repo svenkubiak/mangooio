@@ -35,8 +35,8 @@ import io.mangoo.scheduler.Schedule;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.scheduler.Task;
 import io.mangoo.utils.CommonUtils;
-import io.mangoo.utils.CoreUtils;
 import io.mangoo.utils.PersistenceUtils;
+import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
@@ -755,7 +755,7 @@ public final class Application {
         var logo = '\n' +
                 LOGO +
                 "\n\nhttps://github.com/svenkubiak/mangooio | " +
-                CoreUtils.getVersion() +
+                MangooUtils.getVersion() +
                 '\n';
 
         LOG.info(logo);

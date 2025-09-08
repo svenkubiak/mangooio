@@ -20,7 +20,11 @@ import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.scheduler.Scheduler;
-import io.mangoo.utils.*;
+import io.mangoo.utils.CommonUtils;
+import io.mangoo.utils.DateUtils;
+import io.mangoo.utils.FileUtils;
+import io.mangoo.utils.TotpUtils;
+import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.server.handlers.CookieImpl;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
@@ -135,7 +139,7 @@ public class AdminController {
     }
     
     public Response logout() {
-        var cookie = new CookieImpl(CoreUtils.getAdminCookieName())
+        var cookie = new CookieImpl(MangooUtils.getAdminCookieName())
                 .setValue(Strings.EMPTY)
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())
@@ -152,16 +156,16 @@ public class AdminController {
         form.expectValue("username");
         form.expectValue("password");
         
-        if (CoreUtils.isNotLocked() && form.isValid()) {
-            if (CoreUtils.isValidAuthentication(form)) {
-                CoreUtils.resetLockCounter();
+        if (MangooUtils.isNotLocked() && form.isValid()) {
+            if (MangooUtils.isValidAuthentication(form)) {
+                MangooUtils.resetLockCounter();
                 try {
-                    return Response.redirect(ADMIN_INDEX).cookie(CoreUtils.getAdminCookie(true));
+                    return Response.redirect(ADMIN_INDEX).cookie(MangooUtils.getAdminCookie(true));
                 } catch (MangooJwtException e) {
-                    CoreUtils.invalidAuthentication();
+                    MangooUtils.invalidAuthentication();
                 }
             } else {
-                CoreUtils.invalidAuthentication();
+                MangooUtils.invalidAuthentication();
             }
         }
         form.invalidate();
@@ -177,15 +181,15 @@ public class AdminController {
         form.expectMaxLength("code", 6);
         form.expectMinLength("code", 6);
 
-        if (CoreUtils.isNotLocked() && form.isValid()) {
+        if (MangooUtils.isNotLocked() && form.isValid()) {
             if (TotpUtils.verifyTotp(config.getApplicationAdminSecret(), form.get("code"))) {
                 try {
-                    return Response.redirect(ADMIN_INDEX).cookie(CoreUtils.getAdminCookie(false));
+                    return Response.redirect(ADMIN_INDEX).cookie(MangooUtils.getAdminCookie(false));
                 } catch (MangooJwtException e) {
-                    CoreUtils.invalidAuthentication();
+                    MangooUtils.invalidAuthentication();
                 }
             } else {
-                CoreUtils.invalidAuthentication();
+                MangooUtils.invalidAuthentication();
             }
         }
         form.invalidate();

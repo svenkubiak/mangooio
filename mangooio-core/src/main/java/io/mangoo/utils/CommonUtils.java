@@ -8,7 +8,6 @@ import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import org.apache.commons.codec.binary.Base32;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.fury.Fury;
 import org.apache.fury.ThreadSafeFury;
 import org.apache.fury.config.Language;
@@ -55,8 +54,8 @@ public final class CommonUtils {
      * @return A Base64 encoded String
      */
     public static String hashArgon2(String cleartext, String salt) {
-        Objects.requireNonNull(cleartext, Required.CLEARTEXT);
-        Objects.requireNonNull(salt, Required.SALT);
+        Arguments.requireNonBlank(cleartext, Required.CLEARTEXT);
+        Arguments.requireNonBlank(salt, Required.SALT);
 
         var argon2 = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
                 .withVersion(Argon2Parameters.ARGON2_VERSION_13)
@@ -83,7 +82,7 @@ public final class CommonUtils {
      * @return A Base64 encoded String
      */
     public static String hashArgon2(String cleartext) {
-        Objects.requireNonNull(cleartext, Required.CLEARTEXT);
+        Arguments.requireNonBlank(cleartext, Required.CLEARTEXT);
 
         var salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
         return hashArgon2(cleartext, salt);
@@ -99,9 +98,9 @@ public final class CommonUtils {
      * @return True if hashes match, false otherwise
      */
     public static boolean matchArgon2(String cleartext, String salt, String hash) {
-        Objects.requireNonNull(cleartext, Required.CLEARTEXT);
-        Objects.requireNonNull(salt, Required.SALT);
-        Objects.requireNonNull(hash, Required.HASH);
+        Arguments.requireNonBlank(cleartext, Required.CLEARTEXT);
+        Arguments.requireNonBlank(salt, Required.SALT);
+        Arguments.requireNonBlank(hash, Required.HASH);
 
         return Arrays.areEqual(hashArgon2(cleartext, salt).getBytes(StandardCharsets.UTF_8), hash.getBytes(StandardCharsets.UTF_8));
     }
@@ -115,8 +114,8 @@ public final class CommonUtils {
      * @return True if hashes match, false otherwise
      */
     public static boolean matchArgon2(String cleartext, String hash) {
-        Objects.requireNonNull(cleartext, Required.CLEARTEXT);
-        Objects.requireNonNull(hash, Required.HASH);
+        Arguments.requireNonBlank(cleartext, Required.CLEARTEXT);
+        Arguments.requireNonBlank(hash, Required.HASH);
 
         var salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
 
@@ -131,7 +130,7 @@ public final class CommonUtils {
      * @return SHA512 hashed value or null if hashing failed
      */
     public static String hexSHA512(String data) {
-        Objects.requireNonNull(data, Required.DATA);
+        Arguments.requireNonBlank(data, Required.DATA);
 
         try {
             var digest = MessageDigest.getInstance("SHA3-512");
@@ -167,7 +166,7 @@ public final class CommonUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T deserializeFromBase64(String data) {
-        Objects.requireNonNull(data, Required.DATA);
+        Arguments.requireNonBlank(data, Required.DATA);
         
         byte[] bytes = BASE64DECODER.decode(data);
         return (T) FURY.deserialize(bytes);
@@ -180,7 +179,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static byte[] encodeToBase64(String data) {
-        Objects.requireNonNull(data, Required.DATA);
+        Arguments.requireNonBlank(data, Required.DATA);
         return BASE64ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -191,7 +190,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static String encodeToBase32(String data) {
-        Objects.requireNonNull(data, Required.DATA);
+        Arguments.requireNonBlank(data, Required.DATA);
         return BASE32ENCODER.encodeToString(data.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -213,7 +212,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static byte[] decodeFromBase64(String data) {
-        Objects.requireNonNull(data, Required.DATA);
+        Arguments.requireNonBlank(data, Required.DATA);
         return BASE64DECODER.decode(data);
     }
 
@@ -261,7 +260,7 @@ public final class CommonUtils {
      * @return The number of bit
      */
     public static int bitLength(String string) {
-        Objects.requireNonNull(string, Required.STRING);
+        Arguments.requireNonBlank(string, Required.STRING);
         return bitLength(string.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -328,7 +327,7 @@ public final class CommonUtils {
      * @return True if the resources exists, false otherwise
      */
     public static boolean resourceExists(String name) {
-        Objects.requireNonNull(name, Required.NAME);
+        Arguments.requireNonBlank(name, Required.NAME);
 
         URL resource = null;
         try {
@@ -349,7 +348,7 @@ public final class CommonUtils {
      * @return The content of the resource or null
      */
     public static String readResourceToString(String resource) {
-        Objects.requireNonNull(resource, Required.RESOURCE);
+        Arguments.requireNonBlank(resource, Required.RESOURCE);
 
         var content = Strings.EMPTY;
         try {
@@ -359,11 +358,5 @@ public final class CommonUtils {
         }
 
         return content;
-    }
-
-    public static void requireNoneBlank(String string, String message) {
-        if (StringUtils.isBlank(string)) {
-            throw new IllegalArgumentException(message);
-        }
     }
 }

@@ -10,7 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
-import java.util.Objects;
 import java.util.Random;
 
 public class TotpUtils {
@@ -53,7 +52,7 @@ public class TotpUtils {
      * @return The totp value or null if generation failed
      */
     public static String getTotp(String secret) {
-        Objects.requireNonNull(secret, Required.SECRET);
+        Arguments.requireNonBlank(secret, Required.SECRET);
 
         TOTPGenerator totp = new TOTPGenerator.Builder(secret)
                 .withHOTPGenerator(builder -> {
@@ -76,8 +75,8 @@ public class TotpUtils {
      * @return True if the TOTP is valid, false otherwise
      */
     public static boolean verifyTotp(String secret, String totp) {
-        Objects.requireNonNull(secret, Required.SECRET);
-        Objects.requireNonNull(totp, Required.TOTP);
+        Arguments.requireNonBlank(secret, Required.SECRET);
+        Arguments.requireNonBlank(totp, Required.TOTP);
 
         TOTPGenerator expected = new TOTPGenerator.Builder(secret)
                 .withHOTPGenerator(builder -> {
@@ -100,11 +99,11 @@ public class TotpUtils {
      * @return The QR code as a base64 PNG image
      */
     public static String getQRCode(String name, String issuer, String secret) {
-        Objects.requireNonNull(name, Required.NAME);
-        Objects.requireNonNull(issuer, Required.ISSUER);
-        Objects.requireNonNull(secret, Required.SECRET);
+        Arguments.requireNonBlank(name, Required.NAME);
+        Arguments.requireNonBlank(issuer, Required.ISSUER);
+        Arguments.requireNonBlank(secret, Required.SECRET);
 
-        String text = getOtpauthURL(name, issuer, secret);
+        String text = getOtpAuthURL(name, issuer, secret);
         ByteArrayOutputStream qrCodeOutputStream = QRCode.from(text)
                 .withSize(250, 250)
                 .stream();
@@ -115,18 +114,18 @@ public class TotpUtils {
     }
 
     /**
-     * Generates an otpauth code to share a secret with a user
+     * Generates an OtpAuth url to share a secret with a user
      * 
      * @param name The name of the account
      * @param issuer The name of the issuer
      * @param secret The secret to use
      *
-     * @return An otpauth url
+     * @return An OtpAuth url
      */
-    public static String getOtpauthURL(String name, String issuer, String secret) {
-        Objects.requireNonNull(name, Required.ACCOUNT_NAME);
-        Objects.requireNonNull(secret, Required.SECRET);
-        Objects.requireNonNull(issuer, Required.ISSUER);
+    public static String getOtpAuthURL(String name, String issuer, String secret) {
+        Arguments.requireNonBlank(name, Required.ACCOUNT_NAME);
+        Arguments.requireNonBlank(secret, Required.SECRET);
+        Arguments.requireNonBlank(issuer, Required.ISSUER);
 
         var buffer = new StringBuilder();
         buffer.append("otpauth://totp/")

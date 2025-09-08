@@ -92,7 +92,7 @@ public final class FileUtils {
      * @return The content of the file or null
      */
     public static String readFileToString(String path) {
-        Objects.requireNonNull(path, Required.PATH);
+        Arguments.requireNonBlank(path, Required.PATH);
 
         return readFileToString(Path.of(path));
     }

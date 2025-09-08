@@ -5,6 +5,7 @@ import io.mangoo.constants.Required;
 import io.mangoo.constants.Validation;
 import io.mangoo.core.Application;
 import io.mangoo.i18n.Messages;
+import io.mangoo.utils.Arguments;
 import io.mangoo.utils.FileUtils;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +47,7 @@ public class Validator implements Serializable {
      */
     public void expectFileMimeType(String name, String message, String... allowedMimeTypes) {
         Objects.requireNonNull(name, Required.NAME);
-        Objects.requireNonNull(allowedMimeTypes, Required.ALLOWED_MIME_TYPES);
+        Arguments.requireNonBlank(Required.ALLOWED_MIME_TYPES, allowedMimeTypes);
 
         InputStream inputStream = files.get(name);
 

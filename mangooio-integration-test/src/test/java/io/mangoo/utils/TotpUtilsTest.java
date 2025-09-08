@@ -470,7 +470,7 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when
-        String otpauthURL = TotpUtils.getOtpauthURL(name, issuer, secret);
+        String otpauthURL = TotpUtils.getOtpAuthURL(name, issuer, secret);
 
         //then
         assertThat(otpauthURL, not(nullValue()));
@@ -492,8 +492,8 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when
-        String otpauthURL1 = TotpUtils.getOtpauthURL(name1, issuer, secret);
-        String otpauthURL2 = TotpUtils.getOtpauthURL(name2, issuer, secret);
+        String otpauthURL1 = TotpUtils.getOtpAuthURL(name1, issuer, secret);
+        String otpauthURL2 = TotpUtils.getOtpAuthURL(name2, issuer, secret);
 
         //then
         assertThat(otpauthURL1, not(nullValue()));
@@ -512,8 +512,8 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when
-        String otpauthURL1 = TotpUtils.getOtpauthURL(name, issuer1, secret);
-        String otpauthURL2 = TotpUtils.getOtpauthURL(name, issuer2, secret);
+        String otpauthURL1 = TotpUtils.getOtpAuthURL(name, issuer1, secret);
+        String otpauthURL2 = TotpUtils.getOtpAuthURL(name, issuer2, secret);
 
         //then
         assertThat(otpauthURL1, not(nullValue()));
@@ -532,8 +532,8 @@ class TotpUtilsTest {
         String secret2 = "ZYXWVUTSRQPONMLKJIHGFEDCBA765432ZYXWVUTSRQPONMLKJIHGFEDCBA765432";
 
         //when
-        String otpauthURL1 = TotpUtils.getOtpauthURL(name, issuer, secret1);
-        String otpauthURL2 = TotpUtils.getOtpauthURL(name, issuer, secret2);
+        String otpauthURL1 = TotpUtils.getOtpAuthURL(name, issuer, secret1);
+        String otpauthURL2 = TotpUtils.getOtpAuthURL(name, issuer, secret2);
 
         //then
         assertThat(otpauthURL1, not(nullValue()));
@@ -552,7 +552,7 @@ class TotpUtilsTest {
 
         //when & then
         NullPointerException exception = assertThrows(NullPointerException.class, 
-                () -> TotpUtils.getOtpauthURL(name, issuer, secret));
+                () -> TotpUtils.getOtpAuthURL(name, issuer, secret));
         assertThat(exception.getMessage(), containsString("account name can not be null"));
     }
 
@@ -565,7 +565,7 @@ class TotpUtilsTest {
 
         //when & then
         NullPointerException exception = assertThrows(NullPointerException.class, 
-                () -> TotpUtils.getOtpauthURL(name, issuer, secret));
+                () -> TotpUtils.getOtpAuthURL(name, issuer, secret));
         assertThat(exception.getMessage(), containsString("issuer can not be null"));
     }
 
@@ -578,7 +578,7 @@ class TotpUtilsTest {
 
         //when & then
         NullPointerException exception = assertThrows(NullPointerException.class, 
-                () -> TotpUtils.getOtpauthURL(name, issuer, secret));
+                () -> TotpUtils.getOtpAuthURL(name, issuer, secret));
         assertThat(exception.getMessage(), containsString("secret can not be null"));
     }
 
@@ -590,7 +590,7 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when
-        String otpauthURL = TotpUtils.getOtpauthURL(name, issuer, secret);
+        String otpauthURL = TotpUtils.getOtpAuthURL(name, issuer, secret);
 
         //then
         assertThat(otpauthURL, not(nullValue()));
@@ -608,7 +608,7 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when
-        String otpauthURL = TotpUtils.getOtpauthURL(name, issuer, secret);
+        String otpauthURL = TotpUtils.getOtpAuthURL(name, issuer, secret);
 
         //then
         assertThat(otpauthURL, not(nullValue()));
@@ -626,7 +626,7 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when
-        String otpauthURL = TotpUtils.getOtpauthURL(name, issuer, secret);
+        String otpauthURL = TotpUtils.getOtpAuthURL(name, issuer, secret);
 
         //then
         assertThat(otpauthURL, not(nullValue()));
@@ -643,7 +643,7 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when
-        String otpauthURL = TotpUtils.getOtpauthURL(name, issuer, secret);
+        String otpauthURL = TotpUtils.getOtpAuthURL(name, issuer, secret);
 
         //then
         assertThat(otpauthURL, not(nullValue()));
@@ -660,7 +660,7 @@ class TotpUtilsTest {
         String secret = "";
 
         //when
-        String otpauthURL = TotpUtils.getOtpauthURL(name, issuer, secret);
+        String otpauthURL = TotpUtils.getOtpAuthURL(name, issuer, secret);
 
         //then
         assertThat(otpauthURL, not(nullValue()));
@@ -677,7 +677,7 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when
-        String otpauthURL = TotpUtils.getOtpauthURL(name, issuer, secret);
+        String otpauthURL = TotpUtils.getOtpAuthURL(name, issuer, secret);
 
         //then
         assertThat(otpauthURL, not(nullValue()));
@@ -708,7 +708,7 @@ class TotpUtilsTest {
 
         //when
         String qrCode = TotpUtils.getQRCode(name, issuer, secret);
-        String otpauthURL = TotpUtils.getOtpauthURL(name, issuer, secret);
+        String otpauthURL = TotpUtils.getOtpAuthURL(name, issuer, secret);
 
         //then
         assertThat(qrCode, not(nullValue()));

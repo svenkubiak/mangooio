@@ -7,8 +7,8 @@ import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.utils.CoreUtils;
 import io.mangoo.utils.JwtUtils;
+import io.mangoo.utils.internal.MangooUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
@@ -19,7 +19,7 @@ import java.text.ParseException;
 
 public class AdminFilter implements PerRequestFilter {
     private static final Logger LOG = LogManager.getLogger(AdminFilter.class);
-    private static final String VERSION_TAG = CoreUtils.getVersion();
+    private static final String VERSION_TAG = MangooUtils.getVersion();
     private static final String[] ALLOWED = {
             "/@admin/login",
             "/@admin/logout",
@@ -37,7 +37,7 @@ public class AdminFilter implements PerRequestFilter {
             return response;
         }
 
-        var cookie = request.getCookie(CoreUtils.getAdminCookieName());
+        var cookie = request.getCookie(MangooUtils.getAdminCookieName());
         if (cookie != null) {
             String value = cookie.getValue();
             if (StringUtils.isNotBlank(value)) {
@@ -46,7 +46,7 @@ public class AdminFilter implements PerRequestFilter {
                             .withKey(config.getApplicationSecret())
                             .withSecret(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
                             .withIssuer(config.getApplicationName())
-                            .withAudience(CoreUtils.getAdminCookieName())
+                            .withAudience(MangooUtils.getAdminCookieName())
                             .withTtlSeconds(1800);
 
                     var jwtClaimSet = JwtUtils.parseJwt(value, jwtData);

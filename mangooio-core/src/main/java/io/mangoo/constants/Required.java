@@ -1,30 +1,30 @@
 package io.mangoo.constants;
 
 public final class Required {
-    public static final String ACCOUNT_NAME = "account name can not be null or blank";
-    public static final String ALLOWED_MIME_TYPES = "allowedMimeTypes can not be null or blank";
-    public static final String AUDIENCE = "audience can not be null or blank ";
-    public static final String BCCS = "bccs can not be null or blank";
-    public static final String BYTES = "bytes can not be null or blank";
-    public static final String CACHE = "cache can not be null or blank";
-    public static final String CACHE_PROVIDER = "cacheProvider can not be null or blank";
+    public static final String ACCOUNT_NAME = "account name can not be null or blank"; 
+    public static final String ALLOWED_MIME_TYPES = "allowedMimeTypes can not be null or blank"; 
+    public static final String AUDIENCE = "audience can not be null or blank "; 
+    public static final String BCCS = "bccs can not be null or blank"; 
+    public static final String BYTES = "bytes can not be null or blank"; 
+    public static final String CACHE = "cache can not be null"; 
+    public static final String CACHE_PROVIDER = "cacheProvider can not be null"; 
     public static final String CCS = "ccs can not be null or blank";
-    public static final String CLASS = "class can not be null or blank";
+    public static final String CLASS = "class can not be null ";
     public static final String CLEARTEXT = "cleartext can not be null or blank";
-    public static final String CONFIG = "config can not be null or blank";
-    public static final String CONNECTION = "connection can not be null or blank";
+    public static final String CONFIG = "config can not be null";
+    public static final String CONNECTION = "connection can not be null";
     public static final String CONTENT = "content can not be null or blank";
     public static final String CONTENT_TYPE = "content type can not be null or blank";
     public static final String CONTROLLER_CLASS = "controller class can not be null or blank";
     public static final String CONTROLLER_INSTANCE = "controller instance can not be null or blank";
     public static final String CONTROLLER_METHOD = "controller method can not be null or blank";
     public static final String CONTROLLER_NAME = "controller name can not be null or blank";
-    public static final String COOKIE = "cookie can not be null or blank";
+    public static final String COOKIE = "cookie can not be null";
     public static final String COLLECTION = "collection can not be null or blank";
-    public static final String CRON = "cron can not be nul or blankl";
+    public static final String CRON = "cron can not be nul or blank";
     public static final String CSRF = "csrf can not be null or blank";
     public static final String DATA = "data can not be null or blank";
-    public static final String DATASTORE = "datastore can not be null or blank";
+    public static final String DATASTORE = "datastore can not be null";
     public static final String ENCRYPTED_TEXT = "encrypted text can not be null or blank";
     public static final String EXPIRES = "expires can not be null or blank";
     public static final String FALLBACK = "fallback can not be null or blank";
@@ -37,13 +37,13 @@ public final class Required {
     public static final String INDEX = "index can not be null or blank";
     public static final String INDEX_OPTIONS = "indexOptions can not be null or blank";
     public static final String INDEXES = "indexes van not be null";
-    public static final String INPUT_STREAM = "InputStream can not be null or blank";
+    public static final String INPUT_STREAM = "InputStream can not be null";
     public static final String ISSUER = "issuer can not be null or blank";
     public static final String JSON = "json can not be null or blank";
     public static final String JWT = "jwt can not be null or blank";
     public static final String JWT_DATA = "jwtData can not be null or blank";
     public static final String KEY = "key can not be null or blank";
-    public static final String LOCAL_DATE = "localDate can not be null or blank";
+    public static final String LOCAL_DATE = "localDate can not be null";
     public static final String LOCAL_DATE_TIME = "localDateTime can not be null or blank";
     public static final String LOCALE = "locale can not be null or blank";
     public static final String MAIL = "mail can not be null or blank";
@@ -56,7 +56,7 @@ public final class Required {
     public static final String MODE = "mode can not be null or blank";
     public static final String NAME = "name can not be null or blank";
     public static final String NAMED = "named can not be null or blank";
-    public static final String OBJECT = "object can not be null or blank";
+    public static final String OBJECT = "object can not be null";
     public static final String OBJECTS = "objects can not be null or blank";
     public static final String PART = "part can not be null or blank";
     public static final String PASSWORD = "password can not be null or blank";
@@ -97,7 +97,7 @@ public final class Required {
     public static final String VAULT = "vault can not be null or blank";
     public static final String VALUE = "value can not be null or blank";
     public static final String VALUES = "values can not be null or blank";
-    public static final String RESPONSE = "response can not be null or blank";
+    public static final String RESPONSE = "response can not be null";
 
     private Required() {
     }
