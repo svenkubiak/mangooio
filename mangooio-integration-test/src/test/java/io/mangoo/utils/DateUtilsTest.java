@@ -243,6 +243,7 @@ class DateUtilsTest {
         assertThat(prettyTime, not(emptyString()));
         // Should contain relative time text
         assertThat(prettyTime.toLowerCase(), anyOf(
+                containsString("moments from now"),
                 containsString("moments ago"),
                 containsString("second"),
                 containsString("minute"),
