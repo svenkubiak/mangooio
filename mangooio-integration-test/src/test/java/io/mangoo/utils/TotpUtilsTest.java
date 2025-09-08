@@ -145,7 +145,7 @@ class TotpUtilsTest {
         String secret = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.getTotp(secret));
         assertThat(exception.getMessage(), containsString("secret can not be null"));
     }
@@ -158,7 +158,7 @@ class TotpUtilsTest {
         //when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () ->  TotpUtils.getTotp(secret));
-        assertThat(exception.getMessage(), containsString("Secret must not be empty"));
+        assertThat(exception.getMessage(), containsString("secret can not be null or blank"));
     }
 
     @Test
@@ -224,7 +224,7 @@ class TotpUtilsTest {
         String totp = "123456";
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.verifyTotp(secret, totp));
         assertThat(exception.getMessage(), containsString("secret can not be null"));
     }
@@ -236,7 +236,7 @@ class TotpUtilsTest {
         String totp = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.verifyTotp(secret, totp));
         assertThat(exception.getMessage(), containsString("totp can not be null"));
     }
@@ -248,7 +248,7 @@ class TotpUtilsTest {
         String totp = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.verifyTotp(secret, totp));
         // Should throw for the first null parameter (secret)
         assertThat(exception.getMessage(), containsString("secret can not be null"));
@@ -263,7 +263,7 @@ class TotpUtilsTest {
         //when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.verifyTotp(secret, totp));
-        assertThat(exception.getMessage(), containsString("Secret must not be empty"));
+        assertThat(exception.getMessage(), containsString("secret can not be null or blank"));
     }
 
     @Test
@@ -272,11 +272,8 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
         String totp = "";
 
-        //when
-        boolean isValid = TotpUtils.verifyTotp(secret, totp);
-
-        //then
-        assertThat(isValid, equalTo(false));
+        //when & then
+        assertThrows(IllegalArgumentException.class, () -> TotpUtils.verifyTotp(secret, totp));
     }
 
     @Test
@@ -399,7 +396,7 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.getQRCode(name, issuer, secret));
         assertThat(exception.getMessage(), containsString("name can not be null"));
     }
@@ -412,7 +409,7 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.getQRCode(name, issuer, secret));
         assertThat(exception.getMessage(), containsString("issuer can not be null"));
     }
@@ -425,7 +422,7 @@ class TotpUtilsTest {
         String secret = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.getQRCode(name, issuer, secret));
         assertThat(exception.getMessage(), containsString("secret can not be null"));
     }
@@ -551,7 +548,7 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.getOtpAuthURL(name, issuer, secret));
         assertThat(exception.getMessage(), containsString("account name can not be null"));
     }
@@ -564,7 +561,7 @@ class TotpUtilsTest {
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.getOtpAuthURL(name, issuer, secret));
         assertThat(exception.getMessage(), containsString("issuer can not be null"));
     }
@@ -577,7 +574,7 @@ class TotpUtilsTest {
         String secret = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.getOtpAuthURL(name, issuer, secret));
         assertThat(exception.getMessage(), containsString("secret can not be null"));
     }
@@ -625,14 +622,10 @@ class TotpUtilsTest {
         String issuer = "TestApp";
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
-        //when
-        String otpauthURL = TotpUtils.getOtpAuthURL(name, issuer, secret);
-
-        //then
-        assertThat(otpauthURL, not(nullValue()));
-        assertThat(otpauthURL, not(emptyString()));
-        assertThat(otpauthURL, startsWith("otpauth://totp/"));
-        assertThat(otpauthURL, containsString("secret=" + secret));
+        //when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> TotpUtils.getOtpAuthURL(name, issuer, secret));
+        assertThat(exception.getMessage(), containsString("account name can not be null"));
     }
 
     @Test
@@ -642,14 +635,10 @@ class TotpUtilsTest {
         String issuer = "";
         String secret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
-        //when
-        String otpauthURL = TotpUtils.getOtpAuthURL(name, issuer, secret);
-
-        //then
-        assertThat(otpauthURL, not(nullValue()));
-        assertThat(otpauthURL, not(emptyString()));
-        assertThat(otpauthURL, startsWith("otpauth://totp/"));
-        assertThat(otpauthURL, containsString("issuer="));
+        //when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> TotpUtils.getOtpAuthURL(name, issuer, secret));
+        assertThat(exception.getMessage(), containsString("issuer can not be null"));
     }
 
     @Test
@@ -659,14 +648,9 @@ class TotpUtilsTest {
         String issuer = "TestApp";
         String secret = "";
 
-        //when
-        String otpauthURL = TotpUtils.getOtpAuthURL(name, issuer, secret);
-
-        //then
-        assertThat(otpauthURL, not(nullValue()));
-        assertThat(otpauthURL, not(emptyString()));
-        assertThat(otpauthURL, startsWith("otpauth://totp/"));
-        assertThat(otpauthURL, containsString("secret="));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> TotpUtils.getOtpAuthURL(name, issuer, secret));
+        assertThat(exception.getMessage(), containsString("secret can not be null"));
     }
 
     @Test

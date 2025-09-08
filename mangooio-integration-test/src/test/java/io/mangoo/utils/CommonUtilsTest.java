@@ -38,7 +38,7 @@ class CommonUtilsTest {
         String salt = "test-salt";
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.hashArgon2(cleartext, salt));
         assertThat(exception.getMessage(), containsString("cleartext can not be null"));
     }
@@ -50,7 +50,7 @@ class CommonUtilsTest {
         String salt = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.hashArgon2(cleartext, salt));
         assertThat(exception.getMessage(), containsString("salt can not be null"));
     }
@@ -105,7 +105,7 @@ class CommonUtilsTest {
         String cleartext = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.hashArgon2(cleartext));
         assertThat(exception.getMessage(), containsString("cleartext can not be null"));
     }
@@ -162,7 +162,7 @@ class CommonUtilsTest {
         String hash = "test-hash";
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.matchArgon2(cleartext, salt, hash));
         assertThat(exception.getMessage(), containsString("cleartext can not be null"));
     }
@@ -175,7 +175,7 @@ class CommonUtilsTest {
         String hash = "test-hash";
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.matchArgon2(cleartext, salt, hash));
         assertThat(exception.getMessage(), containsString("salt can not be null"));
     }
@@ -188,7 +188,7 @@ class CommonUtilsTest {
         String hash = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.matchArgon2(cleartext, salt, hash));
         assertThat(exception.getMessage(), containsString("hash can not be null"));
     }
@@ -200,7 +200,7 @@ class CommonUtilsTest {
         String hash = "test-hash";
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.matchArgon2(cleartext, hash));
         assertThat(exception.getMessage(), containsString("cleartext can not be null"));
     }
@@ -212,7 +212,7 @@ class CommonUtilsTest {
         String hash = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.matchArgon2(cleartext, hash));
         assertThat(exception.getMessage(), containsString("hash can not be null"));
     }
@@ -237,7 +237,7 @@ class CommonUtilsTest {
         String data = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.hexSHA512(data));
         assertThat(exception.getMessage(), containsString("data can not be null"));
     }
@@ -314,7 +314,7 @@ class CommonUtilsTest {
         String data = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.deserializeFromBase64(data));
         assertThat(exception.getMessage(), containsString("data can not be null"));
     }
@@ -338,7 +338,7 @@ class CommonUtilsTest {
         String data = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.encodeToBase64(data));
         assertThat(exception.getMessage(), containsString("data can not be null"));
     }
@@ -362,7 +362,7 @@ class CommonUtilsTest {
         String data = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.encodeToBase32(data));
         assertThat(exception.getMessage(), containsString("data can not be null"));
     }
@@ -412,7 +412,7 @@ class CommonUtilsTest {
         String data = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.decodeFromBase64(data));
         assertThat(exception.getMessage(), containsString("data can not be null"));
     }
@@ -526,7 +526,7 @@ class CommonUtilsTest {
         String string = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.bitLength(string));
         assertThat(exception.getMessage(), containsString("string can not be null"));
     }
@@ -718,7 +718,7 @@ class CommonUtilsTest {
         String resourceName = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.resourceExists(resourceName));
         assertThat(exception.getMessage(), containsString("name can not be null"));
     }
@@ -753,7 +753,7 @@ class CommonUtilsTest {
         String resource = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.readResourceToString(resource));
         assertThat(exception.getMessage(), containsString("resource can not be null"));
     }

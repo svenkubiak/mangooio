@@ -73,7 +73,7 @@ class JwtUtilsTest {
         JwtUtils.JwtData jwtData = validJwtData.withSubject(null);
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> JwtUtils.createJwt(jwtData));
         assertThat(exception.getMessage(), containsString("subject can not be null"));
     }
@@ -106,7 +106,7 @@ class JwtUtilsTest {
         JwtUtils.JwtData jwtData = validJwtData.withKey(null);
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> JwtUtils.createJwt(jwtData));
         assertThat(exception.getMessage(), containsString("key can not be null"));
     }
@@ -117,7 +117,7 @@ class JwtUtilsTest {
         JwtUtils.JwtData jwtData = validJwtData.withIssuer(null);
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> JwtUtils.createJwt(jwtData));
         assertThat(exception.getMessage(), containsString("issuer can not be null"));
     }
@@ -128,7 +128,7 @@ class JwtUtilsTest {
         JwtUtils.JwtData jwtData = validJwtData.withAudience(null);
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> JwtUtils.createJwt(jwtData));
         assertThat(exception.getMessage(), containsString("audience can not be null"));
     }
@@ -214,7 +214,7 @@ class JwtUtilsTest {
         String jwt = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> JwtUtils.parseJwt(jwt, validJwtData));
         assertThat(exception.getMessage(), containsString("jwt can not be null"));
     }
@@ -246,7 +246,7 @@ class JwtUtilsTest {
         String jwt = "";
 
         //when & then
-        assertThrows(MangooJwtException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> JwtUtils.parseJwt(jwt, validJwtData));
     }
 

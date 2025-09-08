@@ -321,7 +321,7 @@ class JsonUtilsTest {
         String json = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> JsonUtils.toObject(json, TestObject.class));
         assertThat(exception.getMessage(), containsString("json can not be null"));
     }
@@ -342,11 +342,10 @@ class JsonUtilsTest {
         //given
         String json = "";
 
-        //when
-        TestObject object = JsonUtils.toObject(json, TestObject.class);
-
-        //then
-        assertThat(object, nullValue());
+        //when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> JsonUtils.toObject(json, TestObject.class));
+        assertThat(exception.getMessage(), containsString("json can not be null"));
     }
 
     @Test
@@ -398,7 +397,7 @@ class JsonUtilsTest {
         String json = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> JsonUtils.toObjectWithFallback(json, TestObject.class));
         assertThat(exception.getMessage(), containsString("json can not be null"));
     }
@@ -543,7 +542,7 @@ class JsonUtilsTest {
         String json = null;
 
         //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> JsonUtils.toFlatMap(json));
         assertThat(exception.getMessage(), containsString("json can not be null"));
     }
@@ -553,12 +552,10 @@ class JsonUtilsTest {
         //given
         String json = "";
 
-        //when
-        Map<String, String> flatMap = JsonUtils.toFlatMap(json);
-
-        //then
-        assertThat(flatMap, not(nullValue()));
-        assertThat(flatMap.size(), equalTo(0));
+        //when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> JsonUtils.toFlatMap(json));
+        assertThat(exception.getMessage(), containsString("json can not be null"));
     }
 
     @Test

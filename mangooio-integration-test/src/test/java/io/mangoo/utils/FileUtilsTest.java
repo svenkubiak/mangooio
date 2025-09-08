@@ -304,7 +304,7 @@ class FileUtilsTest {
         // No setup needed for null input
 
         //when & then
-        assertThrows(NullPointerException.class, () -> FileUtils.readFileToString((String) null));
+        assertThrows(IllegalArgumentException.class, () -> FileUtils.readFileToString((String) null));
     }
 
     @Test
@@ -312,11 +312,8 @@ class FileUtilsTest {
         //given
         String filePath = "";
 
-        //when
-        String result = FileUtils.readFileToString(filePath);
-
-        //then
-        assertThat(result, equalTo(""));
+        //when & then
+        assertThrows(IllegalArgumentException.class, () -> FileUtils.readFileToString(filePath));
     }
 
     @Test
