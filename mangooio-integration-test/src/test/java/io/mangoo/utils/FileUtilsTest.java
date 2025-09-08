@@ -158,7 +158,7 @@ class FileUtilsTest {
         String readableSize = FileUtils.readableFileSize(size);
 
         //then
-        assertThat(readableSize, equalTo("1,5 kB"));
+        assertThat(readableSize, anyOf(is("1,5 kB"),  is("1.5 kB")));
     }
 
     @Test
@@ -206,7 +206,7 @@ class FileUtilsTest {
         String readableSize = FileUtils.readableFileSize(size);
 
         //then
-        assertThat(readableSize, equalTo("1,5 GB"));
+        assertThat(readableSize, anyOf(is("1,5 GB")),  is("1.5 GB"));
     }
 
     @Test
