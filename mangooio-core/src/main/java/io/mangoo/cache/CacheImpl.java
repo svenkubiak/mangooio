@@ -129,7 +129,7 @@ public class CacheImpl implements Cache {
     public AtomicInteger resetCounter(String key) {
         Objects.requireNonNull(key, Required.KEY);
 
-        AtomicInteger counter = new AtomicInteger(0);
+        var counter = new AtomicInteger(0);
         put(key, counter);
         
         return counter;

@@ -15,6 +15,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.logging.log4j.util.Strings;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
@@ -49,7 +50,7 @@ public class Validator implements Serializable {
 
         byte[] bytes = files.get(name);
         if (bytes != null) {
-            try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
+            try (var bais = new ByteArrayInputStream(bytes)) {
                 String detectedType = FileUtils.getMimeType(bais);
 
                 boolean allowed = allowedMimeTypes.stream()
@@ -59,7 +60,7 @@ public class Validator implements Serializable {
                     addError(name, Optional.ofNullable(message)
                             .orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 addError(name, Optional.ofNullable(message)
                         .orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
             }
