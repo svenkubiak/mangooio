@@ -1,12 +1,15 @@
 package io.mangoo.routing.bindings;
 
 import io.mangoo.constants.Required;
-import io.mangoo.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serial;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,6 +17,7 @@ import java.util.Optional;
 public class Form extends Validator {
     @Serial
     private static final long serialVersionUID = 2228639200039277653L;
+    private static final Logger LOG = LogManager.getLogger(Form.class);
     private boolean submitted;
     private boolean keep;
     
@@ -139,7 +143,7 @@ public class Form extends Validator {
      *
      * @return File or null if no file is present
      */
-    public Optional<InputStream> getFile(String key) {
+    public Optional<byte[]> getFile(String key) {
         Objects.requireNonNull(key, Required.KEY);
         if (!files.isEmpty()) {
             return Optional.of(files.get(key));
@@ -168,7 +172,11 @@ public class Form extends Validator {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(inputStream, Required.INPUT_STREAM);
 
-        files.put(key, inputStream);
+        try {
+            files.put(key, inputStream.readAllBytes());
+        } catch (IOException e) {
+            LOG.error("Failed to read InputStream for file upload", e);
+        }
     }
  
     /**
@@ -192,8 +200,10 @@ public class Form extends Validator {
      */
     public void discard() {
         if (files != null) {
-            files.forEach((name, stream) -> FileUtils.closeQuietly(stream));
             files.clear();
+            files = new HashMap<>();
+            values.clear();
+            values = new HashMap<>();
         }
     }
     

@@ -8,8 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +29,9 @@ public class FormController {
     
     public Response singlefile(Form form) {
         var content = Strings.EMPTY;
-        Optional<InputStream> formFile = form.getFile("attachment");
+        Optional<byte[]> formFile = form.getFile("attachment");
         if (formFile.isPresent()) {
-            InputStream file = formFile.get();
+            InputStream file = new ByteArrayInputStream(formFile.get());
             try {
                 content = IOUtils.toString(file, StandardCharsets.UTF_8);
             } catch (IOException e) {
@@ -43,15 +45,11 @@ public class FormController {
     @SuppressWarnings("all")
     public Response multifile(Form form) {
         String content = Strings.EMPTY;
-        List<InputStream> files = new ArrayList<>();
+        List<byte[]> files = new ArrayList<>();
         files.add(form.getFile("attachment1").get());
         files.add(form.getFile("attachment2").get());
-        for (InputStream file : files) {
-            try {
-                content = content + IOUtils.toString(file, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                LOG.error("Failed to one of multiple files", e);
-            }
+        for (byte[] file : files) {
+            content = content + new String(file, Charset.defaultCharset());
         }
 
         return Response.ok().bodyText(content + files.size());

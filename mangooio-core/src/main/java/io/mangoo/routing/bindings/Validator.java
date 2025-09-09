@@ -5,7 +5,6 @@ import io.mangoo.constants.Required;
 import io.mangoo.constants.Validation;
 import io.mangoo.core.Application;
 import io.mangoo.i18n.Messages;
-import io.mangoo.utils.Arguments;
 import io.mangoo.utils.FileUtils;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
@@ -15,8 +14,7 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.logging.log4j.util.Strings;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
@@ -27,7 +25,7 @@ public class Validator implements Serializable {
     private final Map<String, String> errors = new HashMap<>();
     private final Messages messages;
     protected Map<String, String> values = new HashMap<>(); // NOSONAR Intentionally not transient
-    protected Map<String, InputStream> files = new HashMap<>(); // NOSONAR Intentionally not transient
+    protected Map<String, byte[]> files = new HashMap<>(); // NOSONAR Intentionally not transient
 
     @Inject
     public Validator(Messages messages) {
@@ -45,32 +43,28 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      * @param allowedMimeTypes A list of allowed MimeTypes
      */
-    public void expectFileMimeType(String name, String message, String... allowedMimeTypes) {
+    public void expectFileMimeType(String name, String message, List<String> allowedMimeTypes) {
         Objects.requireNonNull(name, Required.NAME);
-        Arguments.requireNonBlank(Required.ALLOWED_MIME_TYPES, allowedMimeTypes);
+        Objects.requireNonNull(allowedMimeTypes, Required.ALLOWED_MIME_TYPES);
 
-        InputStream inputStream = files.get(name);
-
-        if (inputStream != null) {
-            try {
-                if (!inputStream.markSupported()) {
-                    inputStream = new BufferedInputStream(inputStream);
-                }
-
-                inputStream.mark(Integer.MAX_VALUE);
-                String detectedType = FileUtils.getMimeType(inputStream);
-                inputStream.reset();
+        byte[] bytes = files.get(name);
+        if (bytes != null) {
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
+                String detectedType = FileUtils.getMimeType(bais);
 
                 for (String type : allowedMimeTypes) {
                     if (type.equalsIgnoreCase(detectedType)) {
-                        addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
+                        addError(name, Optional.ofNullable(message)
+                                .orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
                     }
                 }
             } catch (Exception e) {
-                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
+                addError(name, Optional.ofNullable(message)
+                        .orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
             }
         } else {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
+            addError(name, Optional.ofNullable(message)
+                    .orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
         }
     }
 
@@ -80,7 +74,7 @@ public class Validator implements Serializable {
      * @param name The name of the field
      * @param allowedMimeTypes A list of allowed MimeTypes
      */
-    public void expectFileMimeType(String name, String... allowedMimeTypes) {
+    public void expectFileMimeType(String name, List<String> allowedMimeTypes) {
         expectFileMimeType(name, null, allowedMimeTypes);
     }
 
@@ -93,25 +87,22 @@ public class Validator implements Serializable {
      */
     public void expectFileMaxSize(String name, long maxFileSizeBytes, String message) {
         Objects.requireNonNull(name, Required.NAME);
-        InputStream inputStream = files.get(name);
 
-        if (inputStream != null) {
+        byte[] bytes = files.get(name);
+        if (bytes != null) {
             try {
-                byte[] chunk = new byte[8192];
-                long totalRead = 0;
-
-                int bytesRead;
-                while ((bytesRead = inputStream.read(chunk)) != -1) {
-                    totalRead += bytesRead;
-                    if (totalRead > maxFileSizeBytes) {
-                        addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FILE_SIZE_KEY, name)));
-                    }
+                long totalSize = bytes.length;
+                if (totalSize > maxFileSizeBytes) {
+                    addError(name, Optional.ofNullable(message)
+                            .orElse(messages.get(Validation.FILE_SIZE_KEY, name)));
                 }
             } catch (Exception e) {
-                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FILE_SIZE_KEY, name)));
+                addError(name, Optional.ofNullable(message)
+                        .orElse(messages.get(Validation.FILE_SIZE_KEY, name)));
             }
         } else {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FILE_SIZE_KEY, name)));
+            addError(name, Optional.ofNullable(message)
+                    .orElse(messages.get(Validation.FILE_SIZE_KEY, name)));
         }
     }
 
@@ -362,7 +353,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse(Strings.EMPTY);
 
-        if (( StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue) ) || ( StringUtils.isNotBlank(value) && !value.equalsIgnoreCase(anotherValue)  )) {
+        if (( StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue) ) || ( StringUtils.isNotBlank(value) && !value.equalsIgnoreCase(anotherValue.toLowerCase()))) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MATCH_KEY, name, anotherName)));
         }
     }
