@@ -98,7 +98,7 @@ public class Config {
     private void parse(String key, String value) {
         if (ENV_TAG.equals(value)) {
             String envKey = key.toUpperCase(Locale.ENGLISH)
-                    .replace(".", "_")
+                    .replace(".", "_") // NOSONAR
                     .trim();
 
             String propertyValue = System.getenv(envKey);

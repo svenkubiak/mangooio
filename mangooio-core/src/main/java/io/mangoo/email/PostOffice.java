@@ -90,7 +90,7 @@ public class PostOffice {
         }
     }
 
-    private void setAttachments(Mail mail, Part part) throws MessagingException, IOException {
+    private void setAttachments(Mail mail, Part part) throws MessagingException {
         Objects.requireNonNull(mail, Required.MAIL);
         Objects.requireNonNull(part, Required.PART);
 
@@ -103,11 +103,13 @@ public class PostOffice {
 
             for (Path path : mail.getMailAttachments()) {
                 messageBodyPart = new MimeBodyPart();
-                var filename = FilenameUtils.getName(path.getFileName().toString());
-                DataSource source = new FileDataSource(filename);
-                messageBodyPart.setDataHandler(new DataHandler(source));
-                messageBodyPart.setFileName(filename);
-                multipart.addBodyPart(messageBodyPart);
+                if (path.getFileName() != null) {
+                    var filename = FilenameUtils.getName(path.getFileName().toString());
+                    DataSource source = new FileDataSource(filename);
+                    messageBodyPart.setDataHandler(new DataHandler(source));
+                    messageBodyPart.setFileName(filename);
+                    multipart.addBodyPart(messageBodyPart);
+                }
             }
 
             part.setContent(multipart);

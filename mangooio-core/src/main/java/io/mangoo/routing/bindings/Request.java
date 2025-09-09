@@ -6,6 +6,7 @@ import io.mangoo.utils.JsonUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
+import io.undertow.util.HeaderValues;
 import io.undertow.util.HttpString;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.util.Strings;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Request {
     private transient HttpServerExchange httpServerExchange;
@@ -150,12 +152,11 @@ public class Request {
      * @return The value of the header or null if none found
      */
     public String getHeader(HttpString headerName) {
-        if (httpServerExchange != null && httpServerExchange.getRequestHeaders() != null) {
-            if (httpServerExchange.getRequestHeaders().get(headerName) != null) {
-                return httpServerExchange.getRequestHeaders().get(headerName).element();
-            }
-        }
-        return null;
+        return Optional.ofNullable(httpServerExchange)
+                .map(HttpServerExchange::getRequestHeaders)
+                .map(headers -> headers.get(headerName))
+                .map(HeaderValues::element)
+                .orElse(null);
     }
     
     /**

@@ -70,20 +70,19 @@ public class Vault {
         Security.addProvider(new BouncyCastleProvider());
         try {
             this.keyStore = KeyStore.getInstance(KEYSTORE_TYPE);
-        } catch (KeyStoreException e) {
-            throw new IllegalStateException("Failed to acquire PKCS12 keystore", e);
-        }
-        loadConfig();
 
-        if (enabled()) {
-            loadPath();
-            loadSecret();
-            loadKeyStore();
-            loadPrefix();
-            createSecrets();
-            createCertificate();
-
-            cleanUp();
+            loadConfig();
+            if (enabled()) {
+                loadPath();
+                loadSecret();
+                loadKeyStore();
+                loadPrefix();
+                createSecrets();
+                createCertificate();
+                cleanUp();
+            }
+        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Failed to init keystore", e);
         }
     }
 
@@ -101,13 +100,14 @@ public class Vault {
         }
     }
 
-    private void loadKeyStore() {
+    private void loadKeyStore() throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
         if (Files.exists(path)) {
             try (var inputStream = Files.newInputStream(path, StandardOpenOption.READ)) {
                 keyStore.load(inputStream, secret);
                 LOG.info("Loaded existing vault from {}", path);
             } catch (IllegalStateException | IOException | NoSuchAlgorithmException | CertificateException e) {
-                throw new IllegalStateException("Failed to load existing keystore", e);
+                LOG.error("Failed to load vault from {}", path, e);
+                throw e;
             }
         } else {
             try (var outputStream = Files.newOutputStream(path,
@@ -122,7 +122,8 @@ public class Vault {
                 LOG.info("Created new vault at {}", path);
             } catch (IllegalStateException | IOException | NoSuchAlgorithmException | CertificateException |
                      KeyStoreException e) {
-                throw new IllegalStateException("Failed to create keystore", e);
+                LOG.error("Failed to load vault from {}", path, e);
+                throw e;
             }
         }
     }
