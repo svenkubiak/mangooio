@@ -7,6 +7,8 @@ public final class Validation {
     public static final String EMAIL_KEY = "validation.email";
     public static final String EXACT_MATCH = "{0} must exactly match {1}";
     public static final String EXACT_MATCH_KEY = "validation.exactmatch";
+    public static final String FILE = "{0} must be a valid file";
+    public static final String FILE_KEY = "validation.file";
     public static final String FILE_SIZE = "{0} exceeds allowed filesize";
     public static final String FILE_SIZE_KEY = "validation.filesize";
     public static final String FALSE_KEY = "validation.false";

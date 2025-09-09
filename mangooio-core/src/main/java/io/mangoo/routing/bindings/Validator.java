@@ -52,11 +52,12 @@ public class Validator implements Serializable {
             try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
                 String detectedType = FileUtils.getMimeType(bais);
 
-                for (String type : allowedMimeTypes) {
-                    if (type.equalsIgnoreCase(detectedType)) {
-                        addError(name, Optional.ofNullable(message)
-                                .orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
-                    }
+                boolean allowed = allowedMimeTypes.stream()
+                        .anyMatch(type -> type.equalsIgnoreCase(detectedType));
+
+                if (!allowed) {
+                    addError(name, Optional.ofNullable(message)
+                            .orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
                 }
             } catch (Exception e) {
                 addError(name, Optional.ofNullable(message)
@@ -161,6 +162,31 @@ public class Validator implements Serializable {
         if (StringUtils.isBlank(StringUtils.trimToNull(value))) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.REQUIRED_KEY, name)));
         }
+    }
+
+    /**
+     * Validates a given field to be File
+     *
+     * @param name The field to check
+     * @param message A custom error message instead of the default one
+     */
+    public void expectFile(String name, String message) {
+        Objects.requireNonNull(name, Required.NAME);
+        byte[] bytes = files.get(name);
+
+        if (bytes == null || bytes.length == 0) {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FILE_KEY, name)));
+        }
+    }
+
+    /**
+     * Validates a given field to be File
+     *
+     * @param name The field to check
+     */
+    public void expectFile(String name) {
+        Objects.requireNonNull(name, Required.NAME);
+        expectFile(name, null);
     }
 
     /**

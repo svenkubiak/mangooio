@@ -83,9 +83,9 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 * 1.394 Sonar rules
 * 7.419 Lines of core code
-* 4.740 Commits
-* 582 Unit tests
-* 9+ years development maturity
+* 4.897 Commits
+* 932 Unit tests
+* 10+ years development maturity
 * 223 cups of coffee (estimated)
 
 ## Resources

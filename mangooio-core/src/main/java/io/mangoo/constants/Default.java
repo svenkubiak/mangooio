@@ -77,6 +77,7 @@ public final class Default {
         messages.put(Validation.DOMAIN_NAME_KEY, Validation.DOMAIN_NAME);
         messages.put(Validation.MIME_TYPE_KEY, Validation.MIME_TYPE);
         messages.put(Validation.FILE_SIZE_KEY, Validation.FILE_SIZE);
+        messages.put(Validation.FILE_KEY, Validation.FILE);
     }
 
     private Default() {
