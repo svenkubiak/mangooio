@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -16,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Execution(ExecutionMode.CONCURRENT)
 class JwtUtilsTest {
-    private static final byte[] SECRET = CommonUtils.randomString(64).getBytes();
-    private static final String KEY = CommonUtils.randomString(64);
+    private static final byte[] SECRET = CommonUtils.randomString(64).getBytes(StandardCharsets.UTF_8);
+    private static final byte[] KEY = CommonUtils.randomString(64).getBytes(StandardCharsets.UTF_8);
     private static final String ISSUER = "test-issuer";
     private static final String AUDIENCE = "test-audience";
     private static final String SUBJECT = "test-subject";
@@ -106,7 +107,7 @@ class JwtUtilsTest {
         JwtUtils.JwtData jwtData = validJwtData.withKey(null);
 
         //when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        NullPointerException exception = assertThrows(NullPointerException.class,
                 () -> JwtUtils.createJwt(jwtData));
         assertThat(exception.getMessage(), containsString("key can not be null"));
     }
@@ -406,10 +407,10 @@ class JwtUtilsTest {
         String newKey = "new-key";
 
         //when
-        JwtUtils.JwtData newJwtData = validJwtData.withKey(newKey);
+        JwtUtils.JwtData newJwtData = validJwtData.withKey(newKey.getBytes(StandardCharsets.UTF_8));
 
         //then
-        assertThat(newJwtData.key(), equalTo(newKey));
+        assertThat(newJwtData.key(), equalTo(newKey.getBytes(StandardCharsets.UTF_8)));
         assertThat(newJwtData.secret(), equalTo(validJwtData.secret()));
         assertThat(newJwtData.issuer(), equalTo(validJwtData.issuer()));
         assertThat(newJwtData.audience(), equalTo(validJwtData.audience()));

@@ -484,36 +484,36 @@ public final class Application {
             failsafe();
         }
 
-        bitLength = getBitLength(config.getAuthenticationCookieSecret());
+        bitLength = getBitLength(new String(config.getAuthenticationCookieSecret()));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Authentication cookie requires a 512 bit encryption secret. The current property for authentication.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
-        bitLength = getBitLength(config.getSessionCookieSecret());
+        bitLength = getBitLength(new String(config.getSessionCookieSecret()));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Session cookie secret a 512 bit encryption secret. The current property for session.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(config.getFlashCookieSecret());
+        bitLength = getBitLength(new String(config.getFlashCookieSecret()));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Flash cookie requires a 512 bit encryption secret. The current property for flash.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(config.getFlashCookieKey());
+        bitLength = getBitLength(new String(config.getFlashCookieKey()));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Flash cookie requires a 512 bit signing key. The current property for flash.cookie.key has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(config.getAuthenticationCookieKey());
+        bitLength = getBitLength(new String(config.getAuthenticationCookieKey()));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Authentication cookie requires a 512 bit signing key. The current property for authentication.cookie.key has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(config.getSessionCookieKey());
+        bitLength = getBitLength(new String(config.getSessionCookieKey()));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Session cookie requires a 512 bit signing key. The current property for session.cookie.key has only {} bits.", bitLength);
             failsafe();
@@ -580,37 +580,37 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        if (config.getAuthenticationCookieSecret().equals(config.getApplicationSecret())) {
+        if (Arrays.equals(config.getAuthenticationCookieSecret(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
             var warning = "Authentication cookie secret is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
 
-        if (config.getSessionCookieSecret().equals(config.getApplicationSecret())) {
+        if (Arrays.equals(config.getSessionCookieSecret(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
             var warning = "Session cookie secret is using application secret. It is highly recommended to set a dedicated value to session.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
 
-        if (config.getFlashCookieSecret().equals(config.getApplicationSecret())) {
+        if (Arrays.equals(config.getFlashCookieSecret(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
             var warning = "Flash cookie secret is using application secret. It is highly recommended to set a dedicated value to flash.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
 
-        if (config.getAuthenticationCookieKey().equals(config.getApplicationSecret())) {
+        if (Arrays.equals(config.getAuthenticationCookieKey(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
             var warning = "Authentication cookie key is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.key.";
             warnings.add(warning);
             LOG.warn(warning);
         }
 
-        if (config.getSessionCookieKey().equals(config.getApplicationSecret())) {
+        if (Arrays.equals(config.getSessionCookieKey(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
             var warning = "Session cookie key is using application secret. It is highly recommended to set a dedicated value to session.cookie.key.";
             warnings.add(warning);
             LOG.warn(warning);
         }
 
-        if (config.getFlashCookieKey().equals(config.getApplicationSecret())) {
+        if (Arrays.equals(config.getFlashCookieKey(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
             var warning = "Flash cookie key is using application secret. It is highly recommended to set a dedicated value to flash.cookie.key.";
             warnings.add(warning);
             LOG.warn(warning);

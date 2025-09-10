@@ -10,6 +10,7 @@ public final class Default {
     public static final String APPLICATION_CONTROLLER = "controllers.";
     public static final String APPLICATION_LANGUAGE = "en";
     public static final String APPLICATION_NAME = "mangooio-application";
+    public static final Boolean AUTHENTICATION_BLACKLIST = Boolean.FALSE;
     public static final String AUTHENTICATION_COOKIE_NAME = "mangooio-auth";
     public static final long AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = 2592000;
     public static final String AUTHENTICATION_COOKIE_SAME_SITE_MODE = "Strict";

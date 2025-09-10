@@ -18,6 +18,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -962,7 +963,7 @@ class ConfigTest {
         Config config = new Config(new Vault());
 
         // then
-        assertThat(config.getSessionCookieSecret(), equalTo(key));
+        assertThat(config.getSessionCookieSecret(), equalTo(key.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -977,7 +978,7 @@ class ConfigTest {
         Config config = new Config(new Vault());
 
         // then
-        assertThat(config.getSessionCookieSecret(), equalTo(secret));
+        assertThat(config.getSessionCookieSecret(), equalTo(secret.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -992,7 +993,7 @@ class ConfigTest {
         Config config = new Config(new Vault());
 
         // then
-        assertThat(config.getFlashCookieSecret(), equalTo(key));
+        assertThat(config.getFlashCookieSecret(), equalTo(key.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -1007,7 +1008,7 @@ class ConfigTest {
         Config config = new Config(new Vault());
 
         // then
-        assertThat(config.getFlashCookieSecret(), equalTo(secret));
+        assertThat(config.getFlashCookieSecret(), equalTo(secret.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -1022,7 +1023,7 @@ class ConfigTest {
         Config config = new Config(new Vault());
 
         // then
-        assertThat(config.getAuthenticationCookieSecret(), equalTo(secret));
+        assertThat(config.getAuthenticationCookieSecret(), equalTo(secret.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -1036,7 +1037,7 @@ class ConfigTest {
         Config config = new Config(new Vault());
 
         // then
-        assertThat(config.getAuthenticationCookieSecret(), equalTo(key));
+        assertThat(config.getAuthenticationCookieSecret(), equalTo(key.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -1051,7 +1052,7 @@ class ConfigTest {
         Config config = new Config(new Vault());
 
         // then
-        assertThat(config.getAuthenticationCookieSecret(), equalTo(secret));
+        assertThat(config.getAuthenticationCookieSecret(), equalTo(secret.getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test

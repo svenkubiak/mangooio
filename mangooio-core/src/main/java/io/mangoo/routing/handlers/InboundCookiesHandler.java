@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -66,7 +65,7 @@ public class InboundCookiesHandler implements HttpHandler {
             try {
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getSessionCookieKey())
-                        .withSecret(config.getSessionCookieSecret().getBytes(StandardCharsets.UTF_8))
+                        .withSecret(config.getSessionCookieSecret())
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getSessionCookieName())
                         .withTtlSeconds(config.getSessionCookieTokenExpires());
@@ -104,21 +103,26 @@ public class InboundCookiesHandler implements HttpHandler {
             try {
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getAuthenticationCookieKey())
-                        .withSecret(config.getAuthenticationCookieSecret().getBytes(StandardCharsets.UTF_8))
+                        .withSecret(config.getAuthenticationCookieSecret())
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getAuthenticationCookieName())
                         .withTtlSeconds(config.getAuthenticationCookieRememberExpires());
 
                 var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
 
-                authentication = Authentication.create()
-                        .rememberMe(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.REMEMBER_ME)))
-                        .withSubject(jwtClaimsSet.getSubject())
-                        .twoFactorAuthentication(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.TWO_FACTOR)))
-                        .withExpires(LocalDateTime.ofInstant(
-                            jwtClaimsSet.getExpirationTime().toInstant(),
-                            ZoneId.systemDefault()
-                        ));
+                if (!(config.isAuthenticationBlacklist()
+                        && CommonUtils.isBlacklisted(jwtClaimsSet.getJWTID()))) {
+
+                    authentication = Authentication.create()
+                            .rememberMe(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.REMEMBER_ME)))
+                            .withSubject(jwtClaimsSet.getSubject())
+                            .withId(jwtClaimsSet.getJWTID())
+                            .twoFactorAuthentication(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.TWO_FACTOR)))
+                            .withExpires(LocalDateTime.ofInstant(
+                                    jwtClaimsSet.getExpirationTime().toInstant(),
+                                    ZoneId.systemDefault()
+                            ));
+                }
             } catch (ParseException | MangooJwtException e) {
                 LOG.error("Failed to parse authentication cookie", e);
                 authentication.invalidate();
@@ -141,7 +145,7 @@ public class InboundCookiesHandler implements HttpHandler {
             try {
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getFlashCookieKey())
-                        .withSecret(config.getFlashCookieSecret().getBytes(StandardCharsets.UTF_8))
+                        .withSecret(config.getFlashCookieSecret())
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getFlashCookieName())
                         .withTtlSeconds(60);

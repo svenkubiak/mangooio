@@ -17,7 +17,6 @@ import jakarta.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -72,7 +71,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getSessionCookieKey())
-                        .withSecret(config.getSessionCookieSecret().getBytes(StandardCharsets.UTF_8))
+                        .withSecret(config.getSessionCookieSecret())
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getSessionCookieName())
                         .withSubject(CommonUtils.uuidV6())
@@ -104,6 +103,11 @@ public class OutboundCookiesHandler implements HttpHandler {
     protected void setAuthenticationCookie(HttpServerExchange exchange) {
         var authentication = attachment.getAuthentication();
         if (authentication.isInvalid() || authentication.isLogout()) {
+            String id = authentication.getId();
+            if (config.isAuthenticationBlacklist() && !CommonUtils.isBlacklisted(id)) {
+               CommonUtils.blacklist(id);
+            }
+
             var cookie = new CookieImpl(config.getAuthenticationCookieName())
                     .setSecure(config.isAuthenticationCookieSecure())
                     .setValue("")
@@ -129,7 +133,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                     var jwtData = JwtUtils.jwtData()
                             .withKey(config.getAuthenticationCookieKey())
-                            .withSecret(config.getAuthenticationCookieSecret().getBytes(StandardCharsets.UTF_8))
+                            .withSecret(config.getAuthenticationCookieSecret())
                             .withIssuer(config.getApplicationName())
                             .withAudience(config.getAuthenticationCookieName())
                             .withSubject(authentication.getSubject())
@@ -185,7 +189,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getFlashCookieKey())
-                        .withSecret(config.getFlashCookieSecret().getBytes(StandardCharsets.UTF_8))
+                        .withSecret(config.getFlashCookieSecret())
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getFlashCookieName())
                         .withSubject(CommonUtils.uuidV6())

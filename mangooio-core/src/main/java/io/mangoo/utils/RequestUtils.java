@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public final class RequestUtils {
@@ -103,7 +102,7 @@ public final class RequestUtils {
                 try {
                     var jwtData = JwtUtils.JwtData.create()
                                     .withKey(config.getAuthenticationCookieKey())
-                                    .withSecret(config.getAuthenticationCookieSecret().getBytes(StandardCharsets.UTF_8))
+                                    .withSecret(config.getAuthenticationCookieSecret())
                                     .withIssuer(config.getApplicationName())
                                     .withAudience(config.getAuthenticationCookieName())
                                     .withTtlSeconds(config.getAuthenticationCookieTokenExpires());

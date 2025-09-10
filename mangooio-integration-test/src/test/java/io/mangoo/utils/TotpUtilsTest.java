@@ -158,7 +158,7 @@ class TotpUtilsTest {
         //when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () ->  TotpUtils.getTotp(secret));
-        assertThat(exception.getMessage(), containsString("secret can not be null or blank"));
+        assertThat(exception.getMessage(), containsString("secret can not be null"));
     }
 
     @Test
@@ -263,7 +263,7 @@ class TotpUtilsTest {
         //when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> TotpUtils.verifyTotp(secret, totp));
-        assertThat(exception.getMessage(), containsString("secret can not be null or blank"));
+        assertThat(exception.getMessage(), containsString("secret can not be null"));
     }
 
     @Test

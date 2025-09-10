@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Authentication {
     private LocalDateTime expires;
     private String subject;
+    private String id;
     private boolean twoFactor;
     private boolean remember;
     private boolean loggedOut;
@@ -38,6 +39,14 @@ public class Authentication {
             this.subject = subject;            
         }
         
+        return this;
+    }
+
+    public Authentication withId(String id) {
+        if (StringUtils.isBlank(this.id)) {
+            this.id = id;
+        }
+
         return this;
     }
 
@@ -214,7 +223,11 @@ public class Authentication {
     public boolean isValid() {
         return StringUtils.isNotBlank(subject);
     }
-    
+
+    public String getId() {
+        return id;
+    }
+
     public boolean isInvalid() {
         return invalid;
     }

@@ -75,7 +75,7 @@ class ServerSentEventServiceTest {
         Config config = Application.getInstance(Config.class);
 
         var jwtData = JwtUtils.JwtData.create()
-                .withKey(CommonUtils.randomString(64))
+                .withKey(CommonUtils.randomString(64).getBytes(StandardCharsets.UTF_8))
                 .withSecret(CommonUtils.randomString(64).getBytes(StandardCharsets.UTF_8))
                 .withIssuer(config.getApplicationName())
                 .withAudience(config.getAuthenticationCookieName())

@@ -560,7 +560,7 @@ class RequestUtilsTest {
             var jwtData = JwtUtils.JwtData.create()
                     .withKey(config.getAuthenticationCookieKey())
                     .withSubject("fooobar")
-                    .withSecret(config.getAuthenticationCookieSecret().getBytes(java.nio.charset.StandardCharsets.UTF_8))
+                    .withSecret(config.getAuthenticationCookieSecret())
                     .withIssuer(config.getApplicationName())
                     .withAudience(config.getAuthenticationCookieName())
                     .withTtlSeconds(config.getAuthenticationCookieTokenExpires());

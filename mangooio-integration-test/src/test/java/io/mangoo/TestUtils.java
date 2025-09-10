@@ -10,7 +10,6 @@ import io.mangoo.test.http.TestResponse;
 import io.mangoo.utils.JwtUtils;
 
 import java.net.HttpCookie;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 
 public final class TestUtils {
@@ -25,7 +24,7 @@ public final class TestUtils {
 
         var jwtData = JwtUtils.jwtData()
                 .withKey(config.getSessionCookieKey())
-                .withSecret(config.getSessionCookieSecret().getBytes(StandardCharsets.UTF_8))
+                .withSecret(config.getSessionCookieSecret())
                 .withIssuer(config.getApplicationName())
                 .withAudience(config.getSessionCookieName())
                 .withTtlSeconds(config.getSessionCookieTokenExpires());

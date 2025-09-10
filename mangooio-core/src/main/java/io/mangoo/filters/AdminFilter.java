@@ -43,7 +43,7 @@ public class AdminFilter implements PerRequestFilter {
             if (StringUtils.isNotBlank(value)) {
                 try {
                     var jwtData = JwtUtils.JwtData.create()
-                            .withKey(config.getApplicationSecret())
+                            .withKey(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
                             .withSecret(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
                             .withIssuer(config.getApplicationName())
                             .withAudience(MangooUtils.getAdminCookieName())

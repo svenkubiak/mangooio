@@ -3,6 +3,9 @@ package io.mangoo.utils;
 import com.fasterxml.uuid.Generators;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
+import io.mangoo.cache.CacheProvider;
+import io.mangoo.constants.CacheName;
+import io.mangoo.constants.Const;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
@@ -358,5 +361,25 @@ public final class CommonUtils {
         }
 
         return content;
+    }
+
+    public static boolean isBlacklisted(String id) {
+        Arguments.requireNonBlank(id, Required.ID);
+
+        var authCache = Application
+                .getInstance(CacheProvider.class)
+                .getCache(CacheName.BLACKLIST);
+
+        return authCache.get(Const.BLACKLIST_PREFIX + id) != null;
+    }
+
+    public static void blacklist(String id) {
+        Arguments.requireNonBlank(id, Required.ID);
+
+        var authCache = Application
+                .getInstance(CacheProvider.class)
+                .getCache(CacheName.BLACKLIST);
+
+        authCache.put(Const.BLACKLIST_PREFIX + id, Strings.EMPTY);
     }
 }

@@ -34,6 +34,7 @@ public final class Required {
     public static final String HEADERS = "headers can not be null or blank";
     public static final String HTTP_METHOD = "HTTP method can not be null or blank";
     public static final String HTTP_SERVER_EXCHANGE = "httpServerExchange can not be null or blank";
+    public static final String ID = "id can not be null or blank";
     public static final String INDEX = "index can not be null or blank";
     public static final String INDEX_OPTIONS = "indexOptions can not be null or blank";
     public static final String INDEXES = "indexes van not be null";
@@ -76,7 +77,7 @@ public final class Required {
     public static final String RESOURCE = "resource can not be null or blank";
     public static final String ROUTE = "route can not be null or blank";
     public static final String SALT = "salt can not be null or blank";
-    public static final String SECRET = "secret can not be null or blank";
+    public static final String SECRET = "secret can not be null";
     public static final String SOURCE_PATH = "source path can not be null or blank";
     public static final String SORT = "sort can not be null or blank";
     public static final String STACK_TRACE_ELEMENT = "stack trace element can not be null or blank";

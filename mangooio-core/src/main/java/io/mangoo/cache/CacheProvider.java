@@ -5,6 +5,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
+import io.mangoo.utils.Arguments;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
@@ -20,6 +21,7 @@ public class CacheProvider implements Provider<Cache> {
     private static final long SIXTY = 60;
     private static final long THIRTY = 30;
     private static final long FORTY_THOUSAND = 40000;
+    private static final long TWENTY_THOUSAND = 20000;
     private final Map<String, Cache> caches = new HashMap<>();
     private Cache cache;
 
@@ -27,7 +29,10 @@ public class CacheProvider implements Provider<Cache> {
     @SuppressFBWarnings(value = "FII_USE_FUNCTION_IDENTITY", justification = "Required by cache creation function")
     public CacheProvider(Config config) {
         Objects.requireNonNull(config, Required.CONFIG);
-        
+
+        if (config.isAuthenticationBlacklist()) {
+            initBlacklistCache();
+        }
         initApplicationCache();
         initAuthenticationCache();
         setDefaultApplicationCache();
@@ -53,6 +58,16 @@ public class CacheProvider implements Provider<Cache> {
         caches.put(CacheName.AUTH, authenticationCache);
     }
 
+    private void initBlacklistCache() {
+        Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
+                .maximumSize(TWENTY_THOUSAND)
+                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES)) //FIX ME
+                .recordStats()
+                .build());
+
+        caches.put(CacheName.BLACKLIST, authenticationCache);
+    }
+
     private void setDefaultApplicationCache() {
         cache = getCache(CacheName.APPLICATION);
     }
@@ -64,7 +79,7 @@ public class CacheProvider implements Provider<Cache> {
      * @return A Cache instance
      */
     public Cache getCache(String name) {
-        Objects.requireNonNull(name, Required.NAME);
+        Arguments.requireNonBlank(name, Required.NAME);
         return caches.get(name);
     }
     

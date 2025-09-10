@@ -18,6 +18,7 @@ public final class Key {
     public static final String APPLICATION_VAULT_ENABLE = "application.vault.enable";
     public static final String APPLICATION_VAULT_PATH = "application.vault.path";
     public static final String APPLICATION_VAULT_SECRET = "application.vault.secret";
+    public static final String AUTHENTICATION_BLACKLIST = "authentication.blacklist";
     public static final String AUTHENTICATION_COOKIE_NAME = "authentication.cookie.name";
     public static final String AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = "authentication.cookie.remember.expires";
     public static final String AUTHENTICATION_COOKIE_SAME_SITE_MODE = "authentication.cookie.samesitemode";

@@ -19,6 +19,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -486,22 +487,22 @@ public class Config {
     /**
      * @return session.cookie.secret or application secret if undefined
      */
-    public String getSessionCookieSecret() {
-        return getString(Key.SESSION_COOKIE_SECRET, getApplicationSecret());
+    public byte[] getSessionCookieSecret() {
+        return getString(Key.SESSION_COOKIE_SECRET, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
      * @return authentication.cookie.secret or application secret if undefined
      */
-    public String getAuthenticationCookieSecret() {
-        return getString(Key.AUTHENTICATION_COOKIE_SECRET, getApplicationSecret());
+    public byte[] getAuthenticationCookieSecret() {
+        return getString(Key.AUTHENTICATION_COOKIE_SECRET, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
      * @return flash.cookie.secret or application secret if undefined
      */
-    public String getFlashCookieSecret() {
-        return getString(Key.FLASH_COOKIE_SECRET, getApplicationSecret());
+    public byte[] getFlashCookieSecret() {
+        return getString(Key.FLASH_COOKIE_SECRET, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
@@ -734,22 +735,22 @@ public class Config {
     /**
      * @return session.cookie.key or application.secret if undefined
      */
-    public String getSessionCookieKey() {
-        return getString(Key.SESSION_COOKIE_KEY, getApplicationSecret());
+    public byte[] getSessionCookieKey() {
+        return getString(Key.SESSION_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
      * @return flash.cookie.key or application.secret if undefined
      */
-    public String getFlashCookieKey() {
-        return getString(Key.FLASH_COOKIE_KEY, getApplicationSecret());
+    public byte[] getFlashCookieKey() {
+        return getString(Key.FLASH_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
      * @return authentication.cookie.key or application.secret if undefined
      */
-    public String getAuthenticationCookieKey() {
-        return getString(Key.FLASH_COOKIE_KEY, getApplicationSecret());
+    public byte[] getAuthenticationCookieKey() {
+        return getString(Key.FLASH_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
@@ -759,7 +760,15 @@ public class Config {
         return getString(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS, Default.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
     }
 
+    /**
+     * @return authentication.blacklist or default value if undefined
+     */
+    public boolean isAuthenticationBlacklist() {
+        return getBoolean(Key.AUTHENTICATION_BLACKLIST, Default.AUTHENTICATION_BLACKLIST);
+    }
+
     public boolean isValid() {
         return valid;
     }
+
 }
