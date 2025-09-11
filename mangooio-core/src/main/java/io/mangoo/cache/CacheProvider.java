@@ -15,13 +15,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @Singleton
 public class CacheProvider implements Provider<Cache> {
     private static final long SIXTY = 60;
     private static final long THIRTY = 30;
     private static final long FORTY_THOUSAND = 40000;
-    private static final long TWENTY_THOUSAND = 20000;
+    private static final long TEN_THOUSAND = 10000;
     private final Map<String, Cache> caches = new HashMap<>();
     private Cache cache;
 
@@ -60,8 +61,8 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initBlacklistCache() {
         Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
-                .maximumSize(TWENTY_THOUSAND)
-                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES)) //FIX ME
+                .maximumSize(TEN_THOUSAND)
+                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
 
@@ -81,6 +82,23 @@ public class CacheProvider implements Provider<Cache> {
     public Cache getCache(String name) {
         Arguments.requireNonBlank(name, Required.NAME);
         return caches.get(name);
+    }
+
+    /**
+     * Adds a cache to the CacheProvider list making it available to
+     * the Admin Dashboard (if record stats is enabled)
+     *
+     * @param name The name of the cache
+     * @param cache The cache instance
+     */
+    public void addCache(String name, Cache cache) {
+        Arguments.requireNonBlank(name, Required.NAME);
+        Objects.requireNonNull(cache, Required.CACHE);
+
+        if (Stream.of(CacheName.APPLICATION, CacheName.BLACKLIST, CacheName.AUTH)
+                .noneMatch(s -> s.equalsIgnoreCase(name))) {
+            caches.put(CacheName.APPLICATION, cache);
+        }
     }
     
     /**˝
