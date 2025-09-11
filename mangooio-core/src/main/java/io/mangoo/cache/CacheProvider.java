@@ -97,7 +97,7 @@ public class CacheProvider implements Provider<Cache> {
 
         if (Stream.of(CacheName.APPLICATION, CacheName.BLACKLIST, CacheName.AUTH)
                 .noneMatch(s -> s.equalsIgnoreCase(name))) {
-            caches.put(CacheName.APPLICATION, cache);
+            caches.put(name, cache);
         }
     }
     

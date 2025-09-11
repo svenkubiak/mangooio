@@ -143,8 +143,6 @@ public final class MangooUtils {
     public static Cookie getAdminCookie(boolean requireTwoFactor) throws MangooJwtException {
         Config config = getInstance(Config.class);
         Map<String, String> claims = new HashMap<>();
-        claims.put("uuid", CommonUtils.randomString(32));
-
         if (requireTwoFactor && StringUtils.isNotBlank(config.getApplicationAdminSecret())) {
             claims.put("twofactor", "true");
         }
