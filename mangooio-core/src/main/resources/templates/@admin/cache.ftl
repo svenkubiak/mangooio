@@ -22,8 +22,6 @@
 						<th><b>Hit rate</b></th>
 						<th><b>Misses</b></th>
 						<th><b>Miss rate</b></th>
-						<th><b>Load successes</b></th>
-						<th><b>Load failures</b></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -36,8 +34,6 @@
 							<td>${statistic.hitRate()?string["0.##"]}</td>
 							<td>${statistic.missCount()}</td>
 							<td>${statistic.missRate()?string["0.##"]}</td>
-							<td>${statistic.loadSuccessCount()}</td>
-							<td>${statistic.loadFailureCount()}</td>
 						</tr>
 					</#list>
 					</tbody>
