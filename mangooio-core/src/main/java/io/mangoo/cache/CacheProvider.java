@@ -42,7 +42,7 @@ public class CacheProvider implements Provider<Cache> {
     private void initApplicationCache() {
         Cache applicationCache = new CacheImpl(Caffeine.newBuilder()
                 .maximumSize(FORTY_THOUSAND)
-                .expireAfterAccess(Duration.of(THIRTY, ChronoUnit.DAYS))
+                .expireAfterWrite(Duration.of(THIRTY, ChronoUnit.DAYS))
                 .recordStats()
                 .build());
 
@@ -52,7 +52,7 @@ public class CacheProvider implements Provider<Cache> {
     private void initAuthenticationCache() {
         Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
                 .maximumSize(FORTY_THOUSAND)
-                .expireAfterAccess(Duration.of(SIXTY, ChronoUnit.MINUTES))
+                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
 
