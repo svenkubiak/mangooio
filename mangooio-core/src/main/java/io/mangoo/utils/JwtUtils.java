@@ -20,7 +20,7 @@ import java.util.*;
 public final class JwtUtils {
     private static final String JWT = "JWT";
     private static final int SALT_LENGTH = 32;
-    private static final int ITERATIONS = 100_00;
+    private static final int ITERATIONS = 100_000;
     private static final Set<String> RESERVED = Set.of("iss", "aud", "sub", "iat", "nbf", "exp", "jti");
 
     private JwtUtils() {
