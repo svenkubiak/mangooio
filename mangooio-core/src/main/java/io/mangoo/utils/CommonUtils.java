@@ -63,9 +63,9 @@ public final class CommonUtils {
         var argon2 = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
                 .withVersion(Argon2Parameters.ARGON2_VERSION_13)
                 .withParallelism(2)
-                .withMemoryAsKB(100000)
+                .withMemoryAsKB(80000)
                 .withSalt(salt.getBytes(StandardCharsets.UTF_8))
-                .withIterations(16)
+                .withIterations(6)
                 .build();
 
         var argon2Generator = new Argon2BytesGenerator();
