@@ -21,8 +21,8 @@ import java.util.stream.Stream;
 public class CacheProvider implements Provider<Cache> {
     private static final long SIXTY = 60;
     private static final long THIRTY = 30;
-    private static final long FORTY_THOUSAND = 40000;
-    private static final long TEN_THOUSAND = 10000;
+    private static final long FIFTY_THOUSAND = 50000;
+    private static final long FIVE_THOUSAND = 5000;
     private final Map<String, Cache> caches = new HashMap<>();
     private Cache cache;
 
@@ -41,7 +41,7 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initApplicationCache() {
         Cache applicationCache = new CacheImpl(Caffeine.newBuilder()
-                .maximumSize(FORTY_THOUSAND)
+                .maximumSize(FIFTY_THOUSAND)
                 .expireAfterWrite(Duration.of(THIRTY, ChronoUnit.DAYS))
                 .recordStats()
                 .build());
@@ -51,7 +51,7 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initAuthenticationCache() {
         Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
-                .maximumSize(FORTY_THOUSAND)
+                .maximumSize(FIFTY_THOUSAND)
                 .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
@@ -61,7 +61,7 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initBlacklistCache() {
         Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
-                .maximumSize(TEN_THOUSAND)
+                .maximumSize(FIVE_THOUSAND)
                 .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
