@@ -1,3 +1,13 @@
+## Version 9.10.0
+
+Unreleased
+
+* Reduced unnecessary cache size (svenkubiak)
+* Version bumps (svenkubiak)
+    * guava 33.4.8-jre -&gt; 33.5.0-jre
+    * tika-core 3.2.2 -&gt; 3.2.3
+    * bouncy-castle 1.81 -&gt; 1.82
+
 ## Version 9.9.0
 
 Released at 18.08.2025
@@ -5,6 +15,9 @@ Released at 18.08.2025
 * Version bumps (svenkubiak)
     * mockito-core 3.2.1 -&gt; 3.2.2
     * undertow-core 2.3.18.Final -&gt; 2.3.19.Final
+    * guava 33.4.8-jre -&gt; 33.5.0-jre
+    * tika-core 3.2.2 -&gt; 3.2.3
+    * bouncy-castle 1.81 -&gt; 1.82
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.8.0...9.9.0)
 
