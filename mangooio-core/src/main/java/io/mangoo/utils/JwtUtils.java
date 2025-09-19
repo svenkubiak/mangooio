@@ -1,10 +1,10 @@
 package io.mangoo.utils;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.DirectDecrypter;
+import com.nimbusds.jose.crypto.DirectEncrypter;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
-import com.nimbusds.jose.crypto.PasswordBasedDecrypter;
-import com.nimbusds.jose.crypto.PasswordBasedEncrypter;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.mangoo.constants.Required;
@@ -12,15 +12,12 @@ import io.mangoo.exceptions.MangooJwtException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.fury.util.Preconditions;
 
-import java.security.SecureRandom;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.*;
 
 public final class JwtUtils {
     private static final String JWT = "JWT";
-    private static final int SALT_LENGTH = 32;
-    private static final int ITERATIONS = 100_000;
     private static final Set<String> RESERVED = Set.of("iss", "aud", "sub", "iat", "nbf", "exp", "jti");
 
     private JwtUtils() {
@@ -53,7 +50,7 @@ public final class JwtUtils {
 
             JWTClaimsSet claimsSet = claimsBuilder.build();
 
-            // Step 1: Sign JWT using KEY
+            // Step 1: Sign JWT using KEY with HS512
             var jwsHeader = new JWSHeader.Builder(JWSAlgorithm.HS512)
                     .type(JOSEObjectType.JWT)
                     .build();
@@ -62,18 +59,16 @@ public final class JwtUtils {
             var signer = new MACSigner(jwtData.key());
             signedJWT.sign(signer);
 
-            // Step 2: Encrypt with SECRET
+            // Step 2: Encrypt with SECRET using direct encryption with AES256-GCM
             var jweHeader = new JWEHeader.Builder(
-                    JWEAlgorithm.PBES2_HS512_A256KW,
+                    JWEAlgorithm.DIR,
                     EncryptionMethod.A256GCM)
-                    .compressionAlgorithm(CompressionAlgorithm.DEF)
                     .contentType(JWT)
                     .build();
 
             var jweObject = new JWEObject(jweHeader, new Payload(signedJWT.serialize()));
 
-            var encrypter = new PasswordBasedEncrypter(jwtData.secret(), SALT_LENGTH, ITERATIONS);
-            encrypter.getJCAContext().setSecureRandom(new SecureRandom());
+            var encrypter = new DirectEncrypter(jwtData.secret());
             jweObject.encrypt(encrypter);
 
             return jweObject.serialize();
@@ -90,15 +85,15 @@ public final class JwtUtils {
             // Step 1: Parse encrypted JWE
             var jweObject = JWEObject.parse(jwt);
 
-            if (!JWEAlgorithm.PBES2_HS512_A256KW.equals(jweObject.getHeader().getAlgorithm())) {
+            if (!JWEAlgorithm.DIR.equals(jweObject.getHeader().getAlgorithm())) {
                 throw new JOSEException("Unexpected JWE algorithm: " + jweObject.getHeader().getAlgorithm());
             }
             if (!EncryptionMethod.A256GCM.equals(jweObject.getHeader().getEncryptionMethod())) {
                 throw new JOSEException("Unexpected JWE encryption method: " + jweObject.getHeader().getEncryptionMethod());
             }
 
-            // Step 2: Decrypt using SECRET
-            var decrypter = new PasswordBasedDecrypter(jwtData.secret());
+            // Step 2: Decrypt using SECRET with direct decryption
+            var decrypter = new DirectDecrypter(jwtData.secret());
             jweObject.decrypt(decrypter);
 
             // Step 3: Extract and parse Signed JWT
@@ -163,7 +158,7 @@ public final class JwtUtils {
             // Step 1: Parse encrypted JWE
             var jweObject = JWEObject.parse(jwt);
 
-            if (!JWEAlgorithm.PBES2_HS512_A256KW.equals(jweObject.getHeader().getAlgorithm())) {
+            if (!JWEAlgorithm.DIR.equals(jweObject.getHeader().getAlgorithm())) {
                 throw new JOSEException("Unexpected JWE algorithm: " + jweObject.getHeader().getAlgorithm());
             }
             if (!EncryptionMethod.A256GCM.equals(jweObject.getHeader().getEncryptionMethod())) {
@@ -171,7 +166,7 @@ public final class JwtUtils {
             }
 
             // Step 2: Decrypt using SECRET (necessary to access payload)
-            var decrypter = new PasswordBasedDecrypter(secret);
+            var decrypter = new DirectDecrypter(secret);
             jweObject.decrypt(decrypter);
 
             // Step 3: Extract and parse Signed JWT without verifying signature
@@ -210,8 +205,8 @@ public final class JwtUtils {
     }
 
     public record JwtData(
-            byte[] secret,        // encryption/decryption
-            byte[] key,           // signing/verifying
+            byte[] secret,        // encryption/decryption key (32 bytes)
+            byte[] key,           // signing/verifying key
             String issuer,
             String audience,
             String subject,
