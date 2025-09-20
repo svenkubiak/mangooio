@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
-	<version>10.0.0-Alpha23-SNAPSHOT</version>
+	<version>10.0.0-Alpha24-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>mangoo I/O</name>
 	<description>mangoo I/O is a Modern, Intuitive, Lightweight, High
@@ -237,6 +237,26 @@
 				<artifactId>modernizer-maven-annotations</artifactId>
 				<version>${modernizer.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk</artifactId>
+                <version>1.54.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-exporter-otlp</artifactId>
+                <version>1.54.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.semconv</groupId>
+                <artifactId>opentelemetry-semconv</artifactId>
+                <version>1.37.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-mongo-3.1</artifactId>
+                <version>2.20.0-alpha</version>
+            </dependency>
 			<dependency>
 				<groupId>com.cronutils</groupId>
 				<artifactId>cron-utils</artifactId>
