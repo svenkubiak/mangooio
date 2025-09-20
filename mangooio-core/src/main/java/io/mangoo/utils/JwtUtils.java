@@ -62,7 +62,7 @@ public final class JwtUtils {
             // Step 2: Encrypt with SECRET using direct encryption with AES256-GCM
             var jweHeader = new JWEHeader.Builder(
                     JWEAlgorithm.DIR,
-                    EncryptionMethod.A256GCM)
+                    EncryptionMethod.A256CBC_HS512)
                     .contentType(JWT)
                     .build();
 
@@ -88,7 +88,7 @@ public final class JwtUtils {
             if (!JWEAlgorithm.DIR.equals(jweObject.getHeader().getAlgorithm())) {
                 throw new JOSEException("Unexpected JWE algorithm: " + jweObject.getHeader().getAlgorithm());
             }
-            if (!EncryptionMethod.A256GCM.equals(jweObject.getHeader().getEncryptionMethod())) {
+            if (!EncryptionMethod.A256CBC_HS512.equals(jweObject.getHeader().getEncryptionMethod())) {
                 throw new JOSEException("Unexpected JWE encryption method: " + jweObject.getHeader().getEncryptionMethod());
             }
 
@@ -161,7 +161,7 @@ public final class JwtUtils {
             if (!JWEAlgorithm.DIR.equals(jweObject.getHeader().getAlgorithm())) {
                 throw new JOSEException("Unexpected JWE algorithm: " + jweObject.getHeader().getAlgorithm());
             }
-            if (!EncryptionMethod.A256GCM.equals(jweObject.getHeader().getEncryptionMethod())) {
+            if (!EncryptionMethod.A256CBC_HS512.equals(jweObject.getHeader().getEncryptionMethod())) {
                 throw new JOSEException("Unexpected JWE encryption method: " + jweObject.getHeader().getEncryptionMethod());
             }
 

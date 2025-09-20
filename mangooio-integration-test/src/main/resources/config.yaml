@@ -2,7 +2,7 @@ default:
   application:
     name: arg{}
     url: arg{http://localhost:4223}
-    secret: Jb3MenqcohfVQNi3mYBBoYGk8JQ94u5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvvZpMznuWeOlnfcNss0qlimeK8MA5McCCPeo2fhC
+    secret: o5orE4lGoOM66HpOxuE9VVt1xuIefbmi7D6HFTpcDCwt4PoXH41wSi50jy8NkAcL
     language: en
     allowedOrigins: http://foo.de, http://bar.de
     minify:
@@ -10,6 +10,7 @@ default:
       css: true
     vault:
       enable: true
+      secret: Jb3MenqcohfVQNi3mYBBoYGk8JQ94u5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvvZpMznuWeOlnfcNss0qlimeK8MA5McCCPeo2fhC
     encrypted: arg{}
     named: shouldnotbedisplayed
     admin:
