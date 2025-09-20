@@ -40,16 +40,22 @@ public class OutboundCookiesHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         this.attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
 
-        Telemetry telemetry = Application.getInstance(Telemetry.class);
-        telemetry.begin("mangooio::setSessionCookie");
-        setSessionCookie(exchange);
-        telemetry.end("mangooio::setSessionCookie");
-        telemetry.begin("mangooio::setFlashCookie");
-        setFlashCookie(exchange);
-        telemetry.end("mangooio::setFlashCookie");
-        telemetry.begin("mangooio::setAuthenticationCookie");
-        setAuthenticationCookie(exchange);
-        telemetry.end("mangooio::setAuthenticationCookie");
+        if (config.isOtlpEnable()) {
+            Telemetry telemetry = Application.getInstance(Telemetry.class);
+            telemetry.begin("mangooio::setSessionCookie");
+            setSessionCookie(exchange);
+            telemetry.end("mangooio::setSessionCookie");
+            telemetry.begin("mangooio::setFlashCookie");
+            setFlashCookie(exchange);
+            telemetry.end("mangooio::setFlashCookie");
+            telemetry.begin("mangooio::setAuthenticationCookie");
+            setAuthenticationCookie(exchange);
+            telemetry.end("mangooio::setAuthenticationCookie");
+        } else {
+            setSessionCookie(exchange);
+            setFlashCookie(exchange);
+            setAuthenticationCookie(exchange);
+        }
 
         nextHandler(exchange);
     }
