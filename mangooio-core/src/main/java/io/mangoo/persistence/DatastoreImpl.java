@@ -15,9 +15,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.persistence.interfaces.BaseEntity;
 import io.mangoo.persistence.interfaces.Datastore;
-import io.mangoo.utils.Otlp;
 import io.mangoo.utils.PersistenceUtils;
-import io.opentelemetry.instrumentation.mongo.v3_1.MongoTelemetry;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -59,8 +57,6 @@ public class DatastoreImpl implements Datastore {
     @SuppressWarnings({"java:S2095", "java:S2629"})
     private void connect() {
        if (config.isPersistenceEnabled()) {
-           MongoTelemetry mongoTelemetry = MongoTelemetry.create(Otlp.getOpenTelemetry());
-
            var codecRegistry = MongoClientSettings.getDefaultCodecRegistry();
            var pojoCodecProvider = PojoCodecProvider.builder()
                    .conventions(List.of(ANNOTATION_CONVENTION))
@@ -70,7 +66,6 @@ public class DatastoreImpl implements Datastore {
            MongoClientSettings settings = MongoClientSettings.builder()
                    .applyConnectionString(new ConnectionString(getConnectionString()))
                    .codecRegistry(fromRegistries(codecRegistry, fromProviders(pojoCodecProvider)))
-                   .addCommandListener(mongoTelemetry.newCommandListener())
                    .build();
 
            mongoDatabase = MongoClients

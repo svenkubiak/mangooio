@@ -771,4 +771,31 @@ public class Config {
         return valid;
     }
 
+    /**
+     * @return otlp.enable or default value if undefined
+     */
+    public boolean isOtlpEnable() {
+        return getBoolean(Key.OTLP_ENABLE, Default.OTLP_ENABLE);
+    }
+
+    /**
+     * @return otlp.endpoint or null if undefined
+     */
+    public String getOtlpEndpoint() {
+        return getString(Key.OTLP_ENDPOINT, null);
+    }
+
+    /**
+     * @return otlp.scope or null if undefined
+     */
+    public String getOtlpService() {
+        return getString(Key.OTLP_SERVICE, null);
+    }
+
+    /**
+     * @return otlp.service or null if undefined
+     */
+    public String getOtlpScopeName() {
+        return getString(Key.OTLP_SCOPE, null);
+    }
 }
