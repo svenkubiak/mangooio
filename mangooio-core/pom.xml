@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>10.0.0-Alpha25-SNAPSHOT</version>
+		<version>10.0.0-Alpha26-SNAPSHOT</version>
 	</parent>
 	<artifactId>mangooio-core</artifactId>
 	<packaging>jar</packaging>
@@ -387,12 +387,6 @@
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-exporter-otlp</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.squareup.okio</groupId>
-                    <artifactId>okio-jvm</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry.semconv</groupId>
