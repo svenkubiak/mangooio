@@ -100,6 +100,7 @@ public final class Required {
     public static final String VALUES = "values can not be null or blank";
     public static final String RESPONSE = "response can not be null";
     public static final String PROCESS = "process can not be null or blank";
+    public static final String SCOPE = "scope can not be null or blank";
 
     private Required() {
     }

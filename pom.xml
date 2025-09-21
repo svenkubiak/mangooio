@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
-	<version>10.0.0-Alpha27-SNAPSHOT</version>
+	<version>10.0.0-Alpha28-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>mangoo I/O</name>
 	<description>mangoo I/O is a Modern, Intuitive, Lightweight, High
@@ -32,7 +32,7 @@
 		<enforcer.version>1.10.0</enforcer.version>
 		<jackson.version>2.20.0</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
-		<javadoc.version>3.11.3</javadoc.version>
+		<javadoc.version>3.12.0</javadoc.version>
 		<modernizer.version>3.2.0</modernizer.version>
         <bouncy-castle.version>1.82</bouncy-castle.version>
 	</properties>
@@ -522,7 +522,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>5.19.0</version>
+				<version>5.20.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.freemarker</groupId>

@@ -786,16 +786,9 @@ public class Config {
     }
 
     /**
-     * @return otlp.scope or null if undefined
+     * @return otlp.scope or application.name if undefined
      */
     public String getOtlpService() {
-        return getString(Key.OTLP_SERVICE, null);
-    }
-
-    /**
-     * @return otlp.service or null if undefined
-     */
-    public String getOtlpScopeName() {
-        return getString(Key.OTLP_SCOPE, null);
+        return getString(Key.OTLP_SERVICE, getApplicationName());
     }
 }

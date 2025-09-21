@@ -5,7 +5,6 @@ import io.mangoo.constants.Const;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.monitoring.Telemetry;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
@@ -40,22 +39,9 @@ public class OutboundCookiesHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         this.attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
 
-        if (config.isOtlpEnable()) {
-            Telemetry telemetry = Application.getInstance(Telemetry.class);
-            telemetry.begin("mangooio::setSessionCookie");
-            setSessionCookie(exchange);
-            telemetry.end("mangooio::setSessionCookie");
-            telemetry.begin("mangooio::setFlashCookie");
-            setFlashCookie(exchange);
-            telemetry.end("mangooio::setFlashCookie");
-            telemetry.begin("mangooio::setAuthenticationCookie");
-            setAuthenticationCookie(exchange);
-            telemetry.end("mangooio::setAuthenticationCookie");
-        } else {
-            setSessionCookie(exchange);
-            setFlashCookie(exchange);
-            setAuthenticationCookie(exchange);
-        }
+        setSessionCookie(exchange);
+        setFlashCookie(exchange);
+        setAuthenticationCookie(exchange);
 
         nextHandler(exchange);
     }

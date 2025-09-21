@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>10.0.0-Alpha27-SNAPSHOT</version>
+		<version>10.0.0-Alpha28-SNAPSHOT</version>
 	</parent>
 	<artifactId>mangooio-core</artifactId>
 	<packaging>jar</packaging>
@@ -387,6 +387,16 @@
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-exporter-otlp</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry.semconv</groupId>
