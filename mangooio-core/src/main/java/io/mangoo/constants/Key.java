@@ -77,8 +77,6 @@ public final class Key {
     public static final String UNDERTOW_MAX_ENTITY_SIZE = "undertow.maxentitysize";
     public static final String OTLP_ENABLE = "otlp.enable";
     public static final String OTLP_ENDPOINT = "otlp.endpoint";
-    public static final String OTLP_SERVICE = "otlp.service";
-    public static final String OTLP_SCOPE = "otlp.scope";
 
     private Key() {
     }
