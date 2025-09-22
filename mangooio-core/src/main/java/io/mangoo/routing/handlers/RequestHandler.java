@@ -13,6 +13,7 @@ import io.mangoo.routing.bindings.Request;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.utils.JsonUtils;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -40,10 +41,12 @@ public class RequestHandler implements HttpHandler {
         attachment.setBody(getRequestBody(exchange));
         attachment.setRequest(getRequest(exchange));
 
+        Trace.startChild(exchange.getRequestPath(), "Invoke controller");
         var response = getResponse(exchange);
         response.getCookies().forEach(exchange::setResponseCookie);
 
         attachment.setResponse(response);
+        Trace.end("Invoke controller");
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
         nextHandler(exchange);
