@@ -10,6 +10,7 @@ import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.JwtUtils;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
@@ -37,11 +38,13 @@ public class OutboundCookiesHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
+        Trace.startChild(exchange.getRequestPath(), "OutboundCookiesHandler");
         this.attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
 
         setSessionCookie(exchange);
         setFlashCookie(exchange);
         setAuthenticationCookie(exchange);
+        Trace.end("OutboundCookiesHandler");
 
         nextHandler(exchange);
     }

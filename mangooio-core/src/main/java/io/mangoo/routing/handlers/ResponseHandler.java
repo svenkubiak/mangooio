@@ -5,6 +5,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Server;
 import io.mangoo.routing.Response;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
@@ -31,6 +32,8 @@ public class ResponseHandler implements HttpHandler {
         if (form != null) {
             form.discard();
         }
+
+        Trace.end(exchange.getRequestPath());
     }
 
     /**

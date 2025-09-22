@@ -14,6 +14,7 @@ import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.JwtUtils;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import jakarta.inject.Inject;
@@ -39,6 +40,7 @@ public class InboundCookiesHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
+        Trace.startChild(exchange.getRequestPath(), "InboundCookiesHandler");
         Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
         attachment.setSession(getSessionCookie(exchange));
         attachment.setAuthentication(getAuthenticationCookie(exchange));
@@ -46,6 +48,7 @@ public class InboundCookiesHandler implements HttpHandler {
         attachment.setForm(form);
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
+        Trace.end("InboundCookiesHandler");
         nextHandler(exchange);
     }
 

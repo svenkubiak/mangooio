@@ -1,7 +1,7 @@
 package io.mangoo.core;
 
 import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.monitoring.Telemetry;
+import io.mangoo.utils.internal.Trace;
 import jakarta.inject.Singleton;
 
 @Singleton
@@ -31,7 +31,7 @@ public class Shutdown extends Thread {
 
     private static void stopTelemetry() {
         if (Application.getInstance(Config.class).isOtlpEnable()) {
-            Application.getInstance(Telemetry.class).shutdown();
+            Application.getInstance(Trace.class).shutdown();
         }
     }
     

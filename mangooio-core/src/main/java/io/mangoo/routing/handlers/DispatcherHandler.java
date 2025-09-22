@@ -8,6 +8,7 @@ import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import org.apache.logging.log4j.LogManager;
@@ -93,6 +94,7 @@ public class DispatcherHandler implements HttpHandler {
             return;
         }
 
+        Trace.start(exchange.getRequestPath(), "HandlerChain");
         final var attachment = Attachment.build()
             .withControllerInstance(Application.getInstance(controllerClass))
             .withControllerClass(controllerClass)
