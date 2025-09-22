@@ -29,11 +29,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class Trace {
     private static final Logger LOG = LogManager.getLogger(Trace.class);
     private static final Map<String, Span> spans = new ConcurrentHashMap<>();
+    private static final boolean enabled;
     private static SdkTracerProvider tracerProvider;
     private static OpenTelemetry openTelemetry;
-    private static boolean enabled;
 
-    private Trace() {
+    static {
         Config config = Application.getInstance(Config.class);
         enabled = config.isOtlpEnable();
         if (enabled) {
@@ -58,6 +58,7 @@ public final class Trace {
                     .build();
         }
     }
+    private Trace() {}
 
     public static void shutdown() {
         if (tracerProvider != null) {
