@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class RequestHandler implements HttpHandler {
+
     private static final String FILTER_METHOD = "execute";
     private Attachment attachment;
     
@@ -41,12 +42,12 @@ public class RequestHandler implements HttpHandler {
         attachment.setBody(getRequestBody(exchange));
         attachment.setRequest(getRequest(exchange));
 
-        Trace.startChild(exchange.getRequestPath(), "Invoke controller");
+        Trace.startChild(exchange.getRequestPath(), Const.INVOKE_CONTROLLER);
         var response = getResponse(exchange);
         response.getCookies().forEach(exchange::setResponseCookie);
 
         attachment.setResponse(response);
-        Trace.end("Invoke controller");
+        Trace.end(Const.INVOKE_CONTROLLER);
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
         nextHandler(exchange);

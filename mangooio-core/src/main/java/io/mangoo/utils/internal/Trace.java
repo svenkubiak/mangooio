@@ -17,10 +17,8 @@ import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 
 import java.time.Duration;
 import java.util.Locale;
@@ -95,11 +93,10 @@ public final class Trace {
         }
     }
 
-    public static void start(String process, String scopeName) {
+    public static void start(String process) {
         if (!ENABLED) {return;}
 
         Arguments.requireNonBlank(process, Required.PROCESS);
-        if (StringUtils.isBlank(scopeName)) {scopeName = Strings.EMPTY;}
 
         if (openTelemetry != null) {
             Tracer tracer = openTelemetry.getTracer(Const.FRAMEWORK);
@@ -125,11 +122,6 @@ public final class Trace {
             }
         }
     }
-
-    public static void start(String process) {
-        start(process, Strings.EMPTY);
-    }
-
 
     public static void startChild(String parentProcess, String childProcess) {
         if (!ENABLED) {return;}
