@@ -1,3 +1,10 @@
+## Version 9.10.1
+
+Released at 23.09.2025
+
+* Version bumps (svenkubiak)
+    * log4j 2.25.1 -&gt; 2.25.2
+
 ## Version 9.10.0
 
 Released at 23.09.2025
