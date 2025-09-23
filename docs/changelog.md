@@ -14,7 +14,6 @@ Released at 23.09.2025
     * guava 33.4.8-jre -&gt; 33.5.0-jre
     * tika-core 3.2.2 -&gt; 3.2.3
     * bouncy-castle 1.81 -&gt; 1.82
-    * log4j 2.25.1 -&gt; 2.25.2
 
 ## Version 9.9.0
 
