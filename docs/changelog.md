@@ -1,6 +1,6 @@
 ## Version 9.10.0
 
-Unreleased
+Released at 23.09.2025
 
 * Reduced unnecessary cache size (svenkubiak)
 * Version bumps (svenkubiak)
