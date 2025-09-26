@@ -1,6 +1,6 @@
 # Application configuration
 #
-# The confugration consists of default values that are common in all environments and
+# The configuration consists of default values that are common in all environments and
 # environment specific values for dev, test, and prod.
 #
 # Values in an active environment overwrite default values
@@ -12,6 +12,8 @@ default:
     name: ${application-name}
     secret: application.secret
     language: en
+    vault:
+      enable: true
   connector:
     http:
       host: localhost
@@ -22,7 +24,7 @@ default:
       secret: vault{}
       key: vault{}
       secure: true
-  authenication:
+  authentication:
     redirect: /login
     cookie:
       name: ${application-name}-authentication
