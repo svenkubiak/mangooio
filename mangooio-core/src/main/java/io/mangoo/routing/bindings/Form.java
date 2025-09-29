@@ -138,6 +138,23 @@ public class Form extends Validator {
     }
 
     /**
+     * Retrieves an optional long value corresponding to the name of the form element
+     *
+     * @param key The name of the form element
+     * @return Optional of Long
+     */
+    public Optional<Long> getLong(String key) {
+        Objects.requireNonNull(key, Required.KEY);
+
+        String value = values.get(key);
+        if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
+            return Optional.of(Long.valueOf(value));
+        }
+
+        return Optional.empty();
+    }
+
+    /**
      * Retrieves a single file of the form. If the form
      * has multiple files, the first will be returned
      *
