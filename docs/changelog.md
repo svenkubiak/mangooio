@@ -10,6 +10,7 @@ Unreleased
 * Removed AJP connector (svenkubiak)
 * Replaced internal TOTP implementation with external library (svenkubiak)
 * Switched from Paseto to JWT (svenkubiak)
+* MongoDB index are now case-insensitive when they are unique (svenkubiak)
 * Upgraded to Java 25 (svenkubiak)
 * Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)

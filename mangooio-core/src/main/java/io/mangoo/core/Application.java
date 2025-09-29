@@ -5,6 +5,8 @@ import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
 import com.google.inject.*;
 import com.google.inject.Module;
+import com.mongodb.client.model.Collation;
+import com.mongodb.client.model.CollationStrength;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -51,6 +53,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
+import org.bson.conversions.Bson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -274,14 +277,37 @@ public final class Application {
                         .filter(info -> StringUtils.isNotBlank(info.getName()))
                         .forEach(info -> {
                             List<AnnotationParameterValue> annotationParams = info.getAnnotationInfo().getFirst().getParameterValues();
-                            boolean unique = (annotationParams.size() > 1) && (boolean) annotationParams.get(1).getValue();
-                            var sortOrder = annotationParams.get(0).getValue().toString();
 
-                            if (Sort.ASCENDING.value().equals(sortOrder)) {
-                                datastore.addIndex(classInfo.loadClass(), Indexes.ascending(info.getName()), new IndexOptions().unique(unique));
-                            } else if (Sort.DESCENDING.value().equals(sortOrder)) {
-                                datastore.addIndex(classInfo.loadClass(), Indexes.descending(info.getName()), new IndexOptions().unique(unique));
+                            boolean unique = false;
+                            boolean caseSensitive = false;
+                            var sort = "";
+
+                            for (AnnotationParameterValue annotationParam : annotationParams) {
+                                String name = annotationParam.getName();
+                                if ("unique".equals(name)) {
+                                    unique = (boolean) annotationParam.getValue();
+                                } else if ("caseSensitive".equals(name)) {
+                                    caseSensitive = (boolean) annotationParam.getValue();
+                                } else if (("sort").equals(name)) {
+                                    sort = annotationParam.getValue().toString();
+                                }
                             }
+
+                            Collation collation = Collation.builder()
+                                    .locale("en")
+                                    .collationStrength(CollationStrength.SECONDARY)
+                                    .build();
+
+                            IndexOptions indexOptions = new IndexOptions().unique(unique);
+                            if (!caseSensitive && unique) {
+                                indexOptions.collation(collation);
+                            }
+
+                            Bson indexType = Sort.ASCENDING.value().equals(sort)
+                                    ? Indexes.ascending(info.getName())
+                                    : Indexes.descending(info.getName());
+
+                            datastore.addIndex(classInfo.loadClass(), indexType, indexOptions);
                         });
             });
 
