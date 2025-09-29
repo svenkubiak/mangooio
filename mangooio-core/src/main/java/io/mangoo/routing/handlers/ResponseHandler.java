@@ -63,7 +63,7 @@ public class ResponseHandler implements HttpHandler {
             .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
 
         exchange.getResponseHeaders().put(Header.LOCATION, response.getRedirectTo());
-        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().put(key, value));
         exchange.endExchange();
     }
 
@@ -83,7 +83,7 @@ public class ResponseHandler implements HttpHandler {
             .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
         
         exchange.getResponseHeaders().put(Header.CONTENT_TYPE, response.getContentType() + "; charset=" + StandardCharsets.UTF_8.name());
-        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().put(key, value));
         exchange.getResponseSender().send(response.getBody());
     }
 }
