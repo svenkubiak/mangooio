@@ -35,9 +35,11 @@ public final class CommonUtils {
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final int MAX_LENGTH = 512;
     private static final int MIN_LENGTH = 22;
-    private static final Base32 BASE32ENCODER = new Base32();
-    private static final Base64.Encoder BASE64ENCODER = Base64.getEncoder();
-    private static final Base64.Decoder BASE64DECODER = Base64.getDecoder();
+    private static final Base32 BASE32_ENCODER = new Base32();
+    private static final Base64.Encoder BASE64_ENCODER = Base64.getEncoder();
+    private static final Base64.Decoder BASE64_DECODER = Base64.getDecoder();
+    private static final Base64.Encoder BASE64_URL_ENCODER = Base64.getUrlEncoder();
+    private static final Base64.Decoder BASE64_URL_DECODER = Base64.getUrlDecoder();
     private static final int BYTES = 8;
     private static final int MAX_BYTE_LENGTH = Integer.MAX_VALUE / 8;
     private static final ThreadSafeFury FURY = Fury.builder()
@@ -74,7 +76,7 @@ public final class CommonUtils {
         var hash = new byte[32];
         argon2Generator.generateBytes(cleartext.getBytes(StandardCharsets.UTF_8), hash);
 
-        return BASE64ENCODER.encodeToString(hash);
+        return BASE64_ENCODER.encodeToString(hash);
     }
 
     /**
@@ -157,7 +159,7 @@ public final class CommonUtils {
         Objects.requireNonNull(object, Required.OBJECT);
         
         byte[] serialize = FURY.serialize(object);
-        return BASE64ENCODER.encodeToString(serialize);
+        return BASE64_ENCODER.encodeToString(serialize);
     }
     
     /**
@@ -171,7 +173,7 @@ public final class CommonUtils {
     public static <T> T deserializeFromBase64(String data) {
         Arguments.requireNonBlank(data, Required.DATA);
         
-        byte[] bytes = BASE64DECODER.decode(data);
+        byte[] bytes = BASE64_DECODER.decode(data);
         return (T) FURY.deserialize(bytes);
     }
     
@@ -183,7 +185,62 @@ public final class CommonUtils {
      */
     public static byte[] encodeToBase64(String data) {
         Arguments.requireNonBlank(data, Required.DATA);
-        return BASE64ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
+        return BASE64_ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * URL Encodes a given string to a Base64 byte array
+     *
+     * @param data The data to convert
+     * @return The converted byte array
+     */
+    public static byte[] urlEncodeToBase64(String data) {
+        Arguments.requireNonBlank(data, Required.DATA);
+        return BASE64_URL_ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * URL Encodes a given string to a Base64 byte array without padding
+     *
+     * @param data The data to convert
+     * @return The converted byte array
+     */
+    public static byte[] urlEncodeWithoutPaddingToBase64(String data) {
+        Arguments.requireNonBlank(data, Required.DATA);
+        return BASE64_URL_ENCODER.withoutPadding().encode(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * URL Encodes a given string to a Base64 byte array without padding
+     *
+     * @param data The data to convert
+     * @return The converted byte array
+     */
+    public static String urlEncodeWithoutPaddingToBase64(byte [] data) {
+        Objects.requireNonNull(data, Required.DATA);
+        return BASE64_URL_ENCODER.withoutPadding().encodeToString(data);
+    }
+
+    /**
+     * URL Encodes a given string to a Base64 byte array
+     *
+     * @param data The data to convert
+     * @return The converted byte array
+     */
+    public static byte[] urlDecodeFromBase64(byte[] data) {
+        Objects.requireNonNull(data, Required.DATA);
+        return BASE64_URL_DECODER.decode(data);
+    }
+
+    /**
+     * URL Encodes a given string to a Base64 byte array
+     *
+     * @param data The data to convert
+     * @return The converted byte array
+     */
+    public static byte[] urlDecodeFromBase64(String data) {
+        Arguments.requireNonBlank(data, Required.DATA);
+        return BASE64_URL_DECODER.decode(data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -194,7 +251,7 @@ public final class CommonUtils {
      */
     public static String encodeToBase32(String data) {
         Arguments.requireNonBlank(data, Required.DATA);
-        return BASE32ENCODER.encodeToString(data.getBytes(StandardCharsets.UTF_8));
+        return BASE32_ENCODER.encodeToString(data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -205,7 +262,7 @@ public final class CommonUtils {
      */
     public static byte[] encodeToBase64(byte[] data) {
         Objects.requireNonNull(data, Required.DATA);
-        return BASE64ENCODER.encode(data);
+        return BASE64_ENCODER.encode(data);
     }
     
     /**
@@ -216,7 +273,7 @@ public final class CommonUtils {
      */
     public static byte[] decodeFromBase64(String data) {
         Arguments.requireNonBlank(data, Required.DATA);
-        return BASE64DECODER.decode(data);
+        return BASE64_DECODER.decode(data);
     }
 
     /**
@@ -315,13 +372,9 @@ public final class CommonUtils {
         var randomBytes = new byte[bytesNeeded];
         SECURE_RANDOM.nextBytes(randomBytes);
 
-        var token = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+        var token = BASE64_URL_ENCODER.withoutPadding().encodeToString(randomBytes);
         return token.substring(0, length);
     }
-
-
-
-
 
     /**
      * Checks if a resource exists in the classpath
@@ -341,8 +394,6 @@ public final class CommonUtils {
 
         return resource != null;
     }
-
-
 
     /**
      * Reads the content of a local resource to String
