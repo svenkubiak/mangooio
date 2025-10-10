@@ -27,7 +27,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -109,7 +109,7 @@ public final class MangooUtils {
 
             var dBuilder = dbf.newDocumentBuilder();
             dBuilder.setEntityResolver((publicId, systemId) ->
-                    new InputSource(new StringReader("")));
+                    new InputSource(Reader.of("")));
 
             var path = pomFile.toPath();
             try (var in = Files.newInputStream(path)) {

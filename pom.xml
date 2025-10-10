@@ -24,7 +24,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>21</jdk.version>
+		<jdk.version>25</jdk.version>
 		<log4j.version>2.25.2</log4j.version>
 		<maven.version>4.0.0-rc-4</maven.version>
 		<required.maven.version>3.9.0</required.maven.version>
@@ -185,6 +185,28 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
 					<version>3.15.1</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.ow2.asm</groupId>
+                            <artifactId>asm</artifactId>
+                            <version>9.8</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.ow2.asm</groupId>
+                            <artifactId>asm-util</artifactId>
+                            <version>9.8</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.ow2.asm</groupId>
+                            <artifactId>asm-tree</artifactId>
+                            <version>9.8</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.ow2.asm</groupId>
+                            <artifactId>asm-analysis</artifactId>
+                            <version>9.8</version>
+                        </dependency>
+                    </dependencies>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.plexus</groupId>
