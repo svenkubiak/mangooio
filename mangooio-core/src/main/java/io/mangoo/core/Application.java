@@ -12,8 +12,8 @@ import com.mongodb.client.model.Indexes;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.*;
 import io.mangoo.admin.AdminController;
+import io.mangoo.annotations.Async;
 import io.mangoo.async.EventBus;
-import io.mangoo.async.Subscriber;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Default;
@@ -316,7 +316,7 @@ public final class Application {
 
     @SuppressWarnings("unchecked")
     private static void prepareSubscriber(ScanResult scanResult) {
-        scanResult.getClassesImplementing(Subscriber.class).forEach(classInfo -> {
+        scanResult.getClassesWithAnnotation(Async.class).forEach(classInfo -> {
             var methodInfo = classInfo.getMethodInfo().getFirst();
             if (("receive").equals(methodInfo.getName())) {
                 var methodParameterInfo = Arrays.asList(methodInfo.getParameterInfo()).getFirst();
@@ -842,6 +842,7 @@ public final class Application {
         return new ClassGraph()
                 .enableAllInfo()
                 .acceptPackages(ALL_PACKAGES)
+                .removeTemporaryFilesAfterScan()
                 .scan();
     }
 
