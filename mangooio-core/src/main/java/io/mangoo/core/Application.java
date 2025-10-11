@@ -5,6 +5,7 @@ import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
 import com.google.inject.*;
 import com.google.inject.Module;
+import com.mongodb.MongoCommandException;
 import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.CollationStrength;
 import com.mongodb.client.model.IndexOptions;
@@ -12,8 +13,8 @@ import com.mongodb.client.model.Indexes;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.*;
 import io.mangoo.admin.AdminController;
-import io.mangoo.annotations.Async;
 import io.mangoo.async.EventBus;
+import io.mangoo.async.Subscriber;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Default;
@@ -118,6 +119,9 @@ public final class Application {
                     prepareScheduler(scanResult);
                     prepareDatastore(scanResult);
                     prepareSubscriber(scanResult);
+                } catch (Exception e) {
+                    LOG.error("Failure in classpath scanning", e);
+                    failsafe();
                 }
             });
             prepareRoutes();
@@ -307,7 +311,16 @@ public final class Application {
                                     ? Indexes.ascending(info.getName())
                                     : Indexes.descending(info.getName());
 
-                            datastore.addIndex(classInfo.loadClass(), indexType, indexOptions);
+                            try {
+                                datastore.addIndex(classInfo.loadClass(), indexType, indexOptions);
+                            } catch (MongoCommandException e) {
+                                if (e.getErrorCode() == 86) {
+                                    datastore.query(classInfo.loadClass()).dropIndex("uid_1");
+                                    datastore.addIndex(classInfo.loadClass(), indexType, indexOptions);
+                                } else {
+                                    throw e;
+                                }
+                            }
                         });
             });
 
@@ -316,7 +329,7 @@ public final class Application {
 
     @SuppressWarnings("unchecked")
     private static void prepareSubscriber(ScanResult scanResult) {
-        scanResult.getClassesWithAnnotation(Async.class).forEach(classInfo -> {
+        scanResult.getClassesImplementing(Subscriber.class).forEach(classInfo -> {
             var methodInfo = classInfo.getMethodInfo().getFirst();
             if (("receive").equals(methodInfo.getName())) {
                 var methodParameterInfo = Arrays.asList(methodInfo.getParameterInfo()).getFirst();
