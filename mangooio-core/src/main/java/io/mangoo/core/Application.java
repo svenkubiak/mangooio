@@ -322,6 +322,7 @@ public final class Application {
                 var methodParameterInfo = Arrays.asList(methodInfo.getParameterInfo()).getFirst();
                 var descriptor = methodParameterInfo.getTypeDescriptor().toString();
                 Application.getInstance(EventBus.class).register(descriptor, classInfo.loadClass());
+                LOG.info("Registered subscriber '{}'", classInfo.loadClass());
             }
         });
     }
