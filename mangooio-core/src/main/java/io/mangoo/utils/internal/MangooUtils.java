@@ -15,6 +15,9 @@ import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.JwtUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.executable.ExecutableValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,8 +47,18 @@ public final class MangooUtils {
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
+    private static ExecutableValidator EXECUTABLE_VALIDATOR;
+    static {
+        try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+            EXECUTABLE_VALIDATOR = validatorFactory.getValidator().forExecutables();
+        }
+    }
 
     private MangooUtils() {}
+
+    public static ExecutableValidator validator() {
+        return EXECUTABLE_VALIDATOR;
+    }
 
     @SuppressFBWarnings(justification = "Only used to retrieve the version of mangoo I/O", value = "URLCONNECTION_SSRF_FD")
     public static String getVersion() {
@@ -83,6 +96,7 @@ public final class MangooUtils {
 
         return languages;
     }
+
     private static File findRoot(File current) {
         while (current != null) {
             var pom = current.toPath().resolve("pom.xml").toFile();

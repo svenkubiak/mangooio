@@ -3,6 +3,7 @@
 Unreleased
 
 * Added Support for Open Telemetry (svenkubiak)
+* Added Support for Jakarta Validation API for methods parameters (svenkubiak)
 * Added new vault functionality for storing secrets based on Java Keystore (svenkubiak)
 * Added HTTPS connector (svenkubiak)
 * Removed cryptex{} from configuration in favour of new vault (svenkubiak)

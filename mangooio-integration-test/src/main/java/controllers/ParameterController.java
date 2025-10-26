@@ -1,6 +1,7 @@
 package controllers;
 
 import io.mangoo.routing.Response;
+import jakarta.validation.constraints.Email;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ public class ParameterController {
     private static final String PARAM_TEMPLATE = "/ParameterController/param.ftl";
     private static final String MULTIPARAM_TEMPLATE = "/ParameterController/multiparam.ftl";
 
-    public Response stringParam(String foo) {
+    public Response stringParam(@Email String foo) {
         if (foo == null) {
             foo = "isNull"; //NOSONAR
         }
