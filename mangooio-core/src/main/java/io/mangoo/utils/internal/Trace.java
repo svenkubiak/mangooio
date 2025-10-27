@@ -10,7 +10,6 @@ import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
-import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
@@ -40,7 +39,7 @@ public final class Trace {
         Config config = Application.getInstance(Config.class);
         ENABLED = config.isOtlpEnable();
         if (ENABLED) {
-            Resource resource = Resource.getDefault().merge(
+            var resource = Resource.getDefault().merge(
                     Resource.create(
                             Attributes.of(
                                     AttributeKey.stringKey("service.name"), Const.FRAMEWORK,
@@ -49,7 +48,7 @@ public final class Trace {
                                     AttributeKey.stringKey("framework.environment"), Application.getMode().name()
                             )));
 
-            OtlpGrpcSpanExporter otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder()
+            var otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder()
                     .setEndpoint(config.getOtlpEndpoint())
                     .build();
 
@@ -99,12 +98,12 @@ public final class Trace {
         Arguments.requireNonBlank(process, Required.PROCESS);
 
         if (openTelemetry != null) {
-            Tracer tracer = openTelemetry.getTracer(Const.FRAMEWORK);
-            Span span = tracer.spanBuilder(process)
+            var tracer = openTelemetry.getTracer(Const.FRAMEWORK);
+            var span = tracer.spanBuilder(process)
                     .setSpanKind(SpanKind.INTERNAL)
                     .startSpan();
 
-            Scope scope = span.makeCurrent();
+            var scope = span.makeCurrent();
             String key = getKey(process);
             SPANS.put(key, span);
             SCOPES.put(key, scope);
@@ -130,14 +129,14 @@ public final class Trace {
         Arguments.requireNonBlank(childProcess, Required.PROCESS);
 
         if (openTelemetry != null) {
-            Span parentSpan = SPANS.get(getKey(parentProcess));
+            var parentSpan = SPANS.get(getKey(parentProcess));
             if (parentSpan != null) {
-                try (Scope ignored = parentSpan.makeCurrent()) {
-                    Tracer tracer = openTelemetry.getTracer(Const.FRAMEWORK);
-                    Span child = tracer.spanBuilder(childProcess)
+                try (var ignored = parentSpan.makeCurrent()) {
+                    var tracer = openTelemetry.getTracer(Const.FRAMEWORK);
+                    var child = tracer.spanBuilder(childProcess)
                             .setSpanKind(SpanKind.INTERNAL)
                             .startSpan();
-                    Scope scope = child.makeCurrent();
+                    var scope = child.makeCurrent();
 
                     String key = getKey(childProcess);
                     SPANS.put(key, child);
@@ -174,8 +173,8 @@ public final class Trace {
         Arguments.requireNonBlank(process, Required.PROCESS);
 
         String key = getKey(process);
-        Span span = SPANS.get(key);
-        Scope scope = SCOPES.get(key);
+        var span = SPANS.get(key);
+        var scope = SCOPES.get(key);
 
         if (span != null) {
             try {

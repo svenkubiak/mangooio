@@ -106,7 +106,7 @@ public class Vault {
                 keyStore.load(inputStream, secret);
                 LOG.info("Loaded existing vault from {}", path);
             } catch (IllegalStateException | IOException | NoSuchAlgorithmException | CertificateException e) {
-                LOG.error("Failed to load vault from {}", path, e);
+                LOG.error("Failed to load vault from {}", path, e); //NOSONAR
                 throw e;
             }
         } else {
@@ -122,7 +122,7 @@ public class Vault {
                 LOG.info("Created new vault at {}", path);
             } catch (IllegalStateException | IOException | NoSuchAlgorithmException | CertificateException |
                      KeyStoreException e) {
-                LOG.error("Failed to load vault from {}", path, e);
+                LOG.error("Failed to load vault from {}", path, e); //NOSONAR
                 throw e;
             }
         }

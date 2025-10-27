@@ -47,17 +47,17 @@ public final class MangooUtils {
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
-    private static ExecutableValidator EXECUTABLE_VALIDATOR;
+    private static ExecutableValidator executableValidator;
     static {
         try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
-            EXECUTABLE_VALIDATOR = validatorFactory.getValidator().forExecutables();
+            executableValidator = validatorFactory.getValidator().forExecutables();
         }
     }
 
     private MangooUtils() {}
 
     public static ExecutableValidator validator() {
-        return EXECUTABLE_VALIDATOR;
+        return executableValidator;
     }
 
     @SuppressFBWarnings(justification = "Only used to retrieve the version of mangoo I/O", value = "URLCONNECTION_SSRF_FD")

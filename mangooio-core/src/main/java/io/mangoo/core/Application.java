@@ -282,8 +282,8 @@ public final class Application {
                         .forEach(info -> {
                             List<AnnotationParameterValue> annotationParams = info.getAnnotationInfo().getFirst().getParameterValues();
 
-                            boolean unique = false;
-                            boolean caseSensitive = false;
+                            var unique = false;
+                            var caseSensitive = false;
                             var sort = "";
 
                             for (AnnotationParameterValue annotationParam : annotationParams) {
@@ -302,7 +302,7 @@ public final class Application {
                                     .collationStrength(CollationStrength.SECONDARY)
                                     .build();
 
-                            IndexOptions indexOptions = new IndexOptions().unique(unique);
+                            var indexOptions = new IndexOptions().unique(unique);
                             if (!caseSensitive && unique) {
                                 indexOptions.collation(collation);
                             }
@@ -524,36 +524,36 @@ public final class Application {
             failsafe();
         }
 
-        bitLength = getBitLength(new String(config.getAuthenticationCookieSecret()));
+        bitLength = getBitLength(new String(config.getAuthenticationCookieSecret(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Authentication cookie requires a 512 bit encryption secret. The current property for authentication.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
-        bitLength = getBitLength(new String(config.getSessionCookieSecret()));
+        bitLength = getBitLength(new String(config.getSessionCookieSecret(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Session cookie secret a 512 bit encryption secret. The current property for session.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(new String(config.getFlashCookieSecret()));
+        bitLength = getBitLength(new String(config.getFlashCookieSecret(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Flash cookie requires a 512 bit encryption secret. The current property for flash.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(new String(config.getFlashCookieKey()));
+        bitLength = getBitLength(new String(config.getFlashCookieKey(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Flash cookie requires a 512 bit signing key. The current property for flash.cookie.key has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(new String(config.getAuthenticationCookieKey()));
+        bitLength = getBitLength(new String(config.getAuthenticationCookieKey(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Authentication cookie requires a 512 bit signing key. The current property for authentication.cookie.key has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(new String(config.getSessionCookieKey()));
+        bitLength = getBitLength(new String(config.getSessionCookieKey(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Session cookie requires a 512 bit signing key. The current property for session.cookie.key has only {} bits.", bitLength);
             failsafe();
