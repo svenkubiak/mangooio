@@ -1,6 +1,5 @@
 package io.mangoo.routing.bindings;
 
-import com.google.re2j.Pattern;
 import io.mangoo.constants.Required;
 import io.mangoo.constants.Validation;
 import io.mangoo.core.Application;
@@ -19,6 +18,7 @@ import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Validator implements Serializable {
     @Serial

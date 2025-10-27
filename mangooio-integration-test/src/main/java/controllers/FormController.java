@@ -1,6 +1,5 @@
 package controllers;
 
-import com.google.re2j.Pattern;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 import org.apache.commons.io.IOUtils;
@@ -16,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class FormController {
     private static final Logger LOG = LogManager.getLogger(FormController.class);

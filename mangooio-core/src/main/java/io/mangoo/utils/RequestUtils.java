@@ -1,7 +1,7 @@
 package io.mangoo.utils;
 
 import com.google.common.net.MediaType;
-import com.google.re2j.Pattern;
+import io.mangoo.constants.Const;
 import io.mangoo.constants.Header;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
@@ -20,7 +20,6 @@ import java.util.*;
 
 public final class RequestUtils {
     private static final Logger LOG = LogManager.getLogger(RequestUtils.class);
-    private static final Pattern PATTERN = Pattern.compile("\"");
     private static AttachmentKey<Attachment> attachmentKey;
 
     private RequestUtils() {
@@ -94,7 +93,7 @@ public final class RequestUtils {
                 content = content.trim();
                 if (content.startsWith(config.getAuthenticationCookieName())) {
                     value = StringUtils.substringAfter(content, config.getAuthenticationCookieName() + "=");
-                    value = PATTERN.matcher(value).replaceAll("");
+                    value = Const.COOKIE_PATTERN.matcher(value).replaceAll("");
                 }
             }
 

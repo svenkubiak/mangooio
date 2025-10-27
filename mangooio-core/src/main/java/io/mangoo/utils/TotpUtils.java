@@ -52,7 +52,7 @@ public class TotpUtils {
      * @return The totp value or null if generation failed
      */
     public static String getTotp(String secret) {
-        Arguments.requireNonBlank(secret, Required.SECRET);
+        Argument.requireNonBlank(secret, Required.SECRET);
 
         TOTPGenerator totp = new TOTPGenerator.Builder(secret)
                 .withHOTPGenerator(builder -> {
@@ -75,8 +75,8 @@ public class TotpUtils {
      * @return True if the TOTP is valid, false otherwise
      */
     public static boolean verifyTotp(String secret, String totp) {
-        Arguments.requireNonBlank(secret, Required.SECRET);
-        Arguments.requireNonBlank(totp, Required.TOTP);
+        Argument.requireNonBlank(secret, Required.SECRET);
+        Argument.requireNonBlank(totp, Required.TOTP);
 
         TOTPGenerator expected = new TOTPGenerator.Builder(secret)
                 .withHOTPGenerator(builder -> {
@@ -99,9 +99,9 @@ public class TotpUtils {
      * @return The QR code as a base64 PNG image
      */
     public static String getQRCode(String name, String issuer, String secret) {
-        Arguments.requireNonBlank(name, Required.NAME);
-        Arguments.requireNonBlank(issuer, Required.ISSUER);
-        Arguments.requireNonBlank(secret, Required.SECRET);
+        Argument.requireNonBlank(name, Required.NAME);
+        Argument.requireNonBlank(issuer, Required.ISSUER);
+        Argument.requireNonBlank(secret, Required.SECRET);
 
         String text = getOtpAuthURL(name, issuer, secret);
         ByteArrayOutputStream qrCodeOutputStream = QRCode.from(text)
@@ -123,9 +123,9 @@ public class TotpUtils {
      * @return An OtpAuth url
      */
     public static String getOtpAuthURL(String name, String issuer, String secret) {
-        Arguments.requireNonBlank(name, Required.ACCOUNT_NAME);
-        Arguments.requireNonBlank(secret, Required.SECRET);
-        Arguments.requireNonBlank(issuer, Required.ISSUER);
+        Argument.requireNonBlank(name, Required.ACCOUNT_NAME);
+        Argument.requireNonBlank(secret, Required.SECRET);
+        Argument.requireNonBlank(issuer, Required.ISSUER);
 
         var buffer = new StringBuilder();
         buffer.append("otpauth://totp/")

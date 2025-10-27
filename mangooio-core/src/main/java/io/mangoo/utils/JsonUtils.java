@@ -86,7 +86,7 @@ public final class JsonUtils {
      * @return The converted class or null if conversion fails
      */
     public static <T> T toObject(String json, Class<T> clazz) {
-        Arguments.requireNonBlank(json, Required.JSON);
+        Argument.requireNonBlank(json, Required.JSON);
         Objects.requireNonNull(clazz, Required.CLASS);
 
         T object = null;
@@ -110,7 +110,7 @@ public final class JsonUtils {
      * @return The converted class or null if conversion and fallback fails
      */
     public static <T> T toObjectWithFallback(String json, Class<T> clazz) {
-        Arguments.requireNonBlank(json, Required.JSON);
+        Argument.requireNonBlank(json, Required.JSON);
         Objects.requireNonNull(clazz, Required.CLASS);
 
         T object = null;
@@ -137,7 +137,7 @@ public final class JsonUtils {
      * @return A flat map containing the json data
      */
     public static Map<String, String> toFlatMap(String json) {
-        Arguments.requireNonBlank(json, Required.JSON);
+        Argument.requireNonBlank(json, Required.JSON);
 
         Map<String, String> map = new HashMap<>();
         try {

@@ -1,7 +1,6 @@
 package io.mangoo.core;
 
 import com.google.common.io.Resources;
-import com.google.re2j.Pattern;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Const;
 import io.mangoo.constants.Default;
@@ -24,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 @Singleton
 public class Config {

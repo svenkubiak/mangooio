@@ -1,16 +1,12 @@
 package io.mangoo.admin;
 
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
-import com.google.re2j.Pattern;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.async.EventBus;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheImpl;
 import io.mangoo.cache.CacheProvider;
-import io.mangoo.constants.CacheName;
-import io.mangoo.constants.Key;
-import io.mangoo.constants.Required;
-import io.mangoo.constants.Template;
+import io.mangoo.constants.*;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
@@ -39,7 +35,6 @@ import java.util.concurrent.atomic.LongAdder;
 
 @FilterWith(AdminFilter.class)
 public class AdminController {
-    private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
     private static final String METRICS = "metrics";
@@ -124,7 +119,7 @@ public class AdminController {
 
         if (StringUtils.isBlank(secret)) {
             secret = CommonUtils.randomString(64);
-            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret);
+            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", Const.NAME_PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret);
         }
 
         return Response.ok()

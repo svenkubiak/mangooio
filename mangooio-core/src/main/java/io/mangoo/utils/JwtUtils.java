@@ -25,7 +25,7 @@ public final class JwtUtils {
 
     public static String createJwt(JwtData jwtData) throws MangooJwtException {
         validate(jwtData);
-        Arguments.requireNonBlank(jwtData.subject(), Required.SUBJECT);
+        Argument.requireNonBlank(jwtData.subject(), Required.SUBJECT);
 
         try {
             var now = Instant.now();
@@ -78,7 +78,7 @@ public final class JwtUtils {
     }
 
     public static JWTClaimsSet parseJwt(String jwt, JwtData jwtData) throws MangooJwtException {
-        Arguments.requireNonBlank(jwt, Required.JWT);
+        Argument.requireNonBlank(jwt, Required.JWT);
         validate(jwtData);
 
         try {
@@ -150,7 +150,7 @@ public final class JwtUtils {
     }
 
     public static String extractSubject(String jwt, byte[] secret) throws MangooJwtException {
-        Arguments.requireNonBlank(jwt, Required.JWT);
+        Argument.requireNonBlank(jwt, Required.JWT);
         Objects.requireNonNull(secret, Required.SECRET);
         Preconditions.checkArgument(secret.length > 0, Required.SECRET);
 
@@ -195,8 +195,8 @@ public final class JwtUtils {
         Objects.requireNonNull(jwtData, Required.JWT_DATA);
         Objects.requireNonNull(jwtData.secret(), Required.SECRET); // encryption secret must exist
         Objects.requireNonNull(jwtData.key(), Required.KEY);       // signing key must exist
-        Arguments.requireNonBlank(jwtData.issuer(), Required.ISSUER);
-        Arguments.requireNonBlank(jwtData.audience(), Required.AUDIENCE);
+        Argument.requireNonBlank(jwtData.issuer(), Required.ISSUER);
+        Argument.requireNonBlank(jwtData.audience(), Required.AUDIENCE);
         Preconditions.checkArgument(jwtData.ttlSeconds() > 0, "TTL must be greater than 0.");
     }
 

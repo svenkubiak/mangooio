@@ -4,7 +4,7 @@ import io.mangoo.constants.Const;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.utils.Arguments;
+import io.mangoo.utils.Argument;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
@@ -95,7 +95,7 @@ public final class Trace {
     public static void start(String process) {
         if (!ENABLED) {return;}
 
-        Arguments.requireNonBlank(process, Required.PROCESS);
+        Argument.requireNonBlank(process, Required.PROCESS);
 
         if (openTelemetry != null) {
             var tracer = openTelemetry.getTracer(Const.FRAMEWORK);
@@ -125,8 +125,8 @@ public final class Trace {
     public static void startChild(String parentProcess, String childProcess) {
         if (!ENABLED) {return;}
 
-        Arguments.requireNonBlank(parentProcess, Required.PROCESS);
-        Arguments.requireNonBlank(childProcess, Required.PROCESS);
+        Argument.requireNonBlank(parentProcess, Required.PROCESS);
+        Argument.requireNonBlank(childProcess, Required.PROCESS);
 
         if (openTelemetry != null) {
             var parentSpan = SPANS.get(getKey(parentProcess));
@@ -161,7 +161,7 @@ public final class Trace {
     }
 
     private static String getKey(String process) {
-        Arguments.requireNonBlank(process, Required.PROCESS);
+        Argument.requireNonBlank(process, Required.PROCESS);
 
         return process.replaceAll("[^a-z0-9]", "_")
                 .toLowerCase(Locale.ENGLISH);
@@ -170,7 +170,7 @@ public final class Trace {
     public static void end(String process) {
         if (!ENABLED) {return;}
 
-        Arguments.requireNonBlank(process, Required.PROCESS);
+        Argument.requireNonBlank(process, Required.PROCESS);
 
         String key = getKey(process);
         var span = SPANS.get(key);

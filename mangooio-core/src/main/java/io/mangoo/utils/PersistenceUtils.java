@@ -19,8 +19,8 @@ public final class PersistenceUtils {
      * @param value The value/name of the collection
      */
     public static void addCollection(String key, String value) {
-        Arguments.requireNonBlank(key, Required.KEY);
-        Arguments.requireNonBlank(value, Required.VALUE);
+        Argument.requireNonBlank(key, Required.KEY);
+        Argument.requireNonBlank(value, Required.VALUE);
 
         COLLECTIONS.put(key, value);
     }

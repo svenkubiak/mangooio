@@ -17,7 +17,7 @@ public class ArgumentsTest {
         String message = "message";
         
         // When & Then
-        assertDoesNotThrow(() -> Arguments.requireNonBlank(validString, message));
+        assertDoesNotThrow(() -> Argument.requireNonBlank(validString, message));
     }
 
     @Test
@@ -28,7 +28,7 @@ public class ArgumentsTest {
         
         // When
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
-            () -> Arguments.requireNonBlank(nullString, message));
+            () -> Argument.requireNonBlank(nullString, message));
         
         // Then
         assert exception.getMessage().equals("message");
@@ -42,7 +42,7 @@ public class ArgumentsTest {
         
         // When
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
-            () -> Arguments.requireNonBlank(emptyString, message));
+            () -> Argument.requireNonBlank(emptyString, message));
         
         // Then
         assert exception.getMessage().equals("message");
@@ -56,7 +56,7 @@ public class ArgumentsTest {
         
         // When
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
-            () -> Arguments.requireNonBlank(blankString, message));
+            () -> Argument.requireNonBlank(blankString, message));
         
         // Then
         assert exception.getMessage().equals("message");
@@ -69,7 +69,7 @@ public class ArgumentsTest {
         String[] validStrings = {"valid1", "valid2", "valid3"};
         
         // When & Then
-        assertDoesNotThrow(() -> Arguments.requireNonBlank(message, validStrings));
+        assertDoesNotThrow(() -> Argument.requireNonBlank(message, validStrings));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class ArgumentsTest {
         
         // When
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
-            () -> Arguments.requireNonBlank(message, stringsWithNull));
+            () -> Argument.requireNonBlank(message, stringsWithNull));
         
         // Then
         assert exception.getMessage().equals("message");
@@ -94,7 +94,7 @@ public class ArgumentsTest {
         
         // When
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
-            () -> Arguments.requireNonBlank(message, stringsWithEmpty));
+            () -> Argument.requireNonBlank(message, stringsWithEmpty));
         
         // Then
         assert exception.getMessage().equals("message");
@@ -108,7 +108,7 @@ public class ArgumentsTest {
         
         // When
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
-            () -> Arguments.requireNonBlank(message, stringsWithBlank));
+            () -> Argument.requireNonBlank(message, stringsWithBlank));
         
         // Then
         assert exception.getMessage().equals("message");
@@ -120,6 +120,6 @@ public class ArgumentsTest {
         String message = "message";
         
         // When & Then
-        assertDoesNotThrow(() -> Arguments.requireNonBlank(message));
+        assertDoesNotThrow(() -> Argument.requireNonBlank(message));
     }
 }

@@ -1,18 +1,16 @@
 package io.mangoo.templating.methods;
 
-import com.google.re2j.Pattern;
 import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
+import io.mangoo.constants.Const;
 import io.mangoo.routing.Router;
 import org.apache.commons.lang3.Strings;
 
 import java.util.List;
 
 public class RouteMethod implements TemplateMethodModelEx {
-    private static final Pattern PARAMETER_PATTERN = Pattern.compile("\\{(.*?)\\}");
-
     @Override
     public TemplateModel exec(List arguments) throws TemplateModelException {
         String url;
@@ -22,7 +20,7 @@ public class RouteMethod implements TemplateMethodModelEx {
             
             if (requestRoute != null) {
                 url = requestRoute.getUrl();
-                var matcher = PARAMETER_PATTERN.matcher(url);
+                var matcher = Const.PARAMETER_PATTERN.matcher(url);
                 var i = 1;
                 while (matcher.find()) {
                     var argument = ((SimpleScalar) arguments.get(i)).getAsString();

@@ -59,8 +59,8 @@ public final class CommonUtils {
      * @return A Base64 encoded String
      */
     public static String hashArgon2(String cleartext, String salt) {
-        Arguments.requireNonBlank(cleartext, Required.CLEARTEXT);
-        Arguments.requireNonBlank(salt, Required.SALT);
+        Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
+        Argument.requireNonBlank(salt, Required.SALT);
 
         var argon2 = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
                 .withVersion(Argon2Parameters.ARGON2_VERSION_13)
@@ -87,7 +87,7 @@ public final class CommonUtils {
      * @return A Base64 encoded String
      */
     public static String hashArgon2(String cleartext) {
-        Arguments.requireNonBlank(cleartext, Required.CLEARTEXT);
+        Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
 
         var salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
         return hashArgon2(cleartext, salt);
@@ -103,9 +103,9 @@ public final class CommonUtils {
      * @return True if hashes match, false otherwise
      */
     public static boolean matchArgon2(String cleartext, String salt, String hash) {
-        Arguments.requireNonBlank(cleartext, Required.CLEARTEXT);
-        Arguments.requireNonBlank(salt, Required.SALT);
-        Arguments.requireNonBlank(hash, Required.HASH);
+        Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
+        Argument.requireNonBlank(salt, Required.SALT);
+        Argument.requireNonBlank(hash, Required.HASH);
 
         return Arrays.areEqual(hashArgon2(cleartext, salt).getBytes(StandardCharsets.UTF_8), hash.getBytes(StandardCharsets.UTF_8));
     }
@@ -119,8 +119,8 @@ public final class CommonUtils {
      * @return True if hashes match, false otherwise
      */
     public static boolean matchArgon2(String cleartext, String hash) {
-        Arguments.requireNonBlank(cleartext, Required.CLEARTEXT);
-        Arguments.requireNonBlank(hash, Required.HASH);
+        Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
+        Argument.requireNonBlank(hash, Required.HASH);
 
         var salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
 
@@ -135,7 +135,7 @@ public final class CommonUtils {
      * @return SHA512 hashed value or null if hashing failed
      */
     public static String hexSHA512(String data) {
-        Arguments.requireNonBlank(data, Required.DATA);
+        Argument.requireNonBlank(data, Required.DATA);
 
         try {
             var digest = MessageDigest.getInstance("SHA3-512");
@@ -171,7 +171,7 @@ public final class CommonUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T deserializeFromBase64(String data) {
-        Arguments.requireNonBlank(data, Required.DATA);
+        Argument.requireNonBlank(data, Required.DATA);
         
         byte[] bytes = BASE64_DECODER.decode(data);
         return (T) FURY.deserialize(bytes);
@@ -184,7 +184,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static byte[] encodeToBase64(String data) {
-        Arguments.requireNonBlank(data, Required.DATA);
+        Argument.requireNonBlank(data, Required.DATA);
         return BASE64_ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -195,7 +195,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static byte[] urlEncodeToBase64(String data) {
-        Arguments.requireNonBlank(data, Required.DATA);
+        Argument.requireNonBlank(data, Required.DATA);
         return BASE64_URL_ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -206,7 +206,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static byte[] urlEncodeWithoutPaddingToBase64(String data) {
-        Arguments.requireNonBlank(data, Required.DATA);
+        Argument.requireNonBlank(data, Required.DATA);
         return BASE64_URL_ENCODER.withoutPadding().encode(data.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -239,7 +239,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static byte[] urlDecodeFromBase64(String data) {
-        Arguments.requireNonBlank(data, Required.DATA);
+        Argument.requireNonBlank(data, Required.DATA);
         return BASE64_URL_DECODER.decode(data.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -250,7 +250,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static String encodeToBase32(String data) {
-        Arguments.requireNonBlank(data, Required.DATA);
+        Argument.requireNonBlank(data, Required.DATA);
         return BASE32_ENCODER.encodeToString(data.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -272,7 +272,7 @@ public final class CommonUtils {
      * @return The converted byte array
      */
     public static byte[] decodeFromBase64(String data) {
-        Arguments.requireNonBlank(data, Required.DATA);
+        Argument.requireNonBlank(data, Required.DATA);
         return BASE64_DECODER.decode(data);
     }
 
@@ -320,7 +320,7 @@ public final class CommonUtils {
      * @return The number of bit
      */
     public static int bitLength(String string) {
-        Arguments.requireNonBlank(string, Required.STRING);
+        Argument.requireNonBlank(string, Required.STRING);
         return bitLength(string.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -383,7 +383,7 @@ public final class CommonUtils {
      * @return True if the resources exists, false otherwise
      */
     public static boolean resourceExists(String name) {
-        Arguments.requireNonBlank(name, Required.NAME);
+        Argument.requireNonBlank(name, Required.NAME);
 
         URL resource = null;
         try {
@@ -402,7 +402,7 @@ public final class CommonUtils {
      * @return The content of the resource or null
      */
     public static String readResourceToString(String resource) {
-        Arguments.requireNonBlank(resource, Required.RESOURCE);
+        Argument.requireNonBlank(resource, Required.RESOURCE);
 
         var content = Strings.EMPTY;
         try {
@@ -415,7 +415,7 @@ public final class CommonUtils {
     }
 
     public static boolean isBlacklisted(String id) {
-        Arguments.requireNonBlank(id, Required.ID);
+        Argument.requireNonBlank(id, Required.ID);
 
         var authCache = Application
                 .getInstance(CacheProvider.class)
@@ -425,7 +425,7 @@ public final class CommonUtils {
     }
 
     public static void blacklist(String id) {
-        Arguments.requireNonBlank(id, Required.ID);
+        Argument.requireNonBlank(id, Required.ID);
 
         var authCache = Application
                 .getInstance(CacheProvider.class)

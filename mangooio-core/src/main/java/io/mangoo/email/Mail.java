@@ -6,7 +6,7 @@ import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.templating.TemplateEngine;
-import io.mangoo.utils.Arguments;
+import io.mangoo.utils.Argument;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -55,7 +55,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail cc(String... ccs) {
-        Arguments.requireNonBlank(Required.CCS, ccs);
+        Argument.requireNonBlank(Required.CCS, ccs);
         mailCcs.addAll(Arrays.asList(ccs));
         
         return this;
@@ -68,7 +68,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail bcc(String... bccs) {
-        Arguments.requireNonBlank(Required.BCCS, bccs);
+        Argument.requireNonBlank(Required.BCCS, bccs);
         mailBccs.addAll(Arrays.asList(bccs));
         
         return this;

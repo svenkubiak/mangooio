@@ -5,7 +5,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
-import io.mangoo.utils.Arguments;
+import io.mangoo.utils.Argument;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
@@ -80,7 +80,7 @@ public class CacheProvider implements Provider<Cache> {
      * @return A Cache instance
      */
     public Cache getCache(String name) {
-        Arguments.requireNonBlank(name, Required.NAME);
+        Argument.requireNonBlank(name, Required.NAME);
         return caches.get(name);
     }
 
@@ -92,7 +92,7 @@ public class CacheProvider implements Provider<Cache> {
      * @param cache The cache instance
      */
     public void addCache(String name, Cache cache) {
-        Arguments.requireNonBlank(name, Required.NAME);
+        Argument.requireNonBlank(name, Required.NAME);
         Objects.requireNonNull(cache, Required.CACHE);
 
         if (Stream.of(CacheName.APPLICATION, CacheName.BLACKLIST, CacheName.AUTH)
