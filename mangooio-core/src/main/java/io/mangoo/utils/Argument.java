@@ -31,4 +31,12 @@ public final class Argument  {
             throw new IllegalArgumentException("Invalid argument");
         }
     }
+
+    public static void check(boolean condition, String message) {
+        Argument.requireNonBlank(message, "message can not be null or blank");
+
+        if (!condition) {
+            throw new IllegalArgumentException(message);
+        }
+    }
 }
