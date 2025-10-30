@@ -1,6 +1,5 @@
 package controllers;
 
-import com.google.re2j.Pattern;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 import org.apache.commons.io.IOUtils;
@@ -8,11 +7,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class FormController {
     private static final Logger LOG = LogManager.getLogger(FormController.class);
@@ -24,15 +27,11 @@ public class FormController {
         return Response.ok().render();
     }
     
-    public Response multivalued(Form form) {
-        return Response.ok().render("values", form.getValueList("foo"));
-    }
-    
     public Response singlefile(Form form) {
         var content = Strings.EMPTY;
-        Optional<InputStream> formFile = form.getFile();
+        Optional<byte[]> formFile = form.getFile("attachment");
         if (formFile.isPresent()) {
-            InputStream file = formFile.get();
+            InputStream file = new ByteArrayInputStream(formFile.get());
             try {
                 content = IOUtils.toString(file, StandardCharsets.UTF_8);
             } catch (IOException e) {
@@ -42,21 +41,20 @@ public class FormController {
 
         return Response.ok().bodyText(content);
     }
-    
+
     @SuppressWarnings("all")
     public Response multifile(Form form) {
         String content = Strings.EMPTY;
-        List<InputStream> files = form.getFiles();
-        for (InputStream file : files) {
-            try {
-                content = content + IOUtils.toString(file, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                LOG.error("Failed to one of multiple files", e);
-            }
+        List<byte[]> files = new ArrayList<>();
+        files.add(form.getFile("attachment1").get());
+        files.add(form.getFile("attachment2").get());
+        for (byte[] file : files) {
+            content = content + new String(file, Charset.defaultCharset());
         }
-        
+
         return Response.ok().bodyText(content + files.size());
     }
+
 
     public Response validateform(Form form) {
         form.expectValue("name");

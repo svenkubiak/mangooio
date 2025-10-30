@@ -2,11 +2,11 @@ package io.mangoo.routing.bindings;
 
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.CacheName;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.utils.CodecUtils;
-import io.mangoo.utils.totp.TotpUtils;
+import io.mangoo.utils.CommonUtils;
+import io.mangoo.utils.TotpUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Authentication {
     private LocalDateTime expires;
     private String subject;
+    private String id;
     private boolean twoFactor;
     private boolean remember;
     private boolean loggedOut;
@@ -27,7 +28,7 @@ public class Authentication {
     }
     
     public Authentication withExpires(LocalDateTime expires) {
-        Objects.requireNonNull(expires, NotNull.EXPIRES);
+        Objects.requireNonNull(expires, Required.EXPIRES);
         this.expires = expires;
 
         return this;
@@ -38,6 +39,14 @@ public class Authentication {
             this.subject = subject;            
         }
         
+        return this;
+    }
+
+    public Authentication withId(String id) {
+        if (StringUtils.isBlank(this.id)) {
+            this.id = id;
+        }
+
         return this;
     }
 
@@ -98,15 +107,15 @@ public class Authentication {
      * @param hash The previously hashed password to check
      * @return True if the new hashed password matches the hash, false otherwise
      */
-    public boolean validLogin(String identifier, String password, String salt, String hash) {
-        Objects.requireNonNull(identifier, NotNull.USERNAME);
-        Objects.requireNonNull(password, NotNull.PASSWORD);
-        Objects.requireNonNull(password, NotNull.SALT);
-        Objects.requireNonNull(hash, NotNull.HASH);
+    public boolean isValidLogin(String identifier, String password, String salt, String hash) {
+        Objects.requireNonNull(identifier, Required.USERNAME);
+        Objects.requireNonNull(password, Required.PASSWORD);
+        Objects.requireNonNull(password, Required.SALT);
+        Objects.requireNonNull(hash, Required.HASH);
 
         var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         var authenticated = false;
-        if (!userHasLock(identifier) && CodecUtils.matchArgon2(password, salt, hash)) {
+        if (!userHasLock(identifier) && CommonUtils.matchArgon2(password, salt, hash)) {
             authenticated = true;
         } else {
             cache.getAndIncrementCounter(identifier);
@@ -165,7 +174,7 @@ public class Authentication {
      * @return true if the user has a lock, false otherwise
      */
     public boolean userHasLock(String username) {
-        Objects.requireNonNull(username, NotNull.USERNAME);
+        Objects.requireNonNull(username, Required.USERNAME);
         var lock = false;
         
         var config = Application.getInstance(Config.class);
@@ -182,14 +191,14 @@ public class Authentication {
      * Checks if a given number for 2FA is valid for the given secret
      * 
      * @param secret The plaintext secret to use for checking
-     * @param number The number entered by the user
+     * @param totp The number entered by the user
      * @return True if number is valid, false otherwise
      */
-    public boolean validSecondFactor(String secret, String number) {
-        Objects.requireNonNull(secret, NotNull.SECRET);
-        Objects.requireNonNull(number, NotNull.TOTP);
+    public boolean isValidSecondFactor(String secret, String totp) {
+        Objects.requireNonNull(secret, Required.SECRET);
+        Objects.requireNonNull(totp, Required.TOTP);
         
-        return TotpUtils.verifiedTotp(secret, number);
+        return TotpUtils.verifyTotp(secret, totp);
     }
 
     /**
@@ -214,7 +223,11 @@ public class Authentication {
     public boolean isValid() {
         return StringUtils.isNotBlank(subject);
     }
-    
+
+    public String getId() {
+        return id;
+    }
+
     public boolean isInvalid() {
         return invalid;
     }

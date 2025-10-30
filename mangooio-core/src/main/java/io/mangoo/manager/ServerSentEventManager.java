@@ -1,6 +1,6 @@
 package io.mangoo.manager;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import jakarta.inject.Singleton;
 
@@ -15,8 +15,8 @@ public class ServerSentEventManager {
     private static final Map<String, List<ServerSentEventConnection>> SERVER_SENT_EVENT_CONNECTIONS = new ConcurrentHashMap<>(16, 0.9f, 1);
 
     public void addConnection(String uri, ServerSentEventConnection connection) {
-        Objects.requireNonNull(uri, NotNull.URI);
-        Objects.requireNonNull(connection, NotNull.CONNECTION);
+        Objects.requireNonNull(uri, Required.URI);
+        Objects.requireNonNull(connection, Required.CONNECTION);
 
         SERVER_SENT_EVENT_CONNECTIONS
                 .computeIfAbsent(uri, key -> new ArrayList<>())
@@ -24,7 +24,7 @@ public class ServerSentEventManager {
     }
 
     public void removeConnection(ServerSentEventConnection connection) {
-        Objects.requireNonNull(connection, NotNull.CONNECTION);
+        Objects.requireNonNull(connection, Required.CONNECTION);
         String uri = connection.getRequestURI();
 
         SERVER_SENT_EVENT_CONNECTIONS.computeIfPresent(uri, (key, connections) -> {
@@ -34,8 +34,8 @@ public class ServerSentEventManager {
     }
 
     public void send(String uri, String data) {
-        Objects.requireNonNull(uri, NotNull.URI);
-        Objects.requireNonNull(uri, NotNull.DATA);
+        Objects.requireNonNull(uri, Required.URI);
+        Objects.requireNonNull(uri, Required.DATA);
 
         Thread.ofVirtual().start(() ->
                 SERVER_SENT_EVENT_CONNECTIONS

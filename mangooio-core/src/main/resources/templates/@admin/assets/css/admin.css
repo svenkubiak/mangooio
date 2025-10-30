@@ -158,3 +158,8 @@ nav.navbar {
     margin-left: 10px;
     color: green;
 }
+
+.logout {
+    color: white !important;
+    background-color: red !important;
+}

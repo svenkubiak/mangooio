@@ -7,13 +7,14 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.Version;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.records.Source;
 import io.undertow.server.HttpServerExchange;
 import no.api.freemarker.java8.Java8ObjectWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.File;
@@ -120,7 +121,7 @@ public class TemplateEngine {
     }
     
     public String getTemplateName(String templateName) {
-        Objects.requireNonNull(templateName, NotNull.TEMPLATE_NAME);
+        Objects.requireNonNull(templateName, Required.TEMPLATE_NAME);
         return templateName.endsWith(TEMPLATE_SUFFIX) ? templateName : (templateName + TEMPLATE_SUFFIX);
     }
 
@@ -135,7 +136,7 @@ public class TemplateEngine {
      */
     @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN")
     private List<Source> getSources(int errorLine, String sourcePath) throws IOException {
-        Objects.requireNonNull(sourcePath, NotNull.SOURCE_PATH);
+        Objects.requireNonNull(sourcePath, Required.SOURCE_PATH);
 
         var buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))
@@ -185,13 +186,13 @@ public class TemplateEngine {
      * @return Source code filename
      */
     private String getSourceCodePath(StackTraceElement stackTraceElement) {
-        Objects.requireNonNull(stackTraceElement, NotNull.STACK_TRACE_ELEMENT);
+        Objects.requireNonNull(stackTraceElement, Required.STACK_TRACE_ELEMENT);
 
         String packageName = stackTraceElement.getClassName();
         int position = packageName.lastIndexOf('.');
         if (position > 0) {
             packageName = packageName.substring(0, position);
-            return StringUtils.replace(packageName, ".", File.separator) + File.separator + stackTraceElement.getFileName();
+            return Strings.CI.replace(packageName, ".", File.separator) + File.separator + stackTraceElement.getFileName();
         }
 
         return stackTraceElement.getFileName();

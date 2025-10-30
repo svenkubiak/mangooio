@@ -1,7 +1,7 @@
 package io.mangoo.test.http;
 
 import com.google.common.collect.Multimap;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.undertow.util.Methods;
@@ -51,8 +51,8 @@ public class TestResponse {
     }
     
     public TestResponse (String uri, String method) {
-        Objects.requireNonNull(uri, NotNull.URI);
-        Objects.requireNonNull(method, NotNull.HTTP_METHOD);
+        Objects.requireNonNull(uri, Required.URI);
+        Objects.requireNonNull(method, Required.HTTP_METHOD);
         
         this.uri = uri;
         this.method = method;
@@ -66,8 +66,8 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withHeader(String name, String value) {
-        Objects.requireNonNull(name, NotNull.NAME);
-        Objects.requireNonNull(value, NotNull.VALUE);
+        Objects.requireNonNull(name, Required.NAME);
+        Objects.requireNonNull(value, Required.VALUE);
         
         this.httpRequest.header(name, value);
         
@@ -82,7 +82,7 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withHTTPMethod(String method) {
-        Objects.requireNonNull(method, NotNull.HTTP_METHOD);
+        Objects.requireNonNull(method, Required.HTTP_METHOD);
         
         this.method = method;
         
@@ -100,8 +100,8 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withTimeout(long amount, TemporalUnit unit) {
-        Objects.requireNonNull(method, NotNull.HTTP_METHOD);
-        Objects.requireNonNull(method, NotNull.UNIT);
+        Objects.requireNonNull(method, Required.HTTP_METHOD);
+        Objects.requireNonNull(method, Required.UNIT);
 
         this.httpRequest.timeout(Duration.of(amount, unit));
         
@@ -117,8 +117,8 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withBasicAuthentication(String username, String password) {
-        Objects.requireNonNull(username, NotNull.USERNAME);
-        Objects.requireNonNull(password, NotNull.PASSWORD);
+        Objects.requireNonNull(username, Required.USERNAME);
+        Objects.requireNonNull(password, Required.PASSWORD);
 
         this.authenticator = new Authenticator() {
             @Override
@@ -140,7 +140,7 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse to(String uri) {
-        Objects.requireNonNull(uri, NotNull.URI);
+        Objects.requireNonNull(uri, Required.URI);
 
         this.uri = uri;
         return this;
@@ -154,10 +154,18 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withCookie(HttpCookie cookie) {
-        Objects.requireNonNull(cookie, NotNull.COOKIE);
+        Objects.requireNonNull(cookie, Required.COOKIE);
+        Config config = Application.getInstance(Config.class);
+        String host = config.getConnectorHttpHost();
+        int port =  config.getConnectorHttpPort();
 
-        this.cookieManager.getCookieStore().add(null, cookie);
-        
+        try {
+            var requestUri = new URI("http://" + host + ":" + port);
+            this.cookieManager.getCookieStore().add(requestUri, cookie);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
         return this;
     }
     
@@ -184,7 +192,7 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withContentType(String contentType) {
-        Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
+        Objects.requireNonNull(contentType, Required.CONTENT_TYPE);
 
         this.httpRequest.header(CONTENT_TYPE, contentType);
         
@@ -194,7 +202,7 @@ public class TestResponse {
     /**
      * Disables redirects when the request is executed by setting
      * followReditects to HttpClient.Redirect.NEVER
-     * 
+     *
      * Default is HttpClient.Redirect.ALWAYS
      *
      * @return TestResponse instance
@@ -247,7 +255,7 @@ public class TestResponse {
             if (this.authenticator != null ) {
                 this.httpClient.authenticator(this.authenticator);
             }
-            
+
             this.httpResponse = this.httpClient
                     .build()
                     .send(this.httpRequest.build(), HttpResponse.BodyHandlers.ofString());

@@ -1,13 +1,14 @@
 package io.mangoo.routing.handlers;
 
 import io.mangoo.annotations.FilterWith;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import org.apache.logging.log4j.LogManager;
@@ -36,8 +37,8 @@ public class DispatcherHandler implements HttpHandler {
     private boolean authentication;
 
     public DispatcherHandler dispatch(Class<?> controllerClass, String controllerMethodName) {
-        Objects.requireNonNull(controllerClass, NotNull.CONTROLLER_CLASS);
-        Objects.requireNonNull(controllerMethodName, NotNull.CONTROLLER_METHOD);
+        Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS);
+        Objects.requireNonNull(controllerMethodName, Required.CONTROLLER_METHOD);
 
         this.templateEngine = Application.getInstance(TemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
@@ -93,6 +94,7 @@ public class DispatcherHandler implements HttpHandler {
             return;
         }
 
+        Trace.start(exchange.getRequestPath());
         final var attachment = Attachment.build()
             .withControllerInstance(Application.getInstance(controllerClass))
             .withControllerClass(controllerClass)

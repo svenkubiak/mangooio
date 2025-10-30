@@ -1,7 +1,7 @@
 package io.mangoo.core;
 
 import io.mangoo.constants.Header;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.undertow.util.HttpString;
 import org.apache.logging.log4j.util.Strings;
 
@@ -34,7 +34,7 @@ public final class Server {
      * @param value The value of the header
      */
     public static void header(HttpString header, String value) {
-        Objects.requireNonNull(header, NotNull.HEADER);
+        Objects.requireNonNull(header, Required.HEADER);
         
         Map<HttpString, String> newHeaders = new HashMap<>(headers);
         newHeaders.put(header, value);

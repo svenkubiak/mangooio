@@ -1,7 +1,6 @@
 package io.mangoo.admin;
 
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
-import com.google.re2j.Pattern;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.async.EventBus;
 import io.mangoo.cache.Cache;
@@ -10,23 +9,21 @@ import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.*;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.crypto.Crypto;
-import io.mangoo.exceptions.MangooEncryptionException;
+import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.filters.AdminFilter;
+import io.mangoo.filters.CsrfFilter;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
-import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
-import io.mangoo.utils.AdminUtils;
+import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
-import io.mangoo.utils.MangooUtils;
-import io.mangoo.utils.totp.TotpUtils;
+import io.mangoo.utils.FileUtils;
+import io.mangoo.utils.TotpUtils;
+import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.server.handlers.CookieImpl;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.Date;
@@ -36,36 +33,27 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
 
-import static io.mangoo.utils.AdminUtils.resetLockCounter;
-
 @FilterWith(AdminFilter.class)
 public class AdminController {
-    private static final Logger LOG = LogManager.getLogger(AdminController.class);
-    private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
-    private static final String PERIOD = "30";
-    private static final String DIGITS = "6";
     private static final String METRICS = "metrics";
     private static final double HUNDRED_PERCENT = 100.0;
     private final CacheProvider cacheProvider;
     private final Cache cache;
     private final Config config;
-    private final Crypto crypto;
 
     @Inject
-    public AdminController(Config config, CacheProvider cacheProvider, Crypto crypto) {
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
+    public AdminController(Config config, CacheProvider cacheProvider) {
+        this.config = Objects.requireNonNull(config, Required.CONFIG);
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
-        this.cacheProvider = Objects.requireNonNull(cacheProvider, NotNull.CACHE_PROVIDER);
-        this.crypto = Objects.requireNonNull(crypto, NotNull.CRYPTO);
+        this.cacheProvider = Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER);
     }
 
     public Response index() {
         boolean enabled = config.isMetricsEnable();
         var stream = Application.getInstance(EventBus.class);
 
-        
         if (enabled) {
             var metrics = Application.getInstance(Metrics.class);
             long totalRequests = 0;
@@ -88,7 +76,7 @@ public class AdminController {
                     .render(METRICS, metrics.getResponseMetrics())
                     .render("uptime", DateUtils.getPrettyTime(Application.getStart()))
                     .render("warnings", cache.get(Key.MANGOOIO_WARNINGS))
-                    .render("dataSend", MangooUtils.readableFileSize(metrics.getDataSend()))
+                    .render("dataSend", FileUtils.readableFileSize(metrics.getDataSend()))
                     .render("totalRequests", totalRequests)
                     .render("minRequestTime", metrics.getMinRequestTime())
                     .render("avgRequestTime", metrics.getAvgRequestTime())
@@ -125,13 +113,13 @@ public class AdminController {
         return Response.ok().render("scheduler", scheduler).template(Template.schedulerPath());
     }
 
-    public Response tools() {
+    public Response security() {
         String secret = config.getApplicationAdminSecret();
         String qrCode = null;
 
         if (StringUtils.isBlank(secret)) {
-            secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret, Hmac.SHA512, DIGITS, PERIOD);
+            secret = CommonUtils.randomString(64);
+            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", Const.NAME_PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret);
         }
 
         return Response.ok()
@@ -140,44 +128,13 @@ public class AdminController {
                 .template(Template.toolsPath());
     }
 
-    public Response toolsRx(Request request) {
-        Map<String, Object> body = request.getBodyAsJsonMap();
-        Map<String, String> response = new HashMap<>();
-
-        if (body != null && !body.isEmpty()) {
-            var function = body.get("function").toString();
-
-            if (("keypair").equalsIgnoreCase(function)) {
-                var keyPair = crypto.generateKeyPair();
-                var publicKey = crypto.getKeyAsString(keyPair.getPublic());
-                var privateKey = crypto.getKeyAsString(keyPair.getPrivate());
-
-                response = Map.of("publickey", publicKey,  "privatekey", privateKey);
-            } else if (("encrypt").equalsIgnoreCase(function)) {
-                var cleartext = body.get("cleartext").toString();
-                var key = body.get("key").toString();
-
-                try {
-                    var publicKey = crypto.getPublicKeyFromString(key);
-                    response = Map.of("encrypted", crypto.encrypt(cleartext, publicKey));
-                } catch (MangooEncryptionException e) {
-                    LOG.error("Failed to encrypt cleartext.", e);
-                }
-            } else {
-                LOG.warn("Invalid or no function selected for AJAX request.");
-            }
-        }
-
-        return Response.ok().bodyJson(response);
-    }
-    
     public Response login() {
         return Response.ok()
                 .template(Template.loginPath());
     }
     
     public Response logout() {
-        var cookie = new CookieImpl(Default.APPLICATION_ADMIN_COOKIE_NAME)
+        var cookie = new CookieImpl(MangooUtils.getAdminCookieName())
                 .setValue(Strings.EMPTY)
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())
@@ -188,17 +145,22 @@ public class AdminController {
         
         return Response.redirect(ADMIN_INDEX).cookie(cookie);
     }
-    
+
+    @FilterWith(CsrfFilter.class)
     public Response authenticate(Form form) {
         form.expectValue("username");
         form.expectValue("password");
         
-        if (AdminUtils.isNotLocked() && form.isValid()) {
-            if (AdminUtils.isValidAuthentication(form)) {
-                resetLockCounter();
-                return Response.redirect(ADMIN_INDEX).cookie(AdminUtils.getAdminCookie(true));
+        if (MangooUtils.isNotLocked() && form.isValid()) {
+            if (MangooUtils.isValidAuthentication(form)) {
+                MangooUtils.resetLockCounter();
+                try {
+                    return Response.redirect(ADMIN_INDEX).cookie(MangooUtils.getAdminCookie(true));
+                } catch (MangooJwtException e) {
+                    MangooUtils.invalidAuthentication();
+                }
             } else {
-                AdminUtils.invalidAuthentication();
+                MangooUtils.invalidAuthentication();
             }
         }
         form.invalidate();
@@ -207,14 +169,22 @@ public class AdminController {
         return Response.redirect("/@admin/login");
     }
 
+    @FilterWith(CsrfFilter.class)
     public Response verify(Form form) {
         form.expectValue("code");
-        
-        if (AdminUtils.isNotLocked() && form.isValid()) {
-            if (TotpUtils.verifiedTotp(config.getApplicationAdminSecret(), form.get("code"))) {
-                return Response.redirect(ADMIN_INDEX).cookie(AdminUtils.getAdminCookie(false));
+        form.expectNumeric("code");
+        form.expectMaxLength("code", 6);
+        form.expectMinLength("code", 6);
+
+        if (MangooUtils.isNotLocked() && form.isValid()) {
+            if (TotpUtils.verifyTotp(config.getApplicationAdminSecret(), form.get("code"))) {
+                try {
+                    return Response.redirect(ADMIN_INDEX).cookie(MangooUtils.getAdminCookie(false));
+                } catch (MangooJwtException e) {
+                    MangooUtils.invalidAuthentication();
+                }
             } else {
-                AdminUtils.invalidAuthentication();
+                MangooUtils.invalidAuthentication();
             }
         }
         form.invalidate();

@@ -1,6 +1,6 @@
 package io.mangoo.constants;
 
-import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.CommonUtils;
 
 public final class Template {
     private static final String ADMIN_TEMPLATE_PATH = "@admin/index.ftl";
@@ -15,7 +15,7 @@ public final class Template {
     private static final String NOT_FOUND_TEMPLATE_PATH = "defaults/404.html";
     private static final String TWO_FACTOR_TEMPLATE_PATH = "@admin/twoFactor.ftl";
     private static final String TEMPLATES_FOLDER = "templates/";
-    private static final String TOOLS_TEMPLATE_PATH = "@admin/tools.ftl";
+    private static final String TOOLS_TEMPLATE_PATH = "@admin/security.ftl";
     private static final String UNAUTHORIZED_TEMPLATE_PATH = "defaults/401.html";
     private static final String NOT_FOUND_CONTENT;
     private static final String INTERNAL_SERVER_ERROR_CONTENT;
@@ -25,13 +25,13 @@ public final class Template {
     private static final String FORBIDDEN_CONTENT;
     private static final String XXX_CONTENT;
     static {
-        OK_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + OK_TEMPLATE_PATH);
-        BAD_REQUEST_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH);
-        UNAUTHORIZED_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH);
-        FORBIDDEN_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + FORBIDDEN_TEMPLATE_PATH);
-        NOT_FOUND_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH);
-        INTERNAL_SERVER_ERROR_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH);
-        XXX_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + XXX_TEMPLATE_PATH);
+        OK_CONTENT = CommonUtils.readResourceToString(TEMPLATES_FOLDER + OK_TEMPLATE_PATH);
+        BAD_REQUEST_CONTENT = CommonUtils.readResourceToString(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH);
+        UNAUTHORIZED_CONTENT = CommonUtils.readResourceToString(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH);
+        FORBIDDEN_CONTENT = CommonUtils.readResourceToString(TEMPLATES_FOLDER + FORBIDDEN_TEMPLATE_PATH);
+        NOT_FOUND_CONTENT = CommonUtils.readResourceToString(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH);
+        INTERNAL_SERVER_ERROR_CONTENT = CommonUtils.readResourceToString(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH);
+        XXX_CONTENT = CommonUtils.readResourceToString(TEMPLATES_FOLDER + XXX_TEMPLATE_PATH);
     }
 
     private Template () {

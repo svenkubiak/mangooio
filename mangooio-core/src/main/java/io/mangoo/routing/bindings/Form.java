@@ -1,19 +1,23 @@
 package io.mangoo.routing.bindings;
 
-import io.mangoo.constants.NotNull;
-import io.mangoo.utils.MangooUtils;
+import io.mangoo.constants.Required;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serial;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class Form extends Validator {
     @Serial
     private static final long serialVersionUID = 2228639200039277653L;
-    private transient List<InputStream> files = new ArrayList<>();
-    private Map<String, List<String>> valueMap = new HashMap<>();
+    private static final Logger LOG = LogManager.getLogger(Form.class);
     private boolean submitted;
     private boolean keep;
     
@@ -28,7 +32,7 @@ public class Form extends Validator {
      * @return Optional of String
      */
     public Optional<String> getString(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -45,7 +49,7 @@ public class Form extends Validator {
      * @return String with the value of the form element or an empty value if blank
      */
     public String getValue(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -68,7 +72,7 @@ public class Form extends Validator {
      */
     @SuppressWarnings("fb-contrib:BL_BURYING_LOGIC")
     public Optional<Boolean> getBoolean(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -89,7 +93,7 @@ public class Form extends Validator {
      * @return Optional of Integer
      */
     public Optional<Integer> getInteger(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -106,7 +110,7 @@ public class Form extends Validator {
      * @return Optional of Double
      */
     public Optional<Double> getDouble(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -123,7 +127,7 @@ public class Form extends Validator {
      * @return Optional of Float
      */
     public Optional<Float> getFloat(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -134,12 +138,20 @@ public class Form extends Validator {
     }
 
     /**
-     * Retrieves all attachment files of the form
+     * Retrieves an optional long value corresponding to the name of the form element
      *
-     * @return List of files or an empty list
+     * @param key The name of the form element
+     * @return Optional of Long
      */
-    public List<InputStream> getFiles() {
-        return new ArrayList<>(files);
+    public Optional<Long> getLong(String key) {
+        Objects.requireNonNull(key, Required.KEY);
+
+        String value = values.get(key);
+        if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
+            return Optional.of(Long.valueOf(value));
+        }
+
+        return Optional.empty();
     }
 
     /**
@@ -148,9 +160,10 @@ public class Form extends Validator {
      *
      * @return File or null if no file is present
      */
-    public Optional<InputStream> getFile() {
+    public Optional<byte[]> getFile(String key) {
+        Objects.requireNonNull(key, Required.KEY);
         if (!files.isEmpty()) {
-            return Optional.of(files.getFirst());
+            return Optional.of(files.get(key));
         }
 
         return Optional.empty();
@@ -172,8 +185,15 @@ public class Form extends Validator {
      *  
      * @param inputStream The InputStream to add
      */
-    public void addFile(InputStream inputStream) {
-        files.add(inputStream);
+    public void addFile(String key, InputStream inputStream) {
+        Objects.requireNonNull(key, Required.KEY);
+        Objects.requireNonNull(inputStream, Required.INPUT_STREAM);
+
+        try {
+            files.put(key, inputStream.readAllBytes());
+        } catch (IOException e) {
+            LOG.error("Failed to read InputStream for file upload", e);
+        }
     }
  
     /**
@@ -182,38 +202,7 @@ public class Form extends Validator {
     public void keep() {
         keep = true;
     }
-    
-    /**
-     * Adds an item to the value list
-     * @param key The name of the form element
-     * @param value The value to store
-     */
-    public void addValueList(String key, String value) {
-        Objects.requireNonNull(key, NotNull.KEY);
 
-        List<String> values;
-        if (!valueMap.containsKey(key)) {
-            values = new ArrayList<>();
-        } else {
-            values = valueMap.get(key);
-        }
-
-        values.add(value);
-        valueMap.put(key, values);
-    }
-    
-    /**
-     * Retrieves the value list for a given key
-     * 
-     * @param key The name of the form element
-     * @return A value list with elements
-     */
-    public List<String> getValueList(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
-        
-        return valueMap.get(key);
-    }
-    
     /**
      * Checks if the form values are to put in the flash scope
      * 
@@ -228,9 +217,11 @@ public class Form extends Validator {
      */
     public void discard() {
         if (files != null) {
-            files.forEach(MangooUtils::closeQuietly);            
+            files.clear();
+            files = new HashMap<>();
+            values.clear();
+            values = new HashMap<>();
         }
-        valueMap = new HashMap<>();
     }
     
     public boolean isSubmitted() {

@@ -1,9 +1,29 @@
+## Version 10.0.0
+
+Unreleased
+
+* Added Support for Open Telemetry (svenkubiak)
+* Added Support for Jakarta Validation API for methods parameters (svenkubiak)
+* Added new vault functionality for storing secrets based on Java Keystore (svenkubiak)
+* Added HTTPS connector (svenkubiak)
+* Removed cryptex{} from configuration in favour of new vault (svenkubiak)
+* Removed all deprecated methods and classed (svenkubiak)
+* Removed AJP connector (svenkubiak)
+* Replaced internal TOTP implementation with external library (svenkubiak)
+* Switched from Paseto to JWT (svenkubiak)
+* MongoDB index are now case-insensitive when they are unique (svenkubiak)
+* Upgraded to Java 25 (svenkubiak)
+* Sonar refactorings (svenkubiak)
+* Version bumps (svenkubiak)
+
 ## Version 9.10.1
 
 Released at 23.09.2025
 
 * Version bumps (svenkubiak)
     * log4j 2.25.1 -&gt; 2.25.2
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.10.0...10.10.0)
 
 ## Version 9.10.0
 
@@ -14,6 +34,8 @@ Released at 23.09.2025
     * guava 33.4.8-jre -&gt; 33.5.0-jre
     * tika-core 3.2.2 -&gt; 3.2.3
     * bouncy-castle 1.81 -&gt; 1.82
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.9.0...9.10.0)
 
 ## Version 9.9.0
 

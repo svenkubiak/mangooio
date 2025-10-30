@@ -1,6 +1,6 @@
 package io.mangoo.utils;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
@@ -30,7 +30,9 @@ public final class JsonUtils {
             .build()
             .registerModule(new JavaTimeModule())
             .registerModule(new BlackbirdModule())
-            .setSerializationInclusion(Include.NON_NULL)
+            .setDefaultPropertyInclusion(JsonInclude.Value.construct(
+                    JsonInclude.Include.NON_NULL,
+                    JsonInclude.Include.ALWAYS))
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private JsonUtils(){
@@ -43,7 +45,7 @@ public final class JsonUtils {
      * @return json string or null if conversion fails
      */
     public static String toJson(Object object) {
-        Objects.requireNonNull(object, NotNull.OBJECT);
+        Objects.requireNonNull(object, Required.OBJECT);
         
         String json = Strings.EMPTY;
         try {
@@ -62,7 +64,7 @@ public final class JsonUtils {
      * @return json string or null if conversion fails
      */
     public static String toPrettyJson(Object object) {
-        Objects.requireNonNull(object, NotNull.OBJECT);
+        Objects.requireNonNull(object, Required.OBJECT);
         
         var json = Strings.EMPTY;
         try {
@@ -84,8 +86,8 @@ public final class JsonUtils {
      * @return The converted class or null if conversion fails
      */
     public static <T> T toObject(String json, Class<T> clazz) {
-        Objects.requireNonNull(json, NotNull.JSON);
-        Objects.requireNonNull(clazz, NotNull.CLASS);
+        Argument.requireNonBlank(json, Required.JSON);
+        Objects.requireNonNull(clazz, Required.CLASS);
 
         T object = null;
         try {
@@ -108,8 +110,8 @@ public final class JsonUtils {
      * @return The converted class or null if conversion and fallback fails
      */
     public static <T> T toObjectWithFallback(String json, Class<T> clazz) {
-        Objects.requireNonNull(json, NotNull.JSON);
-        Objects.requireNonNull(clazz, NotNull.CLASS);
+        Argument.requireNonBlank(json, Required.JSON);
+        Objects.requireNonNull(clazz, Required.CLASS);
 
         T object = null;
         try {
@@ -135,7 +137,7 @@ public final class JsonUtils {
      * @return A flat map containing the json data
      */
     public static Map<String, String> toFlatMap(String json) {
-        Objects.requireNonNull(json, NotNull.JSON);
+        Argument.requireNonBlank(json, Required.JSON);
 
         Map<String, String> map = new HashMap<>();
         try {
@@ -157,7 +159,7 @@ public final class JsonUtils {
     private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map) {
         if (jsonNode.isObject()) {
             var objectNode = (ObjectNode) jsonNode;
-            Iterator<Map.Entry<String, JsonNode>> iter = objectNode.fields();
+            Iterator<Map.Entry<String, JsonNode>> iter = objectNode.properties().iterator();
             String pathPrefix = currentPath.isEmpty() ? Strings.EMPTY : currentPath + ".";
 
             while (iter.hasNext()) {

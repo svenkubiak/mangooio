@@ -3,8 +3,9 @@ package io.mangoo.cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.CacheName;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
+import io.mangoo.utils.Argument;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
@@ -14,20 +15,25 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @Singleton
 public class CacheProvider implements Provider<Cache> {
     private static final long SIXTY = 60;
     private static final long THIRTY = 30;
-    private static final long FORTY_THOUSAND = 40000;
+    private static final long FIFTY_THOUSAND = 50000;
+    private static final long FIVE_THOUSAND = 5000;
     private final Map<String, Cache> caches = new HashMap<>();
     private Cache cache;
 
     @Inject
     @SuppressFBWarnings(value = "FII_USE_FUNCTION_IDENTITY", justification = "Required by cache creation function")
     public CacheProvider(Config config) {
-        Objects.requireNonNull(config, NotNull.CONFIG);
-        
+        Objects.requireNonNull(config, Required.CONFIG);
+
+        if (config.isAuthenticationBlacklist()) {
+            initBlacklistCache();
+        }
         initApplicationCache();
         initAuthenticationCache();
         setDefaultApplicationCache();
@@ -35,8 +41,8 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initApplicationCache() {
         Cache applicationCache = new CacheImpl(Caffeine.newBuilder()
-                .maximumSize(FORTY_THOUSAND)
-                .expireAfterAccess(Duration.of(THIRTY, ChronoUnit.DAYS))
+                .maximumSize(FIFTY_THOUSAND)
+                .expireAfterWrite(Duration.of(THIRTY, ChronoUnit.DAYS))
                 .recordStats()
                 .build());
 
@@ -45,12 +51,22 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initAuthenticationCache() {
         Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
-                .maximumSize(FORTY_THOUSAND)
-                .expireAfterAccess(Duration.of(SIXTY, ChronoUnit.MINUTES))
+                .maximumSize(FIFTY_THOUSAND)
+                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
 
         caches.put(CacheName.AUTH, authenticationCache);
+    }
+
+    private void initBlacklistCache() {
+        Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
+                .maximumSize(FIVE_THOUSAND)
+                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
+                .recordStats()
+                .build());
+
+        caches.put(CacheName.BLACKLIST, authenticationCache);
     }
 
     private void setDefaultApplicationCache() {
@@ -64,8 +80,25 @@ public class CacheProvider implements Provider<Cache> {
      * @return A Cache instance
      */
     public Cache getCache(String name) {
-        Objects.requireNonNull(name, NotNull.NAME);
+        Argument.requireNonBlank(name, Required.NAME);
         return caches.get(name);
+    }
+
+    /**
+     * Adds a cache to the CacheProvider list making it available to
+     * the Admin Dashboard (if record stats is enabled)
+     *
+     * @param name The name of the cache
+     * @param cache The cache instance
+     */
+    public void addCache(String name, Cache cache) {
+        Argument.requireNonBlank(name, Required.NAME);
+        Objects.requireNonNull(cache, Required.CACHE);
+
+        if (Stream.of(CacheName.APPLICATION, CacheName.BLACKLIST, CacheName.AUTH)
+                .noneMatch(s -> s.equalsIgnoreCase(name))) {
+            caches.put(name, cache);
+        }
     }
     
     /**˝

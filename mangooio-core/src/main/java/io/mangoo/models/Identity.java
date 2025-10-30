@@ -1,6 +1,6 @@
 package io.mangoo.models;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.undertow.security.idm.Account;
 import io.undertow.security.idm.Credential;
 import io.undertow.security.idm.IdentityManager;
@@ -21,8 +21,26 @@ public class Identity implements IdentityManager, Serializable {
     private final char[] password;
     
     public Identity(String username, String password) {
-        this.username = Objects.requireNonNull(username, NotNull.USERNAME);
-        this.password = Objects.requireNonNull(password.toCharArray(), NotNull.PASSWORD);
+        this.username = Objects.requireNonNull(username, Required.USERNAME);
+        this.password = Objects.requireNonNull(password.toCharArray(), Required.PASSWORD);
+    }
+
+    private static Account getAccount(String username) {
+        return new Account() {
+            @Serial
+            private static final long serialVersionUID = 5311970975103831035L;
+            private transient Principal principal = () -> username;
+
+            @Override
+            public Principal getPrincipal() {
+                return principal;
+            }
+
+            @Override
+            public Set<String> getRoles() {
+                return Collections.emptySet();
+            }
+        };
     }
 
     @Override
@@ -43,24 +61,6 @@ public class Identity implements IdentityManager, Serializable {
         }
 
         return account;
-    }
-
-    private static Account getAccount(String username) {
-        return new Account() {
-            @Serial
-            private static final long serialVersionUID = 5311970975103831035L;
-            private transient Principal principal = () -> username;
-
-            @Override
-            public Principal getPrincipal() {
-                return principal;
-            }
-
-            @Override
-            public Set<String> getRoles() {
-                return Collections.emptySet();
-            }
-        };
     }
 
     private boolean verifyCredential(Credential credential) {

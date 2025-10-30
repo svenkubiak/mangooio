@@ -1,44 +1,45 @@
 package io.mangoo.core;
 
 import com.google.common.io.Resources;
-import com.google.re2j.Pattern;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.mangoo.constants.Const;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.crypto.Crypto;
-import io.mangoo.exceptions.MangooEncryptionException;
+import io.mangoo.constants.Required;
+import io.mangoo.crypto.Vault;
+import io.mangoo.utils.internal.MangooUtils;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
+import java.util.regex.Pattern;
 
 @Singleton
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
-    private static final String CONFIG_FILE = "config.yaml";
-    private static final String CRYPTEX_TAG = "cryptex{";
+    private static final String VAULT_TAG = "vault{}";
     private static final String ARG_TAG = "arg{}";
+    private static final String ENV_TAG = "env{}";
     private final Map<String, String> values = new ConcurrentHashMap<>();
+    private final Vault vault;
     private Pattern corsUrl;
     private Pattern corsAllowOrigin;
-    private boolean decrypted = true;
     private boolean valid;
 
-    public Config() {
+    @Inject
+    public Config(Vault vault) {
+        this.vault = Objects.requireNonNull(vault, Required.VAULT);
         load();
     }
 
@@ -60,9 +61,9 @@ public class Config {
             Map<String, Object> activeEnvironment = (Map<String, Object>) environments.get(activeEnv);
             if (activeEnvironment != null) {
                 Map<String, Object> mergedConfig = new HashMap<>(defaultConfig);
-                mergeMaps(mergedConfig, activeEnvironment);
+                MangooUtils.mergeMaps(mergedConfig, activeEnvironment);
 
-                Map<String, String> falttenedMap = flattenMap(mergedConfig);
+                Map<String, String> falttenedMap = MangooUtils.flattenMap(mergedConfig);
                 falttenedMap.forEach(this::parse);
 
                 valid = true;
@@ -82,40 +83,10 @@ public class Config {
         if (StringUtils.isNotBlank(configPath)) {
             inputStream = Files.newInputStream(Path.of(configPath));
         } else {
-            inputStream = Resources.getResource(CONFIG_FILE).openStream();
+            inputStream = Resources.getResource(Const.CONFIG_FILE).openStream();
         }
 
         return inputStream;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void mergeMaps(Map<String, Object> baseMap, Map<String, Object> overrideMap) {
-        overrideMap.forEach((key, value) -> {
-            if (value instanceof Map && baseMap.get(key) instanceof Map) {
-                mergeMaps((Map<String, Object>) baseMap.get(key), (Map<String, Object>) value);
-            } else {
-                baseMap.put(key, value);
-            }
-        });
-    }
-
-    private Map<String, String> flattenMap(Map<String, Object> map) {
-        Map<String, String> flatMap = new HashMap<>();
-        flattenMapHelper(map, "", flatMap);
-        return flatMap;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void flattenMapHelper(Map<String, Object> map, String prefix, Map<String, String> flatMap) {
-        map.forEach((key, value) -> {
-            String newKey = prefix.isEmpty() ? key : prefix + "." + key;
-
-            if (value instanceof Map) {
-                flattenMapHelper((Map<String, Object>) value, newKey, flatMap);
-            } else {
-                flatMap.put(newKey, value != null ? value.toString() : Strings.EMPTY);
-            }
-        });
     }
 
     /**
@@ -126,12 +97,24 @@ public class Config {
      * @param value The property value
      */
     private void parse(String key, String value) {
-        if (ARG_TAG.equals(value)) {
-            String propertyValue = System.getProperty(key);
+        if (ENV_TAG.equals(value)) {
+            String envKey = key.toUpperCase(Locale.ENGLISH)
+                    .replace(".", "_") // NOSONAR
+                    .trim();
 
-            if (StringUtils.isNotBlank(propertyValue) && propertyValue.startsWith(CRYPTEX_TAG)) {
-                propertyValue = decrypt(key, propertyValue);
+            String propertyValue = System.getenv(envKey);
+
+            if (StringUtils.isNotBlank(propertyValue)) {
+                values.put(key, propertyValue);
             }
+        } else if (value.startsWith("env{")) {
+            value = StringUtils.substringBetween(value, "env{", "}");
+
+            if (StringUtils.isNotBlank(value)) {
+                values.put(key, value);
+            }
+        } else if (ARG_TAG.equals(value)) {
+            String propertyValue = System.getProperty(key);
 
             if (StringUtils.isNotBlank(propertyValue)) {
                 values.put(key, propertyValue);
@@ -142,46 +125,21 @@ public class Config {
             if (StringUtils.isNotBlank(value)) {
                 values.put(key, value);
             }
-        } else if (value.startsWith(CRYPTEX_TAG)) {
-            values.put(key, decrypt(key, value));
+        } else if (VAULT_TAG.equals(value)) {
+            String propertyValue = vault.get(key);
+
+            if (StringUtils.isNotBlank(propertyValue)) {
+                values.put(key, propertyValue);
+            }
+        } else if (value.startsWith("vault{")) {
+            value = StringUtils.substringBetween(value, "vault{", "}");
+
+            if (StringUtils.isNotBlank(value)) {
+                values.put(key, value);
+            }
         } else {
             values.put(key, value);
         }
-    }
-
-    /**
-     * Decrypts a given property key and rewrites it to props
-     *
-     * @param value The encrypted value to decrypt
-     */
-    private String decrypt(String key, String value) {
-        var crypto = new Crypto();
-
-        String keyFile = System.getProperty(Key.APPLICATION_PRIVATE_KEY);
-        if (StringUtils.isNotBlank(keyFile)) {
-            try (Stream<String> lines = Files.lines(Path.of(keyFile))) { //NOSONAR KeyFile can intentionally come from user input
-                String encryptionKey = lines.findFirst().orElse(null);
-                if (StringUtils.isNotBlank(encryptionKey)) {
-                    var privateKey = crypto.getPrivateKeyFromString(encryptionKey);
-                    var cryptex = StringUtils.substringBetween(value, CRYPTEX_TAG, "}");
-
-                    if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
-                        return crypto.decrypt(cryptex, privateKey);
-                    } else {
-                        LOG.error("Failed to decrypt an encrypted config value");
-                        decrypted = false;
-                    }
-                }
-            } catch (IOException | SecurityException | MangooEncryptionException e) {
-                LOG.error("Failed to decrypt an encrypted config value", e);
-                decrypted = false;
-            }
-        } else {
-            LOG.error("{} has an encrypted value in config.yaml but private key for decryption is missing", key);
-            decrypted = false;
-        }
-
-        return Strings.EMPTY;
     }
 
     /**
@@ -190,7 +148,7 @@ public class Config {
     public void validate() {
         for (Map.Entry<String, String> entry : values.entrySet()) {
             String value = entry.getValue();
-            if (value != null && (value.startsWith(CRYPTEX_TAG) || value.startsWith(ARG_TAG)) ) {
+            if (value != null && (value.startsWith(VAULT_TAG) || value.startsWith(ARG_TAG)) ) {
                 LOG.error("{} has not been decrypted or parsed correctly", entry.getKey());
                 valid = false;
             }
@@ -207,13 +165,6 @@ public class Config {
         properties.putAll(values);
 
         return properties;
-    }
-
-    /**
-     * @return True if decryption of config values was successful, false otherwise
-     */
-    public boolean isDecrypted() {
-        return decrypted;
     }
 
     /**
@@ -366,13 +317,6 @@ public class Config {
     }
 
     /**
-     * @return application.publicKey from config.yaml
-     */
-    public String getApplicationPublicKey() {
-        return getString(Key.APPLICATION_PUBLIC_KEY);
-    }
-
-    /**
      * @return authentication.cookie.name from config.yaml or default value if undefined
      */
     public String getAuthenticationCookieName() {
@@ -506,17 +450,17 @@ public class Config {
     }
 
     /**
-     * @return jvm property ajp.host or connector.ajp.host or null if undefined
+     * @return connector.https.host or null if undefined
      */
-    public String getConnectorAjpHost() {
-        return getString(Key.CONNECTOR_AJP_HOST, null);
+    public String getConnectorHttpsHost() {
+        return getString(Key.CONNECTOR_HTTPS_HOST, null);
     }
 
     /**
-     * @return jvm property ajp.port or connector.ajp.port or 0 if undefined
+     * @return connector.https.port or 0 if undefined
      */
-    public int getConnectorAjpPort() {
-        return getInt(Key.CONNECTOR_AJP_PORT, 0);
+    public int getConnectorHttpsPort() {
+        return getInt(Key.CONNECTOR_HTTPS_PORT, 0);
     }
 
     /**
@@ -543,22 +487,22 @@ public class Config {
     /**
      * @return session.cookie.secret or application secret if undefined
      */
-    public String getSessionCookieSecret() {
-        return getString(Key.SESSION_COOKIE_SECRET, getApplicationSecret());
+    public byte[] getSessionCookieSecret() {
+        return getString(Key.SESSION_COOKIE_SECRET, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
      * @return authentication.cookie.secret or application secret if undefined
      */
-    public String getAuthenticationCookieSecret() {
-        return getString(Key.AUTHENTICATION_COOKIE_SECRET, getApplicationSecret());
+    public byte[] getAuthenticationCookieSecret() {
+        return getString(Key.AUTHENTICATION_COOKIE_SECRET, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
      * @return flash.cookie.secret or application secret if undefined
      */
-    public String getFlashCookieSecret() {
-        return getString(Key.FLASH_COOKIE_SECRET, getApplicationSecret());
+    public byte[] getFlashCookieSecret() {
+        return getString(Key.FLASH_COOKIE_SECRET, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
@@ -759,24 +703,85 @@ public class Config {
     }
 
     /**
-     * @return token.secret or null if undefined
-     */
-    public String getTokenSecret() {
-        return getString(Key.APPLICATION_PASETO_SECRET, null);
-    }
-
-    /**
      * @return authentication.cookie.samesitemode or default value if undefined
      */
     public String getAuthenticationCookieSameSiteMode() {
         return getString(Key.AUTHENTICATION_COOKIE_SAME_SITE_MODE, Default.AUTHENTICATION_COOKIE_SAME_SITE_MODE);
     }
 
+    /**
+     * @return session.cookie.samesitemode or default value if undefined
+     */
+    public String getSessionCookieSameSiteMode() {
+        return getString(Key.SESSION_COOKIE_SAME_SITE_MODE, Default.SESSION_COOKIE_SAME_SITE_MODE);
+    }
+
+    /**
+     *
+     * @return application.vault.secret or null if undefined
+     */
+    public String getApplicationVaultSecret() {
+        return getString(Key.APPLICATION_VAULT_SECRET, null);
+    }
+
+    /**
+     *
+     * @return application.vault.path or null if undefined
+     */
+    public String getApplicationVaultPath() {
+        return getString(Key.APPLICATION_VAULT_SECRET, null);
+    }
+
+    /**
+     * @return session.cookie.key or application.secret if undefined
+     */
+    public byte[] getSessionCookieKey() {
+        return getString(Key.SESSION_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * @return flash.cookie.key or application.secret if undefined
+     */
+    public byte[] getFlashCookieKey() {
+        return getString(Key.FLASH_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * @return authentication.cookie.key or application.secret if undefined
+     */
+    public byte[] getAuthenticationCookieKey() {
+        return getString(Key.FLASH_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * @return connector.https.certificate.alias or default value if undefined
+     */
+    public String getConnectorHttpsCertificateAlias() {
+        return getString(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS, Default.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
+    }
+
+    /**
+     * @return authentication.blacklist or default value if undefined
+     */
+    public boolean isAuthenticationBlacklist() {
+        return getBoolean(Key.AUTHENTICATION_BLACKLIST, Default.AUTHENTICATION_BLACKLIST);
+    }
+
     public boolean isValid() {
         return valid;
     }
 
-    public String getSessionCookieSameSiteMode() {
-        return getString(Key.SESSION_COOKIE_SAME_SITE_MODE, Default.SESSION_COOKIE_SAME_SITE_MODE);
+    /**
+     * @return otlp.enable or default value if undefined
+     */
+    public boolean isOtlpEnable() {
+        return getBoolean(Key.OTLP_ENABLE, Default.OTLP_ENABLE);
+    }
+
+    /**
+     * @return otlp.endpoint or null if undefined
+     */
+    public String getOtlpEndpoint() {
+        return getString(Key.OTLP_ENDPOINT, null);
     }
 }

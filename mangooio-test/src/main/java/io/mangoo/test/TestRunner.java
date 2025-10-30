@@ -13,7 +13,7 @@ import org.junit.platform.suite.api.Suite;
  */ 
 @SuppressWarnings("all")
 @Suite(failIfNoTests = false)
-public class TestRunner implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
+public class TestRunner implements BeforeAllCallback, AutoCloseable {
     private boolean started = false;
     
     @Override
@@ -31,8 +31,8 @@ public class TestRunner implements BeforeAllCallback, ExtensionContext.Store.Clo
     
     protected void afterStartup() {
     }
-    
+
     @Override
-    public void close() throws Throwable {
+    public void close() throws Exception {
     }
 }

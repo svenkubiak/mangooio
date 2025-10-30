@@ -3,7 +3,7 @@ package io.mangoo.templating.methods;
 import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class LocationMethod implements TemplateMethodModelEx {
    private final String controller;
 
     public LocationMethod(String path) {
-        Objects.requireNonNull(path, NotNull.PATH);
+        Objects.requireNonNull(path, Required.PATH);
         this.controller = path.toLowerCase(Locale.ENGLISH);
     }
 

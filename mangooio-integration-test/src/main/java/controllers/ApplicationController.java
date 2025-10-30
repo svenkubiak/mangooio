@@ -3,11 +3,10 @@ package controllers;
 import com.google.common.io.Resources;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.filters.ApiKeyFilter;
 import io.mangoo.filters.OriginFilter;
-import io.mangoo.filters.PasetoFilter;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
@@ -27,7 +26,7 @@ public class ApplicationController {
 
     @Inject
     public ApplicationController(@Named(Key.APPLICATION_NAMED) String named) {
-        this.named = Objects.requireNonNull(named, NotNull.NAMED);
+        this.named = Objects.requireNonNull(named, Required.NAMED);
     }
 
     public Response index() {
@@ -63,11 +62,6 @@ public class ApplicationController {
 
     @FilterWith(ApiKeyFilter.class)
     public Response apiFilter() {
-        return Response.ok();
-    }
-
-    @FilterWith(PasetoFilter.class)
-    public Response tokenFilter() {
         return Response.ok();
     }
 

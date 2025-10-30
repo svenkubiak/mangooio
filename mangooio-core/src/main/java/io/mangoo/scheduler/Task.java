@@ -1,6 +1,6 @@
 package io.mangoo.scheduler;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,8 +13,8 @@ public class Task implements Runnable {
     private final String methodName;
     
     public Task(Class<?> clazz, String methodName) {
-        this.clazz = Objects.requireNonNull(clazz, NotNull.CLASS);
-        this.methodName = Objects.requireNonNull(methodName, NotNull.METHOD);
+        this.clazz = Objects.requireNonNull(clazz, Required.CLASS);
+        this.methodName = Objects.requireNonNull(methodName, Required.METHOD);
     }
 
     @Override

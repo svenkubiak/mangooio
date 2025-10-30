@@ -5,6 +5,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Server;
 import io.mangoo.routing.Response;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
@@ -31,6 +32,8 @@ public class ResponseHandler implements HttpHandler {
         if (form != null) {
             form.discard();
         }
+
+        Trace.end(exchange.getRequestPath());
     }
 
     /**
@@ -60,7 +63,7 @@ public class ResponseHandler implements HttpHandler {
             .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
 
         exchange.getResponseHeaders().put(Header.LOCATION, response.getRedirectTo());
-        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().put(key, value));
         exchange.endExchange();
     }
 
@@ -80,7 +83,7 @@ public class ResponseHandler implements HttpHandler {
             .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
         
         exchange.getResponseHeaders().put(Header.CONTENT_TYPE, response.getContentType() + "; charset=" + StandardCharsets.UTF_8.name());
-        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().put(key, value));
         exchange.getResponseSender().send(response.getBody());
     }
 }

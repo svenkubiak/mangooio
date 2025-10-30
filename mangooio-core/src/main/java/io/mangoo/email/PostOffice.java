@@ -1,6 +1,6 @@
 package io.mangoo.email;
 
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
@@ -32,7 +32,7 @@ public class PostOffice {
 
     @Inject
     public PostOffice(Config config) {
-        Objects.requireNonNull(config, NotNull.CONFIG);
+        Objects.requireNonNull(config, Required.CONFIG);
 
         var properties = new Properties();
         properties.put("mail.smtp.host", config.getSmtpHost());
@@ -68,7 +68,7 @@ public class PostOffice {
      * @param mail The mail to send
      */
     public void send(Mail mail) {
-        Objects.requireNonNull(mail, NotNull.MAIL);
+        Objects.requireNonNull(mail, Required.MAIL);
 
         try {
             var mimeMessage = new MimeMessage(session);
@@ -90,9 +90,9 @@ public class PostOffice {
         }
     }
 
-    private void setAttachments(Mail mail, Part part) throws MessagingException, IOException {
-        Objects.requireNonNull(mail, NotNull.MAIL);
-        Objects.requireNonNull(part, NotNull.PART);
+    private void setAttachments(Mail mail, Part part) throws MessagingException {
+        Objects.requireNonNull(mail, Required.MAIL);
+        Objects.requireNonNull(part, Required.PART);
 
         if (mail.hasAttachments()) {
             BodyPart messageBodyPart = new MimeBodyPart();
@@ -103,11 +103,13 @@ public class PostOffice {
 
             for (Path path : mail.getMailAttachments()) {
                 messageBodyPart = new MimeBodyPart();
-                var filename = FilenameUtils.getName(path.getFileName().toString());
-                DataSource source = new FileDataSource(filename);
-                messageBodyPart.setDataHandler(new DataHandler(source));
-                messageBodyPart.setFileName(filename);
-                multipart.addBodyPart(messageBodyPart);
+                if (path.getFileName() != null) {
+                    var filename = FilenameUtils.getName(path.getFileName().toString());
+                    DataSource source = new FileDataSource(filename);
+                    messageBodyPart.setDataHandler(new DataHandler(source));
+                    messageBodyPart.setFileName(filename);
+                    multipart.addBodyPart(messageBodyPart);
+                }
             }
 
             part.setContent(multipart);
@@ -115,8 +117,8 @@ public class PostOffice {
     }
 
     private void setContent(Mail mail, Part part) throws MessagingException {
-        Objects.requireNonNull(mail, NotNull.MAIL);
-        Objects.requireNonNull(part, NotNull.PART);
+        Objects.requireNonNull(mail, Required.MAIL);
+        Objects.requireNonNull(part, Required.PART);
 
         if (mail.isMailHtml()) {
             part.setContent(mail.getMailText(), "text/html; charset=utf-8");
@@ -126,8 +128,8 @@ public class PostOffice {
     }
 
     private void setFrom(Mail mail, MimeMessage mimeMessage) throws MessagingException, UnsupportedEncodingException {
-        Objects.requireNonNull(mail, NotNull.MAIL);
-        Objects.requireNonNull(mimeMessage, NotNull.MIME_MESSAGE);
+        Objects.requireNonNull(mail, Required.MAIL);
+        Objects.requireNonNull(mimeMessage, Required.MIME_MESSAGE);
 
         String messageFromName = mail.getMailFromName();
         String messageFromAddress = mail.getMailFromAddress();

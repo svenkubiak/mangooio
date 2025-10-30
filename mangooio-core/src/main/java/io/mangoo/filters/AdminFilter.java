@@ -1,20 +1,24 @@
 package io.mangoo.filters;
 
 import io.mangoo.constants.ClaimKey;
-import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooTokenException;
+import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.utils.MangooUtils;
-import io.mangoo.utils.paseto.PasetoParser;
+import io.mangoo.utils.JwtUtils;
+import io.mangoo.utils.internal.MangooUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.time.LocalDateTime;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 
 public class AdminFilter implements PerRequestFilter {
+    private static final Logger LOG = LogManager.getLogger(AdminFilter.class);
     private static final String VERSION_TAG = MangooUtils.getVersion();
     private static final String[] ALLOWED = {
             "/@admin/login",
@@ -29,30 +33,31 @@ public class AdminFilter implements PerRequestFilter {
         response.render("mangooioAdminLocale", config.getApplicationAdminLocale());
 
         var uri = request.getURI();
-        if (StringUtils.isNotBlank(uri) && StringUtils.equalsAny(uri, ALLOWED)) {
+        if (StringUtils.isNotBlank(uri) && Strings.CI.equalsAny(uri, ALLOWED)) {
             return response;
         }
 
-        var cookie = request.getCookie(Default.APPLICATION_ADMIN_COOKIE_NAME);
+        var cookie = request.getCookie(MangooUtils.getAdminCookieName());
         if (cookie != null) {
             String value = cookie.getValue();
             if (StringUtils.isNotBlank(value)) {
                 try {
-                    var token = PasetoParser.create()
-                        .withSecret(config.getApplicationSecret())
-                        .withValue(value)
-                        .parse();
+                    var jwtData = JwtUtils.JwtData.create()
+                            .withKey(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
+                            .withSecret(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
+                            .withIssuer(config.getApplicationName())
+                            .withAudience(MangooUtils.getAdminCookieName())
+                            .withTtlSeconds(1800);
 
-                    if (token.getExpires().isAfter(LocalDateTime.now())) {
-                        if (token.containsClaim(ClaimKey.TWO_FACTOR) && token.getClaimAsBoolean(ClaimKey.TWO_FACTOR)) {
-                            return Response.redirect("/@admin/twofactor").end();
-                        }
-                        
-                        response.render("version", VERSION_TAG);
-                        return response;
+                    var jwtClaimSet = JwtUtils.parseJwt(value, jwtData);
+                    if (("true").equals(jwtClaimSet.getClaimAsString(ClaimKey.TWO_FACTOR))) {
+                        return Response.redirect("/@admin/twofactor").end();
                     }
-                } catch (MangooTokenException e) {
-                    //NOSONAR Ignore catch
+
+                    response.render("version", VERSION_TAG);
+                    return response;
+                } catch (ParseException | MangooJwtException e) {
+                    LOG.error("Failed to parse admin cookie -> {}", e.getCause(), e);
                 }
             }
         }

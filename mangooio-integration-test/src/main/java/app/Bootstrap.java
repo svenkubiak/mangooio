@@ -69,7 +69,6 @@ public class Bootstrap implements MangooBootstrap {
         // FormController
         Bind.controller(FormController.class).withRoutes(
                 On.post().to("/form").respondeWith("form"),
-                On.post().to("/multivalued").respondeWith("multivalued"),
                 On.post().to("/submit").respondeWith("submit"),
                 On.get().to("/flashify").respondeWith("flashify"),
                 On.post().to("/singlefile").respondeWith("singlefile"),
@@ -115,7 +114,6 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/origin").respondeWith("origin"),
                 On.get().to("/person").respondeWith("person"),
                 On.get().to("/api-filter").respondeWith("apiFilter"),
-                On.get().to("/token-filter").respondeWith("tokenFilter"),
                 On.get().to("/").respondeWith("index").withNonBlocking(),
                 On.anyOf(Http.DELETE, Http.PATCH).to("/anyof").respondeWith("index").withNonBlocking(),
                 On.get().to("/error").respondeWith("error"),

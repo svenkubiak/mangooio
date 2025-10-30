@@ -27,14 +27,14 @@ class AuthenticationTest {
         Authentication authentication = Application.getInstance(Authentication.class);
         
         //when
-        authentication.validLogin("foo", "bar", SALT, VALID_HASH);
+        authentication.isValidLogin("foo", "bar", SALT, VALID_HASH);
         
         //then
         assertThat(authentication.userHasLock("foo"), equalTo(false));
         
         //when
         for (int i=1; i <= 20; i++) {
-            authentication.validLogin("foobar", "bla", SALT, VALID_HASH);   
+            authentication.isValidLogin("foobar", "bla", SALT, VALID_HASH);
         }
         
         //then

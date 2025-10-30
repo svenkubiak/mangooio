@@ -2,7 +2,10 @@ package io.mangoo.controllers;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import io.mangoo.Csrf;
 import io.mangoo.TestExtension;
+import io.mangoo.TestUtils;
+import io.mangoo.constants.Const;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.test.http.TestRequest;
@@ -23,13 +26,44 @@ import static org.hamcrest.Matchers.*;
 @ExtendWith({TestExtension.class})
 class AdminControllerTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
-    private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
     private static final String EVICTIONS = "Evictions";
-    private static final String SCHEDULER = "scheduler";
-    private static final String TOOLS = "tools";
+    private static final String SECURITY = "security";
     private static final String CACHE = "cache";
     private static final String CONTROL_PANEL = "Dashboard";
-    
+
+    @Test
+    void testLoginWithoutCsrf() {
+        Multimap<String, String> parameters = ArrayListMultimap.create();
+        parameters.put("username", Application.getInstance(Config.class).getApplicationAdminUsername());
+        parameters.put("password", Application.getInstance(Config.class).getApplicationAdminPassword());
+
+        TestResponse response = TestRequest.post("/@admin/authenticate")
+                .withForm(parameters)
+                .execute();
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
+        assertThat(response.getContent(), not(containsString(CONTROL_PANEL)));
+    }
+
+    @Test
+    void testLoginWithCsrf() {
+        Csrf csrf = TestUtils.getCsrf();
+        Multimap<String, String> parameters = ArrayListMultimap.create();
+        parameters.put("username", Application.getInstance(Config.class).getApplicationAdminUsername());
+        parameters.put("password", Application.getInstance(Config.class).getApplicationAdminPassword());
+        parameters.put(Const.CSRF_TOKEN, csrf.token());
+
+        TestResponse response = TestRequest.post("/@admin/authenticate")
+                .withCookie(csrf.cookie())
+                .withForm(parameters)
+                .execute();
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), containsString(CONTROL_PANEL));
+    }
+
     @Test
     void testDashboardUnauthorized() {
         //given
@@ -88,9 +122,9 @@ class AdminControllerTest {
     }
 
     @Test
-    void testToolsAuthorized() {
+    void testSecurityAuthorized() {
         //given
-        TestResponse response = login().to("/@admin/tools")
+        TestResponse response = login().to("/@admin/security")
                 .withHTTPMethod(Methods.GET.toString())
                 .execute();
         
@@ -98,13 +132,13 @@ class AdminControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getContent(), containsString(TOOLS));
+        assertThat(response.getContent(), containsString(SECURITY));
     }
     
     @Test
-    void testToolsTwoFactorAuthorized() {
+    void testSecurityTwoFactorAuthorized() {
         //given
-        TestResponse response = login().to("/@admin/tools")
+        TestResponse response = login().to("/@admin/security")
                 .withHTTPMethod(Methods.GET.toString())
                 .execute();
         
@@ -116,9 +150,9 @@ class AdminControllerTest {
     }
     
     @Test
-    void testToolsUnauthorized() {
+    void testSecurityUnauthorized() {
         //given
-        TestResponse response = TestRequest.get("/@admin/tools")
+        TestResponse response = TestRequest.get("/@admin/security")
                 .withDisabledRedirects()
                 .execute();
         
@@ -126,34 +160,7 @@ class AdminControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
         assertThat(response.getHeader("Location"), equalTo("/@admin/login"));
-        assertThat(response.getContent(), not(containsString(TOOLS)));
-    }
-    
-    @Test
-    void testToolsAjaxAuthorized() {
-        //given
-        TestResponse response = login().to("/@admin/tools")
-                .withHTTPMethod(Methods.POST.toString())
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo("application/json; charset=UTF-8"));
-    }
-    
-    @Test
-    void testToolsAjaxUnauthorized() {
-        //given
-        TestResponse response = TestRequest.post("/@admin/tools")
-                .withDisabledRedirects()
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-        assertThat(response.getHeader("Location"), equalTo("/@admin/login"));
-        assertThat(response.getContent(), not(containsString(SCHEDULER)));
+        assertThat(response.getContent(), not(containsString(SECURITY)));
     }
 
     @Test
@@ -168,10 +175,19 @@ class AdminControllerTest {
     }
     
     private TestResponse login() {
+        Csrf csrf = TestUtils.getCsrf();
         Multimap<String, String> parameters = ArrayListMultimap.create();
         parameters.put("username", Application.getInstance(Config.class).getApplicationAdminUsername());
         parameters.put("password", Application.getInstance(Config.class).getApplicationAdminPassword());
+        parameters.put(Const.CSRF_TOKEN, csrf.token());
+
+        TestResponse execute = TestRequest.post("/@admin/authenticate")
+                .withCookie(csrf.cookie())
+                .withForm(parameters)
+                .execute();
+
         return TestRequest.post("/@admin/authenticate")
+                .withCookie(csrf.cookie())
                 .withForm(parameters)
                 .execute();
     }

@@ -2,7 +2,7 @@ package io.mangoo.async;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import jakarta.inject.Singleton;
 import org.apache.logging.log4j.LogManager;
@@ -25,8 +25,8 @@ public class EventBus<T> {
      * @param subscriber The subscriber of the queue
      */
     public void register(String queue, Class<?> subscriber) {
-        Objects.requireNonNull(queue, NotNull.QUEUE);
-        Objects.requireNonNull(subscriber, NotNull.SUBSCRIBER);
+        Objects.requireNonNull(queue, Required.QUEUE);
+        Objects.requireNonNull(subscriber, Required.SUBSCRIBER);
 
         subscribers.put(queue, subscriber);
         numSubscribers.addAndGet(1);
@@ -40,7 +40,7 @@ public class EventBus<T> {
      */
     @SuppressWarnings("all")
     public void publish(T payload) {
-        Objects.requireNonNull(payload, NotNull.PAYLOAD);
+        Objects.requireNonNull(payload, Required.PAYLOAD);
 
         Thread.ofVirtual().start(() -> {
             String queue = payload.getClass().getCanonicalName();

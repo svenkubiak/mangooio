@@ -34,6 +34,7 @@
                                 </div>
                             </div>
                             <button class="button is-block is-info is-large is-fullwidth" id="login">Login <i class="fa fa-sign-in" aria-hidden="true"></i></button>
+                            <@csrfform/>
                         </form>
                     </div>
                 </div>

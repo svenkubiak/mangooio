@@ -1,20 +1,19 @@
 package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.ClaimKey;
-import io.mangoo.constants.Default;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Const;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooTokenException;
+import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
-import io.mangoo.utils.CodecUtils;
-import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.CommonUtils;
+import io.mangoo.utils.JwtUtils;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.paseto.PasetoParser;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import jakarta.inject.Inject;
@@ -22,7 +21,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -33,7 +34,7 @@ public class InboundCookiesHandler implements HttpHandler {
 
     @Inject
     public InboundCookiesHandler(Config config) {
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
+        this.config = Objects.requireNonNull(config, Required.CONFIG);
     }
     
     @Override
@@ -56,25 +57,30 @@ public class InboundCookiesHandler implements HttpHandler {
     protected Session getSessionCookie(HttpServerExchange exchange) {
         var session = Session.create()
             .withContent(new HashMap<>())
-            .withCsrf(MangooUtils.randomString(32))
-            .withExpires(LocalDateTime.now().plusMinutes(config.getSessionCookieTokenExpires()));
+            .withCsrf(CommonUtils.randomString(32))
+            .withExpires(LocalDateTime.now().plusSeconds(config.getSessionCookieTokenExpires()));
 
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var token = PasetoParser.create()
+                var jwtData = JwtUtils.jwtData()
+                        .withKey(config.getSessionCookieKey())
                         .withSecret(config.getSessionCookieSecret())
-                        .withValue(cookieValue)
-                        .parse();
+                        .withIssuer(config.getApplicationName())
+                        .withAudience(config.getSessionCookieName())
+                        .withTtlSeconds(config.getSessionCookieTokenExpires());
 
-                if (token.getExpires().isAfter(LocalDateTime.now())) {
-                    session = Session.create()
-                            .withContent(MangooUtils.copyMap(token.getClaims()))
-                            .withCsrf(token.getClaim(Default.CSRF_TOKEN))
-                            .withExpires(token.getExpires());
-                }
-            } catch (MangooTokenException e) {
-                LOG.debug("Failed to parse session cookie", e);
+                var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
+
+                session = Session.create()
+                        .withContent(CommonUtils.toStringMap(JwtUtils.extractCustomClaims(jwtClaimsSet).getClaims()))
+                        .withCsrf(jwtClaimsSet.getClaimAsString(Const.CSRF_TOKEN))
+                        .withExpires(LocalDateTime.ofInstant(
+                                jwtClaimsSet.getExpirationTime().toInstant(),
+                                ZoneId.systemDefault()
+                        ));
+            } catch (ParseException | MangooJwtException e) {
+                LOG.error("Failed to parse session cookie", e);
                 session.invalidate();
             }
         }
@@ -90,25 +96,35 @@ public class InboundCookiesHandler implements HttpHandler {
     protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
         var authentication = Authentication.create()
                 .withSubject(null)
-                .withExpires(LocalDateTime.now().plusMinutes(config.getAuthenticationCookieTokenExpires()));
+                .withExpires(LocalDateTime.now().plusSeconds(config.getAuthenticationCookieTokenExpires()));
         
         String cookieValue = getCookieValue(exchange, config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var token = PasetoParser.create()
+                var jwtData = JwtUtils.jwtData()
+                        .withKey(config.getAuthenticationCookieKey())
                         .withSecret(config.getAuthenticationCookieSecret())
-                        .withValue(cookieValue)
-                        .parse();
-                
-                if (token.getExpires().isAfter(LocalDateTime.now())) {
+                        .withIssuer(config.getApplicationName())
+                        .withAudience(config.getAuthenticationCookieName())
+                        .withTtlSeconds(config.getAuthenticationCookieRememberExpires());
+
+                var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
+
+                if (!(config.isAuthenticationBlacklist()
+                        && CommonUtils.isBlacklisted(jwtClaimsSet.getJWTID()))) {
+
                     authentication = Authentication.create()
-                            .rememberMe(token.getClaimAsBoolean(ClaimKey.REMEMBER_ME))
-                            .withExpires(token.getExpires())
-                            .withSubject(token.getSubject())
-                            .twoFactorAuthentication(token.getClaimAsBoolean(ClaimKey.TWO_FACTOR));
+                            .rememberMe(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.REMEMBER_ME)))
+                            .withSubject(jwtClaimsSet.getSubject())
+                            .withId(jwtClaimsSet.getJWTID())
+                            .twoFactorAuthentication(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.TWO_FACTOR)))
+                            .withExpires(LocalDateTime.ofInstant(
+                                    jwtClaimsSet.getExpirationTime().toInstant(),
+                                    ZoneId.systemDefault()
+                            ));
                 }
-            } catch (MangooTokenException e) {
-                LOG.debug("Failed to parse authentication cookie", e);
+            } catch (ParseException | MangooJwtException e) {
+                LOG.error("Failed to parse authentication cookie", e);
                 authentication.invalidate();
             }
         }
@@ -127,24 +143,27 @@ public class InboundCookiesHandler implements HttpHandler {
         final String cookieValue = getCookieValue(exchange, config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var token = PasetoParser.create()
+                var jwtData = JwtUtils.jwtData()
+                        .withKey(config.getFlashCookieKey())
                         .withSecret(config.getFlashCookieSecret())
-                        .withValue(cookieValue)
-                        .parse();
-                
-                if (token.getExpires().isAfter(LocalDateTime.now())) {
-                    if (token.containsClaim(ClaimKey.FORM)) {
-                        form = CodecUtils.deserializeFromBase64(token.getClaim(ClaimKey.FORM));
-                    } 
-                    
-                    flash = Flash.create()
-                            .withContent(MangooUtils.copyMap(token.getClaims()))
-                            .setDiscard(true);
+                        .withIssuer(config.getApplicationName())
+                        .withAudience(config.getFlashCookieName())
+                        .withTtlSeconds(60);
+
+                var jwtClaimSet = JwtUtils.parseJwt(cookieValue, jwtData);
+
+                var formClaim = jwtClaimSet.getClaimAsString(ClaimKey.FORM);
+                if (StringUtils.isNotBlank(formClaim)) {
+                    form = CommonUtils.deserializeFromBase64(formClaim);
                 }
-            } catch (MangooTokenException e) {
-                LOG.debug("Failed to parse flash cookie", e);
+
+                flash = Flash.create()
+                        .withContent(CommonUtils.toStringMap(jwtClaimSet.getClaims()))
+                        .setDiscard(true);
+            } catch (ParseException | MangooJwtException e) {
+                LOG.error("Failed to parse flash cookie", e);
                 flash.invalidate();
-            } 
+            }
         }
         
         return flash;

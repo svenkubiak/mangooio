@@ -1,12 +1,12 @@
 package io.mangoo.test.email;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import java.util.Objects;
 
@@ -24,7 +24,7 @@ public class SmtpMock {
 
     @Inject
     public SmtpMock(Config config) {
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
+        this.config = Objects.requireNonNull(config, Required.CONFIG);
     }
 
     public void start() {

@@ -1,23 +1,22 @@
 package io.mangoo.routing.bindings;
 
 import io.mangoo.constants.Header;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
+import io.undertow.util.HeaderValues;
 import io.undertow.util.HttpString;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 
-import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
-public class Request extends Validator {
-    @Serial
-    private static final long serialVersionUID = 5589488716007844048L;
+public class Request {
     private transient HttpServerExchange httpServerExchange;
     private transient Session session;
     private transient Authentication authentication;
@@ -32,7 +31,7 @@ public class Request extends Validator {
     }
 
     public Request(HttpServerExchange httpServerExchange) {
-        Objects.requireNonNull(httpServerExchange, NotNull.HTTP_SERVER_EXCHANGE);
+        Objects.requireNonNull(httpServerExchange, Required.HTTP_SERVER_EXCHANGE);
 
         this.httpServerExchange = httpServerExchange;
         this.httpServerExchange.requestCookies().forEach(cookie -> this.cookies.put(cookie.getName(), cookie));
@@ -55,7 +54,6 @@ public class Request extends Validator {
     
     public Request withParameter(Map<String, String> parameter) {
         this.parameter = parameter;
-        this.setValues(this.parameter);
         return this;
     }
     
@@ -154,7 +152,11 @@ public class Request extends Validator {
      * @return The value of the header or null if none found
      */
     public String getHeader(HttpString headerName) {
-        return (httpServerExchange.getRequestHeaders().get(headerName) == null) ? null : httpServerExchange.getRequestHeaders().get(headerName).element();
+        return Optional.ofNullable(httpServerExchange)
+                .map(HttpServerExchange::getRequestHeaders)
+                .map(headers -> headers.get(headerName))
+                .map(HeaderValues::element)
+                .orElse(null);
     }
     
     /**
@@ -238,7 +240,7 @@ public class Request extends Validator {
      * @param value The value to store
      */
     public void addAttribute(String key, Object value) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
         attributes.put(key, value);
     }
 
@@ -281,7 +283,7 @@ public class Request extends Validator {
      */
     @SuppressWarnings("unchecked")
     public <T> T getAttribute(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
         return (T) attributes.get(key);
     }
     
@@ -292,7 +294,7 @@ public class Request extends Validator {
      * @return String the value from the attributes map
      */
     public String getAttributeAsString(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
         var object = attributes.get(key);
         
         return object != null ? (String) object : null;

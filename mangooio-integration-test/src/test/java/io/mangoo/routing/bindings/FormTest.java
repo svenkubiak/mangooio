@@ -1,420 +1,656 @@
 package io.mangoo.routing.bindings;
 
 import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class FormTest {
-    private static final String INVALID_IPV6_ADDRESS = "001:db8:85a3:8d3:1319:8a2e:7348";
-    private static final String VALID_IPV6_ADDRESS = "001:db8:85a3:8d3:1319:8a2e:370:7348";
-    private static final String INVALID_IPV4_ADDRESS = "501.15.1.2.1";
-    private static final String VALID_IPV4_ADDRESS = "192.168.2.1";
-    private static final String VALID_URL = "https://mangoo.io";
-    private static final String INVALID_URL = "https:/mangoo.io";
-    private static final String BAR = "bar";
-    private static final String FOO = "foo";
 
-    private Form getNewForm() {
-        Form form = Application.getInstance(Form.class);
+    private Form form;
+
+    @BeforeEach
+    void setUp() {
+        form = new Form();
+    }
+
+    @Test
+    void testGetStringWithValidValue() {
+        // Given
+        String key = "testKey";
+        String expectedValue = "testValue";
+        form.addValue(key, expectedValue);
+
+        // When
+        Optional<String> result = form.getString(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(expectedValue, result.get());
+    }
+
+    @Test
+    void testGetStringWithBlankValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "   ");
+
+        // When
+        Optional<String> result = form.getString(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetStringWithEmptyValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "");
+
+        // When
+        Optional<String> result = form.getString(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetStringWithNullKey() {
+        // Given
+        String key = null;
+
+        // When & Then
+        assertThrows(NullPointerException.class, () -> form.getString(key));
+    }
+
+    @Test
+    void testGetStringWithNonExistentKey() {
+        // Given
+        String key = "nonExistentKey";
+
+        // When
+        Optional<String> result = form.getString(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetValueWithValidValue() {
+        // Given
+        String key = "testKey";
+        String expectedValue = "testValue";
+        form.addValue(key, expectedValue);
+
+        // When
+        String result = form.getValue(key);
+
+        // Then
+        assertEquals(expectedValue, result);
+    }
+
+    @Test
+    void testGetValueWithBlankValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "   ");
+
+        // When
+        String result = form.getValue(key);
+
+        // Then
+        assertEquals("", result);
+    }
+
+    @Test
+    void testGetValueWithEmptyValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "");
+
+        // When
+        String result = form.getValue(key);
+
+        // Then
+        assertEquals("", result);
+    }
+
+    @Test
+    void testGetValueWithNullKey() {
+        // Given
+        String key = null;
+
+        // When & Then
+        assertThrows(NullPointerException.class, () -> form.getValue(key));
+    }
+
+    @Test
+    void testGetValueWithNonExistentKey() {
+        // Given
+        String key = "nonExistentKey";
+
+        // When
+        String result = form.getValue(key);
+
+        // Then
+        assertEquals("", result);
+    }
+
+    @Test
+    void testGetBooleanWithTrueValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "true");
+
+        // When
+        Optional<Boolean> result = form.getBoolean(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertTrue(result.get());
+    }
+
+    @Test
+    void testGetBooleanWithOneValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "1");
+
+        // When
+        Optional<Boolean> result = form.getBoolean(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertTrue(result.get());
+    }
+
+    @Test
+    void testGetBooleanWithFalseValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "false");
+
+        // When
+        Optional<Boolean> result = form.getBoolean(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertFalse(result.get());
+    }
+
+    @Test
+    void testGetBooleanWithZeroValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "0");
+
+        // When
+        Optional<Boolean> result = form.getBoolean(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertFalse(result.get());
+    }
+
+    @Test
+    void testGetBooleanWithInvalidValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "invalid");
+
+        // When
+        Optional<Boolean> result = form.getBoolean(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetBooleanWithBlankValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "   ");
+
+        // When
+        Optional<Boolean> result = form.getBoolean(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetBooleanWithNullKey() {
+        // Given
+        String key = null;
+
+        // When & Then
+        assertThrows(NullPointerException.class, () -> form.getBoolean(key));
+    }
+
+    @Test
+    void testGetIntegerWithValidValue() {
+        // Given
+        String key = "testKey";
+        String value = "42";
+        form.addValue(key, value);
+
+        // When
+        Optional<Integer> result = form.getInteger(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(42, result.get());
+    }
+
+    @Test
+    void testGetIntegerWithNegativeValue() {
+        // Given
+        String key = "testKey";
+        String value = "-42";
+        form.addValue(key, value);
+
+        // When
+        Optional<Integer> result = form.getInteger(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(-42, result.get());
+    }
+
+    @Test
+    void testGetIntegerWithInvalidValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "invalid");
+
+        // When
+        Optional<Integer> result = form.getInteger(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetIntegerWithBlankValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "   ");
+
+        // When
+        Optional<Integer> result = form.getInteger(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetIntegerWithNullKey() {
+        // Given
+        String key = null;
+
+        // When & Then
+        assertThrows(NullPointerException.class, () -> form.getInteger(key));
+    }
+
+    @Test
+    void testGetDoubleWithValidValue() {
+        // Given
+        String key = "testKey";
+        String value = "42.5";
+        form.addValue(key, value);
+
+        // When
+        Optional<Double> result = form.getDouble(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(42.5, result.get());
+    }
+
+    @Test
+    void testGetDoubleWithNegativeValue() {
+        // Given
+        String key = "testKey";
+        String value = "-42.5";
+        form.addValue(key, value);
+
+        // When
+        Optional<Double> result = form.getDouble(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(-42.5, result.get());
+    }
+
+    @Test
+    void testGetDoubleWithIntegerValue() {
+        // Given
+        String key = "testKey";
+        String value = "42";
+        form.addValue(key, value);
+
+        // When
+        Optional<Double> result = form.getDouble(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(42.0, result.get());
+    }
+
+    @Test
+    void testGetDoubleWithInvalidValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "invalid");
+
+        // When
+        Optional<Double> result = form.getDouble(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetDoubleWithBlankValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "   ");
+
+        // When
+        Optional<Double> result = form.getDouble(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetDoubleWithNullKey() {
+        // Given
+        String key = null;
+
+        // When & Then
+        assertThrows(NullPointerException.class, () -> form.getDouble(key));
+    }
+
+    @Test
+    void testGetFloatWithValidValue() {
+        // Given
+        String key = "testKey";
+        String value = "42.5f";
+        form.addValue(key, value);
+
+        // When
+        Optional<Float> result = form.getFloat(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(42.5f, result.get());
+    }
+
+    @Test
+    void testGetFloatWithNegativeValue() {
+        // Given
+        String key = "testKey";
+        String value = "-42.5";
+        form.addValue(key, value);
+
+        // When
+        Optional<Float> result = form.getFloat(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(-42.5f, result.get());
+    }
+
+    @Test
+    void testGetFloatWithIntegerValue() {
+        // Given
+        String key = "testKey";
+        String value = "42";
+        form.addValue(key, value);
+
+        // When
+        Optional<Float> result = form.getFloat(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(42.0f, result.get());
+    }
+
+    @Test
+    void testGetFloatWithInvalidValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "invalid");
+
+        // When
+        Optional<Float> result = form.getFloat(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetFloatWithBlankValue() {
+        // Given
+        String key = "testKey";
+        form.addValue(key, "   ");
+
+        // When
+        Optional<Float> result = form.getFloat(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetFloatWithNullKey() {
+        // Given
+        String key = null;
+
+        // When & Then
+        assertThrows(NullPointerException.class, () -> form.getFloat(key));
+    }
+
+    @Test
+    void testGetFileWithExistingFile() {
+        // Given
+        String key = "testFile";
+        byte[] fileContent = "test content".getBytes();
+        form.addFile(key, new ByteArrayInputStream(fileContent));
+
+        // When
+        Optional<byte[]> result = form.getFile(key);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertArrayEquals(fileContent, result.get());
+    }
+
+    @Test
+    void testGetFileWithNonExistentFile() {
+        // Given
+        String key = "nonExistentFile";
+
+        // When
+        Optional<byte[]> result = form.getFile(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetFileWithEmptyFilesMap() {
+        // Given
+        String key = "testFile";
+
+        // When
+        Optional<byte[]> result = form.getFile(key);
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetFileWithNullKey() {
+        // Given
+        String key = null;
+
+        // When & Then
+        assertThrows(NullPointerException.class, () -> form.getFile(key));
+    }
+
+    @Test
+    void testGetValues() {
+        // Given
+        Map<String, String> expectedValues = new HashMap<>();
+        expectedValues.put("key1", "value1");
+        expectedValues.put("key2", "value2");
+        form.setValues(expectedValues);
+
+        // When
+        Map<String, String> result = form.getValues();
+
+        // Then
+        assertEquals(expectedValues, result);
+    }
+
+    @Test
+    void testAddFileWithValidInputStream() {
+        // Given
+        String key = "testFile";
+        String content = "test file content";
+        InputStream inputStream = new ByteArrayInputStream(content.getBytes());
+
+        // When
+        form.addFile(key, inputStream);
+
+        // Then
+        Optional<byte[]> result = form.getFile(key);
+        assertTrue(result.isPresent());
+        assertArrayEquals(content.getBytes(), result.get());
+    }
+
+    @Test
+    void testAddFileWithNullKey() {
+        // Given
+        String key = null;
+        InputStream inputStream = new ByteArrayInputStream("test".getBytes());
+
+        // When & Then
+        assertThrows(NullPointerException.class, () -> form.addFile(key, inputStream));
+    }
+
+    @Test
+    void testAddFileWithNullInputStream() {
+        // Given
+        String key = "testFile";
+        InputStream inputStream = null;
+
+        // When & Then
+        assertThrows(NullPointerException.class, () -> form.addFile(key, inputStream));
+    }
+
+    @Test
+    void testAddFileWithIOException() {
+        // Given
+        String key = "testFile";
+        InputStream inputStream = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("Test IOException");
+            }
+        };
+
+        // When
+        form.addFile(key, inputStream);
+
+        // Then
+        // Should not throw exception, but file should not be added
+        Optional<byte[]> result = form.getFile(key);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testKeep() {
+        // Given
+        assertFalse(form.isKept());
+
+        // When
+        form.keep();
+
+        // Then
+        assertTrue(form.isKept());
+    }
+
+    @Test
+    void testIsKeptInitiallyFalse() {
+        // When
+        boolean result = form.isKept();
+
+        // Then
+        assertFalse(result);
+    }
+
+    @Test
+    void testDiscard() {
+        // Given
+        form.addValue("key1", "value1");
+        form.addValue("key2", "value2");
+        form.addFile("file1", new ByteArrayInputStream("content1".getBytes()));
+        form.addFile("file2", new ByteArrayInputStream("content2".getBytes()));
+
+        // When
+        form.discard();
+
+        // Then
+        assertTrue(form.getValues().isEmpty());
+        assertTrue(form.getFile("file1").isEmpty());
+        assertTrue(form.getFile("file2").isEmpty());
+    }
+
+    @Test
+    void testIsSubmittedInitiallyFalse() {
+        // When
+        boolean result = form.isSubmitted();
+
+        // Then
+        assertFalse(result);
+    }
+
+    @Test
+    void testSetSubmitted() {
+        // Given
+        assertFalse(form.isSubmitted());
+
+        // When
         form.setSubmitted(true);
 
-        return form;
+        // Then
+        assertTrue(form.isSubmitted());
     }
 
     @Test
-    void testValidExactMatch() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "BlA");
-        form.addValue(BAR, "BlA");
-        form.expectExactMatch(FOO, BAR);
+    void testSetSubmittedFalse() {
+        // Given
+        form.setSubmitted(true);
+        assertTrue(form.isSubmitted());
 
-        //then
-        assertThat(form.hasErrors(), equalTo(false));
-    }
-    
-    @Test
-    void testInvalidExactMatch() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "BlA");
-        form.addValue(BAR, "Bla");
-        form.expectExactMatch(FOO, BAR);
+        // When
+        form.setSubmitted(false);
 
-        //then
-        assertThat(form.hasErrors(), equalTo(true));
-    }
-
-    @Test
-    void testValidMatch() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "BLA");
-        form.addValue(BAR, "bla");
-        form.expectMatch(FOO, BAR);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(false));
-    }
-    
-    @Test
-    void testInvalidMatch() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "BLA");
-        form.addValue(BAR, "bla2");
-        form.expectMatch(FOO, BAR);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(true));
-    }
-
-    @Test
-    void testValidRequired() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, BAR);
-        form.expectValue(FOO);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(false));
-    }
-    
-    @Test
-    void testInvalidRequired() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "");
-        form.expectValue(FOO);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(true));
-    }
-
-    @Test
-    void testValidMin() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, BAR);
-        form.expectMinLength(FOO, 3);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(false));
-    }
-    
-    @Test
-    void testInvalidMin() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "ba");
-        form.expectMinLength(FOO, 4);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(true));
-    }
-
-    @Test
-    void testValidMax() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, BAR);
-        form.expectMaxLength(FOO, 3);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(false));
-    }
-    
-    @Test
-    void testInvalidMax() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "bars");
-        form.expectMaxLength(FOO, 3);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(true));
-    }
-
-    @Test
-    void testValidEmail() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "foo@bar.com");
-        form.expectEmail(FOO);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(false));
-        
-        form = getNewForm();
-        form.addValue(FOO, "foobar");
-        form.expectEmail(FOO);
-
-        assertThat(form.hasErrors(), equalTo(true));
-    }
-    
-    @Test
-    void testInvalidEmail() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "foobar");
-        form.expectEmail(FOO);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(true));
-    }
-
-    @Test
-    void testValidUrl() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, VALID_URL);
-        form.expectUrl(FOO);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(false));
-    }
-    
-    @Test
-    void testInvalidUrl() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, INVALID_URL);
-        form.expectUrl(FOO);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(true));
-    }
-
-    @Test
-    void testValidIpv4Address() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, VALID_IPV4_ADDRESS);
-        form.expectIpv4(FOO);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(false));
-    }
-    
-    @Test
-    void testInvalidIpv4Address() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, INVALID_IPV4_ADDRESS);
-        form.expectIpv4(FOO);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(true));
-    }
-
-    @Test
-    void testValidIpv6Address() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, VALID_IPV6_ADDRESS);
-        form.expectIpv6(FOO);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(false));
-    }
-    
-    @Test
-    void testInvalidIpv6Address() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, INVALID_IPV6_ADDRESS);
-        form.expectIpv6(FOO);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(true));
-    }
-
-    @Test
-    void testValidRange() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, BAR);
-        form.expectRangeLength(FOO, 1, 3);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(false));
-    }
-    
-    @Test
-    void testInvalidRange() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "barddddd");
-        form.expectRangeLength(FOO, 1, 4);
-
-        //then
-        assertThat(form.hasErrors(), equalTo(true));
-    }
-    
-    @Test
-    void testValidGetValue() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, BAR);
-        
-        //then
-        assertThat(form.get(FOO), not(nullValue()));
-        assertThat(form.get(FOO), equalTo(BAR));
-    }
-    
-    @Test
-    void testInvalidGetValue() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, BAR);
-        
-        //then
-        assertThat(form.get("fnu"), equalTo(null));
-    }
-    
-    @Test
-    void testGetString() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, BAR);
-
-        //then
-        assertThat(form.getString(FOO), not(nullValue()));
-        assertThat(form.getString(FOO).get(), equalTo(BAR));
-    }
-    
-    @Test
-    void testGetBoolean() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue("foo-true", "true");
-        form.addValue("foo-false", "false");
-        form.addValue("foo-1", "1");
-        form.addValue("foo-0", "0");
-        
-        //then
-        assertThat(form.getBoolean("foo-true").get(), equalTo(true));
-        assertThat(form.getBoolean("foo-1").get(), equalTo(true));
-        assertThat(form.getBoolean("foo-false").get(), equalTo(false));
-        assertThat(form.getBoolean("foo-0").get(), equalTo(false));
-    }
-    
-    @Test
-    void testGetInteger() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "1");
-        
-        //then
-        assertThat(form.getInteger(FOO).get(), equalTo(1));
-    }
-    
-    @Test
-    void testGetDouble() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "1.234");
-
-        //then
-        assertThat(form.getDouble(FOO).get(), equalTo(1.234));
-    }
-    
-    @Test
-    void testGetFloat() {
-        //given
-        Form form = getNewForm();
-        
-        //when
-        form.addValue(FOO, "1.0");
-
-        //then
-        assertThat(form.getFloat(FOO).get(), equalTo(1.0F));
-    }
-    
-    @Test
-    void testFile() throws IOException {
-        //given
-        Form form = getNewForm();
-        File file = new File(UUID.randomUUID().toString());
-        file.createNewFile();
-        
-        //when
-        InputStream stream = new FileInputStream(file);
-        form.addFile(stream);
-        
-        //then
-        assertThat(form.getFile(), not(nullValue()));
-        assertThat(form.getFile().isPresent(), equalTo(true));
-        assertThat(form.getFiles().size(), equalTo(1));
-        
-        file.delete();
+        // Then
+        assertFalse(form.isSubmitted());
     }
 }

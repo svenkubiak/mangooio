@@ -2,7 +2,7 @@ package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.Header;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.constants.Template;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -23,7 +23,7 @@ public class AuthenticationHandler implements HttpHandler {
     
     @Inject
     public AuthenticationHandler(Config config) {
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
+        this.config = Objects.requireNonNull(config, Required.CONFIG);
     }
     
     @Override

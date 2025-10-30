@@ -3,7 +3,7 @@ package io.mangoo.routing;
 import com.google.common.base.Preconditions;
 import com.google.common.net.MediaType;
 import io.mangoo.constants.Header;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
 import io.mangoo.constants.Template;
 import io.mangoo.models.Error;
 import io.mangoo.utils.JsonUtils;
@@ -43,11 +43,11 @@ public class Response {
     private Response(int statusCode, String contentType) {
         Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP);
         this.statusCode = statusCode;
-        this.contentType = Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
+        this.contentType = Objects.requireNonNull(contentType, Required.CONTENT_TYPE);
     }
 
     private Response(String redirectTo) {
-        Objects.requireNonNull(redirectTo, NotNull.REDIRECT_TO);
+        Objects.requireNonNull(redirectTo, Required.REDIRECT_TO);
         
         this.redirect = true;
         this.redirectTo = redirectTo;
@@ -165,7 +165,7 @@ public class Response {
      */
     public static Response status(int statusCode, String contentType) {
         Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP);
-        Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
+        Objects.requireNonNull(contentType, Required.CONTENT_TYPE);
 
         return new Response(statusCode, contentType);
     }
@@ -178,7 +178,7 @@ public class Response {
      * @return The response object
      */
     public static Response redirect(String redirectTo) {
-        Objects.requireNonNull(redirectTo, NotNull.REDIRECT_TO);
+        Objects.requireNonNull(redirectTo, Required.REDIRECT_TO);
 
         return new Response(redirectTo);
     }
@@ -236,7 +236,7 @@ public class Response {
     }
 
     public String getHeader(HttpString header) {
-        Objects.requireNonNull(header, NotNull.HEADER);
+        Objects.requireNonNull(header, Required.HEADER);
         return headers.get(header);
     }
 
@@ -247,7 +247,7 @@ public class Response {
      * @return The response object
      */
     public Response template(String template) {
-        Objects.requireNonNull(template, NotNull.TEMPLATE);
+        Objects.requireNonNull(template, Required.TEMPLATE);
         this.template = template;
         rendered = true;
 
@@ -261,7 +261,7 @@ public class Response {
      * @return The response object
      */
     public Response contentType(String contentType) {
-        Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
+        Objects.requireNonNull(contentType, Required.CONTENT_TYPE);
 
         headers.put(Header.CONTENT_TYPE, contentType);
         this.contentType = contentType;
@@ -277,7 +277,7 @@ public class Response {
      * @return The response object
      */
     public Response render(String name, Object object) {
-        Objects.requireNonNull(name, NotNull.NAME);
+        Objects.requireNonNull(name, Required.NAME);
         content.put(name, object);
         rendered = true;
         this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
@@ -309,7 +309,7 @@ public class Response {
      * @return The response object
      */
     public Response bodyBinary(byte[] data) {
-        this.binaryBody = Objects.requireNonNull(data, NotNull.DATA);
+        this.binaryBody = Objects.requireNonNull(data, Required.DATA);
         rendered = false;
         binary = true;
 
@@ -352,7 +352,7 @@ public class Response {
      * @return The response object
      */
     public Response cookie(Cookie cookie) {
-        Objects.requireNonNull(cookie, NotNull.COOKIE);
+        Objects.requireNonNull(cookie, Required.COOKIE);
         cookies.add(cookie);
 
         return this;
@@ -367,7 +367,7 @@ public class Response {
      * @return The response object
      */
     public Response bodyJson(Object object) {
-        Objects.requireNonNull(object, NotNull.OBJECT);
+        Objects.requireNonNull(object, Required.OBJECT);
 
         this.body = JsonUtils.toJson(object);
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
@@ -382,7 +382,7 @@ public class Response {
      * @return The response object
      */
     public Response bodyJsonError(String message) {
-        Objects.requireNonNull(message, NotNull.MESSAGE);
+        Objects.requireNonNull(message, Required.MESSAGE);
 
         this.body = JsonUtils.toJson(Error.of(message, statusCode));
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
@@ -399,7 +399,7 @@ public class Response {
      * @return The response object
      */
     public Response bodyJson(String json) {
-        Objects.requireNonNull(json, NotNull.JSON);
+        Objects.requireNonNull(json, Required.JSON);
 
         this.body = json;
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
@@ -434,7 +434,7 @@ public class Response {
      * @return The response object
      */
     public Response header(String key, String value) {
-        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(key, Required.KEY);
         headers.put(new HttpString(key), value);
 
         return this;
@@ -449,7 +449,7 @@ public class Response {
      */
     public Response render(Map<String, Object> content) {
         this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
-        Objects.requireNonNull(content, NotNull.CONTENT);
+        Objects.requireNonNull(content, Required.CONTENT);
         this.content.putAll(content);
         rendered = true;
 
@@ -476,7 +476,7 @@ public class Response {
      * @return The response object
      */
     public Response headers(Map<HttpString, String> headers) {
-        Objects.requireNonNull(headers, NotNull.HEADERS);
+        Objects.requireNonNull(headers, Required.HEADERS);
         this.headers.putAll(headers);
 
         return this;
@@ -490,7 +490,7 @@ public class Response {
      * @return The response object
      */
     public Response disposeCookie(String cookieName, boolean secure) {
-        Objects.requireNonNull(cookieName, NotNull.COOKIE);
+        Objects.requireNonNull(cookieName, Required.COOKIE);
 
         cookies.add(new CookieImpl(cookieName)
                 .setPath("/")
@@ -511,7 +511,7 @@ public class Response {
      * @return The response object
      */
     public Response disposeCookie(String cookieName) {
-        Objects.requireNonNull(cookieName, NotNull.COOKIE);
+        Objects.requireNonNull(cookieName, Required.COOKIE);
         disposeCookie(cookieName, true);
 
         return this;

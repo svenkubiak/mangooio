@@ -5,6 +5,9 @@ import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
 import com.google.inject.*;
 import com.google.inject.Module;
+import com.mongodb.MongoCommandException;
+import com.mongodb.client.model.Collation;
+import com.mongodb.client.model.CollationStrength;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -16,7 +19,8 @@ import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Required;
+import io.mangoo.crypto.Vault;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Sort;
 import io.mangoo.interfaces.MangooBootstrap;
@@ -33,9 +37,9 @@ import io.mangoo.scheduler.CronTask;
 import io.mangoo.scheduler.Schedule;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.scheduler.Task;
-import io.mangoo.utils.ByteUtils;
-import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.PersistenceUtils;
+import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
@@ -50,6 +54,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
+import org.bson.conversions.Bson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -67,7 +72,6 @@ public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final LocalDateTime START = LocalDateTime.now();
     private static final int KEY_MIN_BIT_LENGTH = 512;
-    private static final int PASETO_SECRET_MIN_LENGTH = 256;
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
     private static final String SCHEDULER = "io.mangoo.annotations.Run";
@@ -84,14 +88,14 @@ public final class Application {
     private static ScheduledExecutorService scheduledExecutorService;
     private static ExecutorService executorService;
     private static String httpHost;
-    private static String ajpHost;
+    private static String httpsHost;
     private static Undertow undertow;
     private static Mode mode;
     private static Injector injector;
     private static PathHandler pathHandler;
     private static boolean started;
     private static int httpPort;
-    private static int ajpPort;
+    private static int httpsPort;
 
     private Application() {
     }
@@ -102,7 +106,7 @@ public final class Application {
 
     @SuppressWarnings({"StatementWithEmptyBody", "LoopConditionNotUpdatedInsideLoop"})
     public static void start(Mode mode) {
-        Objects.requireNonNull(mode, NotNull.MODE);
+        Objects.requireNonNull(mode, Required.MODE);
 
         if (!started) {
             userCheck();
@@ -115,6 +119,9 @@ public final class Application {
                     prepareScheduler(scanResult);
                     prepareDatastore(scanResult);
                     prepareSubscriber(scanResult);
+                } catch (Exception e) {
+                    LOG.error("Failure in classpath scanning", e);
+                    failsafe();
                 }
             });
             prepareRoutes();
@@ -274,13 +281,45 @@ public final class Application {
                         .filter(info -> StringUtils.isNotBlank(info.getName()))
                         .forEach(info -> {
                             List<AnnotationParameterValue> annotationParams = info.getAnnotationInfo().getFirst().getParameterValues();
-                            boolean unique = (annotationParams.size() > 1) && (boolean) annotationParams.get(1).getValue();
-                            var sortOrder = annotationParams.get(0).getValue().toString();
 
-                            if (Sort.ASCENDING.value().equals(sortOrder)) {
-                                datastore.addIndex(classInfo.loadClass(), Indexes.ascending(info.getName()), new IndexOptions().unique(unique));
-                            } else if (Sort.DESCENDING.value().equals(sortOrder)) {
-                                datastore.addIndex(classInfo.loadClass(), Indexes.descending(info.getName()), new IndexOptions().unique(unique));
+                            var unique = false;
+                            var caseSensitive = false;
+                            var sort = "";
+
+                            for (AnnotationParameterValue annotationParam : annotationParams) {
+                                String name = annotationParam.getName();
+                                if ("unique".equals(name)) {
+                                    unique = (boolean) annotationParam.getValue();
+                                } else if ("caseSensitive".equals(name)) {
+                                    caseSensitive = (boolean) annotationParam.getValue();
+                                } else if (("sort").equals(name)) {
+                                    sort = annotationParam.getValue().toString();
+                                }
+                            }
+
+                            Collation collation = Collation.builder()
+                                    .locale("en")
+                                    .collationStrength(CollationStrength.SECONDARY)
+                                    .build();
+
+                            var indexOptions = new IndexOptions().unique(unique);
+                            if (!caseSensitive && unique) {
+                                indexOptions.collation(collation);
+                            }
+
+                            Bson indexType = Sort.ASCENDING.value().equals(sort)
+                                    ? Indexes.ascending(info.getName())
+                                    : Indexes.descending(info.getName());
+
+                            try {
+                                datastore.addIndex(classInfo.loadClass(), indexType, indexOptions);
+                            } catch (MongoCommandException e) {
+                                if (e.getErrorCode() == 86) {
+                                    datastore.query(classInfo.loadClass()).dropIndex("uid_1");
+                                    datastore.addIndex(classInfo.loadClass(), indexType, indexOptions);
+                                } else {
+                                    throw e;
+                                }
                             }
                         });
             });
@@ -296,6 +335,7 @@ public final class Application {
                 var methodParameterInfo = Arrays.asList(methodInfo.getParameterInfo()).getFirst();
                 var descriptor = methodParameterInfo.getTypeDescriptor().toString();
                 Application.getInstance(EventBus.class).register(descriptor, classInfo.loadClass());
+                LOG.info("Registered subscriber '{}'", classInfo.loadClass());
             }
         });
     }
@@ -422,7 +462,7 @@ public final class Application {
      * @return An instance of the requested class
      */
     public static <T> T getInstance(Class<T> clazz) {
-        Objects.requireNonNull(clazz, NotNull.CLASS);
+        Objects.requireNonNull(clazz, Required.CLASS);
 
         return injector.getInstance(clazz);
     }
@@ -484,53 +524,39 @@ public final class Application {
             failsafe();
         }
 
-        bitLength = getBitLength(config.getAuthenticationCookieSecret());
+        bitLength = getBitLength(new String(config.getAuthenticationCookieSecret(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Authentication cookie requires a 512 bit encryption key. The current property for authentication.cookie.secret has only {} bits.", bitLength);
+            LOG.error("Authentication cookie requires a 512 bit encryption secret. The current property for authentication.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
-
-        bitLength = getBitLength(config.getAuthenticationCookieSecret());
+        bitLength = getBitLength(new String(config.getSessionCookieSecret(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Authentication cookie requires a 512 bit sign key. The current property for authentication.cookie.signkey has only {} bits.", bitLength);
+            LOG.error("Session cookie secret a 512 bit encryption secret. The current property for session.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(config.getSessionCookieSecret());
+        bitLength = getBitLength(new String(config.getFlashCookieSecret(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Session cookie secret a 512 bit encryption key. The current property for session.cookie.secret has only {} bits.", bitLength);
+            LOG.error("Flash cookie requires a 512 bit encryption secret. The current property for flash.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(config.getSessionCookieSecret());
+        bitLength = getBitLength(new String(config.getFlashCookieKey(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Session cookie requires a 512 bit sign key. The current property for session.cookie.signkey has only {} bits.", bitLength);
+            LOG.error("Flash cookie requires a 512 bit signing key. The current property for flash.cookie.key has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(config.getFlashCookieSecret());
+        bitLength = getBitLength(new String(config.getAuthenticationCookieKey(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Flash cookie requires a 512 bit sign key. The current property for flash.cookie.signkey has only {} bits.", bitLength);
+            LOG.error("Authentication cookie requires a 512 bit signing key. The current property for authentication.cookie.key has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(config.getFlashCookieSecret());
+        bitLength = getBitLength(new String(config.getSessionCookieKey(), StandardCharsets.UTF_8));
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Flash cookie requires a 512 bit encryption key. The current property for flash.cookie.secret has only {} bits.", bitLength);
+            LOG.error("Session cookie requires a 512 bit signing key. The current property for session.cookie.key has only {} bits.", bitLength);
             failsafe();
-        }
-
-        if (!config.isDecrypted()) {
-            LOG.error("Found encrypted config values in config.yaml but decryption was not successful!");
-            failsafe();
-        }
-
-        if (StringUtils.isNotBlank(config.getString(Key.APPLICATION_PASETO_SECRET))) {
-            bitLength = getBitLength(config.getString(Key.APPLICATION_PASETO_SECRET));
-            if (bitLength < PASETO_SECRET_MIN_LENGTH) {
-                LOG.error("Paseto secret requires a 256 bit secret length. The current property for paseto.secret has only {} bits.", bitLength);
-                failsafe();
-            }
         }
 
         if (StringUtils.isNotBlank(config.getString(Key.APPLICATION_API_KEY))) {
@@ -546,13 +572,12 @@ public final class Application {
             failsafe();
         }
 
-        if (!config.getSessionCookieSameSiteMode().equals("Strict") && !config.getSessionCookieSameSiteMode().equals("Lax")) {
+        if (!("Strict").equals(config.getSessionCookieSameSiteMode()) && !("Lax").equals(config.getSessionCookieSameSiteMode())) {
             LOG.error("Only 'Strict' or 'Lax' is allowed in session.cookie.samesitemode is allowed");
             failsafe();
         }
 
-        if (!config.getAuthenticationCookieSameSiteMode().equals("Strict") && !config.getAuthenticationCookieSameSiteMode().equals("Lax")) {
-            System.out.println("found " + config.getAuthenticationCookieSameSiteMode());
+        if (!("Strict").equals(config.getAuthenticationCookieSameSiteMode()) && !("Lax").equals(config.getAuthenticationCookieSameSiteMode())) {
             LOG.error("Only 'Strict' or 'Lax' is allowed in authentication.cookie.samesitemode is allowed");
             failsafe();
         }
@@ -577,12 +602,6 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        if (config.getAuthenticationCookieSecret().equals(config.getApplicationSecret())) {
-            var warning = "Authentication cookie secret is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.secret.";
-            warnings.add(warning);
-            LOG.warn(warning);
-        }
-
         if (!config.isSessionCookieSecure()) {
             var warning = "Session cookie has secure flag set to 'false'. It is highly recommended to set session.cookie.secure to 'true' in an production environment.";
             warnings.add(warning);
@@ -595,25 +614,51 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        if (config.getSessionCookieSecret().equals(config.getApplicationSecret())) {
-            var warning = "Session cookie secret is using application secret. It is highly recommended to set a dedicated value to session.cookie.secret.";
-            warnings.add(warning);
-            LOG.warn(warning);
-        }
-
         if (Default.FLASH_COOKIE_NAME.equals(config.getFlashCookieName())) {
             var warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
         }
 
-        if (config.getFlashCookieSecret().equals(config.getApplicationSecret())) {
+        if (Arrays.equals(config.getAuthenticationCookieSecret(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
+            var warning = "Authentication cookie secret is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.secret.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
+        if (Arrays.equals(config.getSessionCookieSecret(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
+            var warning = "Session cookie secret is using application secret. It is highly recommended to set a dedicated value to session.cookie.secret.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
+        if (Arrays.equals(config.getFlashCookieSecret(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
             var warning = "Flash cookie secret is using application secret. It is highly recommended to set a dedicated value to flash.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
 
-        getInstance(CacheProvider.class).getCache(CacheName.APPLICATION).put(Key.MANGOOIO_WARNINGS, warnings);
+        if (Arrays.equals(config.getAuthenticationCookieKey(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
+            var warning = "Authentication cookie key is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.key.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
+        if (Arrays.equals(config.getSessionCookieKey(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
+            var warning = "Session cookie key is using application secret. It is highly recommended to set a dedicated value to session.cookie.key.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
+        if (Arrays.equals(config.getFlashCookieKey(), config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))) {
+            var warning = "Flash cookie key is using application secret. It is highly recommended to set a dedicated value to flash.cookie.key.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
+        getInstance(CacheProvider.class)
+                .getCache(CacheName.APPLICATION)
+                .put(Key.MANGOOIO_WARNINGS, warnings);
     }
 
     /**
@@ -638,8 +683,8 @@ public final class Application {
      * @return True if the method exists, false otherwise
      */
     private static boolean methodExists(String controllerMethod, Class<?> controllerClass) {
-        Objects.requireNonNull(controllerMethod, NotNull.CONTROLLER_METHOD);
-        Objects.requireNonNull(controllerClass, NotNull.CONTROLLER_CLASS);
+        Objects.requireNonNull(controllerMethod, Required.CONTROLLER_METHOD);
+        Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS);
 
         return Arrays.stream(controllerClass.getMethods()).anyMatch(method -> method.getName().equals(controllerMethod));
     }
@@ -678,11 +723,10 @@ public final class Application {
                             On.get().to("/@admin/login").respondeWith("login"),
                             On.get().to("/@admin/twofactor").respondeWith("twofactor"),
                             On.get().to("/@admin/scheduler").respondeWith("scheduler"),
-                            On.get().to("/@admin/tools").respondeWith("tools"),
+                            On.get().to("/@admin/security").respondeWith("security"),
                             On.get().to("/@admin/logout").respondeWith("logout"),
                             On.post().to("/@admin/authenticate").respondeWith("authenticate"),
-                            On.post().to("/@admin/verify").respondeWith("verify"),
-                            On.post().to("/@admin/tools").respondeWith("toolsRx")
+                            On.post().to("/@admin/verify").respondeWith("verify")
                     );
         }
 
@@ -706,6 +750,7 @@ public final class Application {
 
     private static void prepareUndertow() {
         var config = getInstance(Config.class);
+        var vault = getInstance(Vault.class);
 
         HttpHandler httpHandler;
         if (config.isMetricsEnable()) {
@@ -722,8 +767,8 @@ public final class Application {
 
         httpHost = config.getConnectorHttpHost();
         httpPort = config.getConnectorHttpPort();
-        ajpHost = config.getConnectorAjpHost();
-        ajpPort = config.getConnectorAjpPort();
+        httpsHost = config.getConnectorHttpsHost();
+        httpsPort = config.getConnectorHttpsPort();
 
         var hasConnector = false;
         if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
@@ -731,8 +776,8 @@ public final class Application {
             hasConnector = true;
         }
 
-        if (ajpPort > 0 && StringUtils.isNotBlank(ajpHost)) {
-            builder.addAjpListener(ajpPort, ajpHost);
+        if (httpsPort > 0 && StringUtils.isNotBlank(httpsHost)) {
+            builder.addHttpsListener(httpsPort, httpsHost, vault.getSSLContext(config.getConnectorHttpsCertificateAlias()));
             hasConnector = true;
         }
 
@@ -740,7 +785,7 @@ public final class Application {
             undertow = builder.build();
             undertow.start();
         } else {
-            LOG.error("No connector found! Please configure a HTTP and/or an AJP connector in your config.yaml file");
+            LOG.error("No connector found! Please configure a HTTP and/or an HTTPS connector in your config.yaml file");
             failsafe();
         }
     }
@@ -759,8 +804,8 @@ public final class Application {
             LOG.info("HTTP connector listening @{}:{}", httpHost, httpPort);
         }
 
-        if (ajpPort > 0 && StringUtils.isNotBlank(ajpHost)) {
-            LOG.info("AJP connector listening @{}:{}", ajpHost, ajpPort);
+        if (httpsPort > 0 && StringUtils.isNotBlank(httpsHost)) {
+            LOG.info("HTTPS connector listening @{}:{}", httpsHost, httpsPort);
         }
 
         String startup = "mangoo I/O application started in " + ChronoUnit.MILLIS.between(START, LocalDateTime.now()) + " ms in " + mode + " mode. Enjoy.";
@@ -768,9 +813,9 @@ public final class Application {
     }
 
     private static int getBitLength(String secret) {
-        Objects.requireNonNull(secret, NotNull.SECRET);
+        Objects.requireNonNull(secret, Required.SECRET);
 
-        return ByteUtils.bitLength(RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", Strings.EMPTY));
+        return CommonUtils.bitLength(RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", Strings.EMPTY));
     }
 
     private static List<Module> getModules() {
@@ -810,6 +855,7 @@ public final class Application {
         return new ClassGraph()
                 .enableAllInfo()
                 .acceptPackages(ALL_PACKAGES)
+                .removeTemporaryFilesAfterScan()
                 .scan();
     }
 

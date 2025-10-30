@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>9.10.2-SNAPSHOT</version>
+		<version>10.0.0-Beta8-SNAPSHOT</version>
 	</parent>
 	<artifactId>mangooio-core</artifactId>
 	<packaging>jar</packaging>
@@ -21,6 +21,18 @@
 					<groupId>org.wildfly.common</groupId>
 					<artifactId>wildfly-common</artifactId>
 				</exclusion>
+                <exclusion>
+                    <groupId>io.smallrye.common</groupId>
+                    <artifactId>smallrye-common-constraint</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.smallrye.common</groupId>
+                    <artifactId>smallrye-common-cpu</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.smallrye.common</groupId>
+                    <artifactId>smallrye-common-function</artifactId>
+                </exclusion>
 				<exclusion>
 					<groupId>org.jboss.logging</groupId>
 					<artifactId>jboss-logging-processor</artifactId>
@@ -47,18 +59,6 @@
 					<groupId>org.jboss.logging</groupId>
 					<artifactId>jboss-logging-annotations</artifactId>
 				</exclusion>
-                <exclusion>
-                    <groupId>io.smallrye.common</groupId>
-                    <artifactId>smallrye-common-constraint</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.smallrye.common</groupId>
-                    <artifactId>smallrye-common-cpu</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.smallrye.common</groupId>
-                    <artifactId>smallrye-common-function</artifactId>
-                </exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -75,6 +75,18 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.expressly</groupId>
+            <artifactId>expressly</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.jboss.logging</groupId>
 			<artifactId>jboss-logging</artifactId>
@@ -106,10 +118,6 @@
 		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>javax.annotation-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.re2j</groupId>
-			<artifactId>re2j</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.svenkubiak</groupId>
@@ -264,16 +272,10 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>io.github.nbaars</groupId>
-			<artifactId>paseto4j-version4</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.bouncycastle</groupId>
-					<artifactId>bcprov-jdk18on</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
@@ -314,6 +316,20 @@
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk18on</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.github.bastiaanjansen</groupId>
+            <artifactId>otp-java</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -372,6 +388,28 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-otlp</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry.semconv</groupId>
+            <artifactId>opentelemetry-semconv</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -382,6 +420,16 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-mongo-3.1</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.opentelemetry</groupId>
+                    <artifactId>opentelemetry-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>net.jawr</groupId>
 			<artifactId>jawr-core</artifactId>
@@ -474,12 +522,15 @@
 						<goals>
 							<goal>enforce</goal>
 						</goals>
-						<configuration>
-							<rules>
-								<banDynamicVersions />
-							</rules>
-							<fail>true</fail>
-						</configuration>
+                        <configuration>
+                            <rules>
+                                <banDynamicVersions>
+                                    <ignores>
+                                        <ignore>org.bouncycastle:bcutil-jdk18on</ignore>
+                                    </ignores>
+                                </banDynamicVersions>
+                            </rules>
+                        </configuration>
 					</execution>
 				</executions>
 				<dependencies>
