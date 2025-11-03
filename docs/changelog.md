@@ -1,6 +1,6 @@
 ## Version 10.0.0
 
-Unreleased
+Released at 03.11.2025
 
 * Added Support for Open Telemetry (svenkubiak)
 * Added Support for Jakarta Validation API for methods parameters (svenkubiak)
