@@ -1,3 +1,10 @@
+## Version 10.1.0
+
+Unreleased
+
+* Version bumps (svenkubiak)
+    * jackson 2.20.0 -&gt; 2.20.1  
+
 ## Version 10.0.0
 
 Released at 03.11.2025
