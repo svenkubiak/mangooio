@@ -4,6 +4,7 @@ Unreleased
 
 * Version bumps (svenkubiak)
     * jackson 2.20.0 -&gt; 2.20.1  
+    * commons-codec 1.19.0 -&gt; 1.20.0
 
 ## Version 10.0.0
 
