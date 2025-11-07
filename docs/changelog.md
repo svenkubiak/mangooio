@@ -5,6 +5,7 @@ Unreleased
 * Version bumps (svenkubiak)
     * jackson 2.20.0 -&gt; 2.20.1  
     * commons-codec 1.19.0 -&gt; 1.20.0
+    * nimbus-jose-jwt 10.5 -&gt; 10.6
 
 ## Version 10.0.0
 
