@@ -7,6 +7,8 @@ Unreleased
     * commons-codec 1.19.0 -&gt; 1.20.0
     * nimbus-jose-jwt 10.5 -&gt; 10.6
     * commons-io 2.20.0 -&gt; 2.21.0
+    * commons-lang3 3.19.0 -&gt; 3.20.0
+    * hibernate-validator 9.0.1.Final -&gt; 9.1.0.Final
 
 ## Version 10.0.0
 
