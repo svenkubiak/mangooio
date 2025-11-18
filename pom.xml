@@ -28,9 +28,9 @@
 		<log4j.version>2.25.2</log4j.version>
 		<maven.version>4.0.0-rc-4</maven.version>
 		<required.maven.version>3.9.0</required.maven.version>
-		<junit.version>6.0.1</junit.version>
+		<junit.version>6.1.0-M1</junit.version>
 		<enforcer.version>1.11.0</enforcer.version>
-		<jackson.version>2.20.1</jackson.version>
+		<jackson.version>3.0.2</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<javadoc.version>3.12.0</javadoc.version>
 		<modernizer.version>3.2.0</modernizer.version>
@@ -441,23 +441,13 @@
 				<version>2.1.7</version>
 			</dependency>
 			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
+				<groupId>tools.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.fasterxml.jackson.module</groupId>
+				<groupId>tools.jackson.module</groupId>
 				<artifactId>jackson-module-blackbird</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.datatype</groupId>
-				<artifactId>jackson-datatype-jsr310</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.datatype</groupId>
-				<artifactId>jackson-datatype-jdk8</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>
@@ -588,7 +578,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.29.0</version>
+				<version>3.20.0</version>
 			</dependency>
 			<dependency>
 				<groupId>net.jawr</groupId>
