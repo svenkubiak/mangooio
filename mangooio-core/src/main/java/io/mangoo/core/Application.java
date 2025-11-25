@@ -29,10 +29,7 @@ import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
 import io.mangoo.routing.handlers.*;
-import io.mangoo.routing.routes.FileRoute;
-import io.mangoo.routing.routes.PathRoute;
-import io.mangoo.routing.routes.RequestRoute;
-import io.mangoo.routing.routes.ServerSentEventRoute;
+import io.mangoo.routing.routes.*;
 import io.mangoo.scheduler.CronTask;
 import io.mangoo.scheduler.Schedule;
 import io.mangoo.scheduler.Scheduler;
@@ -49,6 +46,7 @@ import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Methods;
+import io.undertow.websockets.WebSocketConnectionCallback;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -701,6 +699,12 @@ public final class Application {
                                 .withAuthentication(serverSentEventRoute.hasAuthentication())))
         );
 
+        Router.getWebSocketRoutes().forEach((WebSocketRoute webSocketRoute) -> {
+                    Class<? extends WebSocketConnectionCallback> clazz = webSocketRoute.getHandler();
+                    pathHandler.addExactPath(webSocketRoute.getUrl(), Handlers.websocket(getInstance(clazz)));
+               }
+        );
+
         Router.getPathRoutes().forEach((PathRoute pathRoute) ->
                 pathHandler.addPrefixPath(pathRoute.getUrl(),
                         new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER + pathRoute.getUrl())))
@@ -755,10 +759,10 @@ public final class Application {
         HttpHandler httpHandler;
         if (config.isMetricsEnable()) {
             httpHandler = MetricsHandler.HANDLER_WRAPPER.wrap(Handlers.exceptionHandler(pathHandler)
-                    .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
+                    .addExceptionHandler(Throwable.class, getInstance(ExceptionHandler.class)));
         } else {
             httpHandler = Handlers.exceptionHandler(pathHandler)
-                    .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class));
+                    .addExceptionHandler(Throwable.class, getInstance(ExceptionHandler.class));
         }
 
         var builder = Undertow.builder()

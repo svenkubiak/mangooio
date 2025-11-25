@@ -1,15 +1,21 @@
 package io.mangoo.routing;
 
-import io.mangoo.routing.routes.ControllerRoute;
-import io.mangoo.routing.routes.FileRoute;
-import io.mangoo.routing.routes.PathRoute;
-import io.mangoo.routing.routes.ServerSentEventRoute;
+import io.mangoo.routing.routes.*;
 
 public class Bind {
     
     private Bind() {
     }
-    
+
+    /**
+     * Creates a new WebSocket route
+     *
+     * @return WebSocket instance
+     */
+    public static WebSocketRoute webSocket() {
+        return new WebSocketRoute();
+    }
+
     /**
      * Creates a new ServerSentEvent route
      * 

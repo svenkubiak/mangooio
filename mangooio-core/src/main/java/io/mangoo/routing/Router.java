@@ -4,10 +4,7 @@ import com.google.common.base.Preconditions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Required;
 import io.mangoo.interfaces.MangooRoute;
-import io.mangoo.routing.routes.FileRoute;
-import io.mangoo.routing.routes.PathRoute;
-import io.mangoo.routing.routes.RequestRoute;
-import io.mangoo.routing.routes.ServerSentEventRoute;
+import io.mangoo.routing.routes.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -107,6 +104,17 @@ public final class Router {
         return routes.stream()
                 .filter(ServerSentEventRoute.class::isInstance)
                 .map(ServerSentEventRoute.class::cast)
+                .collect(Collectors.toUnmodifiableSet())
+                .stream();
+    }
+
+    /**
+     * @return An unmodifiable set of all configured WebSocketRoutes
+     */
+    public static Stream<WebSocketRoute> getWebSocketRoutes() {
+        return routes.stream()
+                .filter(WebSocketRoute.class::isInstance)
+                .map(WebSocketRoute.class::cast)
                 .collect(Collectors.toUnmodifiableSet())
                 .stream();
     }
