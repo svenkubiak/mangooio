@@ -8,6 +8,7 @@ if [[ -n $(git status --porcelain) ]]; then
 fi
 
 echo "🧹 Cleaning previous release data..."
+mvn clean
 mvn release:clean
 
 echo "🛠️ Running build and verification..."

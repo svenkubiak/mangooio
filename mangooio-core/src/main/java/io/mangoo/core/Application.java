@@ -702,7 +702,7 @@ public final class Application {
         Router.getWebSocketRoutes().forEach((WebSocketRoute webSocketRoute) -> {
                     Class<? extends WebSocketConnectionCallback> clazz = webSocketRoute.getHandler();
                     pathHandler.addExactPath(webSocketRoute.getUrl(), Handlers.websocket(getInstance(clazz)));
-               }
+                }
         );
 
         Router.getPathRoutes().forEach((PathRoute pathRoute) ->
