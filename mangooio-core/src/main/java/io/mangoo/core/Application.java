@@ -271,7 +271,7 @@ public final class Application {
                 PersistenceUtils.addCollection(key, value);
             });
 
-            Datastore datastore = Application.getInstance(Datastore.class);
+            Datastore datastore = getInstance(Datastore.class);
             scanResult.getClassesWithFieldAnnotation(INDEXED).forEach(classInfo -> {
                 var fieldInfoList = classInfo.getFieldInfo();
                 fieldInfoList.stream()
@@ -332,7 +332,7 @@ public final class Application {
             if (("receive").equals(methodInfo.getName())) {
                 var methodParameterInfo = Arrays.asList(methodInfo.getParameterInfo()).getFirst();
                 var descriptor = methodParameterInfo.getTypeDescriptor().toString();
-                Application.getInstance(EventBus.class).register(descriptor, classInfo.loadClass());
+                getInstance(EventBus.class).register(descriptor, classInfo.loadClass());
                 LOG.info("Registered subscriber '{}'", classInfo.loadClass());
             }
         });
@@ -716,7 +716,7 @@ public final class Application {
 
     private static RoutingHandler getRoutingHandler() {
         var routingHandler = Handlers.routing();
-        routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
+        routingHandler.setFallbackHandler(getInstance(FallbackHandler.class));
 
         var config = getInstance(Config.class);
         if (config.isApplicationAdminEnable()) {
@@ -735,7 +735,7 @@ public final class Application {
         }
 
         Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {
-            var dispatcherHandler = Application.getInstance(DispatcherHandler.class)
+            var dispatcherHandler = getInstance(DispatcherHandler.class)
                     .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
                     .isBlocking(requestRoute.isBlocking())
                     .withAuthentication(requestRoute.hasAuthentication());
