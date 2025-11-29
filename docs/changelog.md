@@ -10,6 +10,7 @@ Unreleased
     * commons-lang3 3.19.0 -&gt; 3.20.0
     * hibernate-validator 9.0.1.Final -&gt; 9.1.0.Final
     * commons-validator 1.10.0 -&gt; 1.10.1
+    * bouncy-castle 1.82 -&gt; 1.83
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.0.0...10.1.0)
 
