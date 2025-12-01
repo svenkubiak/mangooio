@@ -1,3 +1,7 @@
+## From 10.0.0 to 10.1.0
+
+This is a drop-in replacement.
+
 ## From 9.x to 10.0.0
 mangoo I/O 9.0.0 is a major release and contains code that will break API compatibility. These are the changes you need to consider when upgrading from 9.x:
 

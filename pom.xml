@@ -337,7 +337,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>8.2.20</version>
+				<version>9.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
