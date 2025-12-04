@@ -1,7 +1,6 @@
 package io.mangoo.persistence;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.mangoo.persistence.interfaces.BaseEntity;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
@@ -16,7 +15,7 @@ public class Entity implements BaseEntity, Serializable {
 
     @BsonId
     @BsonProperty("_id")
-    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonIgnore
     protected ObjectId id;
 
     @Override
