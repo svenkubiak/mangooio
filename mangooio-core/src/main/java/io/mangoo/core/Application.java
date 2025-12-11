@@ -312,12 +312,8 @@ public final class Application {
                             try {
                                 datastore.addIndex(classInfo.loadClass(), indexType, indexOptions);
                             } catch (MongoCommandException e) {
-                                if (e.getErrorCode() == 86) {
-                                    datastore.query(classInfo.loadClass()).dropIndex("uid_1");
-                                    datastore.addIndex(classInfo.loadClass(), indexType, indexOptions);
-                                } else {
-                                    throw e;
-                                }
+                                LOG.error("Failed to add mongodb index for class {} and index name {}", classInfo.loadClass(), info.getName(), e);
+                                throw e;
                             }
                         });
             });
