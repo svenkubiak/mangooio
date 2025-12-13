@@ -120,6 +120,22 @@ public interface Cache {
     AtomicInteger resetCounter(String key);
 
     /**
+     * Tries to retrieve an object from the cache and if not
+     * found invokes the given fallback methods, returns that
+     * value while also populating the cache under the given key
+     * with an expires timestamp where the fallback value will be removed
+     *
+     * @param key The key for the cached value
+     * @param expires The time after which the entry expires
+     * @param temporalUnit The time unit for the expiration
+     * @param fallback The fallback method to call if value not found
+     * @param <T> JavaDoc requires this (just ignore it)
+     *
+     * @return A converted cache class value
+     */
+    <T> T get(String key, int expires, TemporalUnit temporalUnit, Function<String, Object> fallback);
+
+    /**
      * Retrieves the values of multiple given keys or null if no value found
      * 
      * @param keys The keys to retrieve from cache

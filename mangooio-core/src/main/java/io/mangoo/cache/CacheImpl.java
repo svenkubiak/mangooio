@@ -87,6 +87,31 @@ public class CacheImpl implements Cache {
         return (T) object;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T get(String key, int expires, TemporalUnit temporalUnit, Function<String, Object> fallback) {
+        Objects.requireNonNull(key, Required.KEY);
+        Objects.requireNonNull(temporalUnit, Required.TEMPORAL_UNIT);
+        Objects.requireNonNull(fallback, Required.FALLBACK);
+
+        Object expire = caffeineCache.getIfPresent(key + EXPIRES_SUFFIX);
+        if (expire != null && LocalDateTime.now().isAfter((LocalDateTime) expire)) {
+            remove(key);
+            remove(key + EXPIRES_SUFFIX);
+        }
+
+        var object = caffeineCache.getIfPresent(key);
+        if (object == null) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.computeIfAbsent(key, fallback);
+            object = temp.get(key);
+
+            put(key, object, LocalDateTime.now().plus(expires, temporalUnit));
+        }
+
+        return (T) object;
+    }
+
     @Override
     public Map<String, Object> getAll(String... keys) {
         Objects.requireNonNull(keys, Required.KEY);
