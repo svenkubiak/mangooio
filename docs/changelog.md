@@ -1,9 +1,13 @@
 ## Version 10.2.0
 
-Unreleased
+Released at 17.12.2025
 
 * Version bumps (svenkubiak)
-    * mongo-driver-sync 5.5.1 -&gt; 5.5.2
+    * mongo-driver-sync 5.6.1 -&gt; 5.6.2
+    * otp 1.56 -&gt; 1.57
+    * java-uuid-generator 5.1.1 -&gt; 5.2.0
+    * greenmail 2.1.7 -&gt; 2.1.8
+    * log4j 2.25.2 -&gt; 2.25.3
   
 ## Version 10.1.0
 
