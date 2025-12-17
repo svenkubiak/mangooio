@@ -25,7 +25,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>25</jdk.version>
-		<log4j.version>2.25.2</log4j.version>
+		<log4j.version>2.25.3</log4j.version>
 		<maven.version>4.0.0-rc-4</maven.version>
 		<required.maven.version>3.9.0</required.maven.version>
 		<junit.version>6.1.0-M1</junit.version>
