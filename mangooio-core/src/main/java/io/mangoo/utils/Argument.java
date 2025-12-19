@@ -27,7 +27,7 @@ public final class Argument  {
         Argument.requireNonBlank(string, "string can not be null or blank");
         Objects.requireNonNull(pattern, "pattern can not be null");
 
-        if (!pattern.matcher(string).matches()) {
+        if (StringUtils.isBlank(string) || !pattern.matcher(string).matches()) {
             throw new IllegalArgumentException("Invalid argument");
         }
     }
