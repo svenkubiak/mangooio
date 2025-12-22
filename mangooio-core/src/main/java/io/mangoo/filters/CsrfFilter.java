@@ -8,7 +8,7 @@ public class CsrfFilter implements PerRequestFilter {
     @Override
     public Response execute(Request request, Response response) {
         if (!request.hasValidCsrf()) {
-            return Response.forbidden().end();
+            return Response.forbidden().bodyDefault().end();
         }
 
         return response;
