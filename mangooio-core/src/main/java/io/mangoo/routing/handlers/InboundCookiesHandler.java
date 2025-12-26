@@ -81,7 +81,6 @@ public class InboundCookiesHandler implements HttpHandler {
                         ));
             } catch (ParseException | MangooJwtException e) {
                 LOG.warn("Failed to parse session cookie", e);
-                //session.invalidate();
             }
         }
 
@@ -125,7 +124,6 @@ public class InboundCookiesHandler implements HttpHandler {
                 }
             } catch (ParseException | MangooJwtException e) {
                 LOG.warn("Failed to parse authentication cookie", e);
-                //authentication.invalidate();
             }
         }
 
@@ -162,7 +160,6 @@ public class InboundCookiesHandler implements HttpHandler {
                         .setDiscard(true);
             } catch (ParseException | MangooJwtException e) {
                 LOG.warn("Failed to parse flash cookie", e);
-                //flash.invalidate();
             }
         }
         
