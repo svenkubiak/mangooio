@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mangoo/mangooio/badge.svg?style=flat)](https://mvnrepository.com/artifact/io.mangoo/mangooio)
+[![Maven Central](https://img.shields.io/maven-central/v/io.mangoo/mangooio)](https://mvnrepository.com/artifact/io.mangoo/mangooio)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%F0%9F%8D%BA-yellow)](https://buymeacoffee.com/svenkubiak)
 
 # mangoo I/O – A Modern, High-Performance Full-Stack Java Web Framework
