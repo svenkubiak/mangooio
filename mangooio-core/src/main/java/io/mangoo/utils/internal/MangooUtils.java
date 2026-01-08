@@ -9,6 +9,7 @@ import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
+import io.mangoo.exceptions.MangooTranslationException;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
@@ -74,7 +75,7 @@ public final class MangooUtils {
         return version;
     }
 
-    public static Set<String> getLanguages() throws RuntimeException {
+    public static Set<String> getLanguages() throws MangooTranslationException {
         var classLoader = Thread.currentThread().getContextClassLoader();
         Set<String> languages = new HashSet<>();
 
@@ -91,7 +92,7 @@ public final class MangooUtils {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new MangooTranslationException(e);
         }
 
         return languages;

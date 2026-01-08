@@ -103,8 +103,9 @@ public class PostOffice {
 
             for (Path path : mail.getMailAttachments()) {
                 messageBodyPart = new MimeBodyPart();
-                if (path.getFileName() != null) {
-                    var filename = FilenameUtils.getName(path.getFileName().toString());
+                Path fileNamePath = path.getFileName();
+                if (fileNamePath != null) {
+                    String filename = FilenameUtils.getName(fileNamePath.toString());
                     if (StringUtils.isNotBlank(filename)) {
                         DataSource source = new FileDataSource(filename);
                         messageBodyPart.setDataHandler(new DataHandler(source));

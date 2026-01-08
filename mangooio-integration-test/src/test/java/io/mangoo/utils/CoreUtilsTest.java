@@ -4,6 +4,7 @@ import io.mangoo.TestExtension;
 import io.mangoo.cache.Cache;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
+import io.mangoo.exceptions.MangooTranslationException;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.server.handlers.Cookie;
@@ -52,7 +53,7 @@ class CoreUtilsTest {
     }
 
     @Test
-    void testGetLanguages() {
+    void testGetLanguages() throws MangooTranslationException {
         //given
         // No setup needed for static method
 
