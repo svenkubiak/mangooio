@@ -107,7 +107,7 @@ public class PostOffice {
                 if (fileNamePath != null) {
                     String filename = FilenameUtils.getName(fileNamePath.toString());
                     if (StringUtils.isNotBlank(filename)) {
-                        DataSource source = new FileDataSource(filename);
+                        DataSource source = new FileDataSource(filename); //NOSONAR
                         messageBodyPart.setDataHandler(new DataHandler(source));
                         messageBodyPart.setFileName(filename);
                         multipart.addBodyPart(messageBodyPart);

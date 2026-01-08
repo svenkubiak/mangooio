@@ -17,7 +17,6 @@ import io.mangoo.utils.JwtUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import jakarta.validation.Validation;
-import jakarta.validation.ValidatorFactory;
 import jakarta.validation.executable.ExecutableValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -50,7 +49,7 @@ public final class MangooUtils {
     private static final String VERSION_UNKNOWN = "unknown";
     private static final ExecutableValidator executableValidator;
     static {
-        try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+        try (var validatorFactory = Validation.buildDefaultValidatorFactory()) {
             executableValidator = validatorFactory.getValidator().forExecutables();
         }
     }
