@@ -173,7 +173,7 @@ public final class JwtUtils {
             var signedJWT = SignedJWT.parse(jweObject.getPayload().toString());
 
             // Step 4: Extract claims WITHOUT signature verification
-            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+            var claims = signedJWT.getJWTClaimsSet();
 
             return claims.getSubject();
         } catch (Exception e) {

@@ -1,3 +1,12 @@
+## Version 10.3.0
+
+Unreleased
+
+* Argument Utils now have an additional null-check (svenkubiak)
+* Authentication-, Session- and Flash-Cookie don't invalidate if parsing fails (svenkubiak)
+* CSRF-Filter now returns default Forbidden-Body (svenkubiak)
+* Sonar refactorings (svenkubiak)
+
 ## Version 10.2.0
 
 Released at 17.12.2025
@@ -7,7 +16,7 @@ Released at 17.12.2025
     * otp 1.56 -&gt; 1.57
     * java-uuid-generator 5.1.1 -&gt; 5.2.0
     * greenmail 2.1.7 -&gt; 2.1.8
-    * log4j 2.25.2 -&gt; 2.25.3
+    * log4j 2.25.2 -&gt; 2.25.31
   
 ## Version 10.1.0
 
@@ -33,7 +42,7 @@ Released at 03.11.2025
 * Added Support for Jakarta Validation API for methods parameters (svenkubiak)
 * Added new vault functionality for storing secrets based on Java Keystore (svenkubiak)
 * Added HTTPS connector (svenkubiak)
-* Removed cryptex{} from configuration in favour of new vault (svenkubiak)
+* Removed cryptex{} from configuration in favor of new vault (svenkubiak)
 * Removed all deprecated methods and classed (svenkubiak)
 * Removed AJP connector (svenkubiak)
 * Replaced internal TOTP implementation with external library (svenkubiak)

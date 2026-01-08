@@ -105,10 +105,14 @@ public class PostOffice {
                 messageBodyPart = new MimeBodyPart();
                 if (path.getFileName() != null) {
                     var filename = FilenameUtils.getName(path.getFileName().toString());
-                    DataSource source = new FileDataSource(filename);
-                    messageBodyPart.setDataHandler(new DataHandler(source));
-                    messageBodyPart.setFileName(filename);
-                    multipart.addBodyPart(messageBodyPart);
+                    if (StringUtils.isNotBlank(filename)) {
+                        DataSource source = new FileDataSource(filename);
+                        messageBodyPart.setDataHandler(new DataHandler(source));
+                        messageBodyPart.setFileName(filename);
+                        multipart.addBodyPart(messageBodyPart);
+                    } else {
+                        throw new MessagingException("Attachment not found");
+                    }
                 }
             }
 

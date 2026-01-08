@@ -283,8 +283,10 @@ public class Vault {
             return sslContext;
         } catch (IllegalStateException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException |
                  IOException | CertificateException | KeyManagementException e) {
-            throw new IllegalStateException("Failed to create SSLContext", e);
+              LOG.error("Failed to create SSLContext", e);
         }
+
+          return null;
     }
 
     private void createCertificate() {
@@ -327,7 +329,7 @@ public class Vault {
                 keyStore.setKeyEntry(alias, keyPair.getPrivate(), secret, new X509Certificate[]{certificate});
             } catch (CertIOException | OperatorCreationException | CertificateException | KeyStoreException |
                      NoSuchAlgorithmException | NoSuchProviderException e) {
-                throw new IllegalStateException(e);
+                LOG.error("Failed to create certificate", e);
             }
         }
     }

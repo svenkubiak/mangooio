@@ -163,7 +163,7 @@ public class TestResponse {
             var requestUri = new URI("http://" + host + ":" + port);
             this.cookieManager.getCookieStore().add(requestUri, cookie);
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            LOG.error("Failed to add cookie", e);
         }
 
         return this;
@@ -201,7 +201,7 @@ public class TestResponse {
     
     /**
      * Disables redirects when the request is executed by setting
-     * followReditects to HttpClient.Redirect.NEVER
+     * followRedirects to HttpClient.Redirect.NEVER
      *
      * Default is HttpClient.Redirect.ALWAYS
      *
@@ -246,7 +246,7 @@ public class TestResponse {
         final String host = config.getConnectorHttpHost();
         final int port =  config.getConnectorHttpPort();
         
-        try {
+        try (var client = this.httpClient.build()) {
             this.url = "http://" + host + ":" + port;
             this.httpRequest
                 .uri(new URI(this.url + this.uri))
@@ -256,9 +256,7 @@ public class TestResponse {
                 this.httpClient.authenticator(this.authenticator);
             }
 
-            this.httpResponse = this.httpClient
-                    .build()
-                    .send(this.httpRequest.build(), HttpResponse.BodyHandlers.ofString());
+            this.httpResponse = client.send(this.httpRequest.build(), HttpResponse.BodyHandlers.ofString());
         } catch (URISyntaxException | IOException | InterruptedException e) {
             LOG.error("Failed to execute HTTP request", e);
             Thread.currentThread().interrupt();

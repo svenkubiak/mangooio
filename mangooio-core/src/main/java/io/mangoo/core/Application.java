@@ -295,7 +295,7 @@ public final class Application {
                                 }
                             }
 
-                            Collation collation = Collation.builder()
+                            var collation = Collation.builder()
                                     .locale("en")
                                     .collationStrength(CollationStrength.SECONDARY)
                                     .build();

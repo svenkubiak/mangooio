@@ -31,7 +31,7 @@ public class Shutdown extends Thread {
 
     private static void stopTelemetry() {
         if (Application.getInstance(Config.class).isOtlpEnable()) {
-            Application.getInstance(Trace.class).shutdown();
+            Trace.shutdown();
         }
     }
     

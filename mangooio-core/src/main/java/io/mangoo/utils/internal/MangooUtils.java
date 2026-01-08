@@ -47,7 +47,7 @@ public final class MangooUtils {
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
-    private static ExecutableValidator executableValidator;
+    private static final ExecutableValidator executableValidator;
     static {
         try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
             executableValidator = validatorFactory.getValidator().forExecutables();
@@ -74,7 +74,7 @@ public final class MangooUtils {
         return version;
     }
 
-    public static Set<String> getLanguages() {
+    public static Set<String> getLanguages() throws RuntimeException {
         var classLoader = Thread.currentThread().getContextClassLoader();
         Set<String> languages = new HashSet<>();
 
