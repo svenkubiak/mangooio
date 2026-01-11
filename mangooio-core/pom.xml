@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<name>mangoo I/O core</name>
 	<parent>
@@ -335,12 +335,16 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.mail</groupId>
-			<artifactId>jakarta.mail</artifactId>
+			<groupId>jakarta.mail</groupId>
+			<artifactId>jakarta.mail-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.activation</groupId>
-			<artifactId>jakarta.activation</artifactId>
+			<groupId>org.eclipse.angus</groupId>
+			<artifactId>angus-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.angus</groupId>
+			<artifactId>angus-activation</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.github.classgraph</groupId>
