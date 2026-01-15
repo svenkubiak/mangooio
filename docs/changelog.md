@@ -1,11 +1,15 @@
 ## Version 10.3.0
 
-Unreleased
+Released at 15.01.2026
 
 * Argument Utils now have an additional null-check (svenkubiak)
 * Authentication-, Session- and Flash-Cookie don't invalidate if parsing fails (svenkubiak)
 * CSRF-Filter now returns default Forbidden-Body (svenkubiak)
 * Sonar refactorings (svenkubiak)
+* Version bumps (svenkubiak)
+  * undertow-core 2.3.20.Final -&gt; 2.3.21.Final
+  * otp 1.57 -&gt; 1.58
+  * nimbus-jose-jwt 10.6 -&gt; 10.7
 
 ## Version 10.2.0
 
