@@ -2,6 +2,16 @@
 
 Unreleased
 
+## Version 10.3.1
+
+Released at 19.01.2026
+
+* Version bumps (svenkubiak)
+  * undertow-core 2.3.21.Final -&gt; 2.3.22.Final
+  * jackson-databind 2.20.1 -&gt; 2.21.0
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.3.0...10.3.1)
+
 ## Version 10.3.0
 
 Released at 15.01.2026
@@ -15,6 +25,8 @@ Released at 15.01.2026
   * otp 1.57 -&gt; 1.58
   * nimbus-jose-jwt 10.6 -&gt; 10.7
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.2.0...10.3.0)
+
 ## Version 10.2.0
 
 Released at 17.12.2025
@@ -25,6 +37,8 @@ Released at 17.12.2025
     * java-uuid-generator 5.1.1 -&gt; 5.2.0
     * greenmail 2.1.7 -&gt; 2.1.8
     * log4j 2.25.2 -&gt; 2.25.31
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.1.0...10.2.0)
   
 ## Version 10.1.0
 
