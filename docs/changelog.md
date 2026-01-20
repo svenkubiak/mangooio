@@ -2,6 +2,8 @@
 
 Unreleased
 
+* Added option to passthrough JSR 380 validation errors (svenkubiak)
+
 ## Version 10.3.1
 
 Released at 19.01.2026

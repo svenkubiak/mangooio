@@ -784,4 +784,11 @@ public class Config {
     public String getOtlpEndpoint() {
         return getString(Key.OTLP_ENDPOINT, null);
     }
+
+    /**
+     * @return application.validation.passthrough
+     */
+    public boolean isValidationPassthrough() {
+        return getBoolean(Key.APPLICATION_VALIDATION_PASSTHROUGH, Default.APPLICATION_VALIDATION_PASSTHROUGH);
+    }
 }
