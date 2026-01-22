@@ -12,6 +12,7 @@ import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
+import io.mangoo.routing.bindings.UnprocessableContent;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.utils.JsonUtils;
 import io.mangoo.utils.RequestUtils;
@@ -141,6 +142,10 @@ public class RequestHandler implements HttpHandler {
             invokedResponse = (Response) attachment.getMethod().invoke(attachment.getControllerInstance());
         } else {
             final Object [] convertedParameters = getConvertedParameters(exchange);
+            if (Arrays.stream(convertedParameters).anyMatch(obj -> obj instanceof UnprocessableContent)) {
+                return Response.status(422).end();
+            }
+
             Set<ConstraintViolation<Object>> violations =
                     MangooUtils.validator().validateParameters(
                             attachment.getControllerInstance(),

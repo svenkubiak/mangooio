@@ -3,6 +3,7 @@
 Unreleased
 
 * Added option to passthrough JSR 380 validation errors (svenkubiak)
+* Added better handling of unparsable JSON and entities (svenkubiak)
 
 ## Version 10.3.1
 
