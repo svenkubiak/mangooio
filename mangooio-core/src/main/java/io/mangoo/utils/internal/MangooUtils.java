@@ -16,6 +16,7 @@ import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.JwtUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
+import jakarta.validation.MessageInterpolator;
 import jakarta.validation.Validation;
 import jakarta.validation.executable.ExecutableValidator;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +50,12 @@ public final class MangooUtils {
     private static final String VERSION_UNKNOWN = "unknown";
     private static final ExecutableValidator executableValidator;
     static {
-        try (var validatorFactory = Validation.buildDefaultValidatorFactory()) {
+        var configuration = Validation.byDefaultProvider().configure();
+        var englishInterpolator = new EnglishMessageInterpolator(configuration.getDefaultMessageInterpolator());
+        try (var validatorFactory = configuration
+                .messageInterpolator(englishInterpolator)
+                .buildValidatorFactory()) {
+
             executableValidator = validatorFactory.getValidator().forExecutables();
         }
     }
@@ -244,5 +250,25 @@ public final class MangooUtils {
                 flatMap.put(newKey, value != null ? value.toString() : Strings.EMPTY);
             }
         });
+    }
+
+    private static class EnglishMessageInterpolator implements MessageInterpolator {
+        private final MessageInterpolator delegate;
+
+        public EnglishMessageInterpolator(MessageInterpolator delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public String interpolate(String messageTemplate, Context context) {
+            // Ignore default locale, force English
+            return delegate.interpolate(messageTemplate, context, Locale.ENGLISH);
+        }
+
+        @Override
+        public String interpolate(String messageTemplate, Context context, Locale locale) {
+            // Ignore requested locale, force English
+            return delegate.interpolate(messageTemplate, context, Locale.ENGLISH);
+        }
     }
 }

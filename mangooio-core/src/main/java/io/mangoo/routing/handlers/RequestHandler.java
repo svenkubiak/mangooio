@@ -3,13 +3,16 @@ package io.mangoo.routing.handlers;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.constants.Const;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.enums.Binding;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
+import io.mangoo.routing.bindings.UnprocessableContent;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.utils.JsonUtils;
 import io.mangoo.utils.RequestUtils;
@@ -18,7 +21,9 @@ import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
+import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Path;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -29,15 +34,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class RequestHandler implements HttpHandler {
-
     private static final String FILTER_METHOD = "execute";
+    private final Config config;
     private Attachment attachment;
+
+    @Inject
+    public RequestHandler(Config config) {
+        this.config = Objects.requireNonNull(config, Required.CONFIG);
+    }
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
@@ -135,6 +142,10 @@ public class RequestHandler implements HttpHandler {
             invokedResponse = (Response) attachment.getMethod().invoke(attachment.getControllerInstance());
         } else {
             final Object [] convertedParameters = getConvertedParameters(exchange);
+            if (Arrays.stream(convertedParameters).anyMatch(obj -> obj instanceof UnprocessableContent)) {
+                return Response.status(422).end();
+            }
+
             Set<ConstraintViolation<Object>> violations =
                     MangooUtils.validator().validateParameters(
                             attachment.getControllerInstance(),
@@ -142,7 +153,28 @@ public class RequestHandler implements HttpHandler {
                             convertedParameters);
 
             if (!violations.isEmpty()) {
-                return Response.badRequest().bodyDefault().end();
+                if (config.isValidationPassthrough()) {
+                    Map<String, String> errors = new HashMap<>();
+                    violations.forEach(validation -> {
+                        Path path = validation.getPropertyPath();
+                        Path.Node last = null;
+                        for (Path.Node node : path) {
+                            last = node;
+                        }
+                        String fieldName = last != null ? last.getName() : null;
+                        String message = validation.getMessage();
+
+                        errors.put(fieldName, message);
+                    });
+
+                    return Response.badRequest()
+                            .bodyJson(Map.of("errors", errors))
+                            .end();
+                } else {
+                    return Response.badRequest()
+                            .bodyDefault()
+                            .end();
+                }
             }
 
             invokedResponse = (Response) attachment.getMethod().invoke(attachment.getControllerInstance(), convertedParameters);

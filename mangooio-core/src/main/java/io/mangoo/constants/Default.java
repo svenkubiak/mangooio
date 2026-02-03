@@ -18,6 +18,7 @@ public final class Default {
     public static final long AUTHENTICATION_COOKIE_TOKEN_EXPIRES = 3600;
     public static final int AUTHENTICATION_LOCK = 10;
     public static final Boolean AUTHENTICATION_ORIGIN = Boolean.FALSE;
+    public static final Boolean APPLICATION_VALIDATION_PASSTHROUGH = Boolean.FALSE;
     public static final String BUNDLE_NAME = "translations/messages";
     public static final String CORS_ALLOW_ORIGIN = "^http(s)?://(www\\.)?example\\.(com|org)$";
     public static final Boolean CORS_ENABLE = Boolean.FALSE;

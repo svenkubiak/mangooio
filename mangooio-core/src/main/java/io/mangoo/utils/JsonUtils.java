@@ -2,6 +2,7 @@ package io.mangoo.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.databind.node.ValueNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import io.mangoo.constants.Required;
+import io.mangoo.routing.bindings.UnprocessableContent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
@@ -30,6 +32,7 @@ public final class JsonUtils {
             .build()
             .registerModule(new JavaTimeModule())
             .registerModule(new BlackbirdModule())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setDefaultPropertyInclusion(JsonInclude.Value.construct(
                     JsonInclude.Include.NON_NULL,
                     JsonInclude.Include.ALWAYS))
@@ -39,10 +42,10 @@ public final class JsonUtils {
     }
     
     /**
-     * Converts a given object to a Json string
+     * Converts a given object to a JSON string
      * 
      * @param object The object to convert
-     * @return json string or null if conversion fails
+     * @return JSON string or null if conversion fails
      */
     public static String toJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT);
@@ -58,10 +61,10 @@ public final class JsonUtils {
     }
     
     /**
-     * Converts a given object to a Json string
+     * Converts a given object to a JSON string
      * 
      * @param object The object to convert
-     * @return json string or null if conversion fails
+     * @return JSON string or null if conversion fails
      */
     public static String toPrettyJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT);
@@ -77,11 +80,11 @@ public final class JsonUtils {
     }
 
     /**
-     * Converts a given Json string to a given Class
+     * Converts a given JSON string to a given Class
      *
-     * @param json The json string to convert
+     * @param json The JSON string to convert
      * @param clazz The Class to convert to
-     * @param <T> JavaDoc wants this, just ignore it
+     * @param <T> Javadoc wants this, just ignore it
      *
      * @return The converted class or null if conversion fails
      */
@@ -100,15 +103,16 @@ public final class JsonUtils {
     }
 
     /**
-     * Converts a given Json string to a given Class and
+     * Converts a given JSON string to a given Class and
      * tries to create an "empty" instance of the class if conversion fails
      *
-     * @param json The json string to convert
+     * @param json The JSON string to convert
      * @param clazz The Class to convert to
-     * @param <T> JavaDoc wants this, just ignore it
+     * @param <T> Javadoc wants this, just ignore it
      *
-     * @return The converted class or null if conversion and fallback fails
+     * @return The converted class or an instance of UnprocessableContent if conversion and fallback fails
      */
+    @SuppressWarnings("unchecked")
     public static <T> T toObjectWithFallback(String json, Class<T> clazz) {
         Argument.requireNonBlank(json, Required.JSON);
         Objects.requireNonNull(clazz, Required.CLASS);
@@ -117,24 +121,24 @@ public final class JsonUtils {
         try {
             object = MAPPER.readValue(json, clazz);
         } catch (IOException e) {
-            LOG.error("Failed to convert json to object class, providing fallback...",  e);
+            //Intentionally left blank
         }
 
         try {
             return (object != null) ? object : clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LOG.error("Fallback failed",  e);
+            //Intentionally left blank
         }
 
-        return null;
+        return (T) new UnprocessableContent();
     }
 
     /**
-     * Converts a given Json to a map while fattening all keys, e.g
+     * Converts a given JSON to a map while fattening all keys, e.g
      * one.two.three
      *
-     * @param json The json string to convert
-     * @return A flat map containing the json data
+     * @param json The JSON string to convert
+     * @return A flat map containing the JSON data
      */
     public static Map<String, String> toFlatMap(String json) {
         Argument.requireNonBlank(json, Required.JSON);

@@ -3,6 +3,7 @@ package io.mangoo.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mangoo.TestExtension;
 import io.mangoo.models.Car;
+import io.mangoo.routing.bindings.UnprocessableContent;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
@@ -385,10 +386,10 @@ class JsonUtilsTest {
         String json = "invalid json";
 
         //when
-        TestObjectWithoutDefaultConstructor object = JsonUtils.toObjectWithFallback(json, TestObjectWithoutDefaultConstructor.class);
+        Object object = JsonUtils.toObjectWithFallback(json, TestObjectWithoutDefaultConstructor.class);
 
         //then
-        assertThat(object, nullValue());
+        assertThat(object, instanceOf(UnprocessableContent.class));
     }
 
     @Test
