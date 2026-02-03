@@ -1,9 +1,12 @@
 ## Version 10.4.0
 
-Unreleased
+Released at 09.02.2026
 
 * Added option to passthrough JSR 380 validation errors (svenkubiak)
 * Added better handling of unparsable JSON and entities (svenkubiak)
+* Version bumps (svenkubiak)
+  * opentelemetry-semconv 1.37 -&gt; 1.39
+  * commons-codec 1.20.0 -&gt; 1.21.0
 
 ## Version 10.3.1
 
