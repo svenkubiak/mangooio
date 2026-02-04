@@ -1,3 +1,20 @@
+## Version 10.5.0
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * mongo-driver-sync 5.6.2 -&gt; 5.6.3
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.4.1...10.5.0)
+
+## Version 10.4.1
+
+Released at 09.02.2026
+
+* Fixed a dependency conflict
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.4.0...10.4.1)
+
 ## Version 10.4.0
 
 Released at 09.02.2026
@@ -7,6 +24,8 @@ Released at 09.02.2026
 * Version bumps (svenkubiak)
   * opentelemetry-semconv 1.37 -&gt; 1.39
   * commons-codec 1.20.0 -&gt; 1.21.0
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.3.0...10.4.0)
 
 ## Version 10.3.1
 
