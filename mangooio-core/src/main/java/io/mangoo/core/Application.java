@@ -280,9 +280,9 @@ public final class Application {
                         .forEach(info -> {
                             List<AnnotationParameterValue> annotationParams = info.getAnnotationInfo().getFirst().getParameterValues();
 
-                            var unique = false;
-                            var caseSensitive = false;
-                            var sort = "";
+                            boolean unique = false;
+                            boolean caseSensitive = false;
+                            String sort = "";
 
                             for (AnnotationParameterValue annotationParam : annotationParams) {
                                 String name = annotationParam.getName();
@@ -290,18 +290,18 @@ public final class Application {
                                     unique = (boolean) annotationParam.getValue();
                                 } else if ("caseSensitive".equals(name)) {
                                     caseSensitive = (boolean) annotationParam.getValue();
-                                } else if (("sort").equals(name)) {
+                                } else if ("sort".equals(name)) {
                                     sort = annotationParam.getValue().toString();
                                 }
                             }
 
-                            var collation = Collation.builder()
+                            Collation collation = Collation.builder()
                                     .locale("en")
-                                    .collationStrength(CollationStrength.SECONDARY)
+                                    .collationStrength(CollationStrength.SECONDARY) // case-insensitive
                                     .build();
 
-                            var indexOptions = new IndexOptions().unique(unique);
-                            if (!caseSensitive && unique) {
+                            IndexOptions indexOptions = new IndexOptions().unique(unique);
+                            if (!caseSensitive) {
                                 indexOptions.collation(collation);
                             }
 
@@ -312,7 +312,9 @@ public final class Application {
                             try {
                                 datastore.addIndex(classInfo.loadClass(), indexType, indexOptions);
                             } catch (MongoCommandException e) {
-                                LOG.error("Failed to add mongodb index for class {} and index name {}", classInfo.loadClass(), info.getName(), e);
+                                LOG.error(
+                                        "Failed to add mongodb index for class {} and index name {}",
+                                        classInfo.loadClass(), info.getName(), e);
                                 throw e;
                             }
                         });

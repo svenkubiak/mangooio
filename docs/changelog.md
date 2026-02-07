@@ -7,9 +7,17 @@ Unreleased
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.4.1...10.5.0)
 
+## Version 10.4.2
+
+Released at 07.02.2026
+
+* Fixed an issue when creating indices
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.4.1...10.4.2)
+
 ## Version 10.4.1
 
-Released at 09.02.2026
+Released at 03.02.2026
 
 * Fixed a dependency conflict
 
