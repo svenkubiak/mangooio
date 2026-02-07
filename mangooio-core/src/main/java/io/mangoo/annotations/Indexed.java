@@ -17,5 +17,5 @@ public @interface Indexed {
      */
     public Sort sort() default Sort.ASCENDING;
     public boolean unique() default false;
-    public boolean caseSensitive() default false;
+    public boolean caseSensitive() default true;
 }
