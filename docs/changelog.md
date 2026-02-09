@@ -2,6 +2,8 @@
 
 Unreleased
 
+* Added timezone support to application configuration (svenkubiak)
+* Added timezone handling of POJO-mapped MongoDB entities (svenkubiak)
 * Version bumps (svenkubiak)
   * mongo-driver-sync 5.6.2 -&gt; 5.6.3
   * opentelemetry 1.58.0 -&gt; 1.59.0
