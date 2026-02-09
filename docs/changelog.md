@@ -4,6 +4,8 @@ Unreleased
 
 * Version bumps (svenkubiak)
   * mongo-driver-sync 5.6.2 -&gt; 5.6.3
+  * opentelemetry 1.58.0 -&gt; 1.59.0
+  * undertow-core 2.3.22.Final -&gt; 2.3.23.Final
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.4.1...10.5.0)
 
