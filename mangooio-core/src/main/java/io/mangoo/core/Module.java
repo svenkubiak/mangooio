@@ -16,6 +16,7 @@ public class Module extends AbstractModule {
     private EmbeddedMongoDB embeddedMongoDB;
 
     public Module() {
+        System.setProperty("user.timezone", config.getApplicationTimezone());
         var prefix = Default.PERSISTENCE_PREFIX;
         if (config.isPersistenceEnabled() && Boolean.TRUE.equals(config.isMongoEmbedded(prefix))) {
             this.embeddedMongoDB = EmbeddedMongoDB.create()
