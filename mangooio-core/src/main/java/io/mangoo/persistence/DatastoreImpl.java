@@ -75,8 +75,8 @@ public class DatastoreImpl implements Datastore {
             CodecRegistry pojoRegistry = fromProviders(pojoCodecProvider);
 
             CodecRegistry combinedRegistry = fromRegistries(
-                    defaultRegistry,
                     localDateTimeRegistry,
+                    defaultRegistry,
                     pojoRegistry
             );
 
