@@ -1,4 +1,4 @@
-package io.mangoo.persistence;
+package io.mangoo.persistence.codecs;
 
 import org.bson.BsonReader;
 import org.bson.BsonType;

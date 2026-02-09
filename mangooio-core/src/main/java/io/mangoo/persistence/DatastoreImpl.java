@@ -13,6 +13,7 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.persistence.codecs.LocalDateTimeCodec;
 import io.mangoo.persistence.interfaces.BaseEntity;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.utils.PersistenceUtils;
