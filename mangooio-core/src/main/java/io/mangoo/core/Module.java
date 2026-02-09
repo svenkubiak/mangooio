@@ -10,6 +10,8 @@ import io.mangoo.crypto.Vault;
 import io.mangoo.persistence.DatastoreProvider;
 import io.mangoo.persistence.interfaces.Datastore;
 
+import java.util.TimeZone;
+
 public class Module extends AbstractModule {
     private final Vault vault = new Vault();
     public final Config config = new Config(vault);
@@ -17,6 +19,8 @@ public class Module extends AbstractModule {
 
     public Module() {
         System.setProperty("user.timezone", config.getApplicationTimezone());
+        TimeZone.setDefault(TimeZone.getTimeZone(config.getApplicationTimezone()));
+
         var prefix = Default.PERSISTENCE_PREFIX;
         if (config.isPersistenceEnabled() && Boolean.TRUE.equals(config.isMongoEmbedded(prefix))) {
             this.embeddedMongoDB = EmbeddedMongoDB.create()
