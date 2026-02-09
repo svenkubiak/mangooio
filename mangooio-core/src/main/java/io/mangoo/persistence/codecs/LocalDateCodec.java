@@ -8,20 +8,20 @@ import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 
-public class LocalDateTimeCodec implements Codec<LocalDateTime> {
+public class LocalDateCodec implements Codec<LocalDate> {
     private static final ZoneId UTC = ZoneOffset.UTC;
     private final ZoneId zoneId;
 
-    public LocalDateTimeCodec(ZoneId zoneId) {
+    public LocalDateCodec(ZoneId zoneId) {
         this.zoneId = zoneId;
     }
 
     @Override
-    public void encode(BsonWriter writer, LocalDateTime value, EncoderContext encoderContext) {
+    public void encode(BsonWriter writer, LocalDate value, EncoderContext encoderContext) {
         if (value == null) {
             writer.writeNull();
             return;
@@ -29,16 +29,16 @@ public class LocalDateTimeCodec implements Codec<LocalDateTime> {
 
         Instant instant;
         if (UTC.equals(zoneId)) {
-            instant = value.toInstant(ZoneOffset.UTC);
+            instant = value.atStartOfDay(ZoneOffset.UTC).toInstant();
         } else {
-            instant = value.atZone(zoneId).toInstant();
+            instant = value.atStartOfDay(zoneId).toInstant();
         }
 
         writer.writeDateTime(instant.toEpochMilli());
     }
 
     @Override
-    public LocalDateTime decode(BsonReader reader, DecoderContext decoderContext) {
+    public LocalDate decode(BsonReader reader, DecoderContext decoderContext) {
         if (reader.getCurrentBsonType() == BsonType.NULL) {
             reader.readNull();
             return null;
@@ -48,14 +48,14 @@ public class LocalDateTimeCodec implements Codec<LocalDateTime> {
         Instant instant = Instant.ofEpochMilli(millis);
 
         if (UTC.equals(zoneId)) {
-            return LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+            return instant.atZone(ZoneOffset.UTC).toLocalDate();
         } else {
-            return LocalDateTime.ofInstant(instant, zoneId);
+            return instant.atZone(zoneId).toLocalDate();
         }
     }
 
     @Override
-    public Class<LocalDateTime> getEncoderClass() {
-        return LocalDateTime.class;
+    public Class<LocalDate> getEncoderClass() {
+        return LocalDate.class;
     }
 }

@@ -13,6 +13,7 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.persistence.codecs.LocalDateCodec;
 import io.mangoo.persistence.codecs.LocalDateTimeCodec;
 import io.mangoo.persistence.interfaces.BaseEntity;
 import io.mangoo.persistence.interfaces.Datastore;
@@ -67,6 +68,9 @@ public class DatastoreImpl implements Datastore {
             CodecRegistry localDateTimeRegistry =
                     CodecRegistries.fromCodecs(new LocalDateTimeCodec(ZoneId.of(config.getApplicationTimezone())));
 
+            CodecRegistry localDateRegistry =
+                    CodecRegistries.fromCodecs(new LocalDateCodec(ZoneId.of(config.getApplicationTimezone())));
+
             var pojoCodecProvider = PojoCodecProvider.builder()
                     .conventions(List.of(ANNOTATION_CONVENTION))
                     .automatic(true)
@@ -76,6 +80,7 @@ public class DatastoreImpl implements Datastore {
 
             CodecRegistry combinedRegistry = fromRegistries(
                     localDateTimeRegistry,
+                    localDateRegistry,
                     defaultRegistry,
                     pojoRegistry
             );
