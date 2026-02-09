@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,6 +49,7 @@ public final class MangooUtils {
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
+    private static final Set<String> VALID_TIMEZONES = ZoneId.getAvailableZoneIds();
     private static final ExecutableValidator executableValidator;
     static {
         var configuration = Validation.byDefaultProvider().configure();
@@ -250,6 +252,10 @@ public final class MangooUtils {
                 flatMap.put(newKey, value != null ? value.toString() : Strings.EMPTY);
             }
         });
+    }
+
+    public static boolean isValidTimeZone(String timezone) {
+        return StringUtils.isNotBlank(timezone) && VALID_TIMEZONES.contains(timezone);
     }
 
     private static class EnglishMessageInterpolator implements MessageInterpolator {

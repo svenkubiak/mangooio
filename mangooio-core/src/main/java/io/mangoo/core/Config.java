@@ -791,4 +791,16 @@ public class Config {
     public boolean isValidationPassthrough() {
         return getBoolean(Key.APPLICATION_VALIDATION_PASSTHROUGH, Default.APPLICATION_VALIDATION_PASSTHROUGH);
     }
+
+    /**
+     * @return application.timezone or UTC if unconfigured or incorrect
+     */
+    public String getApplicationTimezone() {
+        String timezone = getString(Key.APPLICATION_TIMEZONE);
+        if (MangooUtils.isValidTimeZone(timezone)) {
+            return timezone;
+        }
+
+        return Default.APPLICATION_TIMEZONE;
+    }
 }

@@ -57,6 +57,7 @@ public final class Default {
     public static final long UNDERTOW_MAX_ENTITY_SIZE = 4194304L;
     public static final String CONNECTOR_HTTPS_CERTIFICATE_ALIAS = "certificate";
     public static final Boolean OTLP_ENABLE = Boolean.FALSE;
+    public static final String APPLICATION_TIMEZONE = "UTC";
 
     private static final Map<String, String> messages = new HashMap<>();
 

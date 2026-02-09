@@ -15,6 +15,7 @@ public final class Key {
     public static final String APPLICATION_NAME = "application.name";
     public static final String APPLICATION_NAMED = "application.named";
     public static final String APPLICATION_SECRET = "application.secret";
+    public static final String APPLICATION_TIMEZONE = "application.timezone";
     public static final String APPLICATION_VALIDATION_PASSTHROUGH = "application.validation.passthrough";
     public static final String APPLICATION_VAULT_ENABLE = "application.vault.enable";
     public static final String APPLICATION_VAULT_PATH = "application.vault.path";

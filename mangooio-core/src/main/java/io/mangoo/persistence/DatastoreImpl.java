@@ -20,10 +20,13 @@ import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -56,29 +59,44 @@ public class DatastoreImpl implements Datastore {
 
     @SuppressWarnings({"java:S2095", "java:S2629"})
     private void connect() {
-       if (config.isPersistenceEnabled()) {
-           var codecRegistry = MongoClientSettings.getDefaultCodecRegistry();
-           var pojoCodecProvider = PojoCodecProvider.builder()
-                   .conventions(List.of(ANNOTATION_CONVENTION))
-                   .automatic(true)
-                   .build();
+        if (config.isPersistenceEnabled()) {
+            String zoneId = config.getApplicationTimezone();
+            CodecRegistry defaultRegistry = MongoClientSettings.getDefaultCodecRegistry();
 
-           MongoClientSettings settings = MongoClientSettings.builder()
-                   .applyConnectionString(new ConnectionString(getConnectionString()))
-                   .codecRegistry(fromRegistries(codecRegistry, fromProviders(pojoCodecProvider)))
-                   .build();
+            CodecRegistry localDateTimeRegistry =
+                    CodecRegistries.fromCodecs(new LocalDateTimeCodec(ZoneId.of(config.getApplicationTimezone())));
 
-           mongoDatabase = MongoClients
-                   .create(settings)
-                   .getDatabase(config.getMongoDbName(prefix));
+            var pojoCodecProvider = PojoCodecProvider.builder()
+                    .conventions(List.of(ANNOTATION_CONVENTION))
+                    .automatic(true)
+                    .build();
 
-           LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
-                   config.getMongoHost(prefix),
-                   config.getMongoPort(prefix),
-                   config.isMongoAuth(prefix),
-                   config.getMongoDbName(prefix));
-       }
+            CodecRegistry pojoRegistry = fromProviders(pojoCodecProvider);
+
+            CodecRegistry combinedRegistry = fromRegistries(
+                    defaultRegistry,
+                    localDateTimeRegistry,
+                    pojoRegistry
+            );
+
+            MongoClientSettings settings = MongoClientSettings.builder()
+                    .applyConnectionString(new ConnectionString(getConnectionString()))
+                    .codecRegistry(combinedRegistry)
+                    .build();
+
+            mongoDatabase = MongoClients
+                    .create(settings)
+                    .getDatabase(config.getMongoDbName(prefix));
+
+            LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}' with timezone '{}')",
+                    config.getMongoHost(prefix),
+                    config.getMongoPort(prefix),
+                    config.isMongoAuth(prefix),
+                    config.getMongoDbName(prefix),
+                    zoneId);
+        }
     }
+
     
     private String getConnectionString() {
         var buffer = new StringBuilder();
