@@ -156,7 +156,7 @@ public class RequestHandler implements HttpHandler {
                 if (config.isValidationPassthrough()) {
                     Map<String, String> errors = new HashMap<>();
                     violations.forEach(validation -> {
-                        Path path = validation.getPropertyPath();
+                        var path = validation.getPropertyPath();
                         Path.Node last = null;
                         for (Path.Node node : path) {
                             last = node;

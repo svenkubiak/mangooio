@@ -797,7 +797,7 @@ public class Config {
      * @return application.timezone or UTC if unconfigured or incorrect
      */
     public String getApplicationTimezone() {
-        String timezone = getString(Key.APPLICATION_TIMEZONE);
+        var timezone = getString(Key.APPLICATION_TIMEZONE);
         if (MangooUtils.isValidTimeZone(timezone)) {
             return timezone;
         }

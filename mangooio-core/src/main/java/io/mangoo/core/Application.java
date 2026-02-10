@@ -280,9 +280,9 @@ public final class Application {
                         .forEach(info -> {
                             List<AnnotationParameterValue> annotationParams = info.getAnnotationInfo().getFirst().getParameterValues();
 
-                            boolean unique = false;
-                            boolean caseSensitive = false;
-                            String sort = "";
+                            var unique = false;
+                            var caseSensitive = false;
+                            var sort = "";
 
                             for (AnnotationParameterValue annotationParam : annotationParams) {
                                 String name = annotationParam.getName();
@@ -295,12 +295,12 @@ public final class Application {
                                 }
                             }
 
-                            Collation collation = Collation.builder()
+                            var collation = Collation.builder()
                                     .locale("en")
                                     .collationStrength(CollationStrength.SECONDARY) // case-insensitive
                                     .build();
 
-                            IndexOptions indexOptions = new IndexOptions().unique(unique);
+                            var indexOptions = new IndexOptions().unique(unique);
                             if (!caseSensitive) {
                                 indexOptions.collation(collation);
                             }
