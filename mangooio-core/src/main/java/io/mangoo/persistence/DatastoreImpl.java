@@ -13,8 +13,6 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.persistence.codecs.LocalDateCodec;
-import io.mangoo.persistence.codecs.LocalDateTimeCodec;
 import io.mangoo.persistence.interfaces.BaseEntity;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.utils.PersistenceUtils;
@@ -22,13 +20,11 @@ import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -62,14 +58,7 @@ public class DatastoreImpl implements Datastore {
     @SuppressWarnings({"java:S2095", "java:S2629"})
     private void connect() {
         if (config.isPersistenceEnabled()) {
-            String zoneId = config.getApplicationTimezone();
             CodecRegistry defaultRegistry = MongoClientSettings.getDefaultCodecRegistry();
-
-            CodecRegistry localDateTimeRegistry =
-                    CodecRegistries.fromCodecs(new LocalDateTimeCodec(ZoneId.of(config.getApplicationTimezone())));
-
-            CodecRegistry localDateRegistry =
-                    CodecRegistries.fromCodecs(new LocalDateCodec(ZoneId.of(config.getApplicationTimezone())));
 
             var pojoCodecProvider = PojoCodecProvider.builder()
                     .conventions(List.of(ANNOTATION_CONVENTION))
@@ -79,8 +68,6 @@ public class DatastoreImpl implements Datastore {
             CodecRegistry pojoRegistry = fromProviders(pojoCodecProvider);
 
             CodecRegistry combinedRegistry = fromRegistries(
-                    //localDateTimeRegistry,
-                    //localDateRegistry,
                     defaultRegistry,
                     pojoRegistry
             );
@@ -94,12 +81,12 @@ public class DatastoreImpl implements Datastore {
                     .create(settings)
                     .getDatabase(config.getMongoDbName(prefix));
 
-            LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}' with timezone '{}')",
+            LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
                     config.getMongoHost(prefix),
                     config.getMongoPort(prefix),
                     config.isMongoAuth(prefix),
-                    config.getMongoDbName(prefix),
-                    zoneId);
+                    config.getMongoDbName(prefix)
+            );
         }
     }
 
