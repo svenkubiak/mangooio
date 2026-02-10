@@ -23,7 +23,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -119,7 +118,7 @@ public class InboundCookiesHandler implements HttpHandler {
                             .twoFactorAuthentication(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.TWO_FACTOR)))
                             .withExpires(LocalDateTime.ofInstant(
                                     jwtClaimsSet.getExpirationTime().toInstant(),
-                                    ZoneId.systemDefault()
+                                    config.getApplicationTimeZone()
                             ));
                 }
             } catch (ParseException | MangooJwtException e) {
