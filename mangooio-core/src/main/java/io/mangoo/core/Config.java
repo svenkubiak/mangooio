@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -802,5 +803,9 @@ public class Config {
         }
 
         return Default.APPLICATION_TIMEZONE;
+    }
+
+    public ZoneId getApplicationTimeZone() {
+        return ZoneId.of(getApplicationTimezone());
     }
 }

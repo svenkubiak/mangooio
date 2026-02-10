@@ -1,11 +1,12 @@
 package io.mangoo.utils;
 
 import io.mangoo.constants.Required;
+import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -23,8 +24,9 @@ public final class DateUtils {
      */
     public static Date localDateTimeToDate(LocalDateTime localDateTime) {
         Objects.requireNonNull(localDateTime, Required.LOCAL_DATE_TIME);
+        var config = Application.getInstance(Config.class);
 
-        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        return Date.from(localDateTime.atZone(config.getApplicationTimeZone()).toInstant());
     }
     
     /**
@@ -35,8 +37,11 @@ public final class DateUtils {
      */
     public static Date localDateToDate(LocalDate localDate) {
         Objects.requireNonNull(localDate, Required.LOCAL_DATE);
+        var config = Application.getInstance(Config.class);
 
-        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        return Date.from(localDate.atStartOfDay()
+                .atZone(config.getApplicationTimeZone())
+                .toInstant());
     }
 
     /**
