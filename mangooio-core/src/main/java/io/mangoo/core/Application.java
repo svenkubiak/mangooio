@@ -60,15 +60,15 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
-    private static final LocalDateTime START = LocalDateTime.now();
+    private static final long START = System.currentTimeMillis();
     private static final int KEY_MIN_BIT_LENGTH = 512;
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
@@ -130,6 +130,7 @@ public final class Application {
             sanityChecks();
             do {} while (scan.isAlive()); //NOSONAR
             applicationStarted();
+            showTimezone();
             showLogo();
             started = true;
         }
@@ -438,14 +439,19 @@ public final class Application {
      * @return The LocalDateTime of the application start
      */
     public static LocalDateTime getStart() {
-        return START;
+        var config = getInstance(Config.class);
+
+        return LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(START),
+                config.getApplicationTimeZone()
+        );
     }
 
     /**
      * @return The duration of the application uptime
      */
     public static Duration getUptime() {
-        return Duration.between(START, LocalDateTime.now());
+        return Duration.between(getStart(), LocalDateTime.now());
     }
 
     /**
@@ -792,6 +798,10 @@ public final class Application {
         }
     }
 
+    private static void showTimezone() {
+        LOG.info("Using timezone: {}", TimeZone.getDefault().getID());
+    }
+
     @SuppressFBWarnings(justification = "Buffer only used locally, without user input", value = "CRLF_INJECTION_LOGS")
     private static void showLogo() {
         var logo = '\n' +
@@ -810,8 +820,7 @@ public final class Application {
             LOG.info("HTTPS connector listening @{}:{}", httpsHost, httpsPort);
         }
 
-        String startup = "mangoo I/O application started in " + ChronoUnit.MILLIS.between(START, LocalDateTime.now()) + " ms in " + mode + " mode. Enjoy.";
-        LOG.info(startup);
+        LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", System.currentTimeMillis() - START, mode);
     }
 
     private static int getBitLength(String secret) {

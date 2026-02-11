@@ -1,5 +1,6 @@
 default:
   application:
+    timezone: Europe/Berlin
     name: arg{}
     url: arg{http://localhost:4223}
     secret: o5orE4lGoOM66HpOxuE9VVt1xuIefbmi7D6HFTpcDCwt4PoXH41wSi50jy8NkAcL
