@@ -60,19 +60,18 @@ public class Vault {
         };
     }
 
-    private final KeyStore keyStore;
+    private KeyStore keyStore;
     private Path path;
     private String prefix = Strings.EMPTY;
     private char[] secret;
     private Map<String, String> config = new HashMap<>();
 
     public Vault() {
-        Security.addProvider(new BouncyCastleProvider());
         try {
-            this.keyStore = KeyStore.getInstance(KEYSTORE_TYPE);
-
             loadConfig();
             if (enabled()) {
+                Security.addProvider(new BouncyCastleProvider());
+                this.keyStore = KeyStore.getInstance(KEYSTORE_TYPE);
                 loadPath();
                 loadSecret();
                 loadKeyStore();
@@ -110,8 +109,7 @@ public class Vault {
                 throw e;
             }
         } else {
-            try (var outputStream = Files.newOutputStream(path,
-                    StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+            try (var outputStream = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
                 Set<PosixFilePermission> perms = EnumSet.of(
                         PosixFilePermission.OWNER_READ,
                         PosixFilePermission.OWNER_WRITE);

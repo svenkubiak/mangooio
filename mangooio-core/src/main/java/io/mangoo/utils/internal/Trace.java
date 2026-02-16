@@ -31,7 +31,7 @@ public final class Trace {
     private static final Map<String, ScheduledFuture<?>> SCHEDULED_CLOSURES = new ConcurrentHashMap<>();
     private static final boolean ENABLED;
     private static final Duration AUTO_CLOSE_TIMEOUT = Duration.ofMinutes(2);
-    private static final ScheduledExecutorService SCHEDULER;
+    private static ScheduledExecutorService scheduler;
     private static SdkTracerProvider tracerProvider;
     private static OpenTelemetry openTelemetry;
 
@@ -61,12 +61,13 @@ public final class Trace {
                     .setTracerProvider(tracerProvider)
                     .build();
 
+
+            scheduler = Executors.newScheduledThreadPool(0, Thread.ofVirtual().factory());
+
             LOG.info("OpenTelemetry tracing enabled with endpoint {}", config.getOtlpEndpoint());
         } else {
             LOG.info("OpenTelemetry tracing disabled");
         }
-
-        SCHEDULER = Executors.newScheduledThreadPool(0, Thread.ofVirtual().factory());
     }
 
     private Trace() {}
@@ -80,15 +81,18 @@ public final class Trace {
                 LOG.error("Failed to shutdown tracer provider cleanly", e);
             }
         }
-        SCHEDULER.shutdown();
-        try {
-            if (!SCHEDULER.awaitTermination(5, TimeUnit.SECONDS)) {
-                SCHEDULER.shutdownNow();
+
+        if (scheduler != null) {
+            scheduler.shutdown();
+            try {
+                if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                    scheduler.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                LOG.error("Interrupted during scheduler shutdown", e);
+                scheduler.shutdownNow();
+                Thread.currentThread().interrupt();
             }
-        } catch (InterruptedException e) {
-            LOG.error("Interrupted during scheduler shutdown", e);
-            SCHEDULER.shutdownNow();
-            Thread.currentThread().interrupt();
         }
     }
 
@@ -108,7 +112,7 @@ public final class Trace {
             SPANS.put(key, span);
             SCOPES.put(key, scope);
 
-            ScheduledFuture<?> scheduledClose = SCHEDULER.schedule(() -> {
+            ScheduledFuture<?> scheduledClose = scheduler.schedule(() -> {
                 if (SPANS.containsKey(key)) {
                     LOG.warn("Automatically closing span {} due to timeout", process);
                     end(process);
@@ -142,7 +146,7 @@ public final class Trace {
                     SPANS.put(key, child);
                     SCOPES.put(key, scope);
 
-                    ScheduledFuture<?> scheduledClose = SCHEDULER.schedule(() -> {
+                    ScheduledFuture<?> scheduledClose = scheduler.schedule(() -> {
                         if (SPANS.containsKey(key)) {
                             LOG.warn("Automatically closing child span {} due to timeout", childProcess);
                             end(childProcess);
