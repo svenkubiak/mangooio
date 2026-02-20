@@ -8,8 +8,10 @@ Unreleased
   * mongo-driver-sync 5.6.2 -&gt; 5.6.3
   * opentelemetry 1.58.0 -&gt; 1.59.0
   * undertow-core 2.3.22.Final -&gt; 2.3.23.Final
+  * nimbus-jose-jwt 10.7 -&gt; 10.8
+  * 
 
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.4.1...10.5.0)
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.4.2...10.5.0)
 
 ## Version 10.4.2
 
