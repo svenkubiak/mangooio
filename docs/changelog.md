@@ -9,6 +9,7 @@ Unreleased
   * opentelemetry 1.58.0 -&gt; 1.59.0
   * undertow-core 2.3.22.Final -&gt; 2.3.23.Final
   * nimbus-jose-jwt 10.7 -&gt; 10.8
+  * jackson-databind 2.21.0 -&gt; 2.21.1
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.4.2...10.5.0)
 
