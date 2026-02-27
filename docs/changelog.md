@@ -1,6 +1,15 @@
-## Version 10.5.0
+## Version 10.6.0
 
 Unreleased
+
+* Version bumps (svenkubiak)
+  * snake-yaml 2.5 -&gt; 2.6
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.5.0...10.6.0)
+
+## Version 10.5.0
+
+Released at 27.02.2026
 
 * Added timezone support to application configuration (svenkubiak)
 * Added timezone handling of POJO-mapped MongoDB entities (svenkubiak)
