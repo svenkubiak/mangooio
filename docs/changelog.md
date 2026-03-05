@@ -4,6 +4,7 @@ Unreleased
 
 * Version bumps (svenkubiak)
   * snake-yaml 2.5 -&gt; 2.6
+  * mockito-core 5.21.0 -&gt; 5.22.0
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.5.0...10.6.0)
 
