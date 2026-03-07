@@ -11,6 +11,14 @@ import java.util.List;
 public interface Datastore {
 
     /**
+     * Checks if MongoDB is healthy by sending a ping to
+     * the admin database
+     *
+     * @return True if healthy, false otherwise
+     */
+    boolean isHealthy();
+
+    /**
      * Retrieves a MongoDB entity from the database by the given query
      *
      * @param clazz The corresponding class

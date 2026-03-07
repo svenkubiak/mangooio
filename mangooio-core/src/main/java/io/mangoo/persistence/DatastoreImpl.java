@@ -3,6 +3,8 @@ package io.mangoo.persistence;
 import com.google.common.base.Preconditions;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoException;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -20,6 +22,8 @@ import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.BsonDocument;
+import org.bson.BsonInt64;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
@@ -39,6 +43,7 @@ import static org.bson.codecs.pojo.Conventions.ANNOTATION_CONVENTION;
 public class DatastoreImpl implements Datastore {
     private static final Logger LOG = LogManager.getLogger(DatastoreImpl.class);
     private final Config config;
+    private MongoClient mongoClient;
     private MongoDatabase mongoDatabase;
     private String prefix = Default.PERSISTENCE_PREFIX;
     
@@ -77,9 +82,8 @@ public class DatastoreImpl implements Datastore {
                     .codecRegistry(combinedRegistry)
                     .build();
 
-            mongoDatabase = MongoClients
-                    .create(settings)
-                    .getDatabase(config.getMongoDbName(prefix));
+            mongoClient = MongoClients.create(settings);
+            mongoDatabase = mongoClient.getDatabase(config.getMongoDbName(prefix));
 
             LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
                     config.getMongoHost(prefix),
@@ -90,6 +94,17 @@ public class DatastoreImpl implements Datastore {
         }
     }
 
+    @Override
+    public boolean isHealthy() {
+        try {
+            mongoClient
+                    .getDatabase("admin")
+                    .runCommand(new BsonDocument("ping", new BsonInt64(1)));
+            return true;
+        } catch (MongoException e) {
+            return false;
+        }
+    }
     
     private String getConnectionString() {
         var buffer = new StringBuilder();
