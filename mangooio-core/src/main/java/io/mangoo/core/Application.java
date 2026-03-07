@@ -129,10 +129,18 @@ public final class Application {
             prepareShutdown();
             sanityChecks();
             do {} while (scan.isAlive()); //NOSONAR
+            checkDatastore();
             applicationStarted();
             showTimezone();
             showLogo();
             started = true;
+        }
+    }
+
+    private static void checkDatastore() {
+        if (!getInstance(Datastore.class).isHealthy()) {
+            LOG.error("MongoDB did not startup successfully");
+            failsafe();
         }
     }
 
@@ -257,9 +265,6 @@ public final class Application {
         }
     }
 
-    /**
-     * Configures persistence
-     */
     private static void prepareDatastore(ScanResult scanResult) {
         var config = getInstance(Config.class);
         if (config.isPersistenceEnabled()) {

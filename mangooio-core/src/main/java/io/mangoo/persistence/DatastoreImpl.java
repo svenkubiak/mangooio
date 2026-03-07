@@ -96,6 +96,8 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     public boolean isHealthy() {
+        if (!config.isPersistenceEnabled()) return true;
+
         try {
             mongoClient
                     .getDatabase("admin")
