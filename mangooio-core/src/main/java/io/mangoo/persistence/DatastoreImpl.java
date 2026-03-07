@@ -100,7 +100,7 @@ public class DatastoreImpl implements Datastore {
 
         try {
             mongoClient
-                    .getDatabase("admin")
+                    .getDatabase(config.getMongoDbName(prefix))
                     .runCommand(new BsonDocument("ping", new BsonInt64(1)));
             return true;
         } catch (MongoException e) {
