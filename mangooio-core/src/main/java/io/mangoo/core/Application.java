@@ -776,6 +776,8 @@ public final class Application {
 
         var builder = Undertow.builder()
                 .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getUndertowMaxEntitySize())
+                .setServerOption(UndertowOptions.MAX_PARAMETERS, 1000)
+                .setServerOption(UndertowOptions.MAX_HEADER_SIZE, 8192)
                 .setHandler(httpHandler);
 
         httpHost = config.getConnectorHttpHost();

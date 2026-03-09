@@ -6,7 +6,9 @@ import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.form.FormData;
 import io.undertow.server.handlers.form.FormData.FormValue;
+import io.undertow.server.handlers.form.FormDataParser;
 import io.undertow.server.handlers.form.FormParserFactory;
 
 import java.io.IOException;
@@ -34,30 +36,77 @@ public class FormHandler implements HttpHandler {
      * @throws IOException If form parsing fails
      */
     protected Form getForm(HttpServerExchange exchange) throws IOException {
-        final var form = Application.getInstance(Form.class);
-        if (RequestUtils.isPostPutPatch(exchange)) {
-            var builder = FormParserFactory.builder();
-            builder.setDefaultCharset(StandardCharsets.UTF_8.name());
-            try (var formDataParser = builder.build().createParser(exchange)) {
-                if (formDataParser != null) {
-                    exchange.startBlocking();
-                    var formData = formDataParser.parseBlocking();
-                    for (String name : formData) {
-                        Deque<FormValue> deque = formData.get(name);
-                        if (deque != null) {
-                            var formValue = deque.element();
-                            if (formValue != null) {
-                                if (formValue.isFileItem()) {
-                                    form.addFile(name, formValue.getFileItem().getInputStream());
-                                } else if (!name.contains("[]")) {
-                                    form.addValue(name, formValue.getValue());
-                                }
-                            }
+        final Form form = Application.getInstance(Form.class);
+
+        if (!RequestUtils.isPostPutPatch(exchange)) {
+            return form;
+        }
+
+        exchange.startBlocking();
+
+        FormParserFactory.Builder builder = FormParserFactory.builder();
+        builder.setDefaultCharset(StandardCharsets.UTF_8.name());
+
+        try (FormDataParser parser = builder.build().createParser(exchange)) {
+            if (parser == null) {
+                return form;
+            }
+
+            FormData formData = parser.parseBlocking();
+
+            int parameterCount = 0;
+            int fileCount = 0;
+
+            final int MAX_PARAMETERS_DEFENSE = 1000;      // defense-in-depth
+            final int MAX_FILES = 10;
+            final long MAX_FILE_SIZE = 5L * 1024 * 1024;  // 5 MB per file
+            final int MAX_VALUE_LENGTH = 10_000;
+
+            for (String name : formData) {
+                if (name == null || name.isBlank() || name.length() > 200) {
+                    throw new IOException("Invalid parameter name");
+                }
+
+                Deque<FormValue> values = formData.get(name);
+                if (values == null || values.isEmpty()) {
+                    continue;
+                }
+
+                for (FormValue value : values) {
+                    parameterCount++;
+                    if (parameterCount > MAX_PARAMETERS_DEFENSE) {
+                        throw new IOException("Too many parameters");
+                    }
+
+                    if (value.isFileItem()) {
+                        fileCount++;
+                        if (fileCount > MAX_FILES) {
+                            throw new IOException("Too many file uploads");
                         }
+
+                        FormData.FileItem fileItem = value.getFileItem();
+
+                        long size = fileItem.getFileSize();
+                        if (size > MAX_FILE_SIZE) {
+                            throw new IOException("Uploaded file too large");
+                        }
+
+                        form.addFile(name, fileItem.getInputStream());
+                    } else {
+                        String val = value.getValue();
+                        if (val == null) {
+                            continue;
+                        }
+
+                        if (val.length() > MAX_VALUE_LENGTH) {
+                            throw new IOException("Parameter value too long");
+                        }
+
+                        form.addValue(name, val);
                     }
                 }
             }
-            
+
             form.setSubmitted(true);
         }
 

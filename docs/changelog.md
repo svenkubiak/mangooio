@@ -2,7 +2,8 @@
 
 Unreleased
 
-* Added healthcheck to datastore (svenkubiak)
+* Added healthcheck method to datastore (svenkubiak)
+* Hardened Form parsing (svenkubiak)
 * Version bumps (svenkubiak)
   * snake-yaml 2.5 -&gt; 2.6
   * mockito-core 5.21.0 -&gt; 5.22.0

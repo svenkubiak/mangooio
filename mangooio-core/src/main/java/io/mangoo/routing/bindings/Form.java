@@ -185,14 +185,12 @@ public class Form extends Validator {
      *  
      * @param inputStream The InputStream to add
      */
-    public void addFile(String key, InputStream inputStream) {
+    public void addFile(String key, InputStream inputStream) throws IOException {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(inputStream, Required.INPUT_STREAM);
 
-        try {
-            files.put(key, inputStream.readAllBytes());
-        } catch (IOException e) {
-            LOG.error("Failed to read InputStream for file upload", e);
+        try (InputStream in = inputStream) {
+            files.put(key, in.readAllBytes());
         }
     }
  

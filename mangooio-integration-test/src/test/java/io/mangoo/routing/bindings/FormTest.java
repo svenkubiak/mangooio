@@ -464,7 +464,7 @@ class FormTest {
     }
 
     @Test
-    void testGetFileWithExistingFile() {
+    void testGetFileWithExistingFile() throws IOException {
         // Given
         String key = "testFile";
         byte[] fileContent = "test content".getBytes();
@@ -527,7 +527,7 @@ class FormTest {
     }
 
     @Test
-    void testAddFileWithValidInputStream() {
+    void testAddFileWithValidInputStream() throws IOException {
         // Given
         String key = "testFile";
         String content = "test file content";
@@ -563,7 +563,7 @@ class FormTest {
     }
 
     @Test
-    void testAddFileWithIOException() {
+    void testAddFileWithIOException() throws IOException {
         // Given
         String key = "testFile";
         InputStream inputStream = new InputStream() {
@@ -573,8 +573,8 @@ class FormTest {
             }
         };
 
-        // When
-        form.addFile(key, inputStream);
+        // Then
+        assertThrows(IOException.class, () -> form.addFile(key, inputStream));
 
         // Then
         // Should not throw exception, but file should not be added
@@ -604,7 +604,7 @@ class FormTest {
     }
 
     @Test
-    void testDiscard() {
+    void testDiscard() throws IOException {
         // Given
         form.addValue("key1", "value1");
         form.addValue("key2", "value2");
