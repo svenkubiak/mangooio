@@ -3,8 +3,6 @@ package io.mangoo.routing.bindings;
 import io.mangoo.constants.Required;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +15,6 @@ import java.util.Optional;
 public class Form extends Validator {
     @Serial
     private static final long serialVersionUID = 2228639200039277653L;
-    private static final Logger LOG = LogManager.getLogger(Form.class);
     private boolean submitted;
     private boolean keep;
     
@@ -189,7 +186,7 @@ public class Form extends Validator {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(inputStream, Required.INPUT_STREAM);
 
-        try (InputStream in = inputStream) {
+        try (var in = inputStream) {
             files.put(key, in.readAllBytes());
         }
     }
