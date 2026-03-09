@@ -10,6 +10,8 @@ public final class Default {
     public static final String APPLICATION_CONTROLLER = "controllers.";
     public static final String APPLICATION_LANGUAGE = "en";
     public static final String APPLICATION_NAME = "mangooio-application";
+    public static final String APPLICATION_TIMEZONE = "UTC";
+    public static final Boolean APPLICATION_VALIDATION_PASSTHROUGH = Boolean.FALSE;
     public static final Boolean AUTHENTICATION_BLACKLIST = Boolean.FALSE;
     public static final String AUTHENTICATION_COOKIE_NAME = "mangooio-auth";
     public static final long AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = 2592000;
@@ -18,8 +20,8 @@ public final class Default {
     public static final long AUTHENTICATION_COOKIE_TOKEN_EXPIRES = 3600;
     public static final int AUTHENTICATION_LOCK = 10;
     public static final Boolean AUTHENTICATION_ORIGIN = Boolean.FALSE;
-    public static final Boolean APPLICATION_VALIDATION_PASSTHROUGH = Boolean.FALSE;
     public static final String BUNDLE_NAME = "translations/messages";
+    public static final String CONNECTOR_HTTPS_CERTIFICATE_ALIAS = "certificate";
     public static final String CORS_ALLOW_ORIGIN = "^http(s)?://(www\\.)?example\\.(com|org)$";
     public static final Boolean CORS_ENABLE = Boolean.FALSE;
     public static final Boolean CORS_HEADERS_ALLOW_CREDENTIALS = Boolean.TRUE;
@@ -30,21 +32,26 @@ public final class Default {
     public static final String CORS_URL_PATTERN = "^http(s)?://([^/]+)(:([^/]+))?(/([^/])+)?/api(/.*)?$";
     public static final String FILES_FOLDER = "files";
     public static final String FLASH_COOKIE_NAME = "mangooio-flash";
+    public static final int FORM_MAX_FILES = 10;
+    public static final long FORM_MAX_FILE_SIZE = 5L * 1024 * 1024;
+    public static final int FORM_MAX_PARAMETERS = 1000;
+    public static final int FORM_MAX_VALUE_LENGTH = 10_000;
     public static final String I18N_COOKIE_NAME = "mangooio-i18n";
     public static final String JAVASCRIPT_FOLDER = "javascript";
     public static final String LANGUAGE = "en";
     public static final Boolean METRICS_ENABLE = Boolean.FALSE;
+    public static final Boolean OTLP_ENABLE = Boolean.FALSE;
     public static final Boolean PERSISTENCE_ENABLE = Boolean.TRUE;
     public static final Boolean PERSISTENCE_MONGO_AUTH = Boolean.FALSE;
-    public static final Boolean PERSISTENCE_MONGO_EMBEDDED = Boolean.FALSE;
     public static final String PERSISTENCE_MONGO_DBNAME = "mangoo-io-mongodb";
+    public static final Boolean PERSISTENCE_MONGO_EMBEDDED = Boolean.FALSE;
     public static final String PERSISTENCE_MONGO_HOST = "localhost";
     public static final int PERSISTENCE_MONGO_PORT = 27017;
     public static final String PERSISTENCE_PREFIX = "persistence.";
     public static final Boolean SCHEDULER_ENABLE = Boolean.TRUE;
-    public static final String SESSION_COOKIE_SAME_SITE_MODE = "Strict";
     public static final Boolean SESSION_COOKIE_EXPIRES = Boolean.FALSE;
     public static final String SESSION_COOKIE_NAME = "mangooio-session";
+    public static final String SESSION_COOKIE_SAME_SITE_MODE = "Strict";
     public static final Boolean SESSION_COOKIE_SECURE = Boolean.FALSE;
     public static final long SESSION_COOKIE_TOKEN_EXPIRES = 3600;
     public static final Boolean SMTP_AUTHENTICATION = Boolean.FALSE;
@@ -55,9 +62,8 @@ public final class Default {
     public static final String SMTP_PROTOCOL = "smtps";
     public static final String STYLESHEET_FOLDER = "stylesheet";
     public static final long UNDERTOW_MAX_ENTITY_SIZE = 4194304L;
-    public static final String CONNECTOR_HTTPS_CERTIFICATE_ALIAS = "certificate";
-    public static final Boolean OTLP_ENABLE = Boolean.FALSE;
-    public static final String APPLICATION_TIMEZONE = "UTC";
+    public static final int UNDERTOW_MAX_HEADER_SIZE = 8192;
+    public static final int UNDERTOW_MAX_PARAMETERS = 1000;
 
     private static final Map<String, String> messages = new HashMap<>();
 

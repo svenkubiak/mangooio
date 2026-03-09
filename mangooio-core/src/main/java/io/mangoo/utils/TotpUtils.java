@@ -2,7 +2,6 @@ package io.mangoo.utils;
 
 import com.bastiaanjansen.otp.HMACAlgorithm;
 import com.bastiaanjansen.otp.TOTPGenerator;
-import io.mangoo.constants.Hmac;
 import io.mangoo.constants.Required;
 import net.glxn.qrgen.QRCode;
 
@@ -133,7 +132,7 @@ public class TotpUtils {
             .append("?secret=")
             .append(secret)
             .append("&algorithm=")
-            .append(Hmac.SHA512)
+            .append("SHA512")
             .append("&issuer=")
             .append(issuer)
             .append("&digits=")

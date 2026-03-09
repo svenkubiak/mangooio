@@ -1,5 +1,6 @@
 package io.mangoo.routing.handlers;
 
+import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Form;
@@ -57,11 +58,6 @@ public class FormHandler implements HttpHandler {
             int parameterCount = 0;
             int fileCount = 0;
 
-            final int MAX_PARAMETERS_DEFENSE = 1000;      // defense-in-depth
-            final int MAX_FILES = 10;
-            final long MAX_FILE_SIZE = 5L * 1024 * 1024;  // 5 MB per file
-            final int MAX_VALUE_LENGTH = 10_000;
-
             for (String name : formData) {
                 if (name == null || name.isBlank() || name.length() > 200) {
                     throw new IOException("Invalid parameter name");
@@ -74,20 +70,20 @@ public class FormHandler implements HttpHandler {
 
                 for (FormValue value : values) {
                     parameterCount++;
-                    if (parameterCount > MAX_PARAMETERS_DEFENSE) {
+                    if (parameterCount > Default.FORM_MAX_PARAMETERS) {
                         throw new IOException("Too many parameters");
                     }
 
                     if (value.isFileItem()) {
                         fileCount++;
-                        if (fileCount > MAX_FILES) {
+                        if (fileCount > Default.FORM_MAX_FILES) {
                             throw new IOException("Too many file uploads");
                         }
 
                         FormData.FileItem fileItem = value.getFileItem();
 
                         long size = fileItem.getFileSize();
-                        if (size > MAX_FILE_SIZE) {
+                        if (size > Default.FORM_MAX_FILE_SIZE) {
                             throw new IOException("Uploaded file too large");
                         }
 
@@ -98,7 +94,7 @@ public class FormHandler implements HttpHandler {
                             continue;
                         }
 
-                        if (val.length() > MAX_VALUE_LENGTH) {
+                        if (val.length() > Default.FORM_MAX_VALUE_LENGTH) {
                             throw new IOException("Parameter value too long");
                         }
 
