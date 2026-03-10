@@ -29,7 +29,6 @@ public class Attachment {
     private Response response;
     private Session session;
     private TemplateEngine templateEngine;
-    private int limit;
     private int methodParametersCount;
     private boolean requestFilter;
     private boolean requiresAuthentication;
@@ -94,10 +93,6 @@ public class Attachment {
         this.form = form;
     }
     
-    public int getLimit() {
-        return this.limit;
-    }
-
     public Locale getLocale() {
         return this.locale;
     }
@@ -187,11 +182,6 @@ public class Attachment {
         return this;
     }
 
-    public Attachment withLimit(int limit) {
-        this.limit = limit;
-        return this;
-    }
-    
     public Attachment withLocale(Locale locale) {
         this.locale = Objects.requireNonNull(locale, Required.LOCALE);
         return this;

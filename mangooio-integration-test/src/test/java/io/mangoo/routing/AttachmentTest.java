@@ -30,7 +30,6 @@ class AttachmentTest {
         attachment.withControllerClassName("foo");
         attachment.withControllerInstance(new String());
         attachment.withControllerMethodName("bar");
-        attachment.withLimit(23);
         attachment.withMessages(Application.getInstance(Messages.class));
         attachment.withMethodAnnotations(new ArrayList<Annotation>());
         attachment.withMethodParameterCount(42);
@@ -45,7 +44,6 @@ class AttachmentTest {
         assertThat(attachment.getControllerClassName(), equalTo("foo"));
         assertThat(attachment.getControllerInstance(), instanceOf(String.class));
         assertThat(attachment.getControllerMethodName(), equalTo("bar"));
-        assertThat(attachment.getLimit(), equalTo(23));
         assertThat(attachment.getMessages(), instanceOf(Messages.class));
         assertThat(attachment.getMethodAnnotations(), instanceOf(ArrayList.class));
         assertThat(attachment.getMethodParametersCount(), equalTo(42));

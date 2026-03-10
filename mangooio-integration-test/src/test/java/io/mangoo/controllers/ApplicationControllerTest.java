@@ -320,6 +320,7 @@ class ApplicationControllerTest {
     void testJsonBoonWithPost() {
         //given
         final TestResponse response = TestRequest.post("/jsonboonpost")
+                .withContentType("application/json")
                 .withStringBody(JSON)
                 .execute();
 
@@ -432,6 +433,7 @@ class ApplicationControllerTest {
     void testJsonBoonWithPut() {
         //given
         final TestResponse response = TestRequest.put("/jsonboonput")
+                .withContentType("application/json")
                 .withStringBody(JSON)
                 .execute();
 

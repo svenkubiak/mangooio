@@ -744,10 +744,12 @@ public final class Application {
         }
 
         Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {
-            var dispatcherHandler = getInstance(DispatcherHandler.class)
-                    .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
-                    .isBlocking(requestRoute.isBlocking())
-                    .withAuthentication(requestRoute.hasAuthentication());
+            var dispatcherHandler = new DispatcherHandler(
+                    requestRoute.getControllerClass(),
+                    requestRoute.getControllerMethod(),
+                    requestRoute.isBlocking(),
+                    requestRoute.hasAuthentication()
+            );
 
             routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);
         });

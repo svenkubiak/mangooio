@@ -1,6 +1,5 @@
 package io.mangoo.utils;
 
-import com.google.common.net.MediaType;
 import io.mangoo.constants.Const;
 import io.mangoo.constants.Header;
 import io.mangoo.constants.Required;
@@ -71,9 +70,14 @@ public final class RequestUtils {
     public static boolean isJsonRequest(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
-        var headerMap = exchange.getRequestHeaders();
-        return headerMap != null && headerMap.get(Header.CONTENT_TYPE) != null &&
-               headerMap.get(Header.CONTENT_TYPE).element().toLowerCase(Locale.ENGLISH).contains(MediaType.JSON_UTF_8.withoutParameters().toString());
+        String contentType = exchange.getRequestHeaders().getFirst(Header.CONTENT_TYPE);
+        if (contentType == null) {
+            return false;
+        }
+
+        contentType = contentType.toLowerCase(Locale.ENGLISH);
+
+        return contentType.startsWith("application/json") || contentType.contains("+json");
     }
 
     /**

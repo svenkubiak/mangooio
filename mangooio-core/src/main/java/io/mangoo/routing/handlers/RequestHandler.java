@@ -3,6 +3,7 @@ package io.mangoo.routing.handlers;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.constants.Const;
+import io.mangoo.constants.Header;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -236,27 +237,171 @@ public class RequestHandler implements HttpHandler {
             final var binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
 
             convertedParameters[index] = switch (binding) {
+
                 case FORM -> attachment.getForm();
                 case AUTHENTICATION -> attachment.getAuthentication();
                 case SESSION -> attachment.getSession();
                 case FLASH -> attachment.getFlash();
                 case REQUEST -> attachment.getRequest();
                 case MESSAGES -> attachment.getMessages();
-                case LOCAL_DATE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDate.parse(attachment.getRequestParameter().get(key));
-                case LOCAL_DATE_TIME -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDateTime.parse(attachment.getRequestParameter().get(key));
-                case STRING -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : attachment.getRequestParameter().get(key);
-                case INT_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Integer.parseInt(attachment.getRequestParameter().get(key));
-                case INTEGER -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Integer.valueOf(attachment.getRequestParameter().get(key));
-                case DOUBLE_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Double.parseDouble(attachment.getRequestParameter().get(key));
-                case DOUBLE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Double.valueOf(attachment.getRequestParameter().get(key));
-                case FLOAT_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Float.parseFloat(attachment.getRequestParameter().get(key));
-                case FLOAT -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Float.valueOf(attachment.getRequestParameter().get(key));
-                case LONG_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Long.parseLong(attachment.getRequestParameter().get(key));
-                case LONG -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Long.valueOf(attachment.getRequestParameter().get(key));
-                case OPTIONAL -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? Optional.empty() : Optional.of(attachment.getRequestParameter().get(key));
-                case BOOLEAN_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? Boolean.FALSE : Boolean.parseBoolean(attachment.getRequestParameter().get(key)); //NOSONAR
-                case BOOLEAN -> !StringUtils.isBlank(attachment.getRequestParameter().get(key)) && Boolean.parseBoolean(attachment.getRequestParameter().get(key)); //NOSONAR
-                case UNDEFINED -> RequestUtils.isJsonRequest(exchange) ? JsonUtils.toObjectWithFallback(attachment.getBody(), clazz) : null;
+
+                case LOCAL_DATE -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield null;
+                    }
+                    try {
+                        yield LocalDate.parse(value);
+                    } catch (Exception e) {
+                        yield new UnprocessableContent();
+                    }
+                }
+
+                case LOCAL_DATE_TIME -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield null;
+                    }
+                    try {
+                        yield LocalDateTime.parse(value);
+                    } catch (Exception e) {
+                        yield new UnprocessableContent();
+                    }
+                }
+
+                case STRING -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    yield StringUtils.isBlank(value) ? null : value;
+                }
+
+                case INT_PRIMITIVE -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield 0;
+                    }
+                    try {
+                        yield Integer.parseInt(value);
+                    } catch (NumberFormatException e) {
+                        yield new UnprocessableContent();
+                    }
+                }
+
+                case INTEGER -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield null;
+                    }
+                    try {
+                        yield Integer.valueOf(value);
+                    } catch (NumberFormatException e) {
+                        yield new UnprocessableContent();
+                    }
+                }
+
+                case DOUBLE_PRIMITIVE -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield 0d;
+                    }
+                    try {
+                        yield Double.parseDouble(value);
+                    } catch (NumberFormatException e) {
+                        yield new UnprocessableContent();
+                    }
+                }
+
+                case DOUBLE -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield null;
+                    }
+                    try {
+                        yield Double.valueOf(value);
+                    } catch (NumberFormatException e) {
+                        yield new UnprocessableContent();
+                    }
+                }
+
+                case FLOAT_PRIMITIVE -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield 0f;
+                    }
+                    try {
+                        yield Float.parseFloat(value);
+                    } catch (NumberFormatException e) {
+                        yield new UnprocessableContent();
+                    }
+                }
+
+                case FLOAT -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield null;
+                    }
+                    try {
+                        yield Float.valueOf(value);
+                    } catch (NumberFormatException e) {
+                        yield new UnprocessableContent();
+                    }
+                }
+
+                case LONG_PRIMITIVE -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield 0L;
+                    }
+                    try {
+                        yield Long.parseLong(value);
+                    } catch (NumberFormatException e) {
+                        yield new UnprocessableContent();
+                    }
+                }
+
+                case LONG -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield null;
+                    }
+                    try {
+                        yield Long.valueOf(value);
+                    } catch (NumberFormatException e) {
+                        yield new UnprocessableContent();
+                    }
+                }
+
+                case OPTIONAL -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    yield StringUtils.isBlank(value) ? Optional.empty() : Optional.of(value);
+                }
+
+                case BOOLEAN_PRIMITIVE -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield false;
+                    }
+                    if (!"true".equalsIgnoreCase(value) && !"false".equalsIgnoreCase(value)) {
+                        yield new UnprocessableContent();
+                    }
+                    yield Boolean.parseBoolean(value);
+                }
+
+                case BOOLEAN -> {
+                    String value = attachment.getRequestParameter().get(key);
+                    if (StringUtils.isBlank(value)) {
+                        yield null;
+                    }
+                    if (!"true".equalsIgnoreCase(value) && !"false".equalsIgnoreCase(value)) {
+                        yield new UnprocessableContent();
+                    }
+                    yield Boolean.valueOf(value);
+                }
+
+                case UNDEFINED ->
+                        RequestUtils.isJsonRequest(exchange)
+                                ? JsonUtils.toObjectWithFallback(attachment.getBody(), clazz)
+                                : null;
+
                 default -> null;
             };
 
@@ -302,13 +447,24 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException when setting the body fails
      */
     protected String getRequestBody(HttpServerExchange exchange) throws IOException {
-        var body = Strings.EMPTY;
-        if (RequestUtils.isPostPutPatch(exchange)) {
-            exchange.startBlocking();
-            body = IOUtils.toString(exchange.getInputStream(), StandardCharsets.UTF_8);
+        if (!RequestUtils.isPostPutPatch(exchange)) {
+            return Strings.EMPTY;
         }
 
-        return body;
+        String contentType = exchange.getRequestHeaders().getFirst(Header.CONTENT_TYPE);
+        if (RequestUtils.isJsonRequest(exchange)) {
+            exchange.startBlocking();
+            return IOUtils.toString(exchange.getInputStream(), StandardCharsets.UTF_8);
+        }
+
+        if (contentType != null &&
+                (contentType.startsWith("multipart/") ||
+                 contentType.startsWith("application/x-www-form-urlencoded"))) {
+            return Strings.EMPTY;
+        }
+
+        exchange.startBlocking();
+        return IOUtils.toString(exchange.getInputStream(), StandardCharsets.UTF_8);
     }
 
     /**

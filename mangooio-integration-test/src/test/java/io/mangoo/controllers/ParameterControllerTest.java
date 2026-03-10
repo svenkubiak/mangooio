@@ -49,8 +49,8 @@ class ParameterControllerTest {
 
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("false"));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNPROCESSABLE_ENTITY));
+        assertThat(response.getContent(), equalTo(""));
     }
 
     @Test
