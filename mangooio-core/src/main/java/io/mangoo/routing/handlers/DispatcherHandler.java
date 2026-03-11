@@ -11,8 +11,6 @@ import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -20,7 +18,7 @@ import java.lang.reflect.Parameter;
 import java.util.*;
 
 public final class DispatcherHandler implements HttpHandler {
-    private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
+    private static final int INITIAL_CAPACITY = 1000;
     private final Method method;
     private final List<Annotation> methodAnnotations;
     private final List<Annotation> classAnnotations;
@@ -61,7 +59,7 @@ public final class DispatcherHandler implements HttpHandler {
 
         this.method = resolvedMethod;
 
-        Map<String, Class<?>> parameters = new LinkedHashMap<>(1000);
+        Map<String, Class<?>> parameters = new LinkedHashMap<>(INITIAL_CAPACITY);
         for (Parameter parameter : resolvedMethod.getParameters()) {
             parameters.put(parameter.getName(), parameter.getType());
         }
