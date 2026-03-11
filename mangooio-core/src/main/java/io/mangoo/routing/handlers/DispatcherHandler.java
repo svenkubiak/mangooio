@@ -61,7 +61,7 @@ public final class DispatcherHandler implements HttpHandler {
 
         this.method = resolvedMethod;
 
-        Map<String, Class<?>> parameters = new LinkedHashMap<>();
+        Map<String, Class<?>> parameters = new LinkedHashMap<>(1000);
         for (Parameter parameter : resolvedMethod.getParameters()) {
             parameters.put(parameter.getName(), parameter.getType());
         }

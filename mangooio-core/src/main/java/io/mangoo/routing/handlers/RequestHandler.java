@@ -280,7 +280,7 @@ public class RequestHandler implements HttpHandler {
                         yield 0;
                     }
                     try {
-                        yield Integer.parseInt(value);
+                        yield Integer.valueOf(value);
                     } catch (NumberFormatException e) {
                         yield new UnprocessableContent();
                     }
@@ -304,7 +304,7 @@ public class RequestHandler implements HttpHandler {
                         yield 0d;
                     }
                     try {
-                        yield Double.parseDouble(value);
+                        yield Double.valueOf(value);
                     } catch (NumberFormatException e) {
                         yield new UnprocessableContent();
                     }
@@ -352,7 +352,7 @@ public class RequestHandler implements HttpHandler {
                         yield 0L;
                     }
                     try {
-                        yield Long.parseLong(value);
+                        yield Long.valueOf(value);
                     } catch (NumberFormatException e) {
                         yield new UnprocessableContent();
                     }
@@ -378,12 +378,12 @@ public class RequestHandler implements HttpHandler {
                 case BOOLEAN_PRIMITIVE -> {
                     String value = attachment.getRequestParameter().get(key);
                     if (StringUtils.isBlank(value)) {
-                        yield false;
+                        yield Boolean.FALSE;
                     }
                     if (!"true".equalsIgnoreCase(value) && !"false".equalsIgnoreCase(value)) {
                         yield new UnprocessableContent();
                     }
-                    yield Boolean.parseBoolean(value);
+                    yield Boolean.valueOf(value);
                 }
 
                 case BOOLEAN -> {
