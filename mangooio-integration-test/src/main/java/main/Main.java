@@ -13,7 +13,7 @@ public final class Main {
     private Main(){
     }
 
-    static void main(String... args) throws InterruptedException {
+    static void main() {
         Application.start(Mode.DEV);
     }
 }

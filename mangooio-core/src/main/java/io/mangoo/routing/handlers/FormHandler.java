@@ -7,7 +7,6 @@ import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.form.FormData;
 import io.undertow.server.handlers.form.FormData.FormValue;
 import io.undertow.server.handlers.form.FormDataParser;
 import io.undertow.server.handlers.form.FormParserFactory;
@@ -78,8 +77,7 @@ public class FormHandler implements HttpHandler {
                             throw new IOException("Too many file uploads");
                         }
 
-                        FormData.FileItem fileItem = value.getFileItem();
-
+                        var fileItem = value.getFileItem();
                         var size = fileItem.getFileSize();
                         if (size > Default.FORM_MAX_FILE_SIZE) {
                             throw new IOException("Uploaded file too large");
