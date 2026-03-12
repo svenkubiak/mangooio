@@ -4,10 +4,12 @@ Unreleased
 
 * Added healthcheck method to datastore (svenkubiak)
 * Hardened Form parsing (svenkubiak)
+* Sonar refactorings (svenkubiak)
 * Refactorings and improvements (svenkubiak)
 * Version bumps (svenkubiak)
   * snake-yaml 2.5 -&gt; 2.6
   * mockito-core 5.21.0 -&gt; 5.22.0
+  * otp 1.59.0 -&gt; 1.60.1
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.5.0...10.6.0)
 
