@@ -45,19 +45,17 @@ public class FormHandler implements HttpHandler {
 
         exchange.startBlocking();
 
-        FormParserFactory.Builder builder = FormParserFactory.builder();
-        builder.setDefaultCharset(StandardCharsets.UTF_8.name());
+        var formParserBuilder = FormParserFactory.builder();
+        formParserBuilder.setDefaultCharset(StandardCharsets.UTF_8.name());
 
-        try (FormDataParser parser = builder.build().createParser(exchange)) {
+        try (FormDataParser parser = formParserBuilder.build().createParser(exchange)) {
             if (parser == null) {
                 return form;
             }
 
-            FormData formData = parser.parseBlocking();
-
-            int parameterCount = 0;
-            int fileCount = 0;
-
+            var formData = parser.parseBlocking();
+            var parameterCount = 0;
+            var fileCount = 0;
             for (String name : formData) {
                 if (name == null || name.isBlank() || name.length() > 200) {
                     throw new IOException("Invalid parameter name");
@@ -82,7 +80,7 @@ public class FormHandler implements HttpHandler {
 
                         FormData.FileItem fileItem = value.getFileItem();
 
-                        long size = fileItem.getFileSize();
+                        var size = fileItem.getFileSize();
                         if (size > Default.FORM_MAX_FILE_SIZE) {
                             throw new IOException("Uploaded file too large");
                         }

@@ -33,7 +33,7 @@ public class ExceptionHandler implements HttpHandler {
             return;
         }
 
-        Throwable root = throwable;
+        var root = throwable;
         while (root.getCause() != null) {
             root = root.getCause();
         }
@@ -84,7 +84,7 @@ public class ExceptionHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Header.CONTENT_TYPE, MediaType.HTML_UTF_8.withoutParameters().toString());
 
         if (Application.inDevMode() && status >= 500) {
-            TemplateEngine templateEngine = new TemplateEngine();
+            var templateEngine = new TemplateEngine();
             exchange.getResponseSender()
                     .send(templateEngine.renderException(exchange, root, true));
         } else {

@@ -143,7 +143,7 @@ public class RequestHandler implements HttpHandler {
             invokedResponse = (Response) attachment.getMethod().invoke(attachment.getControllerInstance());
         } else {
             final Object [] convertedParameters = getConvertedParameters(exchange);
-            if (Arrays.stream(convertedParameters).anyMatch(obj -> obj instanceof UnprocessableContent)) {
+            if (Arrays.stream(convertedParameters).anyMatch(UnprocessableContent.class::isInstance)) {
                 return Response.status(422).end();
             }
 

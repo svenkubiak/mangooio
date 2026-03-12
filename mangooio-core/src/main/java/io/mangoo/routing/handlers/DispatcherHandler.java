@@ -18,7 +18,7 @@ import java.lang.reflect.Parameter;
 import java.util.*;
 
 public final class DispatcherHandler implements HttpHandler {
-    private static final int INITIAL_CAPACITY = 1000;
+    private static final int INITIAL_CAPACITY = 50;
     private final Method method;
     private final List<Annotation> methodAnnotations;
     private final List<Annotation> classAnnotations;
@@ -59,7 +59,7 @@ public final class DispatcherHandler implements HttpHandler {
 
         this.method = resolvedMethod;
 
-        Map<String, Class<?>> parameters = new LinkedHashMap<>(INITIAL_CAPACITY);
+        Map<String, Class<?>> parameters = LinkedHashMap.newLinkedHashMap(INITIAL_CAPACITY);
         for (Parameter parameter : resolvedMethod.getParameters()) {
             parameters.put(parameter.getName(), parameter.getType());
         }
@@ -92,7 +92,7 @@ public final class DispatcherHandler implements HttpHandler {
         }
 
         Trace.start(exchange.getRequestPath());
-        Attachment attachment = Attachment.build()
+        var attachment = Attachment.build()
                 .withControllerInstance(Application.getInstance(controllerClass))
                 .withControllerClass(controllerClass)
                 .withControllerClassName(controllerClassName)
