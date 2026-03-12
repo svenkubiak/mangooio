@@ -37,7 +37,6 @@ public class FormHandler implements HttpHandler {
      */
     protected Form getForm(HttpServerExchange exchange) throws IOException {
         final Form form = Application.getInstance(Form.class);
-
         if (!RequestUtils.isPostPutPatch(exchange)) {
             return form;
         }
