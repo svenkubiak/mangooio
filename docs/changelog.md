@@ -1,6 +1,6 @@
 ## Version 10.6.0
 
-Unreleased
+Released at 09.04.2026
 
 * Added healthcheck method to datastore (svenkubiak)
 * Hardened Form parsing (svenkubiak)
@@ -11,6 +11,9 @@ Unreleased
   * mockito-core 5.21.0 -&gt; 5.22.0
   * opentelemetry 1.59.0 -&gt; 1.60.1
   * undertow-core 2.3.23.Final -&gt; 2.3.24.Final
+  * jackson 2.21.1 -&gt; 2.21.2
+  * nimbus-jose-jwt 10.8 -&gt; 10.9
+  * log4j 2.25.3 -&gt; 2.25.4
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.5.0...10.6.0)
 
