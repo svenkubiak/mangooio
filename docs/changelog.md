@@ -1,3 +1,11 @@
+## Version 10.7.0
+
+Unreleased
+
+* Version bumps (svenkubiak)
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.6.0...10.7.0)
+
 ## Version 10.6.0
 
 Released at 09.04.2026
