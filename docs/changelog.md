@@ -1,10 +1,12 @@
-## Version 10.7.0
+## Version 10.6.1
 
-Unreleased
+Released at 10.04.2026
 
 * Version bumps (svenkubiak)
+  * mongo-driver-sync 5.6.4 -&gt; 5.6.5 
+  * undertow-core 2.3.24.Final -&gt; 2.4.0.RC4
 
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.6.0...10.7.0)
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.6.0...10.6.1)
 
 ## Version 10.6.0
 
