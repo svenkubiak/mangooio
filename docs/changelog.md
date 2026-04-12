@@ -1,3 +1,12 @@
+## Version 10.7.0
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * opentelemetry 1.60.1 -&gt; 1.61.0
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.6.1...10.7.0)
+
 ## Version 10.6.1
 
 Released at 10.04.2026
