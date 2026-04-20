@@ -2,6 +2,7 @@
 
 Unreleased
 
+* Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
   * opentelemetry 1.60.1 -&gt; 1.61.0
   * guava-jre 33.5.0-jre -&gt; 33.6.0-jre
