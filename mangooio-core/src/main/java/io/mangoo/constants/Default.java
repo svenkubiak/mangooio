@@ -17,7 +17,7 @@ public final class Default {
     public static final long AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = 2592000;
     public static final String AUTHENTICATION_COOKIE_SAME_SITE_MODE = "Strict";
     public static final Boolean AUTHENTICATION_COOKIE_SECURE = Boolean.FALSE;
-    public static final long AUTHENTICATION_COOKIE_TOKEN_EXPIRES = 3600;
+    public static final long AUTHENTICATION_COOKIE_TOKEN_EXPIRES = 86400;
     public static final int AUTHENTICATION_LOCK = 10;
     public static final Boolean AUTHENTICATION_ORIGIN = Boolean.FALSE;
     public static final String BUNDLE_NAME = "translations/messages";

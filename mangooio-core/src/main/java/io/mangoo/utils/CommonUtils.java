@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public final class CommonUtils {
@@ -431,6 +432,11 @@ public final class CommonUtils {
                 .getInstance(CacheProvider.class)
                 .getCache(CacheName.BLACKLIST);
 
-        authCache.put(Const.BLACKLIST_PREFIX + id, Strings.EMPTY);
+        var config = Application.getInstance(Config.class);
+        authCache.put(
+                Const.BLACKLIST_PREFIX + id,
+                Strings.EMPTY,
+                LocalDateTime.now().plusSeconds(config.getAuthenticationCookieRememberExpires())
+        );
     }
 }
