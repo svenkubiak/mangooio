@@ -2,6 +2,7 @@
 
 Unreleased
 
+* Added Log4j configuration check on application start (svenkubiak)
 * Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
   * opentelemetry 1.60.1 -&gt; 1.61.0

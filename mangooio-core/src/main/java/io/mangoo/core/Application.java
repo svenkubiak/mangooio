@@ -36,6 +36,7 @@ import io.mangoo.scheduler.Scheduler;
 import io.mangoo.scheduler.Task;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.PersistenceUtils;
+import io.mangoo.utils.internal.Log4jListener;
 import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -51,6 +52,7 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.logging.log4j.util.Strings;
 import org.bson.conversions.Bson;
 
@@ -67,6 +69,10 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public final class Application {
+    private static final Log4jListener LOG4J_LISTENER = new Log4jListener();
+    static {
+        StatusLogger.getLogger().registerListener(LOG4J_LISTENER);
+    }
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final long START = System.currentTimeMillis();
     private static final int KEY_MIN_BIT_LENGTH = 512;
@@ -107,6 +113,7 @@ public final class Application {
         Objects.requireNonNull(mode, Required.MODE);
 
         if (!started) {
+            logCheck();
             userCheck();
             prepareMode(mode);
             prepareInjector();
@@ -134,6 +141,15 @@ public final class Application {
             showTimezone();
             showLogo();
             started = true;
+        }
+    }
+
+    private static void logCheck() {
+        LOG4J_LISTENER.validateAndCollect();
+        if (!LOG4J_LISTENER.getEvents().isEmpty()) {
+            System.out.println("Log4j configuration failed with errors:");
+            System.out.println("\t" + LOG4J_LISTENER.getEvents().toString());
+            failsafe();
         }
     }
 
