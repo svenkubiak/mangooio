@@ -34,8 +34,6 @@ public class Log4jListener implements org.apache.logging.log4j.status.StatusList
         appenders.forEach((name, appender) -> {
             if (!appender.isStarted())
                 addSynthetic(Level.ERROR, "Appender '" + name + "' is not started");
-            if (appender.getLayout() == null)
-                addSynthetic(Level.WARN, "Appender '" + name + "' has no layout configured");
         });
 
         config.getLoggers().forEach((name, lc) -> {
@@ -43,16 +41,6 @@ public class Log4jListener implements org.apache.logging.log4j.status.StatusList
                 if (!appenders.containsKey(ref.getRef()))
                     addSynthetic(Level.ERROR, "Logger '" + name + "' references unknown appender '" + ref.getRef() + "'");
             });
-            if (lc.getAppenderRefs().isEmpty() && !lc.isAdditive())
-                addSynthetic(Level.WARN, "Logger '" + name + "' has no appender refs and additivity=false — events will be discarded");
-        });
-
-        appenders.keySet().forEach(name -> {
-            boolean referenced = config.getLoggers().values().stream()
-                    .flatMap(lc -> lc.getAppenderRefs().stream())
-                    .anyMatch(ref -> ref.getRef().equals(name));
-            if (!referenced)
-                addSynthetic(Level.WARN, "Appender '" + name + "' is defined but not referenced by any logger");
         });
     }
 
