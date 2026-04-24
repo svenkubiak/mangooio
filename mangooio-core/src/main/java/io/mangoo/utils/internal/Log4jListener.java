@@ -33,29 +33,24 @@ public class Log4jListener implements org.apache.logging.log4j.status.StatusList
 
         appenders.forEach((name, appender) -> {
             if (!appender.isStarted())
-                addSynthetic(Level.ERROR, "Appender '" + name + "' is not started");
+                addSynthetic("Appender '" + name + "' is not started");
         });
 
         config.getLoggers().forEach((name, lc) -> {
             lc.getAppenderRefs().forEach(ref -> {
                 if (!appenders.containsKey(ref.getRef()))
-                    addSynthetic(Level.ERROR, "Logger '" + name + "' references unknown appender '" + ref.getRef() + "'");
+                    addSynthetic("Logger '" + name + "' references unknown appender '" + ref.getRef() + "'");
             });
         });
     }
 
-    private void addSynthetic(Level level, String message) {
-        events.add(new StatusData(null, level,
+    private void addSynthetic(String message) {
+        events.add(new StatusData(null, Level.ERROR,
                 new SimpleMessage(message), null, null));
     }
 
     public List<StatusData> getEvents() {
         return List.copyOf(events);
-    }
-
-    public boolean hasErrors() {
-        return events.stream()
-                .anyMatch(e -> e.getLevel().isMoreSpecificThan(Level.ERROR));
     }
 
     public void clear() {
