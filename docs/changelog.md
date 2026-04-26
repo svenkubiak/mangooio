@@ -8,6 +8,9 @@ Unreleased
   * opentelemetry 1.60.1 -&gt; 1.61.0
   * guava-jre 33.5.0-jre -&gt; 33.6.0-jre
   * bouncy-castle 1.83 -&gt; 1.84
+  * commons-codec 1.21.0 -&gt; 1.22.0
+  * commons-io 2.21.0 -&gt; 2.22.0
+  * cactoos 0.59.0 -&gt; 0.60.0
   
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.6.1...10.7.0)
 
