@@ -1,6 +1,6 @@
 ## Version 10.7.0
 
-Unreleased
+Released at 27.04.2026
 
 * Added Log4j configuration check on application start (svenkubiak)
 * Sonar refactorings (svenkubiak)
