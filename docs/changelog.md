@@ -1,3 +1,13 @@
+## Version 10.8.0
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * jackson 2.21.1 -&gt; 2.21.3
+  * opentelemetry-semconv 1.40.0 -&gt; 1.41.0
+  * mongo-driver-sync 5.6.5 -&gt; 5.7.0
+  * caffeine 3.2.3 -&gt; 3.2.4
+
 ## Version 10.7.0
 
 Released at 27.04.2026
