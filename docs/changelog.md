@@ -2,6 +2,7 @@
 
 Unreleased
 
+* Flushing SSE connection on first connect (svenkubiak)
 * Version bumps (svenkubiak)
   * jackson 2.21.1 -&gt; 2.21.3
   * opentelemetry-semconv 1.40.0 -&gt; 1.41.0
