@@ -28,6 +28,7 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
             var serverEventManager = Application.getInstance(ServerSentEventManager.class);
             serverEventManager.addConnection(connection.getRequestURI(), connection);
             connection.addCloseTask(Application.getInstance(ServerSentEventCloseListener.class));
+            connection.send(": ok\n\n");
         };
 
         if (hasAuthentication) {
@@ -42,6 +43,5 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
         } else {
             Thread.ofVirtual().start(addConnectionTask);
         }
-
     }
 }
