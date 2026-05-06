@@ -121,8 +121,7 @@ success "Git working directory is clean."
 
 step "Cleaning previous release data"
 
-run_maven "Running mvn clean" clean
-run_maven "Running mvn release:clean" release:clean
+run_maven "Running mvn clean release:clean" clean release:clean
 echo
 success "Cleanup complete."
 
@@ -145,11 +144,11 @@ echo
 
 run_maven "Setting project version to ${NEW_VERSION}" versions:set -DnewVersion="$NEW_VERSION"
 
-VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+VERSION="$NEW_VERSION"
 info "Deploying version  :  ${BOLD}${VERSION}${RESET}"
 echo
 
-run_maven "Running mvn clean deploy" clean deploy -Prelease -DskipTests
+run_maven "Running mvn deploy" deploy -Prelease -DskipTests
 echo
 success "Version ${BOLD}${VERSION}${RESET} deployed successfully."
 
