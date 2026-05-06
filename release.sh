@@ -45,7 +45,7 @@ warn() {
 banner() {
   echo
   echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════════════════════════════════════╗${RESET}"
-  echo -e "${BOLD}${CYAN}║                          🚀  Release Script                                  ║${RESET}"
+  echo -e "${BOLD}${CYAN}║                          🚀  Release Script                                ║${RESET}"
   echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════════════════════════════════════╝${RESET}"
   echo
 }
@@ -101,6 +101,13 @@ run_silent() {
   rm -f "$tmp_log"
 }
 
+bump_patch() {
+  local ver="$1"
+  IFS=. read -r major minor patch <<<"$ver"
+  patch=$((patch + 1))
+  echo "${major}.${minor}.${patch}"
+}
+
 banner
 
 step "Checking Git state"
@@ -148,12 +155,16 @@ success "Version ${BOLD}${VERSION}${RESET} deployed successfully."
 
 step "Tagging Git and updating versions"
 
+NEXT_DEV_BASE="$(bump_patch "$VERSION")"
+NEXT_SNAPSHOT_VERSION="${NEXT_DEV_BASE}-SNAPSHOT"
+
 run_silent "Creating Git tag ${VERSION}" git tag "$VERSION"
-run_maven "Updating to next development version" release:update-versions
-run_silent "Committing version update" git commit -am "Updated version after release"
+run_maven "Setting next snapshot version ${NEXT_SNAPSHOT_VERSION}" versions:set -DnewVersion="${NEXT_SNAPSHOT_VERSION}"
+rm -f pom.xml.versionsBackup
+run_silent "Committing release ${VERSION}" git commit -am "Release ${VERSION}, next dev version ${NEXT_SNAPSHOT_VERSION}"
 run_silent "Pushing to origin main" git push origin main
 echo
-success "Git tag ${BOLD}${VERSION}${RESET} pushed and version updated."
+success "Git tag ${BOLD}${VERSION}${RESET} pushed and next dev version set  :  ${BOLD}${NEXT_SNAPSHOT_VERSION}${RESET}"
 
 step "Publishing documentation"
 
