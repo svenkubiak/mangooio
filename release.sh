@@ -127,7 +127,16 @@ success "Maven build succeeded."
 
 step "Setting version and deploying"
 
-run_maven "Setting project version" versions:set
+CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+DEFAULT_RELEASE_VERSION="${CURRENT_VERSION%-SNAPSHOT}"
+
+info "Current version  :  ${BOLD}${CURRENT_VERSION}${RESET}"
+echo
+read -rp "  ✏️   Enter new release version [${DEFAULT_RELEASE_VERSION}]: " NEW_VERSION
+NEW_VERSION="${NEW_VERSION:-$DEFAULT_RELEASE_VERSION}"
+echo
+
+run_maven "Setting project version to ${NEW_VERSION}" versions:set -DnewVersion="$NEW_VERSION"
 
 VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
 info "Deploying version  :  ${BOLD}${VERSION}${RESET}"
