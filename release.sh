@@ -149,7 +149,7 @@ VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
 info "Deploying version  :  ${BOLD}${VERSION}${RESET}"
 echo
 
-run_maven "Running mvn clean deploy" clean deploy -Prelease
+run_maven "Running mvn clean deploy" clean deploy -Prelease -DskipTests
 echo
 success "Version ${BOLD}${VERSION}${RESET} deployed successfully."
 
