@@ -156,7 +156,11 @@ success "Version ${BOLD}${VERSION}${RESET} deployed successfully."
 step "Tagging Git and updating versions"
 
 NEXT_DEV_BASE="$(bump_patch "$VERSION")"
-NEXT_SNAPSHOT_VERSION="${NEXT_DEV_BASE}-SNAPSHOT"
+NEXT_SNAPSHOT_DEFAULT="${NEXT_DEV_BASE}-SNAPSHOT"
+
+read -rp "  ✏️   Enter next development version [${NEXT_SNAPSHOT_DEFAULT}]: " NEXT_SNAPSHOT_VERSION
+NEXT_SNAPSHOT_VERSION="${NEXT_SNAPSHOT_VERSION:-$NEXT_SNAPSHOT_DEFAULT}"
+echo
 
 run_silent "Creating Git tag ${VERSION}" git tag "$VERSION"
 run_maven "Setting next snapshot version ${NEXT_SNAPSHOT_VERSION}" versions:set -DnewVersion="${NEXT_SNAPSHOT_VERSION}"
