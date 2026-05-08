@@ -45,7 +45,7 @@ warn() {
 banner() {
   echo
   echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════════════════════════════════════╗${RESET}"
-  echo -e "${BOLD}${CYAN}║                          🚀  Release Script                                ║${RESET}"
+  echo -e "${BOLD}${CYAN}║                          🚀  Release Script                                  ║${RESET}"
   echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════════════════════════════════════╝${RESET}"
   echo
 }

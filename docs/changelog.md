@@ -8,6 +8,7 @@ Unreleased
   * opentelemetry-semconv 1.40.0 -&gt; 1.41.0
   * mongo-driver-sync 5.6.5 -&gt; 5.7.0
   * caffeine 3.2.3 -&gt; 3.2.4
+  * log4j 2.25.4 -&gt; 2.26.0
 
 ## Version 10.7.0
 
