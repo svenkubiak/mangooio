@@ -1,6 +1,6 @@
 ## Version 10.8.0
 
-Unreleased
+Released at 17.05.2026
 
 * Flushing SSE connection on first connect (svenkubiak)
 * Version bumps (svenkubiak)
