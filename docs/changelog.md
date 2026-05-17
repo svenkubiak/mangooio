@@ -1,3 +1,9 @@
+## Version 10.8.2
+
+Released at 17.05.2026
+
+* Fixed dependency issue (svenkubiak)
+
 ## Version 10.8.1
 
 Released at 17.05.2026
