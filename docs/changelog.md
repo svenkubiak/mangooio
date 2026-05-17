@@ -5,7 +5,8 @@ Unreleased
 * Flushing SSE connection on first connect (svenkubiak)
 * Version bumps (svenkubiak)
   * jackson 2.21.1 -&gt; 2.21.3
-  * opentelemetry-semconv 1.40.0 -&gt; 1.41.0
+  * opentelemetry-semconv 1.40.0 -&gt; 1.41.1
+  * opentelemetry 1.61.0 -&gt; 1.62.0
   * mongo-driver-sync 5.6.5 -&gt; 5.7.0
   * caffeine 3.2.3 -&gt; 3.2.4
   * log4j 2.25.4 -&gt; 2.26.0
