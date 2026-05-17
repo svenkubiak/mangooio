@@ -25,7 +25,6 @@ import io.undertow.server.handlers.Cookie;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Path;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 
@@ -454,7 +453,7 @@ public class RequestHandler implements HttpHandler {
         String contentType = exchange.getRequestHeaders().getFirst(Header.CONTENT_TYPE);
         if (RequestUtils.isJsonRequest(exchange)) {
             exchange.startBlocking();
-            return IOUtils.toString(exchange.getInputStream(), StandardCharsets.UTF_8);
+            return new String(exchange.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         }
 
         if (contentType != null &&
@@ -464,7 +463,7 @@ public class RequestHandler implements HttpHandler {
         }
 
         exchange.startBlocking();
-        return IOUtils.toString(exchange.getInputStream(), StandardCharsets.UTF_8);
+        return new String(exchange.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
     }
 
     /**
