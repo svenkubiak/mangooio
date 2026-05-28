@@ -1,3 +1,10 @@
+## Version 10.9.0
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * mongo-driver-sync 5.7.0 -&gt; 5.7.1
+
 ## Version 10.8.2
 
 Released at 17.05.2026
