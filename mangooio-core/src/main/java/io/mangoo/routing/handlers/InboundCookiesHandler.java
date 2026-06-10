@@ -55,11 +55,14 @@ public class InboundCookiesHandler implements HttpHandler {
      */
     protected Session getSessionCookie(HttpServerExchange exchange) {
         var session = Session.create()
-            .withContent(new HashMap<>())
-            .withCsrf(CommonUtils.randomString(32))
-            .withExpires(LocalDateTime.now().plusSeconds(config.getSessionCookieTokenExpires()));
+                .withContent(new HashMap<>())
+                .withCsrf(CommonUtils.randomString(32))
+                .withExpires(LocalDateTime.now()
+                        .plusSeconds(config.getSessionCookieTokenExpires())
+                        .withNano(0));
 
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
+
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
                 var jwtData = JwtUtils.jwtData()
@@ -71,13 +74,15 @@ public class InboundCookiesHandler implements HttpHandler {
 
                 var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
 
+                LocalDateTime expires = LocalDateTime.ofInstant(
+                        jwtClaimsSet.getExpirationTime().toInstant(),
+                        config.getApplicationTimeZone()
+                ).withNano(0);
+
                 session = Session.create()
                         .withContent(CommonUtils.toStringMap(JwtUtils.extractCustomClaims(jwtClaimsSet).getClaims()))
                         .withCsrf(jwtClaimsSet.getClaimAsString(Const.CSRF_TOKEN))
-                        .withExpires(LocalDateTime.ofInstant(
-                                jwtClaimsSet.getExpirationTime().toInstant(),
-                                config.getApplicationTimeZone()
-                        ));
+                        .withExpires(expires);
             } catch (ParseException | MangooJwtException e) {
                 LOG.warn("Failed to parse session cookie", e);
             }

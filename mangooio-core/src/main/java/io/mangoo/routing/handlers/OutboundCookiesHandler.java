@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -53,6 +54,7 @@ public class OutboundCookiesHandler implements HttpHandler {
      */
     protected void setSessionCookie(HttpServerExchange exchange) {
         var session = attachment.getSession();
+
         if (session.isInvalid()) {
             var cookie = new CookieImpl(config.getSessionCookieName())
                     .setSecure(config.isSessionCookieSecure())
@@ -62,12 +64,22 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setMaxAge(0)
                     .setSameSiteMode(config.getSessionCookieSameSiteMode())
                     .setDiscard(true);
-            
+
             exchange.setResponseCookie(cookie);
-        } else if (session.hasChanged() || session.isKept()) {
+            return;
+        }
+
+        var requestCookie = exchange.getRequestCookie(config.getSessionCookieName());
+        if (session.hasChanged() || (requestCookie == null && session.isKept())) {
             try {
                 Map<String, String> claims = session.getValues();
                 claims.put(Const.CSRF_TOKEN, session.getCsrf());
+
+                LocalDateTime expires = session.getExpires().withNano(0);
+                LocalDateTime now = LocalDateTime.now().withNano(0);
+
+                long ttlSeconds = Duration.between(now, expires).getSeconds();
+                ttlSeconds = Math.max(0, ttlSeconds);
 
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getSessionCookieKey())
@@ -75,7 +87,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getSessionCookieName())
                         .withSubject(CommonUtils.uuidV6())
-                        .withTtlSeconds(Duration.between(LocalDateTime.now(), session.getExpires()).getSeconds())
+                        .withTtlSeconds(ttlSeconds)
                         .withClaims(claims);
 
                 var jwt = JwtUtils.createJwt(jwtData);
@@ -83,7 +95,9 @@ public class OutboundCookiesHandler implements HttpHandler {
                 var cookie = new CookieImpl(config.getSessionCookieName())
                         .setValue(jwt)
                         .setSameSiteMode(config.getSessionCookieSameSiteMode())
-                        .setExpires(DateUtils.localDateTimeToDate(session.getExpires()))
+                        .setExpires(Date.from(
+                                expires.atZone(config.getApplicationTimeZone()).toInstant()
+                        ))
                         .setHttpOnly(true)
                         .setPath("/")
                         .setSecure(config.isSessionCookieSecure());
