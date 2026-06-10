@@ -5,6 +5,9 @@ Unreleased
 * Fixed issued when setting session cookie (svenkubiak)
 * Version bumps (svenkubiak)
   * mongo-driver-sync 5.7.0 -&gt; 5.8.0
+  * jackson 2.21.3 -&gt; 2.22.0
+  * nimbus-jose-jwt 10.9 -&gt; 10.9.1
+  * open-telemetry 1.62.0 -&gt; 1.63.0
 
 ## Version 10.8.2
 
