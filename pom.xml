@@ -34,8 +34,8 @@
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<javadoc.version>3.12.0</javadoc.version>
 		<modernizer.version>3.4.0</modernizer.version>
-        <bouncy-castle.version>1.84</bouncy-castle.version>
-        <otp.version>1.63.0</otp.version>
+		<bouncy-castle.version>1.84</bouncy-castle.version>
+		<opentelemetry.version>1.63.0</opentelemetry.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -86,9 +86,9 @@
 					<groupId>org.gaul</groupId>
 					<artifactId>modernizer-maven-plugin</artifactId>
 					<version>${modernizer.version}</version>
-                    <configuration>
-                        <javaVersion>${jdk.version}</javaVersion>
-                    </configuration>
+					<configuration>
+						<javaVersion>${jdk.version}</javaVersion>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -103,17 +103,17 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>versions-maven-plugin</artifactId>
-                    <version>2.21.0</version>
-                    <configuration>
-                        <ruleSet>
-                            <ignoreVersions>
-                                <ignoreVersion>
-                                    <type>regex</type>
-                                    <version>.*(beta|Beta|alpha|Alpha|rc|RC|m|M|CR|cr).*</version>
-                                </ignoreVersion>
-                            </ignoreVersions>
-                        </ruleSet>
-                    </configuration>
+					<version>2.21.0</version>
+					<configuration>
+						<ruleSet>
+							<ignoreVersions>
+								<ignoreVersion>
+									<type>regex</type>
+									<version>.*(beta|Beta|alpha|Alpha|rc|RC|m|M|CR|cr).*</version>
+								</ignoreVersion>
+							</ignoreVersions>
+						</ruleSet>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -145,9 +145,9 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>${javadoc.version}</version>
-                    <configuration>
-                        <doclint>none</doclint>
-                    </configuration>
+					<configuration>
+						<doclint>none</doclint>
+					</configuration>
 					<executions>
 						<execution>
 							<id>attach-javadocs</id>
@@ -214,6 +214,11 @@
 								<requireMavenVersion>
 									<version>${required.maven.version}</version>
 								</requireMavenVersion>
+								<requireJavaVersion>
+									<version>${jdk.version}</version>
+								</requireJavaVersion>
+								<requirePluginVersions />
+								<dependencyConvergence />
 							</rules>
 						</configuration>
 					</execution>
@@ -223,6 +228,20 @@
 	</build>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>com.fasterxml.jackson</groupId>
+				<artifactId>jackson-bom</artifactId>
+				<version>${jackson.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.opentelemetry</groupId>
+				<artifactId>opentelemetry-bom</artifactId>
+				<version>${opentelemetry.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.uuid</groupId>
 				<artifactId>java-uuid-generator</artifactId>
@@ -238,26 +257,16 @@
 				<artifactId>modernizer-maven-annotations</artifactId>
 				<version>${modernizer.version}</version>
 			</dependency>
-            <dependency>
-                <groupId>io.opentelemetry</groupId>
-                <artifactId>opentelemetry-sdk</artifactId>
-                <version>${otp.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.opentelemetry</groupId>
-                <artifactId>opentelemetry-exporter-otlp</artifactId>
-                <version>${otp.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.opentelemetry.semconv</groupId>
-                <artifactId>opentelemetry-semconv</artifactId>
-                <version>1.41.1</version>
-            </dependency>
-            <dependency>
-                <groupId>io.opentelemetry.instrumentation</groupId>
-                <artifactId>opentelemetry-mongo-3.1</artifactId>
-                <version>2.20.0-alpha</version>
-            </dependency>
+			<dependency>
+				<groupId>io.opentelemetry.semconv</groupId>
+				<artifactId>opentelemetry-semconv</artifactId>
+				<version>1.41.1</version>
+			</dependency>
+			<dependency>
+				<groupId>io.opentelemetry.instrumentation</groupId>
+				<artifactId>opentelemetry-mongo-3.1</artifactId>
+				<version>2.20.0-alpha</version>
+			</dependency>
 			<dependency>
 				<groupId>com.cronutils</groupId>
 				<artifactId>cron-utils</artifactId>
@@ -353,11 +362,11 @@
 				<artifactId>kotlin-stdlib</artifactId>
 				<version>2.4.0</version>
 			</dependency>
-            <dependency>
-                <groupId>com.nimbusds</groupId>
-                <artifactId>nimbus-jose-jwt</artifactId>
-                <version>10.9.1</version>
-            </dependency>
+			<dependency>
+				<groupId>com.nimbusds</groupId>
+				<artifactId>nimbus-jose-jwt</artifactId>
+				<version>10.9.1</version>
+			</dependency>
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
@@ -440,26 +449,6 @@
 				<version>2.1.8</version>
 			</dependency>
 			<dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-blackbird</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jdk8</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-api</artifactId>
 				<version>${junit.version}</version>
@@ -539,11 +528,11 @@
 				<artifactId>commons-io</artifactId>
 				<version>2.22.0</version>
 			</dependency>
-            <dependency>
-                <groupId>com.github.bastiaanjansen</groupId>
-                <artifactId>otp-java</artifactId>
-                <version>2.1.0</version>
-            </dependency>
+			<dependency>
+				<groupId>com.github.bastiaanjansen</groupId>
+				<artifactId>otp-java</artifactId>
+				<version>2.1.0</version>
+			</dependency>
 			<dependency>
 				<groupId>com.github.ben-manes.caffeine</groupId>
 				<artifactId>caffeine</artifactId>
@@ -559,11 +548,11 @@
 				<artifactId>bcprov-jdk18on</artifactId>
 				<version>${bouncy-castle.version}</version>
 			</dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcpkix-jdk18on</artifactId>
-                <version>${bouncy-castle.version}</version>
-            </dependency>
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcpkix-jdk18on</artifactId>
+				<version>${bouncy-castle.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.zeroturnaround</groupId>
 				<artifactId>zt-exec</artifactId>
@@ -594,21 +583,21 @@
 				<artifactId>jawr-core</artifactId>
 				<version>3.9</version>
 			</dependency>
-            <dependency>
-                <groupId>jakarta.validation</groupId>
-                <artifactId>jakarta.validation-api</artifactId>
-                <version>3.1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.validator</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>9.1.0.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.expressly</groupId>
-                <artifactId>expressly</artifactId>
-                <version>6.0.0</version>
-            </dependency>
+			<dependency>
+				<groupId>jakarta.validation</groupId>
+				<artifactId>jakarta.validation-api</artifactId>
+				<version>3.1.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate.validator</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>9.1.0.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.expressly</groupId>
+				<artifactId>expressly</artifactId>
+				<version>6.0.0</version>
+			</dependency>
 			<dependency>
 				<groupId>commons-validator</groupId>
 				<artifactId>commons-validator</artifactId>

@@ -174,11 +174,6 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>io.mangoo</groupId>
-				<artifactId>mangooio-maven-plugin</artifactId>
-				<version>10.9.1-SNAPSHOT</version>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
