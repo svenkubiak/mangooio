@@ -1,3 +1,9 @@
+## Version 10.8.6
+
+Released at 12.06.2026
+
+* Updated release script to avoid release issues (svenkubiak)
+
 ## Version 10.8.5
 
 Released at 12.06.2026
