@@ -1,6 +1,6 @@
-## Version 10.9.0
+## Version 10.8.3
 
-Unreleased
+Released at 12.06.2026
 
 * Fixed issued when setting session cookie (svenkubiak)
 * Version bumps (svenkubiak)
