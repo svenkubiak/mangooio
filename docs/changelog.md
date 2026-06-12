@@ -1,3 +1,9 @@
+## Version 10.8.5
+
+Released at 12.06.2026
+
+* Fixed build issue (svenkubiak)
+
 ## Version 10.8.4
 
 Released at 12.06.2026
