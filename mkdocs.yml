@@ -4,6 +4,7 @@ site_url: https://svenkubiak.github.io/mangooio/
 repo_url: https://github.com/svenkubiak/mangooio
 theme:
   name: material
+  variant: classic
   language: en
   custom_dir: docs/overrides
   palette:

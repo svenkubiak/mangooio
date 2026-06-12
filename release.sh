@@ -9,7 +9,7 @@ RED="\033[31m"
 CYAN="\033[36m"
 BLUE="\033[34m"
 
-# Ensure Python user-installed CLI tools such as mike and mkdocs are available.
+# Ensure Python user-installed CLI tools such as mike are available.
 export PATH="$HOME/Library/Python/3.13/bin:$PATH"
 
 TOTAL_STEPS=6
@@ -104,6 +104,12 @@ run_silent() {
   rm -f "$tmp_log"
 }
 
+run_zensical() {
+  local description="$1"
+  shift
+  run_silent "$description" uvx zensical "$@"
+}
+
 bump_patch() {
   local ver="$1"
   IFS=. read -r major minor patch <<<"$ver"
@@ -118,8 +124,34 @@ is_prerelease_version() {
   [[ "$ver" =~ beta || "$ver" =~ alpha || "$ver" =~ rc ]]
 }
 
+docs_config_file() {
+  if [[ -f mkdocs.yml ]]; then
+    echo "mkdocs.yml"
+  elif [[ -f mkdocs.yaml ]]; then
+    echo "mkdocs.yaml"
+  else
+    echo ""
+  fi
+}
+
 check_docs_toolchain() {
   info "Checking documentation toolchain ..."
+
+  local config_file
+  config_file=$(docs_config_file)
+
+  if [[ -z "$config_file" ]]; then
+    error "No mkdocs.yml or mkdocs.yaml found in the project root."
+    exit 1
+  fi
+
+  if ! command -v uv > /dev/null 2>&1; then
+    error "uv command not found."
+    echo
+    echo "  Install it with Homebrew:"
+    echo "    brew install uv"
+    exit 1
+  fi
 
   if ! command -v mike > /dev/null 2>&1; then
     error "mike command not found."
@@ -132,46 +164,21 @@ check_docs_toolchain() {
     exit 1
   fi
 
-  if ! command -v mkdocs > /dev/null 2>&1; then
-    error "mkdocs command not found."
-    echo
-    echo "  Install it with:"
-    echo "    python3 -m pip install mkdocs"
-    exit 1
-  fi
-
-  if ! python3 -c "import material" > /dev/null 2>&1; then
-    error "mkdocs-material is not installed in the current Python environment."
-    echo
-    echo "  Install it with:"
-    echo "    python3 -m pip install mkdocs-material"
-    echo
-    echo "  Current tools:"
-    echo "    python : $(command -v python3)"
-    echo "    mike   : $(command -v mike)"
-    echo "    mkdocs : $(command -v mkdocs)"
-    echo
-    echo "  Current versions:"
-    echo "    $(mike --version 2>/dev/null || true)"
-    echo "    $(mkdocs --version 2>/dev/null || true)"
-    exit 1
-  fi
-
-  if [[ ! -f mkdocs.yml && ! -f mkdocs.yaml ]]; then
-    error "No mkdocs.yml or mkdocs.yaml found in the project root."
-    exit 1
+  if ! grep -Eq "^[[:space:]]*variant:[[:space:]]*classic[[:space:]]*$" "$config_file"; then
+    warn "The documentation config does not appear to contain 'variant: classic'."
+    warn "Zensical may use its modern theme unless this is configured intentionally."
   fi
 
   echo
   info "Documentation tools:"
-  echo "    python : $(command -v python3)"
+  echo "    uv     : $(command -v uv)"
   echo "    mike   : $(command -v mike)"
-  echo "    mkdocs : $(command -v mkdocs)"
+  echo "    config : $config_file"
+  echo "    $(uv --version)"
   echo "    $(mike --version)"
-  echo "    $(mkdocs --version)"
   echo
 
-  run_silent "Validating MkDocs configuration" mkdocs build --strict
+  run_zensical "Validating Zensical build" build --strict
 
   if ! git ls-remote --exit-code --heads origin gh-pages > /dev/null 2>&1; then
     warn "Remote branch origin/gh-pages was not found. mike may create it, but please verify your docs setup."
@@ -264,6 +271,8 @@ step "Publishing documentation"
 
 if ! is_prerelease_version "$VERSION"; then
   check_docs_toolchain
+
+  run_zensical "Building docs with Zensical for ${BOLD}${VERSION}${RESET}" build --strict
 
   run_silent "Deploying docs for ${BOLD}${VERSION}${RESET}" mike deploy --update-aliases "$VERSION" latest
   run_silent "Setting default docs version to ${BOLD}${VERSION}${RESET}" mike set-default "$VERSION"
