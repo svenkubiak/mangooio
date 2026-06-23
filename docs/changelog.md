@@ -1,3 +1,11 @@
+## Version 10.9.0
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * commons-logging 1.3.6 -&gt; 1.4.0
+  * hibernate-validator 9.1.0.Final -&gt; 9.1.1.Final
+
 ## Version 10.8.6
 
 Released at 12.06.2026
