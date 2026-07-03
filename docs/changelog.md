@@ -5,6 +5,7 @@ Unreleased
 * Version bumps (svenkubiak)
   * commons-logging 1.3.6 -&gt; 1.4.0
   * hibernate-validator 9.1.0.Final -&gt; 9.1.1.Final
+  * log4j 2.26.0 -&gt; 2.26.1
 
 ## Version 10.8.6
 
