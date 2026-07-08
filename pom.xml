@@ -30,7 +30,7 @@
 		<required.maven.version>3.9.10</required.maven.version>
 		<junit.version>6.1.1</junit.version>
 		<enforcer.version>1.12.0</enforcer.version>
-		<jackson.version>2.22.0</jackson.version>
+		<jackson.version>2.22.1</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<javadoc.version>3.12.0</javadoc.version>
 		<modernizer.version>3.4.0</modernizer.version>
@@ -260,7 +260,7 @@
 			<dependency>
 				<groupId>io.opentelemetry.semconv</groupId>
 				<artifactId>opentelemetry-semconv</artifactId>
-				<version>1.42.0</version>
+				<version>1.43.0</version>
 			</dependency>
 			<dependency>
 				<groupId>io.opentelemetry.instrumentation</groupId>

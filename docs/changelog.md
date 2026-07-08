@@ -8,6 +8,7 @@ Unreleased
   * log4j 2.26.0 -&gt; 2.26.1
   * otp-java 2.1.0 -&gt; 2.2.0
   * mongodb-driver-sync 5.8.0 -&gt; 5.9.0
+  * jackson 2.22.0 -&gt; 2.22.1
 
 ## Version 10.8.6
 
