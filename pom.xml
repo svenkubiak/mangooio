@@ -5,8 +5,7 @@
 	<version>10.9.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>mangoo I/O</name>
-	<description>mangoo I/O is a Modern, Intuitive, Lightweight, High
-		Performance Full Stack Java Web Framework.</description>
+	<description>mangoo I/O is a Modern, Intuitive, Lightweight, High Performance Full Stack Java Web Framework.</description>
 	<url>https://github.com/svenkubiak/mangooio</url>
 	<inceptionYear>2015</inceptionYear>
 	<licenses>
@@ -26,7 +25,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>25</jdk.version>
 		<log4j.version>2.26.1</log4j.version>
-		<maven.version>4.0.0-rc-4</maven.version>
+		<maven.version>4.0.0-rc-5</maven.version>
 		<required.maven.version>3.9.10</required.maven.version>
 		<junit.version>6.1.1</junit.version>
 		<enforcer.version>1.12.0</enforcer.version>
