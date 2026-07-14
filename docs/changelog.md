@@ -9,6 +9,7 @@ Unreleased
   * otp-java 2.1.0 -&gt; 2.2.0
   * mongodb-driver-sync 5.8.0 -&gt; 5.9.0
   * jackson 2.22.0 -&gt; 2.22.1
+  * undertow 2.4.0.RC4 -&gt; 2.4.1.Final
 
 ## Version 10.8.6
 
