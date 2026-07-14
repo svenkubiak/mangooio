@@ -1,6 +1,6 @@
 ## Version 10.9.0
 
-Unreleased
+Released at 14.07.2026
 
 * Version bumps (svenkubiak)
   * commons-logging 1.3.6 -&gt; 1.4.0
