@@ -1,3 +1,15 @@
+## Version 10.10.0
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * greenmail 2.1.9 -&gt; 2.1.11
+  * open-telemetry 1.63.0 -&gt; 1.64.0
+  * undertow-core 2.4.1.Final -&gt; 2.4.2.Final
+  * junit 6.1.1 -&gt; 6.1.2
+  * bouncy-castle 1.84 -&gt; 1.85
+  * zt-exec 1.12 -&gt; 1.13.0
+
 ## Version 10.9.0
 
 Released at 14.07.2026
