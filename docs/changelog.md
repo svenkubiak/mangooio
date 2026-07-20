@@ -45,7 +45,7 @@ Released at 12.06.2026
 
 Released at 12.06.2026
 
-* Fixed issued when setting session cookie (svenkubiak)
+* Fixed an issue when setting session cookie (svenkubiak)
 * Version bumps (svenkubiak)
   * mongo-driver-sync 5.7.0 -&gt; 5.8.0
   * jackson 2.21.3 -&gt; 2.22.0
