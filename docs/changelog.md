@@ -9,6 +9,7 @@ Unreleased
   * junit 6.1.1 -&gt; 6.1.2
   * bouncy-castle 1.84 -&gt; 1.85
   * zt-exec 1.12 -&gt; 1.13.0
+  * tika-core 3.3.1 -&gt; 3.3.2
 
 ## Version 10.9.0
 

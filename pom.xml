@@ -32,7 +32,7 @@
 		<jackson.version>2.22.1</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<javadoc.version>3.12.0</javadoc.version>
-		<modernizer.version>3.4.0</modernizer.version>
+		<modernizer.version>3.5.0</modernizer.version>
 		<bouncy-castle.version>1.85</bouncy-castle.version>
 		<opentelemetry.version>1.64.0</opentelemetry.version>
 	</properties>
@@ -339,7 +339,7 @@
 			<dependency>
 				<groupId>org.apache.tika</groupId>
 				<artifactId>tika-core</artifactId>
-				<version>3.3.1</version>
+				<version>3.3.2</version>
 			</dependency>
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
@@ -374,7 +374,7 @@
 			<dependency>
 				<groupId>com.squareup.okio</groupId>
 				<artifactId>okio</artifactId>
-				<version>3.17.0</version>
+				<version>3.18.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.launchdarkly</groupId>
