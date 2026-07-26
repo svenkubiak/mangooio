@@ -2,6 +2,7 @@
 
 Unreleased
 
+* Set MongoDB version to v7.0 in Embedded MongoDB (svenkubiak)
 * Version bumps (svenkubiak)
   * greenmail 2.1.9 -&gt; 2.1.11
   * open-telemetry 1.63.0 -&gt; 1.64.0

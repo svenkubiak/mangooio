@@ -2,6 +2,7 @@ package io.mangoo.core;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+import de.flapdoodle.embed.mongo.distribution.Version;
 import de.svenkubiak.embeddedmongodb.EmbeddedMongoDB;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
@@ -24,6 +25,7 @@ public class Module extends AbstractModule {
         var prefix = Default.PERSISTENCE_PREFIX;
         if (config.isPersistenceEnabled() && Boolean.TRUE.equals(config.isMongoEmbedded(prefix))) {
             this.embeddedMongoDB = EmbeddedMongoDB.create()
+                    .withVersion(Version.Main.V7_0)
                     .withHost(config.getMongoHost(prefix))
                     .withPort(config.getMongoPort(prefix))
                     .start();
