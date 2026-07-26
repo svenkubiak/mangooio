@@ -14,7 +14,8 @@ import java.util.Objects;
 
 public class ServerSentEventHandler implements ServerSentEventConnectionCallback {
     private boolean hasAuthentication;
-    
+
+    @Deprecated(since = "10.10.0", forRemoval = true)
     public ServerSentEventHandler withAuthentication(boolean hasAuthentication) {
         this.hasAuthentication = hasAuthentication;
         return this;
