@@ -11,7 +11,9 @@ Unreleased
   * bouncy-castle 1.84 -&gt; 1.85
   * zt-exec 1.12 -&gt; 1.13.0
   * tika-core 3.3.1 -&gt; 3.3.2
+  * classgraph 4.8.184 -&gt; 4.8.186
   * mongodb-driver-sync 5.9.0 -&gt; 5.9.1
+  * hibernate-validator 9.1.2.Final -&gt; 9.1.3.Final
 
 ## Version 10.9.0
 
