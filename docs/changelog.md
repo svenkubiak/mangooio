@@ -14,6 +14,7 @@ Unreleased
   * classgraph 4.8.184 -&gt; 4.8.186
   * mongodb-driver-sync 5.9.0 -&gt; 5.9.1
   * hibernate-validator 9.1.2.Final -&gt; 9.1.3.Final
+  * cactoos 0.61.0 -&gt; 0.61.1
 
 ## Version 10.9.0
 
