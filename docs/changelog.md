@@ -1,6 +1,6 @@
 ## Version 10.10.0
 
-Unreleased
+Released at 03.08.2026
 
 * Set MongoDB version to v7.0 in Embedded MongoDB (svenkubiak)
 * Version bumps (svenkubiak)
@@ -15,6 +15,8 @@ Unreleased
   * mongodb-driver-sync 5.9.0 -&gt; 5.9.1
   * hibernate-validator 9.1.2.Final -&gt; 9.1.3.Final
   * cactoos 0.61.0 -&gt; 0.61.1
+  * commons-codec 1.22.0 -&gt; 1.22.1
+  * commons-validator 1.10.1 -&gt; 1.11.0
 
 ## Version 10.9.0
 
