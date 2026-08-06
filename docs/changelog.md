@@ -1,3 +1,10 @@
+## Version 10.11.0
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * greenmail-standalone 2.1.11 -&gt; 2.1.12
+
 ## Version 10.10.0
 
 Released at 03.08.2026
