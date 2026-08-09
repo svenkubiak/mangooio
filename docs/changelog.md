@@ -4,7 +4,9 @@ Unreleased
 
 * Version bumps (svenkubiak)
   * greenmail-standalone 2.1.11 -&gt; 2.1.12
-
+  * classgraph 4.8.186 -&gt; 4.8.189
+  * junit 6.1.2 -&gt; 6.1.3
+    
 ## Version 10.10.0
 
 Released at 03.08.2026
