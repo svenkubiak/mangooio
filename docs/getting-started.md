@@ -4,8 +4,8 @@
 
 Before setting up a **mangoo I/O** application, ensure that the following dependencies are installed:
 
-- **Maven** (version **3.9.0** or higher)
-- **Java** (version **21** or higher)
+- **Maven** (version **3.9.10** or higher)
+- **Java** (version **25** or higher)
 
 ### Verifying Java Installation
 
@@ -14,9 +14,7 @@ To check your installed Java version, run:
 ```shell
 $ java --version
 ...
-java 21.0.6 2025-01-21 LTS
-Java(TM) SE Runtime Environment (build 21.0.6+8-LTS-188)
-Java HotSpot(TM) 64-Bit Server VM (build 21.0.6+8-LTS-188, mixed mode, sharing)
+openjdk 25.0.4 2026-07-21 LTS
 ```
 
 ### Verifying Maven Installation
@@ -25,10 +23,7 @@ To verify Maven, run:
 
 ```shell
 $ mvn --version
-...
-Apache Maven 3.9.9
-Java version: 21.0.6, vendor: Oracle Corporation, runtime:
-Default locale: en_US, platform encoding: UTF-8
+Apache Maven 3.9.16
 ```
 
 Once both dependencies are confirmed, you are ready to create your first **mangoo I/O** application.
