@@ -143,6 +143,16 @@ public interface Datastore {
     MongoCollection query(String collection);
 
     /**
+     *
+     * @param collection The name of the collection
+     * @param clazz The name of the class
+     * @return MongoCollection
+     * @param <T> Type
+     */
+    @SuppressWarnings("rawtypes")
+    <T> MongoCollection query(String collection, Class<T> clazz);
+
+    /**
      * Deletes one object from the database
      *
      * @param object The object to delete

@@ -296,6 +296,14 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
+    public <T> MongoCollection query(String collection, Class<T> clazz) {
+        Objects.requireNonNull(collection, Required.COLLECTION);
+
+        return mongoDatabase.getCollection(collection, clazz);
+    }
+
+    @Override
     public DeleteResult delete(Object object) {
         Objects.requireNonNull(object, Required.OBJECT);
         var baseEntity = (BaseEntity) object;
