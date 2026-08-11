@@ -3,6 +3,7 @@
 Unreleased
 
 * Added additional query options for MongoDB (svenkubiak)
+* Added method for generating UUIDv7 in CommonUtils (svenkubiak)
 * Version bumps (svenkubiak)
   * greenmail-standalone 2.1.11 -&gt; 2.1.12
   * classgraph 4.8.186 -&gt; 4.8.189

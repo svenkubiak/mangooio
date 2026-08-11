@@ -286,6 +286,15 @@ public final class CommonUtils {
     }
 
     /**
+     * Creates a UUIDv7 random String
+     *
+     * @return UUIDv7 String
+     */
+    public static String uuidV7() {
+        return Generators.timeBasedEpochRandomGenerator().generate().toString();
+    }
+
+    /**
      * Creates a UUIDv4 random String
      *
      * @return UUIDv4 String
@@ -304,6 +313,8 @@ public final class CommonUtils {
     public static int bitLength(byte[] bytes) {
         Objects.requireNonNull(bytes, Required.BYTES);
         int byteLength = bytes.length;
+
+
 
         var length = 0;
         if (byteLength <= MAX_BYTE_LENGTH && byteLength > 0) {

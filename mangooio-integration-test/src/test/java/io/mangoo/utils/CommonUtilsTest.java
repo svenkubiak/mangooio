@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -425,6 +426,20 @@ class CommonUtilsTest {
         //then
         assertThat(uuid, not(nullValue()));
         assertThat(uuid, not(emptyString()));
+        assertThat(UUID.fromString(uuid).version(), equalTo(6));
+        assertThat(uuid.length(), equalTo(36)); // Standard UUID length
+        assertThat(uuid, matchesRegex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"));
+    }
+
+    @Test
+    void testUuidV7() {
+        //when
+        String uuid = CommonUtils.uuidV7();
+
+        //then
+        assertThat(uuid, not(nullValue()));
+        assertThat(uuid, not(emptyString()));
+        assertThat(UUID.fromString(uuid).version(), equalTo(7));
         assertThat(uuid.length(), equalTo(36)); // Standard UUID length
         assertThat(uuid, matchesRegex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"));
     }
@@ -447,6 +462,7 @@ class CommonUtilsTest {
         //then
         assertThat(uuid, not(nullValue()));
         assertThat(uuid, not(emptyString()));
+        assertThat(UUID.fromString(uuid).version(), equalTo(4));
         assertThat(uuid.length(), equalTo(36)); // Standard UUID length
         assertThat(uuid, matchesRegex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"));
     }
