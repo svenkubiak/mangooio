@@ -127,11 +127,9 @@ public interface Datastore {
      * Returns a collection to execute a query against the MongoDB database
      *
      * @param clazz The POJO entity class to query against
-     * @param <T> Type
      * @return MongoCollection
      */
-    @SuppressWarnings("rawtypes")
-    <T> MongoCollection query(Class<T> clazz);
+    <T> MongoCollection<T> query(Class<T> clazz);
 
     /**
      * Returns a collection to execute a query against the MongoDB database
@@ -147,10 +145,8 @@ public interface Datastore {
      * @param collection The name of the collection
      * @param clazz The name of the class
      * @return MongoCollection
-     * @param <T> Type
      */
-    @SuppressWarnings("rawtypes")
-    <T> MongoCollection query(String collection, Class<T> clazz);
+    <T> MongoCollection<T> query(String collection, Class<T> clazz);
 
     /**
      * Deletes one object from the database
@@ -212,5 +208,8 @@ public interface Datastore {
      */
     void dropAllIndexes();
 
+    /**
+     * @return The original MongoDatabase handle
+     */
     MongoDatabase getMongoDatabase();
 }

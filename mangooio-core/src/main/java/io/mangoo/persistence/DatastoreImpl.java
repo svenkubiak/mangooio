@@ -280,8 +280,7 @@ public class DatastoreImpl implements Datastore {
     }
     
     @Override
-    @SuppressWarnings("rawtypes")
-    public <T> MongoCollection query(Class<T> clazz) {
+    public <T> MongoCollection<T> query(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS);
         
         return getCollection(clazz).orElse(null);
@@ -296,8 +295,7 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public <T> MongoCollection query(String collection, Class<T> clazz) {
+    public <T> MongoCollection<T> query(String collection, Class<T> clazz) {
         Objects.requireNonNull(collection, Required.COLLECTION);
 
         return mongoDatabase.getCollection(collection, clazz);
@@ -364,11 +362,10 @@ public class DatastoreImpl implements Datastore {
         return mongoDatabase;
     }
 
-    @SuppressWarnings("rawtypes")
-    private <T> Optional<MongoCollection> getCollection(Class<T> clazz) {
+    private <T> Optional<MongoCollection<T>> getCollection(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS);
 
-        MongoCollection mongoCollection = null;
+        MongoCollection<T> mongoCollection = null;
         String name = PersistenceUtils.getCollectionName(clazz);
         if (StringUtils.isNotBlank(name)) {
             mongoCollection = mongoDatabase.getCollection(name, clazz);
