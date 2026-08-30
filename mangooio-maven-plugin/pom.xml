@@ -99,14 +99,32 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jspecify</groupId>
+					<artifactId>jspecify</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jspecify</groupId>
+					<artifactId>jspecify</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jspecify</groupId>
+					<artifactId>jspecify</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.awaitility</groupId>
@@ -116,6 +134,12 @@
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jspecify</groupId>
+					<artifactId>jspecify</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
