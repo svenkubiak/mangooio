@@ -5,12 +5,18 @@ Unreleased
 * Added additional query options for MongoDB (svenkubiak)
 * Added method for generating UUIDv7 in CommonUtils (svenkubiak)
 * Version bumps (svenkubiak)
-  * greenmail-standalone 2.1.11 -&gt; 2.1.12
-  * classgraph 4.8.186 -&gt; 4.8.190
+  * greenmail-standalone 2.1.11 -&gt; 2.1.13
+  * classgraph 4.8.186 -&gt; 4.8.194
   * junit 6.1.2 -&gt; 6.1.3
   * mongo-driver-sync 5.9.1 -&gt; 5.9.2
   * bouncy-castle 1.85 -&gt; 1.85.2
-    
+  * jackson 2.22.1 -&gt; 2.22.2
+  * guava 33.6.0-jre -&gt; 33.7.1-jre
+  * undertow 2.4.2.Final -&gt; 2.4.3.Final
+  * tika-core 3.3.2 -&gt; 4.0.0
+  * freemarker 2.3.34 -&gt; 2.3.35
+  * mongo-driver-sync 5.9.2 -&gt; 5.11.0 
+ 
 ## Version 10.10.0
 
 Released at 03.08.2026
