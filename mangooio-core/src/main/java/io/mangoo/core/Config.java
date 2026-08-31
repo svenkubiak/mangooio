@@ -730,7 +730,7 @@ public class Config {
      * @return application.vault.path or null if undefined
      */
     public String getApplicationVaultPath() {
-        return getString(Key.APPLICATION_VAULT_SECRET, null);
+        return getString(Key.APPLICATION_VAULT_PATH, null);
     }
 
     /**

@@ -4,6 +4,9 @@ Unreleased
 
 * Added additional query options for MongoDB (svenkubiak)
 * Added method for generating UUIDv7 in CommonUtils (svenkubiak)
+* Fixed incorrect handling of getAuthenticationCookieKey (svenkubiak)
+* Fixed incorrect handling of getApplicationVaultPath (svenkubiak)
+* Switched to new Apache Fory library and refactoring usage of Fory (svenkubiak)
 * Version bumps (svenkubiak)
   * greenmail-standalone 2.1.11 -&gt; 2.1.13
   * classgraph 4.8.186 -&gt; 4.8.194

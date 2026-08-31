@@ -14,8 +14,6 @@ default:
       secret: Jb3MenqcohfVQNi3mYBBoYGk8JQ94u5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvvZpMznuWeOlnfcNss0qlimeK8MA5McCCPeo2fhC
     encrypted: arg{}
     named: shouldnotbedisplayed
-    admin:
-      secret: ""
     paseto:
       secret: QLxhAXDh6PjAhFVY2kMMrQrdlaWDUP7E1PC4pBuDe9zSCH2Suvv
     api:

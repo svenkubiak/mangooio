@@ -595,6 +595,11 @@ public final class Application {
             failsafe();
         }
 
+        if (config.getAllConfigurations().containsKey(Key.APPLICATION_ADMIN_SECRET) && StringUtils.isBlank(config.getString(Key.APPLICATION_ADMIN_SECRET))) {
+            LOG.error("application.admin.secret is present in config.yaml, but has no value.");
+            failsafe();
+        }
+
         if (!("Strict").equals(config.getSessionCookieSameSiteMode()) && !("Lax").equals(config.getSessionCookieSameSiteMode())) {
             LOG.error("Only 'Strict' or 'Lax' is allowed in session.cookie.samesitemode is allowed");
             failsafe();
