@@ -10,10 +10,15 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.exceptions.MangooTranslationException;
+import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Form;
+import io.mangoo.routing.bindings.Validator;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.JwtUtils;
+import org.apache.fory.Fory;
+import org.apache.fory.ThreadSafeFory;
+import org.apache.fory.config.Language;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import jakarta.validation.MessageInterpolator;
@@ -39,6 +44,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Base64;
 
 import static io.mangoo.core.Application.getInstance;
 
@@ -50,8 +56,18 @@ public final class MangooUtils {
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
     private static final Set<String> VALID_TIMEZONES = ZoneId.getAvailableZoneIds();
+    private static final Base64.Encoder BASE64_ENCODER = Base64.getEncoder();
+    private static final Base64.Decoder BASE64_DECODER = Base64.getDecoder();
+    private static final ThreadSafeFory FLASH_FORM_FORY = Fory.builder()
+            .withLanguage(Language.JAVA)
+            .requireClassRegistration(true)
+            .buildThreadSafeFory();
     private static final ExecutableValidator executableValidator;
     static {
+        FLASH_FORM_FORY.register(Form.class);
+        FLASH_FORM_FORY.register(Validator.class);
+        FLASH_FORM_FORY.register(Messages.class);
+
         var configuration = Validation.byDefaultProvider().configure();
         var englishInterpolator = new EnglishMessageInterpolator(configuration.getDefaultMessageInterpolator());
         try (var validatorFactory = configuration
@@ -256,6 +272,38 @@ public final class MangooUtils {
 
     public static boolean isValidTimeZone(String timezone) {
         return StringUtils.isNotBlank(timezone) && VALID_TIMEZONES.contains(timezone);
+    }
+
+    /**
+     * Serializes a flash form for storage in a flash cookie claim.
+     *
+     * @param form The form to serialize
+     * @return A Base64 encoded serialization of the form
+     */
+    public static String serializeFlashFormToBase64(Form form) {
+        Objects.requireNonNull(form, Required.OBJECT);
+
+        byte[] serialized = FLASH_FORM_FORY.serialize(form);
+        return BASE64_ENCODER.encodeToString(serialized);
+    }
+
+    /**
+     * Deserializes a flash form from a flash cookie claim.
+     *
+     * @param data The Base64 encoded form data
+     * @return The deserialized form
+     */
+    public static Form deserializeFlashFormFromBase64(String data) {
+        Objects.requireNonNull(data, Required.DATA);
+
+        byte[] bytes = BASE64_DECODER.decode(data);
+        Object deserialized = FLASH_FORM_FORY.deserialize(bytes);
+        if (!(deserialized instanceof Form form)) {
+            throw new IllegalArgumentException("Unexpected flash form type: "
+                    + (deserialized == null ? "null" : deserialized.getClass().getName()));
+        }
+
+        return form;
     }
 
     private static class EnglishMessageInterpolator implements MessageInterpolator {

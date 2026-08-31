@@ -10,6 +10,7 @@ import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.JwtUtils;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
@@ -198,7 +199,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             try {
                 Map<String, String> claims = new HashMap<>(flash.getValues());
                 if (form.isKept()) {
-                    claims.put(ClaimKey.FORM, CommonUtils.serializeToBase64(form));
+                    claims.put(ClaimKey.FORM, MangooUtils.serializeFlashFormToBase64(form));
                 }
 
                 var jwtData = JwtUtils.jwtData()

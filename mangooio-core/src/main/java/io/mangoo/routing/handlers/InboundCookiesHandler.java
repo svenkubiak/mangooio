@@ -13,6 +13,7 @@ import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.JwtUtils;
+import io.mangoo.utils.internal.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -156,7 +157,7 @@ public class InboundCookiesHandler implements HttpHandler {
 
                 var formClaim = jwtClaimSet.getClaimAsString(ClaimKey.FORM);
                 if (StringUtils.isNotBlank(formClaim)) {
-                    form = CommonUtils.deserializeFromBase64(formClaim);
+                    form = MangooUtils.deserializeFlashFormFromBase64(formClaim);
                 }
 
                 flash = Flash.create()

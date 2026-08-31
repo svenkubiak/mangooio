@@ -411,9 +411,9 @@
 				<version>${log4j.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.fury</groupId>
-				<artifactId>fury-core</artifactId>
-				<version>0.10.3</version>
+				<groupId>org.apache.fory</groupId>
+				<artifactId>fory-core</artifactId>
+				<version>1.7.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>

@@ -1,5 +1,6 @@
 package io.mangoo.utils;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -16,6 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Execution(ExecutionMode.CONCURRENT)
 class CommonUtilsTest {
+
+    @BeforeAll
+    static void registerSerializableTypes() {
+        CommonUtils.registerSerializable(TestSerializableObject.class);
+    }
 
     @Test
     void testHashArgon2WithSalt() {

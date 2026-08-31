@@ -1,5 +1,6 @@
 package io.mangoo.utils;
 
+import com.google.common.base.Preconditions;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.DirectDecrypter;
 import com.nimbusds.jose.crypto.DirectEncrypter;
@@ -10,7 +11,6 @@ import com.nimbusds.jwt.SignedJWT;
 import io.mangoo.constants.Required;
 import io.mangoo.exceptions.MangooJwtException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.fury.util.Preconditions;
 
 import java.text.ParseException;
 import java.time.Instant;

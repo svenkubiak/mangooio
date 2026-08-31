@@ -11,9 +11,9 @@ import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import org.apache.commons.codec.binary.Base32;
-import org.apache.fury.Fury;
-import org.apache.fury.ThreadSafeFury;
-import org.apache.fury.config.Language;
+import org.apache.fory.Fory;
+import org.apache.fory.ThreadSafeFory;
+import org.apache.fory.config.Language;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
@@ -42,12 +42,25 @@ public final class CommonUtils {
     private static final Base64.Decoder BASE64_URL_DECODER = Base64.getUrlDecoder();
     private static final int BYTES = 8;
     private static final int MAX_BYTE_LENGTH = Integer.MAX_VALUE / 8;
-    private static final ThreadSafeFury FURY = Fury.builder()
+    private static final ThreadSafeFory FORY = Fory.builder()
             .withLanguage(Language.JAVA)
-            .requireClassRegistration(false)
-            .buildThreadSafeFury();
+            .requireClassRegistration(true)
+            .buildThreadSafeFory();
 
     private CommonUtils() {
+    }
+
+    /**
+     * Registers a class for serialization and deserialization via {@link #serializeToBase64(Serializable)}
+     * and {@link #deserializeFromBase64(String)}.
+     * <p>
+     * Must be invoked during application startup before first use. Only deserialize data from trusted sources.
+     *
+     * @param type The class to register
+     */
+    public static void registerSerializable(Class<?> type) {
+        Objects.requireNonNull(type, Required.CLASS);
+        FORY.register(type);
     }
     
     /**
@@ -150,7 +163,8 @@ public final class CommonUtils {
     }
     
     /**
-     * Serializes an object into a Base64 encoded data string
+     * Serializes a registered object into a Base64 encoded data string.
+     * The object's class must be registered via {@link #registerSerializable(Class)} first.
      *
      * @param object The object to serialize
      * @return The base64 encoded data string
@@ -158,13 +172,14 @@ public final class CommonUtils {
     public static String serializeToBase64(Serializable object)  {
         Objects.requireNonNull(object, Required.OBJECT);
         
-        byte[] serialize = FURY.serialize(object);
+        byte[] serialize = FORY.serialize(object);
         return BASE64_ENCODER.encodeToString(serialize);
     }
     
     /**
-     * Deserializes a given Base64 encoded data string into an object
-     * 
+     * Deserializes a given Base64 encoded data string into a registered object.
+     * Only use with trusted data. The object's class must be registered via {@link #registerSerializable(Class)} first.
+     *
      * @param data The base64 encoded data string
      * @param <T> Just for JavaDoc can be ignored
      * @return The required object
@@ -174,7 +189,7 @@ public final class CommonUtils {
         Argument.requireNonBlank(data, Required.DATA);
         
         byte[] bytes = BASE64_DECODER.decode(data);
-        return (T) FURY.deserialize(bytes);
+        return (T) FORY.deserialize(bytes);
     }
     
     /**
