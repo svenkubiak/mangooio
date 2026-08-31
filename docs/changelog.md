@@ -19,6 +19,7 @@ Unreleased
   * tika-core 3.3.2 -&gt; 4.0.0
   * freemarker 2.3.34 -&gt; 2.3.35
   * mongo-driver-sync 5.9.2 -&gt; 5.11.0 
+  * snakeyaml 2.6 -&gt; 2.7
  
 ## Version 10.10.0
 
