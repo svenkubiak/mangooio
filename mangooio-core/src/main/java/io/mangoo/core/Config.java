@@ -751,7 +751,7 @@ public class Config {
      * @return authentication.cookie.key or application.secret if undefined
      */
     public byte[] getAuthenticationCookieKey() {
-        return getString(Key.FLASH_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
+        return getString(Key.AUTHENTICATION_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
