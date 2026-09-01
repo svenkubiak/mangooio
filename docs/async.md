@@ -1,36 +1,48 @@
 # Async
 
-mangoo I/O supports a simple `EventBus` mechanism, allowing asynchronous event handling. To start using the `EventBus`, inject it into your logic:
+The `EventBus` delivers payloads to `Subscriber` implementations on virtual threads.
+
+## Subscribers
+
+Implement `io.mangoo.async.Subscriber`. On startup, mangoo I/O registers every implementation. The queue name is the **canonical name of the payload type** (`java.lang.String` for `Subscriber<String>`).
 
 ```java
-@Inject
-private EventBus eventBus;
-```
+package subscribers;
 
-## EventBus Functions
+import io.mangoo.async.Subscriber;
 
-The `EventBus` provides essential functions for event handling, including registering, unregistering, and publishing events. Example usage:
-
-```java
-MyListener myListener = new MyListener();
-eventBus.register("queueName", myListener);
-eventBus.publish("This is a test event");
-eventBus.unregister(myListener);
-```
-
-## Subscriber Implementation
-
-To receive events, a subscriber class must implement the `Subscriber` interface:
-
-```java
-public class MySubscriber implements Subscriber<String> {
+public class AuditSubscriber implements Subscriber<String> {
     @Override
     public void receive(String payload) {
-        // Handle received event data
+        // handle payload
     }
 }
 ```
 
-### Payload Handling
+Subscribers are created through Guice, so you can inject dependencies.
 
-The payload type depends on the data being passed to the receiver. In this example, a `String` is used, but other data types can be utilized as needed.
+## Publishing
+
+```java
+@Inject
+private EventBus eventBus;
+
+public void notify(String message) {
+    eventBus.publish(message);
+}
+```
+
+`publish` looks up subscribers for `payload.getClass().getCanonicalName()`. There is no `unregister`. You can also call `eventBus.register("java.lang.String", AuditSubscriber.class)` yourself; classpath scanning already does that for `Subscriber` types.
+
+Use a dedicated payload class if you need separate queues:
+
+```java
+public record OrderPlaced(String id) {}
+
+public class OrderSubscriber implements Subscriber<OrderPlaced> {
+    @Override
+    public void receive(OrderPlaced payload) { }
+}
+
+eventBus.publish(new OrderPlaced("42"));
+```

@@ -1,40 +1,43 @@
-# Form Handling in mangoo I/O
+# Forms
 
-To access a submitted form in a controller class, you can pass the mangoo I/O `Form` class as a parameter. Example:
-
-```java
-public Response index(Form form) {
-    ...
-}
-```
-
-The `Form` class provides convenient methods to retrieve form values:
+Pass `io.mangoo.routing.bindings.Form` into a controller method. `Form` extends `Validator`.
 
 ```java
-public Response index(Form form) {
-    File file = form.getFile();
-    List<File> files = form.getFiles();
+public Response save(Form form) {
     String firstname = form.get("firstname");
-    ...
+    return Response.ok().render();
 }
 ```
 
-### Important Notes
-- The `Form` class is only available for `POST` or `PUT` requests; otherwise, it will be `null`.
-- The `Form` class is automatically accessible in templates without explicitly passing it.
+Typed getters:
 
-### Retaining Form Values After Redirects
-By default, form values are not retained after a redirect. To persist form values across redirects, use:
+```java
+form.getValue("firstname");           // String, empty if missing
+form.getString("firstname");          // Optional<String>
+form.getInteger("age");               // Optional<Integer>
+form.getLong("id");
+form.getDouble("amount");
+form.getFloat("ratio");
+form.getBoolean("active");
+form.getFile("resume");               // Optional<byte[]>
+```
+
+!!! note
+    Form fields are parsed for `POST`, `PUT`, and `PATCH`. On `GET` you still receive a `Form` instance, but it has no submitted values.
+
+The form is also available in templates without passing it explicitly.
+
+Keep values across a redirect (typically after a validation error):
 
 ```java
 form.keep();
 ```
 
-This is useful when handling validation errors while maintaining previously entered values.
+Call `form.discard()` to drop kept values.
 
-## Form Validation
+Default upload limits (not configurable in `config.yaml`): 10 files, 5 MB per file, 1000 parameters, 10 000 characters per value. The HTTP body as a whole is limited by `undertow.maxentitysize` (4 MB by default).
 
-Consider the following form in a template:
+## Validation
 
 ```html
 <form action="/save" method="post">
@@ -44,83 +47,76 @@ Consider the following form in a template:
 </form>
 ```
 
-To validate the `firstname` and `lastname` fields, use the built-in validation functions:
-
 ```java
-public Response form(Form form) {
+public Response save(Form form) {
     form.expectEmail("email");
     form.expectValue("firstname");
     form.expectValue("lastname");
 
     if (form.isValid()) {
-        // Handle form
+        // persist
+        return Response.redirect("/");
     }
-    return Response.ok().render();
+
+    form.keep();
+    return Response.redirect("/save");
 }
 ```
 
-The `Form` class allows checks for field existence, email validation, and more. Use `hasErrors()` to determine if the form is valid.
+`isValid()` is the inverse of `hasErrors()`.
 
-### Built-in Validations
-mangoo I/O provides various validation rules:
+Field checks include:
 
-- **Required**
-- **Minimum length**
-- **Maximum length**
-- **Match (case-insensitive)**
-- **Exact match (case-sensitive)**
-- **Email format**
-- **IPv4 format**
-- **IPv6 format**
-- **Range check**
-- **Regular expressions**
-- **Numeric values**
+- `expectValue`, `expectMinLength`, `expectMaxLength`, `expectRangeLength`
+- `expectMinValue`, `expectMaxValue`, `expectRangeValue`, `expectNumeric`
+- `expectMatch`, `expectExactMatch`, `expectMatch` with a list of allowed values
+- `expectEmail`, `expectUrl`, `expectIpv4`, `expectIpv6`, `expectDomainName`, `expectRegex`
+- `expectFile`, `expectFileMaxSize`, `expectFileMimeType`
 
-Additionally, validations can be bound to a specific field to check values beyond form input:
+Bind a check to a field for values that are not form input:
 
-- `validateTrue`
-- `validateFalse`
-- `validateNull`
-- `validateNotNull`
-
-These are useful for checking existing usernames or passing custom error messages to form fields.
-
-## Handling Form Errors
-
-To display an error in a template, check for errors in a specific field:
-
-```html
-<#if form.hasError("myField")>
+```java
+form.expectTrue("username", usernameAvailable);
+form.expectFalse("username", usernameTaken);
+form.expectNull("token", existing);
+form.expectNotNull("user", user);
 ```
 
-This is useful for modifying CSS styles or displaying error messages when validation fails.
+Every `expect*` method has an overload that takes a custom message.
 
-To retrieve a specific error message:
+## Errors in templates
 
-```html
-${form.getError("myField")}
+```ftl
+<#if form.hasError("firstname")>
+    <span class="error">${form.getError("firstname")}</span>
+</#if>
 ```
 
-For example, it may display:
+## Message keys
 
-```
-Firstname cannot be blank
-```
-
-## Customizing Error Messages
-Error messages are defined in `messages.properties` (or language-specific message files). Default messages can be customized as follows:
+Override defaults in `src/main/resources/translations/messages.properties`:
 
 ```properties
-validation.required={0} is required
-validation.min={0} must be at least {1} characters
-validation.max={0} can be a maximum of {1} characters
-validation.exactMatch={0} must exactly match {1}
+validation.required={0} is a required value
+validation.min.length={0} must be a value with a min length of {1}
+validation.max.length={0} must be a value with a max length of {1}
+validation.min.value={0} must be a value not less than {1}
+validation.max.value={0} must be a value not greater than {1}
+validation.exactmatch={0} must exactly match {1}
 validation.match={0} must match {1}
-validation.email={0} must be a valid email address
+validation.matchvalues=The values of {0} is not valid
+validation.email={0} must be a valid eMail address
 validation.ipv4={0} must be a valid IPv4 address
 validation.ipv6={0} must be a valid IPv6 address
-validation.range={0} must be between {1} and {2} characters
+validation.range.length={0} must be a length between {1} and {2}
+validation.range.value={0} must be value between {1} and {2}
 validation.url={0} must be a valid URL
-validation.regex={0} is invalid
+validation.regex={0} is an invalid value
 validation.numeric={0} must be a numeric value
+validation.domainname={0} must be a valid domain name
+validation.mimetype={0} does not have an allowed MimeType
+validation.filesize={0} exceeds allowed filesize
+validation.file={0} must be a valid file
 ```
+
+Protect state-changing forms with [CSRF](csrf.md). Use [Flash](flash.md) for one-time messages after redirect.

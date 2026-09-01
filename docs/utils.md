@@ -1,104 +1,95 @@
 # Utils
 
-## Overview
+Public helpers live in `io.mangoo.utils`. `io.mangoo.utils.internal.MangooUtils` is internal and not part of the supported API.
 
-The `io.mangoo.utils` package in the Mangoo I/O framework provides a set of utility classes that simplify various operations. These utilities help with byte processing, encoding, date handling, JSON operations, request handling, and persistence. This documentation outlines the available classes and their functionalities.
+## CommonUtils
 
----
+Argon2id hashing, encoding, UUIDs, and small helpers:
 
-## **Utility Classes**
-
-### **1. ByteUtils**
-**Description:**  
-Provides methods for calculating the bit length of byte arrays and strings.
-
-**Key Features:**
-- Determine bit length of byte arrays
-- Calculate bit length of a given string
-
----
-
-### **2. CodecUtils**
-**Description:**  
-Offers encoding and decoding functionalities, including Base64 operations and URL encoding/decoding.
-
-**Key Features:**
-- Encode and decode Base64 data
-- Perform URL encoding and decoding
-- Ensure proper data formatting and transmission
-
----
-
-### **3. DateUtils**
-**Description:**  
-Contains methods for converting between `LocalDateTime` and `Date` objects, as well as formatting dates into human-readable strings.
-
-**Key Features:**
-- Convert `LocalDateTime` to `Date`
-- Convert `Date` to `LocalDateTime`
-- Format date values into human-readable strings
-
----
-
-### **4. JsonUtils**
-**Description:**  
-Utilizes the Jackson library to provide JSON serialization and deserialization methods.
-
-**Key Features:**
-- Convert Java objects to JSON strings
-- Deserialize JSON strings into Java objects
-- Streamline JSON processing within the application
-
----
-
-### **5. MangooUtils**
-**Description:**  
-Offers a collection of general-purpose utility methods, including string manipulation, class loading, and resource handling.
-
-**Key Features:**
-- Handle string manipulation efficiently
-- Load Java classes dynamically
-- Access and manage application resources
-
----
-
-### **6. PersistenceUtils**
-**Description:**  
-Manages mappings between class types and their corresponding collection names in the datastore.
-
-**Key Features:**
-- Associate class types with collection names
-- Facilitate organized data persistence
-
----
-
-### **7. RequestUtils**
-**Description:**  
-Provides methods for handling HTTP request data, such as extracting parameters, headers, and cookies.
-
-**Key Features:**
-- Extract request parameters
-- Retrieve request headers
-- Manage HTTP cookies
-
----
-
-## **Usage Examples**
-Each class includes static methods that can be directly accessed without needing to instantiate objects. Below are a few examples:
-
-### Example: Encoding Data with `CodecUtils`
 ```java
-String encoded = CodecUtils.encodeBase64("Hello, Mangoo!");
-String decoded = CodecUtils.decodeBase64(encoded);
+String hash = CommonUtils.hashArgon2("password", "salt");
+boolean ok = CommonUtils.matchArgon2("password", "salt", hash);
+
+String id = CommonUtils.uuidV7();   // also uuidV4(), uuidV6()
+String random = CommonUtils.randomString(32);
+
+byte[] encoded = CommonUtils.encodeToBase64("payload");
+byte[] decoded = CommonUtils.decodeFromBase64(new String(encoded, StandardCharsets.UTF_8));
+
+CommonUtils.blacklist("subject");
+boolean blocked = CommonUtils.isBlacklisted("subject");
 ```
 
-### Example: Formatting Dates with `DateUtils`
+`hashArgon2(cleartext)` hashes without an explicit salt. `bitLength` checks key material. `registerSerializable` / `serializeToBase64` use Apache Fory; register classes at startup and only deserialize trusted data.
+
+## JwtUtils
+
+Sessions, authentication, and the admin cookie use Nimbus JOSE+JWT (HS512 + JWE). You can issue tokens yourself:
+
 ```java
-String formattedDate = DateUtils.formatDate(LocalDateTime.now());
+var data = JwtUtils.JwtData.create()
+    .withKey(signingKey)
+    .withSecret(encryptionSecret)
+    .withIssuer("myapp")
+    .withAudience("myapp-api")
+    .withSubject("user-1")
+    .withTtlSeconds(3600);
+
+String jwt = JwtUtils.createJwt(data);
+JWTClaimsSet claims = JwtUtils.parseJwt(jwt, data);
 ```
 
-### Example: Handling JSON with `JsonUtils`
+Signing and encryption keys must be long enough for HS512 / AES. Prefer values from the [vault](secrets.md).
+
+## TotpUtils
+
+SHA-512 TOTP, 6 digits, 30-second period. See [Authentication](authentication.md).
+
 ```java
-String jsonString = JsonUtils.toJson(myObject);
-MyObject object = JsonUtils.fromJson(jsonString, MyObject.class);
+String secret = TotpUtils.createSecret();
+boolean valid = TotpUtils.verifyTotp(secret, code);
+String qr = TotpUtils.getQRCode("user@example.com", "My App", secret);
 ```
+
+## DateUtils
+
+```java
+Date date = DateUtils.localDateTimeToDate(LocalDateTime.now());
+Date day = DateUtils.localDateToDate(LocalDate.now());
+String relative = DateUtils.getPrettyTime(LocalDateTime.now());
+String de = DateUtils.getPrettyTime(Locale.GERMAN, LocalDateTime.now());
+```
+
+## JsonUtils
+
+See [Working with JSON](working-with-json.md): `toJson`, `toPrettyJson`, `toObject`, `toFlatMap`, `getMapper()`.
+
+## FileUtils
+
+```java
+String mime = FileUtils.getMimeType(bytes);
+String size = FileUtils.readableFileSize(2048);
+String text = FileUtils.readFileToString(path);
+FileUtils.closeQuietly(stream);
+```
+
+## RequestUtils
+
+```java
+Optional<String> bearer = RequestUtils.getAuthorizationHeader(request);
+Map<String, String> params = RequestUtils.getRequestParameters(exchange);
+```
+
+## PersistenceUtils
+
+Maps `@Collection` classes to MongoDB collection names. You rarely call this; the framework registers collections at startup.
+
+## Argument
+
+```java
+Argument.requireNonBlank(value, "value");
+```
+
+## Crypto
+
+`io.mangoo.crypto.Crypto` encrypts with AES and can wrap values with RSA (3072-bit, OAEP SHA-512). Inject it when you need application-level encryption beyond the vault.

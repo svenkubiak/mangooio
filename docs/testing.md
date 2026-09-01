@@ -1,74 +1,99 @@
 # Testing
 
-mangoo I/O provides tools for testing applications. These utilities are not part of the core framework and require an additional dependency. This allows setting the scope to `test` in the Maven configuration, ensuring the dependency is only included for testing.
+HTTP tests live in the `mangooio-test` artifact. Put it on the test classpath:
 
 ```xml
 <dependency>
     <groupId>io.mangoo</groupId>
     <artifactId>mangooio-test</artifactId>
-    <version>LATEST</version>
+    <version>10.11.0</version>
     <scope>test</scope>
 </dependency>
 ```
 
-## Backend Testing
+Use the latest published version instead of a placeholder.
 
-mangoo I/O includes convenient classes for unit testing applications. Below is an example of how a unit test using these utilities might look:
+## Starting the application
+
+Extend tests with `io.mangoo.test.TestRunner`. It starts mangoo I/O in **test** mode once per test class:
 
 ```java
-import io.mangoo.test.utils.TestRequest;
-import io.mangoo.test.utils.TestResponse;
+import io.mangoo.test.TestRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+@ExtendWith(TestRunner.class)
+class ApplicationControllerTest {
+}
+```
+
+Override `beforeStartup()` / `afterStartup()` if you need system properties before `Application.start(Mode.TEST)`.
+
+## HTTP requests
+
+```java
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
+import io.undertow.util.StatusCodes;
+import org.junit.jupiter.api.Test;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @Test
-public void testIndex() {
-    // Given
+void testIndex() {
     TestResponse response = TestRequest.get("/").execute();
 
-    // Then
     assertThat(response, not(nullValue()));
-    assertThat(response.getContentType(), equalTo(TEXT_HTML));
     assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+    assertThat(response.getContent(), containsString("Hello"));
 }
 ```
 
-### Request-Response Testing
+Factories: `TestRequest.get/post/put/patch/delete/head/options(uri)`.
 
-A common use case for testing is verifying request-response interactions. mangoo I/O provides utilities for constructing test requests and processing responses. The request utility supports authentication, headers, and other modifications via a fluent API.
-
-### Simulating Browser Sessions
-
-For scenarios where request data needs to persist across multiple requests, mangoo I/O provides the `TestBrowser` class:
+Fluent extras on `TestResponse`:
 
 ```java
-TestBrowser browser = TestBrowser.open();
-```
-
-This allows session persistence across multiple requests, simulating real browser interactions. Below is an example:
-
-```java
-import io.mangoo.test.utils.TestBrowser;
-import io.mangoo.test.utils.TestRequest;
-import io.mangoo.test.utils.TestResponse;
-
-// Given
-TestBrowser browser = TestBrowser.open();
-
-// When
-TestResponse response = browser.withUri("/dologin")
-    .withMethod(Methods.POST)
-    .execute();
-
-// Then
-assertThat(response, not(nullValue()));
-assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-
-// When
-response = browser.withUri("/authenticationrequired")
-    .withDisableRedirects(true)
-    .withMethod(Methods.GET)
+TestRequest.post("/save")
+    .withHeader("X-Request-Id", "1")
+    .withContentType("application/json")
+    .withStringBody("{\"name\":\"Ada\"}")
+    .withCookie(cookie)
+    .withBasicAuthentication("user", "pass")
+    .withDisabledRedirects()
+    .withTimeout(5, ChronoUnit.SECONDS)
     .execute();
 ```
 
-In this example, session data (such as cookies) from the first request persists into subsequent requests, allowing realistic browser-like testing of the application.
+`withForm(Multimap)` sends `application/x-www-form-urlencoded` as POST.
+
+## Browser sessions
+
+`TestBrowser` keeps cookies across calls:
+
+```java
+import io.mangoo.test.http.TestBrowser;
+import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
+
+TestBrowser browser = TestBrowser.open();
+
+TestResponse login = browser.to("/dologin")
+    .withHTTPMethod(Methods.POST.toString())
+    .withDisabledRedirects()
+    .execute();
+
+assertThat(login.getStatusCode(), equalTo(StatusCodes.FOUND));
+
+TestResponse account = browser.to("/authenticationrequired")
+    .withHTTPMethod(Methods.GET.toString())
+    .execute();
+```
+
+## Email and concurrency
+
+`io.mangoo.test.email.SmtpMock` starts GreenMail in dev/test using `smtp.host` and `smtp.port`. Call `start()` / `stop()` and inspect `getGreenMail()`.
+
+`io.mangoo.test.concurrent.ConcurrentRunner` is a Hamcrest matcher that runs a function on many virtual threads.
+
+`io.mangoo.test.hamcrest.RegexMatcher.matches(regex)` matches response bodies.

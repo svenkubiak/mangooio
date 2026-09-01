@@ -1,43 +1,47 @@
 # Scheduler
 
-mangoo I/O enables task scheduling using plain Java methods. It supports two types of scheduled tasks: periodic (e.g., every 3 minutes) and cron-based execution.
+Annotate any public method with `@Run`. Classgraph finds those methods at startup when `scheduler.enable` is `true` (the default).
 
-## Repeating Task
-
-To create a repeating task, define a simple POJO and annotate the method with `@Run` specifying the execution interval.
+## Fixed rate
 
 ```java
+import io.mangoo.annotations.Run;
+
 public class InfoJob {
     @Run(at = "Every 3m")
     public void execute() {
-        // Task logic here
+        // task
     }
 }
 ```
 
-### Interval Configuration
+Units after `Every`:
 
-Use the `at` parameter to specify the execution frequency:
+- `s` seconds (`Every 5s`)
+- `m` minutes (`Every 15m`)
+- `h` hours (`Every 4h`)
+- `d` days (`Every 1d`)
 
-- **s** = seconds (e.g., `"Every 5s"`)
-- **m** = minutes (e.g., `"Every 15m"`)
-- **h** = hours (e.g., `"Every 4h"`)
+The prefix is case-insensitive (`every` / `Every`).
 
-## Cron Task
+## Cron
 
-To create a cron-based task, define a POJO and annotate the method with `@Run`, providing a cron expression.
+Use a **5-field UNIX cron** expression (minute hour day-of-month month day-of-week):
 
 ```java
-public class InfoJobCron {
-    @Run(at = "0/1 * * * *")
+public class NightlyJob {
+    @Run(at = "0 2 * * *")
     public void execute() {
-        // Task logic here
+        // 02:00 every day
     }
 }
 ```
 
-### Cron Expression
+This is not Quartz cron: there is no seconds field.
 
-Cron expressions follow the standard format: `"seconds minutes hours day month day-of-week"`.
+Jobs run on a platform thread pool. Disable scheduling with:
 
-This approach provides flexible scheduling for tasks that require execution at specific times or intervals.
+```yaml
+scheduler:
+  enable: false
+```

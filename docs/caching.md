@@ -1,41 +1,62 @@
-# Cache
+# Caching
 
-mangoo I/O comes with a pre-configured application cache powered by [Caffeine](https://github.com/ben-manes/caffeine). To utilize caching in your application, inject the `Cache` class:
+mangoo I/O ships a Caffeine cache. Inject `io.mangoo.cache.Cache` for the application cache:
 
 ```java
 @Inject
 private Cache cache;
 ```
 
-## Cache Operations
-
-The `Cache` class provides essential functions for managing cached values, including adding, retrieving, and removing entries.
-
-### Adding a Value to the Cache
 ```java
 cache.put("foo", "bar");
-```
-
-### Retrieving a Cached Value
-```java
 String value = cache.get("foo");
-```
-
-### Removing a Value from the Cache
-```java
 cache.remove("foo");
+cache.clear();
 ```
 
-## Cache Expiration
+Entries in the application cache expire **30 days after write** (not last access) and the cache holds at most 50 000 keys.
 
-Cached entries expire **30 days after the last access**. If a value is neither read nor updated within this period, it will be automatically evicted.
-
-## Using a Fallback Method
-
-In addition to standard cache operations, you can use a **get** call with a fallback method:
+## TTL and fallback
 
 ```java
-String value = cache.get("foo", v -> getValue());
+cache.put("foo", "bar", 10, ChronoUnit.MINUTES);
+cache.put("foo", "bar", LocalDateTime.now().plusHours(1));
+
+String value = cache.get("foo", key -> loadFromDatabase(key));
+String timed = cache.get("foo", 5, ChronoUnit.MINUTES, key -> loadFromDatabase(key));
 ```
 
-If the key `"foo"` exists in the cache, its value is returned. If not, the fallback method `getValue()` is invoked, its return value is cached under the key `"foo"`, and then returned.
+The fallback is a `Function<String, Object>`. The result is stored under the same key.
+
+```java
+cache.putAll(Map.of("a", 1, "b", 2));
+Map<String, Object> batch = cache.getAll("a", "b");
+```
+
+## Counters
+
+```java
+cache.getAndIncrementCounter("logins");
+cache.getAndDecrementCounter("logins");
+cache.getCounter("logins");
+cache.resetCounter("logins");
+```
+
+## Named caches
+
+The application cache is the default. Two more caches exist:
+
+| Name (`CacheName`) | Use | Eviction |
+|---|---|---|
+| `APPLICATION` | Default `Cache` injection | 30 days after write, 50 000 keys |
+| `AUTH` | Login lockout counters | 60 minutes after write |
+| `BLACKLIST` | Created only if `authentication.blacklist` is true | 60 minutes after write |
+
+```java
+@Inject
+public MyService(CacheProvider cacheProvider) {
+    Cache auth = cacheProvider.getCache(CacheName.AUTH);
+}
+```
+
+Register extra caches with `cacheProvider.addCache(name, cache)` so they appear on the [admin](administration.md) dashboard.

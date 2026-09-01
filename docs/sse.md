@@ -1,34 +1,36 @@
 # Server-Sent Events
 
-mangoo I/O provides built-in support for Server-Sent Events (SSE), enabling real-time one-way communication from the server to the client.
+SSE is one-way: the server pushes text (often JSON) to the browser.
 
 ## Routing
 
-To set up Server-Sent Events, define a route for the SSE endpoint in your `Bootstrap` class:
-
 ```java
 Bind.serverSentEvent().to("/sse");
+Bind.serverSentEvent().to("/sseauth").withAuthentication();
 ```
 
-## Sending Data
+Authenticated endpoints require a valid authentication cookie. See [Routing](routing.md) and [Authentication](authentication.md).
 
-Once the routing is configured, you can send Server-Sent Events from anywhere in your application using the `ServerSentEventManager`:
+## Sending
 
 ```java
-private final ServerSentEventManager sse;
+import io.mangoo.manager.ServerSentEventManager;
+import jakarta.inject.Inject;
 
-@Inject
-public MyClass(ServerSentEventManager sse) {
-    this.sse = Objects.requireNonNull(sse, "sse cannot be null");
-}
+public class NotifyService {
+    private final ServerSentEventManager sse;
 
-public void sendData() {
-    sse.send("/sse", "data");
+    @Inject
+    public NotifyService(ServerSentEventManager sse) {
+        this.sse = sse;
+    }
+
+    public void sendData() {
+        sse.send("/sse", "{\"status\":\"ok\"}");
+    }
 }
 ```
 
-### Data Format
+The first argument is the route URL. The payload is a string. Delivery runs on a virtual thread.
 
-The data must be a string, such as a JSON object, and can be formatted according to your needs.
-
-For more details on setting up Server-Sent Events on the client side, refer to the [Mozilla Developer Documentation](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).
+Client setup: [MDN Server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).

@@ -1,17 +1,6 @@
 # Configuration
 
-mangoo I/O relies on a single configuration file for your application, based on [SnakeYAML](https://bitbucket.org/snakeyaml/snakeyaml/src/master/). The `config.yaml` file is located in the `src/main/resources` folder, along with other non-Java files. You can customize settings by adding values to `config.yaml`. For example:
-
-```yaml
-application:
-  foo: bar
-```
-
-mangoo I/O provides a set of default property values that configure the application. See [default values](#default-values) for a full list of configuration options and their defaults.
-
-## Accessing Configuration Values
-
-Configuration values are accessed using dot notation based on their hierarchy. For example:
+mangoo I/O loads a single YAML file, `src/main/resources/config.yaml`, using [SnakeYAML](https://bitbucket.org/snakeyaml/snakeyaml/src/master/). Values are addressed with dot notation that matches the YAML hierarchy.
 
 ```yaml
 application:
@@ -19,191 +8,192 @@ application:
     key: foo
 ```
 
-This value can be accessed using:
-
 ```java
 config.getString("application.api.key");
 ```
 
-### Injecting the Config Class
+You can load a different file by setting the JVM property `application.config` to an absolute path.
 
-You can retrieve configuration values by injecting the `Config` class in two ways:
+## Accessing configuration
 
-#### Member Variable Injection
+Inject `io.mangoo.core.Config`. Constructor injection is preferred:
+
 ```java
-@Inject
-private Config config;
-```
+import io.mangoo.core.Config;
+import jakarta.inject.Inject;
 
-#### Constructor Injection (Recommended)
-```java
-@Inject
-private MyClass(Config config) {
-    // Use config
+public class MyService {
+    private final Config config;
+
+    @Inject
+    public MyService(Config config) {
+        this.config = config;
+    }
 }
 ```
 
-You can retrieve configuration values either by specifying a key or using predefined constants from mangoo I/O:
+Look up values by key string or by constants in `io.mangoo.constants.Key`:
+
 ```java
-config.getString("application.minify.js");
-config.getString(Key.APPLICATION_MINIFY_JS);
+config.getString("application.api.key");
+config.getString(Key.APPLICATION_API_KEY);
 ```
 
-## Configuration Modes
+Typed helpers also exist (`getInt`, `getLong`, `getBoolean`) and dedicated getters such as `getApplicationName()` or `getSmtpHost()`.
 
-mangoo I/O offers three configuration modes: **dev**, **test**, and **prod**.
+Every entry in `config.yaml` is also bound as a Guice `@Named` string, so you can inject a single value:
 
-- **Dev mode** is activated automatically when starting the application using the Maven plugin:
-  ```shell
-  mvn mangooio:run
-  ```
-- **Test mode** is activated during unit tests.
-- **Prod mode** is the default if no other mode is specified.
+```java
+@Inject
+public MyService(@Named("application.named") String named) {
+    // ...
+}
+```
 
-To manually set a mode, use:
+## Modes
+
+mangoo I/O has three modes: **dev**, **test**, and **prod**.
+
+- **dev** is activated by `mvn mangooio:run`.
+- **test** is activated when tests start the application through `TestRunner`.
+- **prod** is the default when you start the packaged JAR.
+
+Set the mode explicitly with:
 
 ```shell
+java -Dapplication.mode=dev -jar myapp.jar
+```
+
+or:
+
+```java
 System.setProperty("application.mode", "dev");
 ```
 
-Or pass it as a JVM argument:
+## Environment-specific values
 
-```shell
-... -Dapplication.mode=dev
-```
-
-### Mode-Specific Configuration
-
-You can define mode-specific settings by prefixing configuration values:
+Put shared settings under `default` and overrides under `environments.<mode>`. The active mode overwrites matching keys from `default`:
 
 ```yaml
 default:
   application:
-    name: foo
+    name: myapp
     url: http://localhost
 
 environments:
   test:
     application:
-      name: foo
-      url:  https://test.mydomain.com
-
+      url: https://test.example.com
   prod:
     application:
-      name: foo
-      url:  https://mydomain.com
+      url: https://example.com
 ```
 
-By default, mangoo I/O uses values from the `default` section, which are overridden by environment-specific values when the corresponding mode is active.
+The active environment block is required. If `environments.dev` (or `test` / `prod`) is missing, startup fails.
 
-## Encrypted Configuration Values
+## Secrets, environment variables, and JVM arguments
 
-Configuration values in `config.yaml` can be encrypted using public/private key encryption. Encrypted values are decrypted at runtime and stored in-memory.
+Configuration values can come from the application vault, environment variables, or JVM arguments. See [Secrets](secrets.md) for `vault{}`, `env{}`, and `arg{}`.
 
-To use encryption, generate a key pair via the mangoo I/O administrative backend. Once generated, you can encrypt configuration values and set them in `config.yaml` as follows:
+Do not put cookie signing keys, the vault password, or SMTP credentials in source control as clear text.
+
+## Connectors
+
+At least one HTTP or HTTPS connector must be configured, otherwise the application does not start.
 
 ```yaml
-application:
-  db:
-    username: cryptex{...}
-    password: cryptex{...}
+default:
+  connector:
+    http:
+      host: localhost
+      port: 8080
+    https:
+      host: localhost
+      port: 8443
+      certificate:
+        alias: certificate
 ```
 
-The private key must be provided as a JVM argument:
+HTTPS uses an SSL context from the [vault](secrets.md). The certificate alias defaults to `certificate`.
 
-```shell
-... -Dapplication.privatekey=/path/to/privatekey
-```
+## Default values
 
-**Note:** The encryption prefix is `cryptex{}`, without a trailing "t", based on the [Cryptex](https://en.wikipedia.org/wiki/Cryptex) concept.
+Keys that you omit fall back to these defaults. MongoDB keys are nested under `persistence` in YAML (`persistence.mongo.host`, and `persistence.<prefix>.mongo.host` for extra datastores).
 
-## Passing JVM Arguments
-
-JVM arguments can be used in configuration values by using the `arg{}` syntax:
-
-```yaml
-application:
-  db:
-    username: arg{}
-```
-
-This configuration will use the corresponding JVM argument if provided:
-
-```shell
-... -Dapplication.db.username=myusername
-```
-
-You can also specify default values:
-
-```yaml
-application:
-  db:
-    username: arg{defaultuser}
-```
-
-## Default Values
-
-This is an overview of the out-of-the box configuration options for the config.yaml and their default values, if the properties are not configured in the config.yaml file.
-
-| Key                                    | Description                                                                                                  | Default Value                                                             |
-|----------------------------------------|--------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
-| application.admin.enable               | Activates the admin dashboard                                                                                | false                                                                     |
-| application.admin.password             | Password for the admin dashboard                                                                             | -                                                                         |
-| application.admin.secret               | Secret for the admin dashboard. If configured, enabled MFA for the admin dashboard                           | -                                                                         |
-| application.admin.username             | Username for the admin dashboard                                                                             | -                                                                         |
-| application.admin.locale               | Locale for the admin dashoard                                                                                | en_EN                                                                     |
-| application.api.key                    | API key for the build-in ApiKeyFilter                                                                        | -                                                                         |
-| application.controller                 | Package name where the controller classes are located                                                        | controllers.                                                              |
-| application.language                   | Language of the application                                                                                  | en                                                                        |
-| application.name                       | Name of the application                                                                                      | mangooio-application                                                      |
-| application.paseto.secret              | Secret for the build-in PasetoFilter                                                                         | -                                                                         |
-| application.secret                     | Default application secret                                                                                   | -                                                                         |
-| application.timezone                   | The timezone of the application                                                                              | UTC                                                                       |
-| authentication.cookie.expires          | Activates that the cookie has a defined lifetime, otherwise the cookie is only valid for the browser session | false                                                                     |
-| authentication.cookie.name             | Name of the authentication cookie                                                                            | mangooio-authentication                                                   |
-| authentication.cookie.remember.expires | Lifetime of the cookie in hours if remember me is activated                                                  | 720                                                                       |
-| authentication.cookie.secret           | Secret for the authentication cookie                                                                         | -> application.secret value                                               |
-| authentication.cookie.secure           | Set the secure attribute of the authentication cookie                                                        | false                                                                     |
-| authentication.cookie.token.expires    | Lifetime of the token and the cookie in minutes                                                              | 60                                                                        |
-| authentication.lock                    | Number of attemps after an account gets locked; Only valid if build-in authentication is used                | 10                                                                        |
-| authentication.redirect.login          | Redirect URL for the login page when build-in authentication is used                                         | -                                                                         |
-| authentication.redirect.mfa            | Redirect URL for the MFA page when build-in authentication is used                                           | -                                                                         |
-| authentication.origin                  | Activates that an "?origin=" parameter with the request URL is added during authentication                   | false                                                                     |
-| connector.http.host                    | HTTP host                                                                                                    | -                                                                         |
-| connector.http.port                    | HTTP port                                                                                                    | -                                                                         |
-| cors.alloworigin                       | Header value for Access-Control-Allow-Origin                                                                 | ^http(s)?://(www\.)?example\.(com\|org)$                                  |
-| cors.enable                            | Activate sending of CORS headers                                                                             | false                                                                     |
-| cors.headers.allowcredentials          | Header value for Access-Control-Allow-Credentials                                                            | true                                                                      |
-| cors.headers.allowheaders              | Header value for Access-Control-Allow-Headers                                                                | Authorization,Content-Type,Link,X-Total-Count,Range                       |
-| cors.headers.allowmethods              | Header value for Access-Control-Allow-Methods                                                                | DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT                                    |
-| cors.headers.exposeheaders             | Header value for Access-Control-Expose-Headers                                                               | Accept-Ranges,Content-Length,Content-Range,ETag,Link,Server,X-Total-Count |
-| cors.headers.maxage                    | Header value for Access-Control-Max-Age                                                                      | 864000                                                                    |
-| cors.urlpattern                        | Regex pattern on which the CORS headers should be checked against                                            | `^http(s)?://([^/]+)(:([^/]+))?(/([^/])+)?/api(/.*)?$`                |
-| flash.cookie.name                      | Name of the flash cookie                                                                                     | mangooio-flash                                                            |
-| flash.cookie.secret                    | Secret for the flash cookie                                                                                  | -> application.secret value                                               |
-| i18n.cookie.name                       | Name of the i18n cookie                                                                                      | mangooio-i18n                                                             |
-| metrics.enable                         | Activates collecting metrics which are shown in the admin dashboard                                          | false                                                                     |
-| persistence.enable                     | Activates default persistence with MongoDB                                                                   | true                                                                      |
-| mongo.auth                             | Activates MongoDB authentication                                                                             | false                                                                     |
-| mongo.authdb                           | Name of the MongoDB AuthDB                                                                                   | -                                                                         |
-| mongo.dbname                           | Name of the MongoDB database                                                                                 | mangoo-io-mongodb                                                         |
-| mongo.embedded                         | Activates the build-in in-memory MongoDB                                                                     | false                                                                     |
-| mongo.host                             | MongoDB host                                                                                                 | localhost                                                                 |
-| mongo.password                         | MongoDB password                                                                                             | -                                                                         |
-| mongo.port                             | MongoDB port                                                                                                 | 27017                                                                     |
-| mongo.username                         | MongoDB username                                                                                             | -                                                                         |
-| scheduler.enable                       | Activates the build-in scheduker                                                                             | true                                                                      |
-| session.cookie.expires                 | Activates that the cookie has a defined lifetime, otherwise the cookie is only valid for the browser session | false                                                                     |
-| session.cookie.name                    | Name of the seesion cookie                                                                                   | mangooio-session                                                          |
-| session.cookie.secret                  | Secret of the seesion cookie                                                                                 | -> application.secret value                                               |
-| session.cookie.secure                  | Set the secure attribute of the session cookie                                                               | -                                                                         |
-| session.cookie.token.expires           | Lifetime of the token and the cookie in minutes                                                              | 60                                                                        |
-| smtp.authentication                    | Axtivates SMTP authentication                                                                                | false                                                                     |
-| smtp.debug                             | Acticates SMTP debugging                                                                                     | false                                                                     |
-| smtp.from                              | SMTP from address                                                                                            | mangoo <noreply@mangoo.local>                                             |
-| smtp.host                              | SMTP host address                                                                                            | localhost                                                                 |
-| smtp.password                          | SMTP password                                                                                                | -                                                                         |
-| smtp.port                              | SMTP port                                                                                                    | 25                                                                        |
-| smtp.protocol                          | SMTP protocol                                                                                                | smtps                                                                     |
-| smtp.username                          | SMTP username                                                                                                | -                                                                         |
-| undertow.maxentitysize                 | Maximum size of an HTTP request entity (body)                                                                | 4194304 byte                                                              |
+| Key | Description | Default |
+|---|---|---|
+| `application.admin.enable` | Enables the admin dashboard | `false` |
+| `application.admin.locale` | Locale for the admin dashboard | `en_EN` |
+| `application.admin.password` | Admin dashboard password | — |
+| `application.admin.secret` | Admin TOTP secret; if set, MFA is required | — |
+| `application.admin.username` | Admin dashboard username | — |
+| `application.allowedOrigins` | Comma-separated origins for `OriginFilter` | — |
+| `application.api.key` | Shared secret for `ApiKeyFilter` | — |
+| `application.controller` | Controller package prefix | `controllers.` |
+| `application.language` | Default application language | `en` |
+| `application.name` | Application name (JWT issuer, logs) | `mangooio-application` |
+| `application.named` | Example named Guice binding | — |
+| `application.secret` | Application secret; fallback for cookie keys | — |
+| `application.timezone` | Application timezone | `UTC` |
+| `application.validation.passthrough` | Return Bean Validation errors as JSON | `false` |
+| `application.vault.enable` | Enable the PKCS12 vault | — |
+| `application.vault.path` | Directory of `vault.p12` in prod | — |
+| `application.vault.secret` | Vault password (min. 64 characters) | — |
+| `authentication.blacklist` | Enable authentication blacklist cache | `false` |
+| `authentication.cookie.name` | Authentication cookie name | `mangooio-auth` |
+| `authentication.cookie.key` | JWT signing key; falls back to `application.secret` | — |
+| `authentication.cookie.secret` | JWT encryption secret; falls back to `application.secret` | — |
+| `authentication.cookie.remember.expires` | Remember-me lifetime in **seconds** | `2592000` |
+| `authentication.cookie.samesitemode` | SameSite attribute | `Strict` |
+| `authentication.cookie.secure` | Secure cookie flag | `false` |
+| `authentication.cookie.token.expires` | Token and cookie lifetime in **seconds** | `3600` |
+| `authentication.lock` | Failed logins before lockout | `10` |
+| `authentication.origin` | Append `?origin=` on auth redirects | `false` |
+| `authentication.redirect.login` | Redirect when authentication is missing | — |
+| `authentication.redirect.mfa` | Redirect when MFA is required | — |
+| `connector.http.host` | HTTP bind address | — |
+| `connector.http.port` | HTTP port | — |
+| `connector.https.host` | HTTPS bind address | — |
+| `connector.https.port` | HTTPS port | — |
+| `connector.https.certificate.alias` | Vault certificate alias | `certificate` |
+| `cors.alloworigin` | Regex for `Access-Control-Allow-Origin` | `^http(s)?://(www\.)?example\.(com\|org)$` |
+| `cors.enable` | Send CORS headers | `false` |
+| `cors.headers.allowcredentials` | `Access-Control-Allow-Credentials` | `true` |
+| `cors.headers.allowheaders` | `Access-Control-Allow-Headers` | `Authorization,Content-Type,Link,X-Total-Count,Range` |
+| `cors.headers.allowmethods` | `Access-Control-Allow-Methods` | `DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT` |
+| `cors.headers.exposeheaders` | `Access-Control-Expose-Headers` | `Accept-Ranges,Content-Length,Content-Range,ETag,Link,Server,X-Total-Count` |
+| `cors.headers.maxage` | `Access-Control-Max-Age` | `864000` |
+| `cors.urlpattern` | Regex of request URLs that receive CORS headers | `^http(s)?://([^/]+)(:([^/]+))?(/([^/])+)?/api(/.*)?$` |
+| `flash.cookie.name` | Flash cookie name | `mangooio-flash` |
+| `flash.cookie.key` | Flash JWT signing key | — |
+| `flash.cookie.secret` | Flash JWT encryption secret | — |
+| `i18n.cookie.name` | Locale cookie name | `mangooio-i18n` |
+| `metrics.enable` | Collect request metrics for the admin dashboard | `false` |
+| `otlp.enable` | Enable OpenTelemetry export | `false` |
+| `otlp.endpoint` | OTLP gRPC endpoint | — |
+| `persistence.enable` | Enable MongoDB persistence | `true` |
+| `persistence.mongo.auth` | Use MongoDB authentication | `false` |
+| `persistence.mongo.authdb` | MongoDB authentication database | — |
+| `persistence.mongo.dbname` | MongoDB database name | `mangoo-io-mongodb` |
+| `persistence.mongo.embedded` | Start embedded MongoDB | `false` |
+| `persistence.mongo.host` | MongoDB host | `localhost` |
+| `persistence.mongo.password` | MongoDB password | — |
+| `persistence.mongo.port` | MongoDB port | `27017` |
+| `persistence.mongo.username` | MongoDB username | — |
+| `scheduler.enable` | Enable `@Run` scheduling | `true` |
+| `session.cookie.expires` | Persist the session cookie beyond the browser session | `false` |
+| `session.cookie.name` | Session cookie name | `mangooio-session` |
+| `session.cookie.key` | Session JWT signing key | — |
+| `session.cookie.secret` | Session JWT encryption secret | — |
+| `session.cookie.samesitemode` | SameSite attribute | `Strict` |
+| `session.cookie.secure` | Secure cookie flag (also used for flash) | `false` |
+| `session.cookie.token.expires` | Session token lifetime in **seconds** | `3600` |
+| `smtp.authentication` | Enable SMTP authentication | `false` |
+| `smtp.debug` | Enable SMTP debug output | `false` |
+| `smtp.from` | Default From address | `mangoo <noreply@mangoo.local>` |
+| `smtp.host` | SMTP host | `localhost` |
+| `smtp.password` | SMTP password | — |
+| `smtp.port` | SMTP port | `25` |
+| `smtp.protocol` | SMTP protocol | `smtps` |
+| `smtp.username` | SMTP username | — |
+| `undertow.maxentitysize` | Maximum HTTP entity size in bytes | `4194304` |

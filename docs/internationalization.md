@@ -1,102 +1,74 @@
 # Internationalization
 
-Translations in mangoo I/O are based on the standard `Locale` of Java.
+Translations use a standard Java `ResourceBundle` under `src/main/resources/translations/` (`messages.properties`, `messages_en.properties`, `messages_de.properties`, …).
 
-## Locale Determination Order
+## Locale order
 
-The `Locale` is determined in the following order:
+1. **`lang` request parameter** (query or path). A path parameter must be mapped:
 
-**Language Parameter in the URL**  
-   The language can be specified as either a URL parameter or a query parameter, e.g.:
+    ```java
+    On.get().to("/page/{lang}").respondeWith("page")
+    ```
 
-   ```java
-   /my/path?lang=en
-   /my/path/en
-   ```
+    Examples: `/page?lang=en`, `/page/en`
 
-   If a URL parameter is used, the URL must be configured accordingly in the `Bootstrap` class:
+2. **i18n cookie** (`i18n.cookie.name`, default `mangooio-i18n`)
 
-   ```java
-   On.get().to("/foo/bar/{lang}").respondWith("foobar");
-   ```
+3. **`Accept-Language` header**
 
-**i18n Cookie in the Request**  
-   A language preference can be stored in a cookie. You can create such a cookie using the `CookieBuilder`, e.g.:
+4. **`application.language`** in `config.yaml` (default `en`)
 
-   ```java
-   public Response localize() {
-       Cookie cookie = CookieBuilder.create()
-               .name(Default.COOKIE_I18N_NAME.toString())
-               .value("en")
-               .build();
-   
-       return Response.withOk().andCookie(cookie);
-   }
-   ```
+5. Hardcoded fallback `en`
 
-**Accept-Language Header in the Request**  
-   The language is determined from the `Accept-Language` header sent by the client.
+## Setting the cookie
 
-**Default application language**
+```java
+import io.mangoo.constants.Default;
+import io.mangoo.routing.Response;
+import io.undertow.server.handlers.Cookie;
+import io.undertow.server.handlers.CookieImpl;
 
-The application’s default language can be set in the configuration file:
+public Response localize() {
+    Cookie cookie = new CookieImpl(Default.I18N_COOKIE_NAME, "en");
+    return Response.ok().cookie(cookie).render();
+}
+```
 
-   ```yaml
-   application:
-      language: en
-   ```
-
-**Hardcoded Default Value**  
-   If no other sources define a language, the application defaults to `en`.
-
-## Accessing Translated Values
-
-mangoo I/O provides a convenient way to access translations by injecting the `Messages` class.
+## Messages in Java
 
 ```java
 package controllers;
 
-import com.google.inject.Inject;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.Response;
+import jakarta.inject.Inject;
 
 public class I18nController {
-
     @Inject
     private Messages messages;
 
     public Response translation() {
-        messages.get("my.translation");
-        messages.get("my.othertranslation", "foo");
-        ...
+        String text = messages.get("welcome");
+        String named = messages.get("hello", "Ada");
+        return Response.ok().bodyText(text);
     }
 }
 ```
 
-The `Messages` class offers two methods for retrieving translations from the resource bundle: with or without optional parameters.
-
-Example resource bundle entries:
-
 ```properties
-my.translation=This is a translation
-my.othertranslation=This is a translation with the parameter: {0}
+welcome=Welcome
+hello=Hello {0}
 ```
 
-!!! note
-    `{0}` is a placeholder that will be replaced by the passed parameter (`"foo"`).
+`{0}` is replaced with the extra argument.
 
-## Translation in Templates
+You can also take `Messages` as a controller method parameter.
 
-To access translations in a template, use the special `i18n` tag along with the translation key:
+## Templates
 
-```html
-${i18n("my.translation")}
+```ftl
+${i18n("welcome")}
+${i18n("hello", "Ada")}
 ```
 
-To pass a parameter to the translation, append it to the function call:
-
-```html
-${i18n("my.othertranslation", "foo")}
-```
-
-If no matching key is found in the resource bundle, the template will output an empty value.
+The varargs `Messages.get(key, args)` returns an empty string when the key is absent. See [Templating](templating.md).

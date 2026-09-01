@@ -1,104 +1,120 @@
 # Persistence
 
-Mangoo I/O provides a ready-to-use integration with [MongoDB](https://www.mongodb.com/) using the [Java Sync Driver](https://www.mongodb.com/docs/drivers/java/sync/current/quick-start/).
+mangoo I/O integrates [MongoDB](https://www.mongodb.com/) through the [Java Sync Driver](https://www.mongodb.com/docs/drivers/java/sync/current/quick-start/). POJOs are mapped with the driver codec (not Morphia).
 
 ## Configuration
 
-To set up a MongoDB connection, use the following configuration values:
-
 ```yaml
-persistence:
-  mongo:
-    host: 127.0.0.1
-    port: 27017
-    username: myUsername
-    password: myPassword
-    dbname: myDBname  # Database to connect to
-    authdb: myAuthDB  # Authentication database
-    auth: true        # Enable authentication (true/false)
-    embedded: true    # Start in-memory instance
-    package: models   # Package containing Morphia models
-```
-
-!!! note
-    Setting `mongo.embedded = true` starts an embedded MongoDB instance for local development and testing. Ensure this is set to `false` in production environments.
-
-## Entity Configuration
-
-To map a class to the persistence datastore, add the `@Collection` annotation to your POJO:
-
-```java
-@Collection(name = "people")
-public class Person extends Entity {
-    // Class implementation
-}
-```
-
-Extending `Entity` is optional but provides methods to retrieve the entity ID.
-
-## Datastore
-
-Once configured and models are mapped, the ready-to-use datastore can be injected:
-
-```java
-private final Datastore datastore;
-
-@Inject
-public DataService(Datastore datastore) {
-    this.datastore = Objects.requireNonNull(datastore, "datastore cannot be null");
-}
-```
-
-The datastore provides essential methods for working with entities:
-
-```java
-findById(String id, Class<T> clazz);
-findAll(Class<T> clazz);
-countAll(Class<T> clazz);
-save(Object object);
-delete(Object object);
-deleteAll(Class<T> clazz);
-dropDatabase();
-```
-
-For specific queries, use the fluent MongoDB API with the `query()` method:
-
-```java
-List<Booking> bookings = datastore
-    .query(Booking.class)
-    .find(and(gte("booked", fromDate), lte("booked", toDate)))
-    .into(bookings);
-```
-
-Using `query()` grants access to all MongoDB Java client methods.
-
-## Multiple Connections and Users
-
-For multiple connections with different users, adjust how you retrieve the datastore:
-
-```java
-@Inject
-public DataService(DatastoreProvider datastoreProvider) {
-    Objects.requireNonNull(datastoreProvider, "datastoreProvider cannot be null");
-    datastore = datastoreProvider.getDatastore("readonly");
-}
-```
-
-The `"readonly"` string corresponds to a prefix set in the configuration:
-
-```yaml
-persistence:
-  mongo:
-    readonly:
+default:
+  persistence:
+    mongo:
       host: 127.0.0.1
       port: 27017
       username: myUsername
-      password: myPassword
-      dbname: myDBname  # Database to connect to
-      authdb: myAuthDB  # Authentication database
-      auth: true        # Enable authentication (true/false)
-      embedded: true    # Start in-memory instance
-      package: models   # Package containing Morphia models
+      password: vault{}
+      dbname: myDBname
+      authdb: myAuthDB
+      auth: true
+      embedded: false
 ```
 
-This configuration enables separate connections for different user roles.
+Set `persistence.enable` to `false` to skip MongoDB entirely.
+
+!!! note
+    `persistence.mongo.embedded: true` starts MongoDB 7.0 in-process. Use it only for local development and tests.
+
+There is no `package` setting. Annotate entity classes; Classgraph finds them.
+
+## Entities
+
+```java
+import io.mangoo.annotations.Collection;
+import io.mangoo.annotations.Indexed;
+import io.mangoo.enums.Sort;
+import io.mangoo.persistence.Entity;
+
+@Collection(name = "people")
+public class Person extends Entity {
+    @Indexed(sort = Sort.ASCENDING, unique = true)
+    private String email;
+
+    private String firstname;
+    private String lastname;
+}
+```
+
+`Entity` stores `_id` as a BSON `ObjectId`. Extending it is optional if you implement `BaseEntity` yourself.
+
+`@Indexed` is applied at startup (`sort`, `unique`, `caseSensitive`).
+
+## Datastore
+
+```java
+import io.mangoo.persistence.interfaces.Datastore;
+import jakarta.inject.Inject;
+
+public class PersonService {
+    private final Datastore datastore;
+
+    @Inject
+    public PersonService(Datastore datastore) {
+        this.datastore = datastore;
+    }
+}
+```
+
+```java
+String id = datastore.save(person);
+Person found = datastore.find(Person.class, eq("_id", new ObjectId(id)));
+List<Person> all = datastore.findAll(Person.class);
+long count = datastore.countAll(Person.class);
+datastore.delete(person);
+datastore.dropCollection(Person.class);
+datastore.isHealthy();
+```
+
+Query helpers:
+
+```java
+Person first = datastore.findFirst(Person.class, Sorts.descending("created"));
+List<Person> page = datastore.findAll(Person.class, Filters.eq("active", true), Sorts.ascending("lastname"), 50);
+```
+
+For the full driver API, use `query()`:
+
+```java
+List<Booking> bookings = new ArrayList<>();
+datastore
+    .query(Booking.class)
+    .find(Filters.and(
+        Filters.gte("booked", fromDate),
+        Filters.lte("booked", toDate)))
+    .into(bookings);
+```
+
+Index helpers: `addIndex`, `dropIndex`, `dropAllIndexes`. `saveAll` inserts a list. `getMongoDatabase()` returns the native handle.
+
+## Multiple connections
+
+```java
+@Inject
+public PersonService(DatastoreProvider datastoreProvider) {
+    this.readonly = datastoreProvider.getDatastore("readonly");
+}
+```
+
+The prefix maps to `persistence.<prefix>.mongo.*`:
+
+```yaml
+persistence:
+  readonly:
+    mongo:
+      host: 127.0.0.1
+      port: 27017
+      username: reader
+      password: vault{}
+      dbname: myDBname
+      authdb: myAuthDB
+      auth: true
+      embedded: false
+```

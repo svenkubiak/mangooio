@@ -1,22 +1,12 @@
 # Working with JSON
 
-mangoo I/O uses [Jackson](https://github.com/FasterXML/jackson) with [Blackbird](https://github.com/stevenschlansker/jackson-blackbird) for JSON serialization and deserialization of objects.
+mangoo I/O uses [Jackson](https://github.com/FasterXML/jackson) with the Blackbird module for serialization.
 
-## JSON Input
-
-To retrieve JSON sent to your mangoo I/O application, you have three options:
-
-1. Automatic object serialization
-2. Generic object conversion
-3. Working with the raw JSON string
-
-### Custom Serializer
-
-By default, mangoo I/O does not write out nulls, empty lists, or default values. To ensure a value is included even if it is empty, `null`, `false`, or `0`, use the `@JsonInclude` annotation. To exclude a value from JSON generation, use `@JsonIgnore`.
+By default, `null` properties are omitted. Use `@JsonInclude` to force a value out, and `@JsonIgnore` to hide a field:
 
 ```java
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class Car {
     @JsonInclude
@@ -26,26 +16,15 @@ public class Car {
     public int doors = 0;
 
     @JsonIgnore
-    public String comment = "blablabla";
+    public String comment = "internal";
 
-    public String foo = "blablabla";
-
-    public Car() {}
+    public String foo = "visible";
 }
 ```
 
-### Automatic Object Conversion
+## JSON input
 
-Given the following JSON input:
-
-```json
-{
-    "brand": "Nissan",
-    "doors": 4
-}
-```
-
-You can automatically convert it to a Java object in a controller:
+Automatic POJO binding works for `POST`, `PUT`, and `PATCH` with `Content-Type: application/json`:
 
 ```java
 package controllers;
@@ -55,106 +34,55 @@ import models.Car;
 
 public class JsonController {
     public Response parse(Car car) {
-        // Process the car object
-        ...
+        return Response.ok().bodyJson(car);
     }
 }
 ```
 
-mangoo I/O automatically deserializes JSON into a POJO, making it available in the controller.
+If deserialization fails, the parameter becomes `UnprocessableContent` and the framework returns **HTTP 422**.
 
-!!! note
-    Automatic conversion only works with `PUT` or `POST` requests having `Content-Type: application/json`.
-
-If you do not have a POJO but still need to retrieve JSON content, you can use a generic approach:
+Without a POJO:
 
 ```java
-package controllers;
-
-import io.mangoo.routing.Response;
-import io.mangoo.routing.bindings.Request;
-import java.util.Map;
-
-public class MyController {
-    public Response parse(Request request) {
-        Map<String, Object> json = request.getBodyAsJsonMap();
-        String foo = (String) json.get("firstname");
-    }
+public Response parse(Request request) {
+    Map<String, Object> json = request.getBodyAsJsonMap();
+    String firstname = (String) json.get("firstname");
+    return Response.ok();
 }
 ```
 
-### Handling Raw JSON String
-
-If you prefer working with the raw JSON string, retrieve it from the request body:
+Raw body:
 
 ```java
-package controllers;
-
-import io.mangoo.routing.Response;
-import io.mangoo.routing.bindings.Request;
-
-public class MyController {
-    public Response parse(Request request) {
-        String body = request.getBody();
-        ...
-    }
+public Response parse(Request request) {
+    String body = request.getBody();
+    return Response.ok();
 }
 ```
 
-## JSON Output
-
-Consider the following POJO:
+`JsonUtils` helpers:
 
 ```java
-package models;
-
-public class Person {
-    private String firstname;
-    private String lastname;
-    private int age;
-
-    public Person(String firstname, String lastname, int age) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.age = age;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public int getAge() {
-        return age;
-    }
-}
+String json = JsonUtils.toJson(person);
+String pretty = JsonUtils.toPrettyJson(person);
+Person object = JsonUtils.toObject(json, Person.class);
+Map<String, String> flat = JsonUtils.toFlatMap(json);
+ObjectMapper mapper = JsonUtils.getMapper();
 ```
 
-To create a new `Person` object and send it as a JSON response:
+## JSON output
 
 ```java
-package controllers;
-
-import io.mangoo.routing.Response;
-import models.Person;
-
-public class JsonController {
-    public Response render() {
-        Person person = new Person("Peter", "Parker", 24);
-        return Response.ok().bodyJson(person);
-    }
-}
+Person person = new Person("Peter", "Parker", 24);
+return Response.ok().bodyJson(person);
 ```
-
-### JSON Response Output
 
 ```json
 {
-    "firstname": "Peter",
-    "lastname": "Parker",
-    "age": 24
+  "firstname": "Peter",
+  "lastname": "Parker",
+  "age": 24
 }
 ```
+
+`Response.badRequest().bodyJsonError("Invalid payload")` sends a small JSON error object.

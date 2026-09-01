@@ -1,6 +1,6 @@
 # Controllers
 
-Every controller method, whether it renders a template, sends JSON, or just returns an HTTP status, must return a `Response` object. This is handled using the `Response` class of **mangoo I/O**. Below is an example of a controller method:
+Controller methods return an `io.mangoo.routing.Response`. There is no base class.
 
 ```java
 package controllers;
@@ -14,208 +14,158 @@ public class ApplicationController {
 }
 ```
 
-The example above returns a blank HTML page without any rendering.
+`Response.ok()` sends HTTP 200 with an empty `text/plain` body. It does **not** render a template.
 
-## Predefined HTML Templates
-Mangoo I/O provides predefined HTML templates for standard responses:
+## HTML templates
+
+Call `render()` to use Freemarker. By convention the template is:
+
+```
+src/main/resources/templates/CONTROLLER_NAME/METHOD_NAME.ftl
+```
 
 ```java
-package controllers;
+public Response index() {
+    return Response.ok().render();
+}
 
-import io.mangoo.routing.Response;
-
-public class ApplicationController {
-    public Response index() {
-        return Response.ok().bodyDefault();
-    }
+public Response greet() {
+    return Response.ok().render("name", "Ada");
 }
 ```
 
-To trigger rendering of a **Freemarker template**, use `render()`:
+The first example looks up `templates/ApplicationController/index.ftl`. Mapping is case-sensitive.
+
+`bodyDefault()` sends a built-in HTML page for the status code (used for framework error pages).
+
+Override the template path with `template("/path/to/file.ftl")`.
+
+## Response helpers
 
 ```java
-package controllers;
-
-import io.mangoo.routing.Response;
-
-public class ApplicationController {
-    public Response index() {
-        return Response.ok().render();
-    }
-
-    public Response foo() {
-        return Response.ok().render("bar", "value");
-    }
-}
+Response.ok()                  // 200
+Response.created()             // 201
+Response.accepted()            // 202
+Response.notModified()         // 304
+Response.badRequest()          // 400
+Response.unauthorized()        // 401
+Response.forbidden()           // 403
+Response.notFound()            // 404
+Response.internalServerError() // 500
+Response.status(418)
+Response.redirect("/login")
 ```
 
-By convention, the corresponding Freemarker template is expected to be in:
-
-```
-/src/main/resources/templates/CONTROLLER_NAME/METHOD_NAME.ftl
-```
-
-For example:
-
-```
-/src/main/resources/templates/ApplicationController/index.ftl
-```
-
-!!! note
-    Mapping of controller methods to templates is **case-sensitive**.
-
-With the previously mapped request in the `Bootstrap.java` file, a request to `/` will render the `index.ftl` template and send it along with an HTTP **200 OK** response.
-
----
-
-## Request and Query Parameters
-
-Mangoo I/O makes handling request or query parameters straightforward. Assume the following mapping in your `Bootstrap` class:
+Body helpers:
 
 ```java
-Bind.controller(MyController.class).withRoutes(
-    On.get().to("/foo/{id}").respondWith("myMethod")
+return Response.ok().bodyText("hello");
+return Response.ok().bodyHtml("<p>hello</p>");
+return Response.ok().bodyJson(person);
+return Response.badRequest().bodyJsonError("Invalid payload");
+return Response.ok().bodyBinary(bytes);
+```
+
+Add headers and cookies with `header(...)`, `headers(...)`, and `cookie(...)`. Call `end()` when a [filter](filters.md) should stop the remaining chain.
+
+Redirects are a static factory, not a chain on `ok()`:
+
+```java
+return Response.redirect("/dashboard");
+```
+
+## Path and query parameters
+
+```java
+Bind.controller(UserController.class).withRoutes(
+    On.get().to("/users/{id}").respondeWith("show")
 );
 ```
 
-Here, `{id}` in the URL defines a **request parameter**.
-
-For example, given the request:
-
-```
-/user/1?foo=bar
-```
-
-Both **request** and **query** parameters can be accessed in the controller method:
+For `/users/1?active=true`:
 
 ```java
-public Response index(int id, String foo) {
-    // Process id and foo
+public Response show(int id, boolean active) {
     return Response.ok().render();
 }
 ```
 
-Mangoo I/O automatically converts passed parameters into the required data types.
+Supported parameter types:
 
-### **Supported Parameter Types**
-The following parameter types are supported by default:
+- `String`
+- `Integer` / `int`
+- `Long` / `long`
+- `Float` / `float`
+- `Double` / `double`
+- `Boolean` / `boolean`
+- `LocalDate` (`ISO_LOCAL_DATE`, `yyyy-MM-dd`)
+- `LocalDateTime` (`ISO_LOCAL_DATE_TIME`)
+- `Optional` of the types above
+
+Parameter names are case-sensitive and must match the path placeholder. Decimal values use `.` even if the client sent `,`.
+
+These types are bound from the request, not from the URL, and must not be used as path placeholders:
+
+- `Request`
+- `Session`
+- `Form`
+- `Flash`
+- `Authentication`
+- `Messages`
+
+A JSON POJO is bound from the body on `POST`, `PUT`, and `PATCH` with `Content-Type: application/json`. See [Working with JSON](working-with-json.md).
+
+If conversion fails, the framework returns **HTTP 422** unless you handle it yourself.
+
+## Bean Validation
+
+Annotate controller parameters with Jakarta Bean Validation constraints. On failure the default response is HTTP 400 with the built-in HTML error page.
 
 ```java
-String
-Integer / int
-Float / float
-Double / double
-Long / long
-LocalDate
-LocalDateTime
-Optional
+public Response show(@NotBlank String id) {
+    return Response.ok().render();
+}
 ```
 
-- **Double and Float values** must use a `.` delimiter, even if the query parameter is passed with `,`.
-- **All parameters are case-sensitive**. For example, if a method parameter is `localDateTime`, it must be mapped exactly in Bootstrap URL mapping, like so:
+Set `application.validation.passthrough` to `true` to return JSON instead:
 
-  ```
-  /foo/{localDateTime}
-  ```
+```json
+{ "errors": { "id": "must not be blank" } }
+```
 
-- **Date Formats**
-    - `LocalDate`: `yyyy-MM-dd` (`ISO_LOCAL_DATE`)
-    - `LocalDateTime`: `yyyy-MM-ddThh:mm:ss` (`ISO_LOCAL_DATE_TIME`)
+This is not the same as [form validation](forms.md). Form rules live on the `Form` object.
 
-### **Unsupported Parameter Types**
-The following classes **cannot** be used as request or query parameters but can still be used in controller methods:
+## Request object
 
 ```java
-Request
-Session
-Form
-Flash
-Authentication
-Messages
+public Response index(Request request) {
+    String foo = request.getParameter("foo");
+    String agent = request.getHeader("User-Agent");
+    String body = request.getBody();
+    return Response.ok();
+}
 ```
 
-These will be explained in the next chapters.
+Useful methods include `getURI()`, `getURL()`, `getPath()`, `getScheme()`, `getCookie(name)`, `getBodyAsJsonMap()`, and `hasValidCsrf()`.
 
----
+## Custom handlers
 
-## Custom Handlers
-
-Using **Google Guice**, you can customize request handlers as needed. To override a handler, first bind your custom handler in your `Modules` class:
+Handler classes such as `LocaleHandler` are Guice-managed. Bind a subclass in `app.Module` if you need to replace one:
 
 ```java
 bind(LocaleHandler.class).to(MyLocaleHandler.class);
 ```
 
-Then, extend the default handler class:
-
 ```java
 public class MyLocaleHandler extends LocaleHandler {
+    @Inject
+    public MyLocaleHandler(Config config) {
+        super(config);
+    }
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        // Custom handling logic
+        super.handleRequest(exchange);
     }
-
-    @Override
-    protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        // Call a different handler instead of the default one
-    }
-}
-```
-
----
-
-## Request Validation
-
-Mangoo I/O allows **validation of incoming request parameters**.
-
-```java
-public Response index(Request request) {
-    request.expectValue("bar");
-    request.expectEmail("foo");
-
-    if (request.isValid()) {
-        // Process request
-    } else {
-        // Handle invalid request
-    }
-}
-```
-
-### **Returning Validation Errors as JSON**
-You can return validation errors as a JSON response:
-
-```java
-public Response index(Request request) {
-    request.expectValue("bar");
-    request.expectEmail("foo");
-
-    if (!request.isValid()) {
-        return Response.badRequest().bodyJson(request.getErrors());
-    }
-
-    return Response.ok();
-}
-```
-
----
-
-## Request Object and Values
-
-The `Request` object provides access to headers, URL values, and additional request data. It can be passed directly into a controller method:
-
-```java
-public Response index(Request request) {
-    // Process request
-    return Response.ok();
-}
-```
-
-When dealing with multiple query or request parameters, instead of listing them explicitly, you can access them using:
-
-```java
-public Response index(Request request) {
-    String foo = request.getParameter("foo");
-    return Response.ok();
 }
 ```

@@ -1,74 +1,62 @@
 # Templating
 
-Mangoo I/O leverages [Freemarker](https://freemarker.apache.org/) for rendering HTML pages.
+mangoo I/O renders HTML with [Freemarker](https://freemarker.apache.org/). Templates live under `src/main/resources/templates/` and use the `.ftl` suffix. See [Controllers](controllers.md) for the naming convention.
 
-## Template Variables
+## Built-in variables
 
-Mangoo I/O provides several default variables automatically assigned to templates, offering useful functionality out of the box:
+These names are injected into every template:
 
-```injectedfreemarker
-Form
-Flash
-Session
+```
+form
+flash
+session
 i18n
-Route
-Location
-Prettytime
+route
+location
+prettytime
 ```
 
-!!! note
-    These variable names cannot be passed into a template manually. Assigning a variable with the same name in your controller would overwrite the built-in ones, leading to rendering failures and exceptions.
+Do not pass a controller value with the same name; it overwrites the built-in and rendering can fail.
 
-## Pretty Time
+CSRF helpers (see [CSRF](csrf.md)):
 
-**Pretty Time** allows you to format localized relative dates dynamically. For example, a date representing "yesterday" would be formatted as **"1 day ago"** based on the request's preferred locale.
+```ftl
+<@csrfform/>
+<@csrftoken/>
+```
 
-### Usage
+## Pretty time
 
-```injectedfreemarker
-${prettytime(localDateTime)}  // Based on LocalDateTime
-${prettytime(localDate)}      // Based on LocalDate
-${prettytime(date)}           // Based on Date
+Relative dates, localized from the request locale:
+
+```ftl
+${prettytime(localDateTime)}
+${prettytime(localDate)}
+${prettytime(date)}
 ```
 
 ## Location
 
-**Location** helps determine the current URL accessing the template. This is useful for dynamic navigation highlighting.
+True when the current request is mapped to that controller method (case-insensitive):
 
-### Usage
-
-```injectedfreemarker
-<#if location("ApplicationController:location")>DO SOMETHING</#if>
+```ftl
+<#if location("ApplicationController:index")>current</#if>
 ```
 
-To validate the above, provide the **Controller** and **method**. The check is case-insensitive.
+## Reverse routes
 
-## Route
-
-**Route** enables reverse routing, allowing URLs to be dynamically generated instead of being hardcoded. This ensures that links always align with mapped controller methods.
-
-### Basic Usage
-
-```injectedfreemarker
-<a href="${route("ApplicationController:route")}">Route</a>
+```ftl
+<a href="${route("ApplicationController:show")}">Show</a>
+<a href="${route("ApplicationController:show", "42")}">Show 42</a>
 ```
 
-If `ApplicationController.class` contains a method `route()` mapped to `/route`, the above will render as:
+If `show` is mapped to `/users/{id}`, the second example becomes `/users/42`.
 
-```html
-<a href="/route">Route</a>
+## Internationalization
+
+```ftl
+${i18n("welcome")}
+${i18n("hello", "Ada")}
 ```
 
-### Passing Attributes
-
-You can pass additional attributes to the function:
-
-```injectedfreemarker
-<a href="${route("ApplicationController:route", "foo")}">Route</a>
-```
-
-This outputs:
-
-```html
-<a href="/route/foo">Route</a>
-```
+See [Internationalization](internationalization.md).

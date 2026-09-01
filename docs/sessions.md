@@ -1,15 +1,8 @@
 # Sessions
 
-mangoo I/O employs a **client-side session** approach within its shared-nothing architecture. This means all session data for a user is stored inside a cookie on the client side.
+mangoo I/O stores session data in a client cookie (share-nothing). The cookie is a signed and encrypted JWT. Capacity is limited to about 4 KB.
 
-## Advantages and Limitations
-
-- **Scalability**: Since session data is stored on the client, scaling the application becomes seamless.
-- **Storage Limitation**: Cookie storage is limited to approximately **4KB**, restricting the amount of session data.
-
-## Using Sessions in mangoo I/O
-
-To work with sessions, simply pass the `Session` class into your controller method:
+Pass `Session` into the controller method:
 
 ```java
 package controllers;
@@ -19,29 +12,44 @@ import io.mangoo.routing.bindings.Session;
 
 public class SessionController {
     public Response session(Session session) {
-        session.add("foo", "this is a session value");
+        session.put("foo", "this is a session value");
         return Response.ok();
     }
 }
 ```
 
-## Session Management
+## Methods
 
-The `Session` class provides convenient methods for:
-
-- **Adding session data**: `session.add("key", "value");`
-- **Removing a session entry**: `session.remove("key");`
-- **Clearing all session data**: `session.clear();`
-
-## Configuring Session Properties
-
-By default, the session cookie has a lifespan of **one day (86,400 seconds)**. The session expiration and cookie name can be modified in the `config.yaml` file:
-
-```properties
-session:
-    cookie:
-        expires: 86400
-        name: My-Session
+```java
+session.put("key", "value");
+session.get("key");
+session.remove("key");
+session.clear();       // empties values and invalidates the cookie
+session.invalidate();  // expires the cookie
+session.keep();        // keep the session even if it would otherwise be dropped
+session.getCsrf();
+session.hasContent();
 ```
 
-This allows customization of session behavior based on application needs.
+Keys and values must not contain spaces, `|`, `:`, or `&`.
+
+## Cookie settings
+
+```yaml
+session:
+  cookie:
+    name: myapp-session
+    expires: false
+    token:
+      expires: 3600
+    secure: true
+    samesitemode: Strict
+    secret: vault{}
+    key: vault{}
+```
+
+- `session.cookie.expires`: `false` (default) keeps a browser-session cookie. `true` sets an expiry from `session.cookie.token.expires`.
+- `session.cookie.token.expires`: JWT lifetime in **seconds** (default `3600`).
+- Signing (`key`) and encryption (`secret`) fall back to `application.secret` if unset. Use the [vault](secrets.md) in production.
+
+See [CSRF](csrf.md) for how the session holds the CSRF token.

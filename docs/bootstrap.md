@@ -1,10 +1,6 @@
 # Bootstrap
 
-In some cases, it is useful to hook into the startup process of a Mangoo I/O application, such as initializing a database connection. For these cases, Mangoo I/O provides the `MangooBootstrap` interface, which can be implemented in a class within the `/conf` package of your application.
-
-## Implementing the Bootstrap Class
-
-The `Bootstrap` class allows you to execute code at different stages of the application lifecycle. Below is a basic implementation:
+Hook into startup and shutdown by implementing `MangooBootstrap` in the `app` package (the archetype class is `app.Bootstrap`).
 
 ```java
 package app;
@@ -15,31 +11,27 @@ public class Bootstrap implements MangooBootstrap {
 
     @Override
     public void initializeRoutes() {
-        // Executed when routes are initialized
+        // Bind.controller(...).withRoutes(...)
     }
-    
+
     @Override
     public void applicationInitialized() {
-        // Executed after the application has been initialized
+        // After config load and Guice injector creation
     }
 
     @Override
     public void applicationStarted() {
-        // Executed after the application has fully started
+        // HTTP/HTTPS listeners are up
     }
 
     @Override
     public void applicationStopped() {
-        // Executed when the application is shutting down
+        // JVM shutdown
     }
 }
 ```
 
-The class name does not need to be `Bootstrap`, but it must implement the `MangooBootstrap` interface. Additionally, you must bind the implementation using Google Guice in the `Module` class.
-
-## Configuring the Module Class
-
-The `Module` class is also located in the `/conf` package and is responsible for defining dependency bindings using Google Guice. You can bind the `MangooBootstrap` implementation as shown below:
+The class name is arbitrary; it must implement `MangooBootstrap` and be bound in `app.Module`:
 
 ```java
 package app;
@@ -55,4 +47,10 @@ public class Module extends AbstractModule {
 }
 ```
 
-The `Module` class can also be used to define additional [custom Google Guice bindings](https://github.com/google/guice/wiki/GettingStarted) as needed.
+Put extra Guice bindings in the same `configure()` method. See [Dependency injection](dependency-injection.md) and [Routing](routing.md).
+
+`initializeRoutes()` is also a good place for [global response headers](operating.md):
+
+```java
+Server.header(Header.CONTENT_SECURITY_POLICY, "default-src 'self'");
+```

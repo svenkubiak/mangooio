@@ -56,33 +56,40 @@ nav:
   - Home: index.md
   - Changelog: changelog.md
   - Migrations: migrations.md
-  - Getting Started: getting-started.md
-  - Configuration: configuration.md
-  - Routing: routing.md
-  - Bootstrap: bootstrap.md
-  - Controllers: controllers.md
-  - Dependency Injection: dependency-injection.md
-  - Templating: templating.md
-  - Working with JSON: working-with-json.md
-  - Persistence: persistence.md
-  - CORS: cors.md
-  - CSRF: csrf.md
-  - Authentication: authentication.md
-  - Server-Sent Events: sse.md
-  - Scheduler: scheduler.md
-  - Async: async.md
-  - Filters: filters.md
-  - Forms: forms.md
-  - Sessions: sessions.md
-  - Flash: flash.md
-  - Internationalization: internationalization.md
-  - Caching: caching.md
-  - Emails: emails.md
-  - Utils: utils.md
-  - Logging: logging.md
-  - Testing: testing.md
-  - Administration: administration.md
-  - Operating: operating.md
+  - Getting started:
+      - Getting started: getting-started.md
+      - Configuration: configuration.md
+      - Secrets: secrets.md
+      - Bootstrap: bootstrap.md
+      - Dependency injection: dependency-injection.md
+  - HTTP:
+      - Routing: routing.md
+      - Controllers: controllers.md
+      - Templating: templating.md
+      - Working with JSON: working-with-json.md
+      - Filters: filters.md
+      - Forms: forms.md
+      - Sessions: sessions.md
+      - Flash: flash.md
+  - Security:
+      - Authentication: authentication.md
+      - CSRF: csrf.md
+      - CORS: cors.md
+  - Data and services:
+      - Persistence: persistence.md
+      - Caching: caching.md
+      - Emails: emails.md
+      - Scheduler: scheduler.md
+      - Server-Sent Events: sse.md
+      - Async: async.md
+      - Internationalization: internationalization.md
+      - Utils: utils.md
+  - Operations:
+      - Logging: logging.md
+      - Testing: testing.md
+      - Administration: administration.md
+      - Observability: observability.md
+      - Operating: operating.md
   - Archived:
       - Changelog: changelog-archived.md
       - Migrations: migrations-archived.md

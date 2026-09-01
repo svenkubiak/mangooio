@@ -1,42 +1,29 @@
 # Logging
 
-mangoo I/O utilizes **Log4j2** for logging. If you are familiar with Log4j2, creating a new logger instance is straightforward:
+mangoo I/O uses Log4j2.
 
 ```java
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-...
-
-private static final Logger LOG = LogManager.getLogger(MyClass.class);
+public class AccountService {
+    private static final Logger LOG = LogManager.getLogger(AccountService.class);
+}
 ```
 
-## Log4j2 Configuration
+## Configuration files
 
-The integration follows the [automatic configuration](https://logging.apache.org/log4j/2.x/manual/configuration.html) mechanism of Log4j2, which looks for specific configuration files during startup.
+Log4j2 [automatic configuration](https://logging.apache.org/log4j/2.x/manual/configuration.html) applies:
 
-### Environment-Specific Configuration
+- `log4j2-test.*` for tests (and anything that puts that file first on the classpath)
+- `log4j2.*` for production
 
-To configure Log4j2 for different environments, use the following naming conventions:
-
-- **Development and Testing:**
-  ```
-  log4j2-test.*
-  ```
-- **Production:**
-  ```
-  log4j2.*
-  ```
-
-### Filtering Test Configurations in Production
-
-It is crucial to filter out test configurations during the JAR build process to prevent them from becoming active in a production environment. This can be achieved using the **maven-jar-plugin** with the following configuration:
+Keep `log4j2-test.xml` out of the fat JAR. The archetype already excludes it via `maven-jar-plugin`:
 
 ```xml
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-jar-plugin</artifactId>
-    <version>3.1.0</version>
     <configuration>
         <excludes>
             <exclude>**/log4j2-test*</exclude>
@@ -45,4 +32,4 @@ It is crucial to filter out test configurations during the JAR build process to 
 </plugin>
 ```
 
-This ensures that any Log4j2 test configurations are not included in the final production JAR.
+On startup mangoo I/O checks that appenders referenced by loggers exist and are started. Warnings from that check are treated as configuration errors.
