@@ -1,3 +1,9 @@
+## Version 10.11.2
+
+Released at 01.09.2026
+
+* Added additional documentation updates (svenkubiak)
+
 ## Version 10.11.1
 
 Released at 01.09.2026
