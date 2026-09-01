@@ -1,6 +1,10 @@
 # Forms
 
-Pass `io.mangoo.routing.bindings.Form` into a controller method. `Form` extends `Validator`.
+HTML forms post `application/x-www-form-urlencoded` or `multipart/form-data` data. mangoo I/O parses that into a **`Form`** object you inject as a controller parameter. `Form` extends **`Validator`**, so the same method can read fields and run validation rules before you persist or redirect.
+
+On **GET**, you receive an empty `Form` (useful for rendering defaults). On **POST**, **PUT**, and **PATCH**, the body is parsed and available through typed getters. File uploads are exposed as `Optional<byte[]>` per field name—not as `java.io.File`.
+
+Pass `io.mangoo.routing.bindings.Form` into a controller method:
 
 ```java
 public Response save(Form form) {

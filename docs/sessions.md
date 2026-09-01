@@ -1,6 +1,8 @@
 # Sessions
 
-mangoo I/O stores session data in a client cookie (share-nothing). The cookie is a signed and encrypted JWT. Capacity is limited to about 4 KB.
+HTTP is stateless; **sessions** carry server-side state across requests without a database lookup on every hit. mangoo I/O stores session data in a **signed, encrypted JWT cookie** (share-nothing). That fits horizontal scaling: any node can verify and decode the cookie with the vault key.
+
+Capacity is limited to roughly **4 KB** per cookie—store identifiers and small flags, not large blobs. Configure cookie name, signing key, and SameSite in [Configuration](configuration.md). Session lifetime is controlled by token TTL and `session.cookie.expires`, not an arbitrary day count.
 
 Pass `Session` into the controller method:
 

@@ -1,6 +1,10 @@
 # Emails
 
-mangoo I/O sends mail through Jakarta Mail. `Mail.send()` dispatches on a virtual thread via `PostOffice`.
+Outbound mail uses **Jakarta Mail**. The fluent **`Mail`** builder composes messages; **`PostOffice`** sends them asynchronously on a virtual thread so your controller can return immediately after calling `send()`.
+
+Templates for HTML or plain text live under `src/main/resources/templates/` (same Freemarker engine as HTTP responses). SMTP settings and credentials come from `config.yaml`—passwords should use `vault{}`. For tests, `SmtpMock` in `mangooio-test` captures messages without a real server.
+
+Basic send:
 
 ```java
 Mail.newMail()

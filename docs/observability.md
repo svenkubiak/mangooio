@@ -1,5 +1,9 @@
 # Observability
 
+Production systems need visibility beyond log lines. mangoo I/O exposes **request metrics** (counts and latency) for the admin dashboard and optional **OpenTelemetry** export for traces. Both are off by default so local development stays lightweight; enable them explicitly when you deploy.
+
+Metrics answer "how much traffic and how slow?" inside the app. OTLP sends spans to a collector (Jaeger, Grafana Tempo, vendor backends) for distributed tracing. See [Operating](operating.md) for JVM and vault setup alongside these features.
+
 ## Metrics
 
 Set `metrics.enable` to `true` to count requests and record processing time. Values show up on the [admin dashboard](administration.md). Metrics are disabled by default.

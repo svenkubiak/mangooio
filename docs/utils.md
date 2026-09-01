@@ -1,6 +1,8 @@
 # Utils
 
-Public helpers live in `io.mangoo.utils`. `io.mangoo.utils.internal.MangooUtils` is internal and not part of the supported API.
+The framework exposes small, focused helper classes in **`io.mangoo.utils`**. Prefer these over duplicating crypto, JWT, or file logic in application code. Types under **`io.mangoo.utils.internal`** are not public API and may change without notice.
+
+Common tasks: **Argon2** password hashing (`CommonUtils`), **JWT** creation and parsing (`JwtUtils`), **TOTP** for admin MFA (`TotpUtils`), JSON helpers (`JsonUtils`), and file/stream utilities (`FileUtils`).
 
 ## CommonUtils
 

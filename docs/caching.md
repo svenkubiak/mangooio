@@ -1,6 +1,10 @@
 # Caching
 
-mangoo I/O ships a Caffeine cache. Inject `io.mangoo.cache.Cache` for the application cache:
+Repeated expensive lookups—database reads, external API calls, computed aggregates—benefit from an in-process cache. mangoo I/O wraps **Caffeine** and exposes a injectable **`Cache`** for the default application cache, plus named caches when you need separate eviction policies or key spaces.
+
+Entries expire **after write** (default 30 days). You can attach a **fallback** function so `get` loads missing keys automatically. Counter helpers support rate limiting or metrics-style increments without a separate store.
+
+Inject `io.mangoo.cache.Cache` for the application cache:
 
 ```java
 @Inject

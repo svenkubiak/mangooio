@@ -1,6 +1,8 @@
 # Internationalization
 
-Translations use a standard Java `ResourceBundle` under `src/main/resources/translations/` (`messages.properties`, `messages_en.properties`, `messages_de.properties`, …).
+User-visible strings belong in **resource bundles**, not hard-coded in templates or controllers. mangoo I/O loads `messages*.properties` from `src/main/resources/translations/` and resolves the active locale per request.
+
+Templates call `${i18n("key")}` (or with arguments). Controllers inject `Messages` for the same keys in Java. Locale selection follows a fixed order: explicit `lang` parameter, then cookie, then `Accept-Language`, then the configured default.
 
 ## Locale order
 

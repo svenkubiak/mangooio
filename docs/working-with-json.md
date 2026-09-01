@@ -1,8 +1,10 @@
 # Working with JSON
 
-mangoo I/O uses [Jackson](https://github.com/FasterXML/jackson) with the Blackbird module for serialization.
+REST and AJAX endpoints often return JSON instead of HTML. mangoo I/O uses [Jackson](https://github.com/FasterXML/jackson) with the Blackbird module for fast serialization. Controller methods can return a POJO directly, use `Response.ok().bodyJson(...)`, or bind the request body to a type with `@Body` on a parameter.
 
-By default, `null` properties are omitted. Use `@JsonInclude` to force a value out, and `@JsonIgnore` to hide a field:
+**PATCH** requests merge JSON into an existing object; invalid JSON or failed Bean Validation yields **422 Unprocessable Content** unless you enable passthrough mode in configuration. For error payloads shaped for clients, `bodyJsonError(...)` returns a consistent structure.
+
+By default, `null` properties are omitted from output. Use `@JsonInclude` to force a value out, and `@JsonIgnore` to hide a field:
 
 ```java
 import com.fasterxml.jackson.annotation.JsonIgnore;

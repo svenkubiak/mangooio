@@ -1,6 +1,10 @@
 # Operating
 
-The Maven shade plugin packages a fat JAR. Run it on Java 25:
+mangoo I/O applications ship as a **fat JAR** (Maven shade plugin). One process runs Undertow, your controllers, and the scheduler—there is no separate WAR deployment step. Production runs use **Java 25**, **prod** mode, and external MongoDB (embedded MongoDB is for dev/test only).
+
+Plan for secrets outside the JAR: the vault file (`vault.p12`), its password, and any `env{}` / `arg{}` overrides should come from the host or orchestrator. The same `config.yaml` structure applies; only the active environment section and secret sources change.
+
+Run the packaged application:
 
 ```shell
 java -Dapplication.mode=prod -jar myapp.jar

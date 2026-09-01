@@ -1,6 +1,15 @@
 # Authentication
 
-mangoo I/O does not store user accounts. It issues a signed and encrypted JWT cookie after you verify credentials yourself.
+mangoo I/O provides **cookie-based authentication**, not a full user-management system. You remain responsible for storing users, validating passwords, and deciding who may log in. After a successful check, you call `authentication.login(subject)` and the framework sets a signed, encrypted JWT cookie on the response.
+
+That design fits applications that already have a user table (or an external identity source) and want session-like behavior without server-side session storage for auth state. The cookie works in a share-nothing setup: any node can validate it with the configured keys.
+
+Optional pieces build on the same model:
+
+- **Remember me** — Longer cookie lifetime via `rememberMe()`.
+- **Two-factor** — Flag the cookie until TOTP is verified; use `TotpUtils` and `isValidSecondFactor`.
+- **Route protection** — `withAuthentication()` on routes or controllers.
+- **API keys** — `ApiKeyFilter` for machine clients using the `Authorization` header.
 
 Inject `Authentication` into a controller method:
 

@@ -1,6 +1,10 @@
 # Testing
 
-HTTP tests live in the `mangooio-test` artifact. Put it on the test classpath:
+Integration-style HTTP tests are supported through the **`mangooio-test`** artifact. It starts the real application stack in **test** mode (same routing, config merge, and handlers as production) and exposes helpers to send requests against the configured HTTP connector.
+
+That approach catches issues unit tests miss: wrong routes, filter ordering, cookie handling, and template rendering. The trade-off is speed—each test class boots the app once via `TestRunner`, so keep tests focused and reuse the running instance within a class.
+
+Add the dependency to your `pom.xml`:
 
 ```xml
 <dependency>

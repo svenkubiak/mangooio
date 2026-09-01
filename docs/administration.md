@@ -1,6 +1,10 @@
 # Administration
 
-The built-in dashboard shows cache stats, scheduled tasks, security helpers, and (optionally) request metrics. It is disabled by default.
+The **admin dashboard** is a built-in UI for operators: cache statistics, registered scheduler jobs, security-related helpers, and request metrics when enabled. It is **disabled by default** because it exposes internal state—turn it on only in environments where access is controlled.
+
+Access uses a **login form** and JWT cookie (not HTTP Basic). Optional **TOTP** second factor is configured with `application.admin.secret`. Protect admin routes in production with network policy as well as strong credentials stored in the [vault](secrets.md).
+
+Enable and configure:
 
 ```yaml
 application:

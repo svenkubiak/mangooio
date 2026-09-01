@@ -1,6 +1,10 @@
 # Persistence
 
-mangoo I/O integrates [MongoDB](https://www.mongodb.com/) through the [Java Sync Driver](https://www.mongodb.com/docs/drivers/java/sync/current/quick-start/). POJOs are mapped with the driver codec (not Morphia).
+mangoo I/O includes a thin integration layer over the [MongoDB Java Sync Driver](https://www.mongodb.com/docs/drivers/java/sync/current/quick-start/). You work with POJOs and BSON queries directly—there is no ORM query language and no Morphia (removed in 8.0).
+
+At startup the framework scans for classes annotated with `@Collection`, registers collection names, and optionally creates indexes from `@Indexed` fields. Inject `Datastore` (or `DatastoreProvider` for multiple databases) and use familiar driver patterns: `save`, `find`, `findAll`, and `query()` for fluent access.
+
+For local development the archetype can start **embedded MongoDB 7.0** when `persistence.mongo.embedded` is `true`. Turn that off in production and point `host` / `port` at your cluster. Passwords belong in the [vault](secrets.md) or environment, not in source control.
 
 ## Configuration
 

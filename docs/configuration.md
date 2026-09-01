@@ -1,6 +1,12 @@
 # Configuration
 
-mangoo I/O loads a single YAML file, `src/main/resources/config.yaml`, using [SnakeYAML](https://bitbucket.org/snakeyaml/snakeyaml/src/master/). Values are addressed with dot notation that matches the YAML hierarchy.
+Almost all runtime behavior is controlled through one YAML file: `src/main/resources/config.yaml`. mangoo I/O loads it with [SnakeYAML](https://bitbucket.org/snakeyaml/snakeyaml/src/master/), flattens nested keys into dot notation, and exposes them through the `Config` class and Guice `@Named` bindings.
+
+Typical uses include connector host and port, cookie names, MongoDB connection details, SMTP settings, feature toggles (admin UI, metrics, scheduler), and security options (CORS, authentication redirects). Sensitive values should reference the [vault](secrets.md), environment variables, or JVM properties rather than plain text in the repository.
+
+The file is split into a **`default`** block (shared by all modes) and an **`environments`** block with overrides for `dev`, `test`, and `prod`. When the application starts, it merges `default` with the section for the active mode. Missing an environment section for the current mode causes startup to fail, which catches incomplete deployment configs early.
+
+Values are addressed with dot notation that matches the YAML hierarchy:
 
 ```yaml
 application:

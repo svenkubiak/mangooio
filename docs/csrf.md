@@ -1,6 +1,8 @@
 # Cross-Site Request Forgery (CSRF)
 
-mangoo I/O stores a CSRF token in the [session](sessions.md) cookie and checks it on protected endpoints.
+CSRF attacks trick a logged-in browser into submitting a request the user did not intend—for example, a hidden form on another site that posts to your `/transfer` endpoint. mangoo I/O mitigates this by requiring a **secret token** that only your pages know, stored in the [session](sessions.md) and submitted with state-changing requests.
+
+Protection is layered: **`OriginFilter`** can reject requests whose `Origin` header is not on your allow list; **`CsrfFilter`** validates the `x-csrf-token` field (or header) against the session value. HTML forms should use the Freemarker `<@csrfform/>` or `<@csrftoken/>` directives from [Templating](templating.md).
 
 ## Origin check
 

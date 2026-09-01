@@ -1,10 +1,14 @@
 # Filters
 
-Filters run before the controller method. Apply them with `@FilterWith`:
+Filters intercept requests **after** routing matches but **before** the controller method runs. Use them for cross-cutting checks: authentication gates, API keys, CSRF validation, CORS preflight handling, or shared request logging.
+
+Attach a filter with `@FilterWith` on a controller class or individual method:
 
 ```java
 @FilterWith(MyFilter.class)
 ```
+
+For logic that must run on **every** controller request, implement `OncePerRequestFilter` and register it in `Bootstrap.initializeRoutes()` alongside your route bindings.
 
 There are two kinds:
 

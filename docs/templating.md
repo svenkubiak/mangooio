@@ -1,6 +1,10 @@
 # Templating
 
-mangoo I/O renders HTML with [Freemarker](https://freemarker.apache.org/). Templates live under `src/main/resources/templates/` and use the `.ftl` suffix. See [Controllers](controllers.md) for the naming convention.
+Server-rendered HTML uses [Freemarker](https://freemarker.apache.org/). Templates are plain `.ftl` files under `src/main/resources/templates/`. When a controller returns `Response.ok().render()`, the framework resolves `templates/<ControllerSimpleName>/<methodName>.ftl` unless you override the path with `template(...)`.
+
+Beyond simple `${variable}` substitution, mangoo I/O registers **built-in objects and methods** on every render: the current `form`, `session`, and `flash`; an `i18n(...)` helper; reverse routing via `route(...)`; and CSRF directives. That reduces boilerplate in layouts and partials.
+
+See [Controllers](controllers.md) for how to pass model data with `.render("key", value)`. For forms and CSRF, combine templating with [Forms](forms.md) and [CSRF](csrf.md).
 
 ## Built-in variables
 

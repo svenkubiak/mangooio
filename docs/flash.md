@@ -1,6 +1,10 @@
 # Flash
 
-Flash values survive **one** subsequent request, then the cookie is discarded. Use them for success or error messages after a redirect.
+The **post/redirect/get** pattern avoids duplicate form submissions: after a POST you redirect to a GET page. Flash messages carry one-time feedback across that redirect—"Saved successfully" or validation errors—without putting text in the URL.
+
+Flash data lives in its own JWT cookie, separate from the session. Values survive **exactly one** subsequent request, then the cookie is cleared. In Freemarker templates the built-in `flash` object exposes `success`, `warning`, and `error` slots plus arbitrary keys via `put()`.
+
+Typical flow: set flash in the POST handler, `Response.redirect(...)`, then read flash in the GET template or controller.
 
 ```java
 package controllers;

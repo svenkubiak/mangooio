@@ -1,6 +1,14 @@
 # Bootstrap
 
-Hook into startup and shutdown by implementing `MangooBootstrap` in the `app` package (the archetype class is `app.Bootstrap`).
+The bootstrap class is the main extension point for application wiring. It implements `MangooBootstrap` and is bound in `app.Module`. Most projects use a class named `Bootstrap` in the `app` package, as the archetype does.
+
+You use it for three kinds of work:
+
+1. **Routes** — `initializeRoutes()` registers every URL before the server accepts traffic.
+2. **Startup and shutdown** — Optional hooks run after configuration is loaded, after connectors are listening, and when the JVM shuts down.
+3. **Cross-cutting setup** — For example global security headers via `Server.header(...)` at the start of `initializeRoutes()`.
+
+Because `Bootstrap` is a normal Guice-managed type, you can inject services (such as `Datastore`) and use them in `applicationStarted()` to seed data or warm caches.
 
 ```java
 package app;

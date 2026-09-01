@@ -1,6 +1,16 @@
 # Secrets
 
-Cookie keys, the admin password, SMTP credentials, and similar values should not live in source control as clear text. mangoo I/O can resolve them from the application vault, environment variables, or JVM arguments.
+Production applications need secrets that must not be committed to git: cookie signing keys, database passwords, SMTP credentials, and the vault password itself. mangoo I/O supports three resolution strategies in `config.yaml`:
+
+| Placeholder | Source |
+|---|---|
+| `vault{}` | PKCS12 keystore (`vault.p12`) created and managed by the framework |
+| `env{}` | Operating-system environment variable |
+| `arg{}` | JVM system property (`-D...`) |
+
+The vault is the recommended approach for cookie keys and other values the framework reads on every request. Environment variables and JVM arguments suit deployment-specific overrides (for example a MongoDB password injected by your platform).
+
+Older versions used `cryptex{}` encryption in YAML; that was removed in 10.0 in favor of the vault. See [Migrations](migrations.md) if you upgrade from 9.x.
 
 ## Vault
 

@@ -1,6 +1,8 @@
 # Scheduler
 
-Annotate any public method with `@Run`. Classgraph finds those methods at startup when `scheduler.enable` is `true` (the default).
+Background jobs run inside the same JVM as your web app—no separate Quartz XML or cron daemon required. Annotate any **public** method with **`@Run`** and a schedule expression; **Classgraph** discovers those methods at startup when `scheduler.enable` is `true` (the default).
+
+Use fixed-rate expressions such as `Every 3m` or `Every 1d` for recurring work: cleanup tasks, cache warming, report generation. Jobs share Guice injection with the rest of the application, so you can inject services and `Datastore` like in a controller.
 
 ## Fixed rate
 

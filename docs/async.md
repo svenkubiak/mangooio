@@ -1,6 +1,8 @@
 # Async
 
-The `EventBus` delivers payloads to `Subscriber` implementations on virtual threads.
+Long-running or fire-and-forget work should not block the HTTP thread. The **`EventBus`** publishes payloads to **`Subscriber`** implementations; delivery runs on **virtual threads** so you can write straightforward blocking code without starving Undertow workers.
+
+Subscribers are discovered at startup (classpath scan). Each subscriber type is tied to a **queue name equal to the payload class canonical name**. There is no `unregister`—register additional subscribers by class if you need multiple handlers for the same payload type.
 
 ## Subscribers
 

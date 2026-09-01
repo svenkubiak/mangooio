@@ -1,6 +1,10 @@
 # Controllers
 
-Controller methods return an `io.mangoo.routing.Response`. There is no base class.
+Controllers are the entry point for application logic. Each public method that handles HTTP traffic returns an `io.mangoo.routing.Response` and lives in the package configured by `application.controller` (default `controllers.`). There is no framework base class: your classes are plain Java types that Guice instantiates and injects.
+
+A controller method can declare only what it needs in its parameter list—path variables, query strings, JSON bodies, the raw `Request`, session data, forms, authentication state, or translation helpers. That keeps signatures readable and makes unit testing straightforward.
+
+Since version 9, returning `Response.ok()` alone does **not** render a template. You must call `.render()` or set an explicit body. This makes it obvious when a response is empty, JSON, or HTML.
 
 ```java
 package controllers;

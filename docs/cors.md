@@ -1,6 +1,8 @@
 # Cross-Origin Resource Sharing (CORS)
 
-Enable CORS in `config.yaml`. Headers are added only when the request URL matches `cors.urlpattern`.
+Browsers block JavaScript on one origin from reading responses from another unless the server opts in with CORS headers. Enable CORS when your **API** is consumed by a SPA or mobile web app hosted on a different domain than the mangoo I/O backend.
+
+mangoo I/O adds headers only when the request URL matches **`cors.urlpattern`** and the origin matches **`cors.alloworigin`** (both regular expressions). That keeps accidental wide-open CORS off by default—you must configure patterns explicitly.
 
 ```yaml
 cors:

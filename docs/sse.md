@@ -1,6 +1,8 @@
 # Server-Sent Events
 
-SSE is one-way: the server pushes text (often JSON) to the browser.
+**Server-Sent Events (SSE)** let the server push updates to the browser over a long-lived HTTP connection. Unlike WebSockets, traffic is **one-way** (server → client) and uses ordinary HTTP, which plays well with proxies and load balancers that struggle with upgrade headers.
+
+mangoo I/O maps SSE endpoints in routing and sends events from controller code. Authenticated streams require a valid auth cookie on the initial connection. For bidirectional or binary protocols, see the WebSocket note in [Routing](routing.md).
 
 ## Routing
 

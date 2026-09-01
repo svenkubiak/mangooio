@@ -1,6 +1,13 @@
 # Routing
 
-Map request URLs to controller methods in `app.Bootstrap`, in `initializeRoutes()`.
+Routing connects incoming URLs to controller methods. In mangoo I/O every route is declared in code—typically in `app.Bootstrap.initializeRoutes()`—so the URL map always matches what is compiled. There is no separate routes file to maintain.
+
+You use two builders:
+
+- **`On`** — HTTP verb and path for a controller method (`On.get().to("/users").respondeWith("list")`).
+- **`Bind`** — Groups routes for a controller, or registers static files, SSE endpoints, and WebSockets.
+
+Once a route matches, the framework invokes the corresponding method on a Guice-managed controller instance. Path segments in `{braces}` become method parameters; see [Controllers](controllers.md).
 
 ```java
 import controllers.ApplicationController;

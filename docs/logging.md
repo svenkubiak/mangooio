@@ -1,6 +1,8 @@
 # Logging
 
-mangoo I/O uses Log4j2.
+Application code uses **Log4j2** through the standard API. The framework and Undertow log through the same pipeline, so one `log4j2.xml` (or YAML) controls verbosity for your controllers and the HTTP stack.
+
+Use a **static logger per class**—cheap to create and easy to filter in configuration. Avoid logging secrets, full session cookies, or raw passwords even at debug level.
 
 ```java
 import org.apache.logging.log4j.LogManager;
