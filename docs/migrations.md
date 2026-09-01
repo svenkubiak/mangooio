@@ -1,3 +1,31 @@
+## From 10.10.0 to 10.11.1
+
+This is a drop-in replacement.
+
+## From 10.9.0 to 10.10.0
+
+This is a drop-in replacement.
+
+## From 10.8.0 to 10.9.0
+
+This is a drop-in replacement.
+
+## From 10.7.0 to 10.8.0
+
+This is a drop-in replacement.
+
+## From 10.6.0 to 10.7.0
+
+This is a drop-in replacement.
+
+## From 10.5.0 to 10.6.0
+
+This is a drop-in replacement.
+
+## From 10.4.0 to 10.5.0
+
+This is a drop-in replacement.
+
 ## From 10.3.0 to 10.4.0
 
 This is a drop-in replacement.
