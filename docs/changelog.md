@@ -1,6 +1,6 @@
-## Version 10.11.0
+## Version 10.11.1
 
-Unreleased
+Released at 01.09.2026
 
 * Added additional query options for MongoDB (svenkubiak)
 * Added method for generating UUIDv7 in CommonUtils (svenkubiak)
