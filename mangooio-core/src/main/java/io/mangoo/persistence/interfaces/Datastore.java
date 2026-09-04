@@ -1,5 +1,6 @@
 package io.mangoo.persistence.interfaces;
 
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
@@ -212,4 +213,9 @@ public interface Datastore {
      * @return The original MongoDatabase handle
      */
     MongoDatabase getMongoDatabase();
+
+    /**
+     * @return The underlying MongoClient
+     */
+    MongoClient getMongoClient();
 }

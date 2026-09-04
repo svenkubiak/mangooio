@@ -107,7 +107,12 @@ public class DatastoreImpl implements Datastore {
             return false;
         }
     }
-    
+
+    @Override
+    public MongoClient getMongoClient() {
+        return mongoClient;
+    }
+
     private String getConnectionString() {
         var buffer = new StringBuilder();
         buffer.append("mongodb://");
@@ -135,7 +140,6 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
-    @SuppressWarnings({"unchecked" })
     public <T> T find(Class<T> clazz, Bson query) {
         Objects.requireNonNull(clazz, Required.CLASS);
         Objects.requireNonNull(query, Required.KEY);
@@ -146,7 +150,6 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
-    @SuppressWarnings({"unchecked" })
     public <T> T findFirst(Class<T> clazz, Bson sort) {
         Objects.requireNonNull(clazz, Required.CLASS);
         Objects.requireNonNull(sort, Required.SORT);

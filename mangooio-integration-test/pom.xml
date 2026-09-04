@@ -179,6 +179,7 @@
 				<configuration>
 					<argLine>-XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
 					<parallel>all</parallel>
+					<threadCount>8</threadCount>
 				</configuration>
 			</plugin>
 		</plugins>
