@@ -1,3 +1,10 @@
+## Version 10.11.3
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * fory-core 1.7.0 -&gt; 1.7.1
+
 ## Version 10.11.2
 
 Released at 01.09.2026
