@@ -31,7 +31,7 @@ public class MinifyMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        String baseDir = project.getBaseDirectory().toFile().getAbsolutePath();
+        String baseDir = project.getBasedir().getAbsolutePath();
         Minification.setBasePath(baseDir);
         minifyFiles(baseDir);
     }

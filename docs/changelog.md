@@ -1,4 +1,10 @@
-## Version 10.11.2
+## Version 10.11.4
+
+Unreleased
+
+* Fixed an issue that prevented mvn mangooio:run from starting (svenkubiak)
+
+## Version 10.11.4
 
 Released at 06.09.2026
 
