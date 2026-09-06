@@ -225,6 +225,9 @@ public class Vault {
 
     public String get(String key) {
         Objects.requireNonNull(key, Required.KEY);
+        if (keyStore == null) {
+            return null;
+        }
         String prefixed = prefix + key;
 
         try {

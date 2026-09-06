@@ -1,9 +1,9 @@
 ## Version 10.11.3
 
-Unreleased
+Released at 06.09.2026
 
 * Update @admin dashboad to bulma 1.0.4 (svenkubiak)
-* Fixed an issue in vault creation (svenkubiak)
+* Fixed an issue in vault creation and value parsing (svenkubiak)
 * Added additional method to datastore to retrieve the MongoClient (svenkubiak)
 * Version bumps (svenkubiak)
   * fory-core 1.7.0 -&gt; 1.7.1
