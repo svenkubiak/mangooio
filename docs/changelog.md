@@ -2,6 +2,8 @@
 
 Unreleased
 
+* Update @admin dashboad to bulma 1.0.4 (svenkubiak)
+* Fixed an issue in vault creation (svenkubiak)
 * Added additional method to datastore to retrieve the MongoClient (svenkubiak)
 * Version bumps (svenkubiak)
   * fory-core 1.7.0 -&gt; 1.7.1

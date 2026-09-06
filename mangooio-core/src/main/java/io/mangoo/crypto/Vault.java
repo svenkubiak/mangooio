@@ -206,7 +206,7 @@ public class Vault {
 
     private void createSecrets() {
         for (String key : KEYS) {
-            if (!exists(key)) {
+            if (!exists(prefix + key)) {
                 put(key, CommonUtils.randomString(64));
             }
         }

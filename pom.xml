@@ -288,7 +288,7 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>2.0.18</version>
+				<version>2.0.19</version>
 			</dependency>
 			<dependency>
 				<groupId>org.ocpsoft.prettytime</groupId>
@@ -373,7 +373,7 @@
 			<dependency>
 				<groupId>com.squareup.okio</groupId>
 				<artifactId>okio</artifactId>
-				<version>3.18.1</version>
+				<version>3.18.2</version>
 			</dependency>
 			<dependency>
 				<groupId>com.launchdarkly</groupId>
