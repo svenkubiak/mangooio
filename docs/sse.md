@@ -2,7 +2,7 @@
 
 **Server-Sent Events (SSE)** let the server push updates to the browser over a long-lived HTTP connection. Unlike WebSockets, traffic is **one-way** (server → client) and uses ordinary HTTP, which plays well with proxies and load balancers that struggle with upgrade headers.
 
-mangoo I/O maps SSE endpoints in routing and sends events from controller code. Authenticated streams require a valid auth cookie on the initial connection. For bidirectional or binary protocols, see the WebSocket note in [Routing](routing.md).
+mangoo I/O maps SSE endpoints in routing and sends events from your own controller or service code. Authenticated streams require a valid auth cookie on the initial connection, same as any other authenticated route. For bidirectional or binary protocols, reach for WebSockets instead, see the note in [Routing](routing.md).
 
 ## Routing
 
@@ -33,6 +33,6 @@ public class NotifyService {
 }
 ```
 
-The first argument is the route URL. The payload is a string. Delivery runs on a virtual thread.
+The first argument is the route URL the event goes to, and the payload is a plain string. Delivery runs on a virtual thread, so `sendData()` returns immediately without blocking on connected clients.
 
 Client setup: [MDN Server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).

@@ -88,17 +88,17 @@ mangoo I/O 9.0.0 is a major release and contains code that will break API compat
 
 **Removed Basic HTTP authentication**
 
-The basic HTTP authentication that came with mangoo I/O has been removed. This should be done in a HTTP Proxy in front of your application.
+The basic HTTP authentication that came with mangoo I/O has been removed. This should be done in an HTTP proxy in front of your application instead.
 
 **Refactored Response class**
 
-The Response class and the handling of a response in a controller has been changed. Previously when a Response was returned in a controller, mangoo I/O automatically looked up the corresponding .ftl template and rendered it. Now when returning a Response.ok() it returns an empty response. Rendering only takes place when calling Response.ok().render() or when passing a variable to the template via Response.ok().render ("foo", "bar").
+The Response class and the handling of a response in a controller has been changed. Previously, when a Response was returned in a controller, mangoo I/O automatically looked up the corresponding .ftl template and rendered it. Now, returning `Response.ok()` returns an empty response. Rendering only takes place when calling `Response.ok().render()` or when passing a variable to the template via `Response.ok().render("foo", "bar")`.
 
 **Removed @admin/health endpoint**
 
 The @admin/health endpoint is not available anymore.
 
-**Switched from props based configuration yaml based configuration**
+**Switched from props based configuration to yaml based configuration**
 
 Please check the [updated documentation](configuration.md) for further details.
 

@@ -1,8 +1,8 @@
 # Emails
 
-Outbound mail uses **Jakarta Mail**. The fluent **`Mail`** builder composes messages; **`PostOffice`** sends them asynchronously on a virtual thread so your controller can return immediately after calling `send()`.
+Outbound mail uses **Jakarta Mail** under the hood. The fluent **`Mail`** builder composes messages, and **`PostOffice`** sends them asynchronously on a virtual thread, so your controller can return immediately after calling `send()` instead of waiting on the SMTP round trip.
 
-Templates for HTML or plain text live under `src/main/resources/templates/` (same Freemarker engine as HTTP responses). SMTP settings and credentials come from `config.yaml`—passwords should use `vault{}`. For tests, `SmtpMock` in `mangooio-test` captures messages without a real server.
+Templates for HTML or plain text live under `src/main/resources/templates/` and go through the same Freemarker engine as regular HTTP responses. SMTP settings and credentials come from `config.yaml`, and passwords should use `vault{}` rather than sit in the file as plain text. For tests, `SmtpMock` in `mangooio-test` captures messages without needing a real mail server running.
 
 Basic send:
 
@@ -26,11 +26,11 @@ Mail.newMail()
     .send();
 ```
 
-The one-argument `from(String)` sets the address only. It does not parse `Name <email>`.
+The one-argument `from(String)` sets the address only; it does not parse a `Name <email>` string for you.
 
 ## Templates
 
-Render Freemarker by passing a template path and a content map. Template messages are sent as HTML when you call `htmlMessage`:
+Render Freemarker by passing a template path and a content map instead of a literal string. Template messages are sent as HTML when you call `htmlMessage`:
 
 ```java
 Mail.newMail()
@@ -41,7 +41,7 @@ Mail.newMail()
     .send();
 ```
 
-`textMessage(template, content)` renders the same way as plain text. Session, Flash, and the other web template variables are **not** present. Pass everything you need in the map.
+`textMessage(template, content)` renders the same way, just as plain text. Session, Flash, and the other web template variables are **not** present in this context, since there is no request to draw them from, so pass everything the template needs in the map yourself.
 
 ## Other helpers
 
@@ -59,6 +59,6 @@ Mail.newMail()
     .send();
 ```
 
-Priority is 1 (highest) to 5 (lowest). Encoding is UTF-8.
+Priority ranges from 1 (highest) to 5 (lowest), and encoding is always UTF-8.
 
-SMTP settings live under `smtp.*` in [Configuration](configuration.md). For tests, use `io.mangoo.test.email.SmtpMock` from `mangooio-test`.
+SMTP settings live under `smtp.*` in [Configuration](configuration.md). For tests, reach for `io.mangoo.test.email.SmtpMock` from `mangooio-test` instead of a real SMTP server.

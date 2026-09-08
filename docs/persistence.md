@@ -1,10 +1,10 @@
 # Persistence
 
-mangoo I/O includes a thin integration layer over the [MongoDB Java Sync Driver](https://www.mongodb.com/docs/drivers/java/sync/current/quick-start/). You work with POJOs and BSON queries directly—there is no ORM query language and no Morphia (removed in 8.0).
+mangoo I/O includes a thin integration layer over the [MongoDB Java Sync Driver](https://www.mongodb.com/docs/drivers/java/sync/current/quick-start/). You work with POJOs and BSON queries directly, there is no ORM query language on top and no Morphia (it was removed in 8.0).
 
-At startup the framework scans for classes annotated with `@Collection`, registers collection names, and optionally creates indexes from `@Indexed` fields. Inject `Datastore` (or `DatastoreProvider` for multiple databases) and use familiar driver patterns: `save`, `find`, `findAll`, and `query()` for fluent access.
+At startup, the framework scans for classes annotated with `@Collection`, registers their collection names, and optionally creates indexes from `@Indexed` fields. Inject `Datastore` (or `DatastoreProvider` when you need multiple databases) and use familiar driver patterns: `save`, `find`, `findAll`, and `query()` for fluent, driver-level access.
 
-For local development the archetype can start **embedded MongoDB 7.0** when `persistence.mongo.embedded` is `true`. Turn that off in production and point `host` / `port` at your cluster. Passwords belong in the [vault](secrets.md) or environment, not in source control.
+For local development, the archetype can start **embedded MongoDB 7.0** when `persistence.mongo.embedded` is `true`, so you get a working database with zero setup. Turn that off in production and point `host` / `port` at your actual cluster instead. Passwords belong in the [vault](secrets.md) or the environment, never in source control.
 
 ## Configuration
 
@@ -22,12 +22,12 @@ default:
       embedded: false
 ```
 
-Set `persistence.enable` to `false` to skip MongoDB entirely.
+Set `persistence.enable` to `false` if you want to skip MongoDB entirely.
 
 !!! note
-    `persistence.mongo.embedded: true` starts MongoDB 7.0 in-process. Use it only for local development and tests.
+    `persistence.mongo.embedded: true` starts MongoDB 7.0 in-process. Use it only for local development and tests, never in production.
 
-There is no `package` setting. Annotate entity classes; Classgraph finds them.
+There is no `package` setting to configure. Just annotate your entity classes and Classgraph finds them on its own.
 
 ## Entities
 
@@ -47,9 +47,9 @@ public class Person extends Entity {
 }
 ```
 
-`Entity` stores `_id` as a BSON `ObjectId`. Extending it is optional if you implement `BaseEntity` yourself.
+`Entity` stores `_id` as a BSON `ObjectId`. Extending it is optional as long as you implement `BaseEntity` yourself instead.
 
-`@Indexed` is applied at startup (`sort`, `unique`, `caseSensitive`).
+`@Indexed` is applied at startup, and it understands the `sort`, `unique`, and `caseSensitive` attributes.
 
 ## Datastore
 
@@ -84,7 +84,7 @@ Person first = datastore.findFirst(Person.class, Sorts.descending("created"));
 List<Person> page = datastore.findAll(Person.class, Filters.eq("active", true), Sorts.ascending("lastname"), 50);
 ```
 
-For the full driver API, use `query()`:
+When you need the full driver API rather than the convenience helpers, drop down to `query()`:
 
 ```java
 List<Booking> bookings = new ArrayList<>();
@@ -96,7 +96,7 @@ datastore
     .into(bookings);
 ```
 
-Index helpers: `addIndex`, `dropIndex`, `dropAllIndexes`. `saveAll` inserts a list. `getMongoDatabase()` returns the native handle.
+Index helpers cover `addIndex`, `dropIndex`, and `dropAllIndexes`. `saveAll` inserts an entire list at once, and `getMongoDatabase()` hands you the native driver handle for anything not covered above.
 
 ## Multiple connections
 
@@ -107,7 +107,7 @@ public PersonService(DatastoreProvider datastoreProvider) {
 }
 ```
 
-The prefix maps to `persistence.<prefix>.mongo.*`:
+The prefix you pass to `getDatastore` maps directly to `persistence.<prefix>.mongo.*`:
 
 ```yaml
 persistence:

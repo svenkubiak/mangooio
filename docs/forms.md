@@ -1,8 +1,8 @@
 # Forms
 
-HTML forms post `application/x-www-form-urlencoded` or `multipart/form-data` data. mangoo I/O parses that into a **`Form`** object you inject as a controller parameter. `Form` extends **`Validator`**, so the same method can read fields and run validation rules before you persist or redirect.
+HTML forms post `application/x-www-form-urlencoded` or `multipart/form-data` data. mangoo I/O parses that into a **`Form`** object you inject directly as a controller parameter. `Form` extends **`Validator`**, so the same method can read fields and run validation rules before you persist or redirect, no separate validator object to wire up.
 
-On **GET**, you receive an empty `Form` (useful for rendering defaults). On **POST**, **PUT**, and **PATCH**, the body is parsed and available through typed getters. File uploads are exposed as `Optional<byte[]>` per field name—not as `java.io.File`.
+On **GET**, you receive an empty `Form`, which is handy for rendering default values on the initial page load. On **POST**, **PUT**, and **PATCH**, the body is parsed and available through typed getters. File uploads are exposed as `Optional<byte[]>` per field name, not as `java.io.File`, so there is no temp file to clean up afterward.
 
 Pass `io.mangoo.routing.bindings.Form` into a controller method:
 
@@ -29,17 +29,17 @@ form.getFile("resume");               // Optional<byte[]>
 !!! note
     Form fields are parsed for `POST`, `PUT`, and `PATCH`. On `GET` you still receive a `Form` instance, but it has no submitted values.
 
-The form is also available in templates without passing it explicitly.
+The form is also available in templates without passing it explicitly from the controller.
 
-Keep values across a redirect (typically after a validation error):
+Keep values across a redirect, typically right after a validation error so the user does not have to retype everything:
 
 ```java
 form.keep();
 ```
 
-Call `form.discard()` to drop kept values.
+Call `form.discard()` to drop kept values once they are no longer needed.
 
-Default upload limits (not configurable in `config.yaml`): 10 files, 5 MB per file, 1000 parameters, 10 000 characters per value. The HTTP body as a whole is limited by `undertow.maxentitysize` (4 MB by default).
+Default upload limits, which are not configurable in `config.yaml`: 10 files, 5 MB per file, 1000 parameters, 10 000 characters per value. The HTTP body as a whole is separately limited by `undertow.maxentitysize` (4 MB by default).
 
 ## Validation
 
@@ -67,7 +67,7 @@ public Response save(Form form) {
 }
 ```
 
-`isValid()` is the inverse of `hasErrors()`.
+`isValid()` is simply the inverse of `hasErrors()`, use whichever reads better at the call site.
 
 Field checks include:
 
@@ -77,7 +77,7 @@ Field checks include:
 - `expectEmail`, `expectUrl`, `expectIpv4`, `expectIpv6`, `expectDomainName`, `expectRegex`
 - `expectFile`, `expectFileMaxSize`, `expectFileMimeType`
 
-Bind a check to a field for values that are not form input:
+Use these to bind a check to a field name even when the value being checked did not actually come from form input, for example a lookup result you still want reported as a field-level error:
 
 ```java
 form.expectTrue("username", usernameAvailable);
@@ -86,7 +86,7 @@ form.expectNull("token", existing);
 form.expectNotNull("user", user);
 ```
 
-Every `expect*` method has an overload that takes a custom message.
+Every `expect*` method also has an overload that takes a custom message, for when the default validation text does not fit.
 
 ## Errors in templates
 
@@ -98,7 +98,7 @@ Every `expect*` method has an overload that takes a custom message.
 
 ## Message keys
 
-Override defaults in `src/main/resources/translations/messages.properties`:
+Override the default messages in `src/main/resources/translations/messages.properties`:
 
 ```properties
 validation.required={0} is a required value
@@ -123,4 +123,4 @@ validation.filesize={0} exceeds allowed filesize
 validation.file={0} must be a valid file
 ```
 
-Protect state-changing forms with [CSRF](csrf.md). Use [Flash](flash.md) for one-time messages after redirect.
+Protect any state-changing form with [CSRF](csrf.md), and use [Flash](flash.md) for one-time messages after the redirect.

@@ -1,8 +1,8 @@
 # Caching
 
-Repeated expensive lookups—database reads, external API calls, computed aggregates—benefit from an in-process cache. mangoo I/O wraps **Caffeine** and exposes a injectable **`Cache`** for the default application cache, plus named caches when you need separate eviction policies or key spaces.
+Repeated expensive lookups, such as database reads, external API calls, or computed aggregates, benefit from an in-process cache. mangoo I/O wraps **Caffeine** and exposes an injectable **`Cache`** for the default application cache, plus named caches for when you need separate eviction policies or key spaces.
 
-Entries expire **after write** (default 30 days). You can attach a **fallback** function so `get` loads missing keys automatically. Counter helpers support rate limiting or metrics-style increments without a separate store.
+Entries expire **after write** (30 days by default). You can attach a **fallback** function so a `get` on a missing key loads and stores it automatically instead of returning null. Counter helpers cover rate limiting or metrics-style increments without needing a separate store.
 
 Inject `io.mangoo.cache.Cache` for the application cache:
 
@@ -18,7 +18,7 @@ cache.remove("foo");
 cache.clear();
 ```
 
-Entries in the application cache expire **30 days after write** (not last access) and the cache holds at most 50 000 keys.
+Entries in the application cache expire **30 days after write** (not after last access), and the cache holds at most 50 000 keys.
 
 ## TTL and fallback
 
@@ -30,7 +30,7 @@ String value = cache.get("foo", key -> loadFromDatabase(key));
 String timed = cache.get("foo", 5, ChronoUnit.MINUTES, key -> loadFromDatabase(key));
 ```
 
-The fallback is a `Function<String, Object>`. The result is stored under the same key.
+The fallback is a `Function<String, Object>`, and its result is stored under the same key so the next `get` hits the cache instead of the fallback.
 
 ```java
 cache.putAll(Map.of("a", 1, "b", 2));
@@ -48,7 +48,7 @@ cache.resetCounter("logins");
 
 ## Named caches
 
-The application cache is the default. Two more caches exist:
+The application cache is the default, but two more caches exist out of the box:
 
 | Name (`CacheName`) | Use | Eviction |
 |---|---|---|
@@ -63,4 +63,4 @@ public MyService(CacheProvider cacheProvider) {
 }
 ```
 
-Register extra caches with `cacheProvider.addCache(name, cache)` so they appear on the [admin](administration.md) dashboard.
+Register extra caches with `cacheProvider.addCache(name, cache)`, and they show up on the [admin](administration.md) dashboard alongside the built-in ones.

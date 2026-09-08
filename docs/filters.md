@@ -1,6 +1,6 @@
 # Filters
 
-Filters intercept requests **after** routing matches but **before** the controller method runs. Use them for cross-cutting checks: authentication gates, API keys, CSRF validation, CORS preflight handling, or shared request logging.
+Filters intercept requests **after** routing matches but **before** the controller method runs. Reach for them for cross-cutting checks such as authentication gates, API keys, CSRF validation, CORS preflight handling, or shared request logging, anything you would otherwise have to repeat at the top of every controller method.
 
 Attach a filter with `@FilterWith` on a controller class or individual method:
 
@@ -10,14 +10,14 @@ Attach a filter with `@FilterWith` on a controller class or individual method:
 
 For logic that must run on **every** controller request, implement `OncePerRequestFilter` and register it in `Bootstrap.initializeRoutes()` alongside your route bindings.
 
-There are two kinds:
+There are two kinds, depending on how broadly you need the filter applied:
 
 1. **Per-request filters** on a controller class or method (`PerRequestFilter`)
 2. **One global filter** for every mapped controller request (`OncePerRequestFilter`)
 
 ## Controller and method filters
 
-A class-level filter runs for every method. A method-level filter runs only for that method.
+A class-level filter runs for every method on that controller. A method-level filter runs only for the one method it is attached to.
 
 ```java
 package controllers;
@@ -40,7 +40,7 @@ public class AccountController {
 }
 ```
 
-Assign several filters; they run in declaration order:
+Assign several filters at once, and they run in the order you declared them:
 
 ```java
 @FilterWith({MyFirstFilter.class, MySecondFilter.class})
@@ -52,7 +52,7 @@ Execution order for a request:
 2. Controller filters
 3. Method filters
 
-Only headers and content from the filter `Response` are merged into the controller response.
+Only headers and content from the filter `Response` are merged into the controller response; everything else the filter sets is discarded.
 
 ## Writing a per-request filter
 
@@ -73,7 +73,7 @@ public class MyFilter implements PerRequestFilter {
 }
 ```
 
-Return `response.end()` (or another finished `Response`) to skip the controller.
+Return `response.end()` (or any other finished `Response`) to short-circuit the request and skip the controller method entirely.
 
 ## Built-in filters
 
@@ -94,18 +94,18 @@ public Response privateApi() {
 }
 ```
 
-`OriginFilter` compares the `Origin` header to a comma-separated list:
+`OriginFilter` compares the `Origin` header against a comma-separated list:
 
 ```yaml
 application:
   allowedOrigins: http://foo.example, http://bar.example
 ```
 
-A mismatch returns HTTP 403.
+A mismatch returns HTTP 403 rather than falling through to the controller.
 
 ## Global filter
 
-A global filter implements `OncePerRequestFilter` and is bound in `app.Module`. Only one global filter is supported.
+A global filter implements `OncePerRequestFilter` and is bound in `app.Module`. Only one is supported at a time, so if you need several concerns handled globally, compose them into a single filter implementation.
 
 ```java
 package filters;

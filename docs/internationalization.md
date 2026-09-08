@@ -1,8 +1,8 @@
 # Internationalization
 
-User-visible strings belong in **resource bundles**, not hard-coded in templates or controllers. mangoo I/O loads `messages*.properties` from `src/main/resources/translations/` and resolves the active locale per request.
+User-visible strings belong in **resource bundles**, not hard-coded inside templates or controllers. mangoo I/O loads `messages*.properties` from `src/main/resources/translations/` and resolves the active locale for you on every request.
 
-Templates call `${i18n("key")}` (or with arguments). Controllers inject `Messages` for the same keys in Java. Locale selection follows a fixed order: explicit `lang` parameter, then cookie, then `Accept-Language`, then the configured default.
+Templates call `${i18n("key")}`, with arguments if you need them. Controllers inject `Messages` to reach the same keys from Java. Locale selection follows a fixed order: an explicit `lang` parameter first, then the cookie, then the `Accept-Language` header, and finally the configured default.
 
 ## Locale order
 
@@ -62,9 +62,9 @@ welcome=Welcome
 hello=Hello {0}
 ```
 
-`{0}` is replaced with the extra argument.
+`{0}` is replaced with the extra argument, and further placeholders follow the same pattern for additional arguments.
 
-You can also take `Messages` as a controller method parameter.
+You can also take `Messages` directly as a controller method parameter instead of injecting it as a field.
 
 ## Templates
 
@@ -73,4 +73,4 @@ ${i18n("welcome")}
 ${i18n("hello", "Ada")}
 ```
 
-The varargs `Messages.get(key, args)` returns an empty string when the key is absent. See [Templating](templating.md).
+The varargs `Messages.get(key, args)` returns an empty string when the key is absent, rather than throwing, so a missing translation degrades quietly instead of breaking the page. See [Templating](templating.md).

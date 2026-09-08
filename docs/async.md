@@ -1,12 +1,12 @@
 # Async
 
-Long-running or fire-and-forget work should not block the HTTP thread. The **`EventBus`** publishes payloads to **`Subscriber`** implementations; delivery runs on **virtual threads** so you can write straightforward blocking code without starving Undertow workers.
+Long-running or fire-and-forget work should not block the HTTP thread. The **`EventBus`** publishes payloads to **`Subscriber`** implementations, and delivery runs on **virtual threads**, so you can write straightforward blocking code inside a subscriber without starving Undertow's worker pool.
 
-Subscribers are discovered at startup (classpath scan). Each subscriber type is tied to a **queue name equal to the payload class canonical name**. There is no `unregister`—register additional subscribers by class if you need multiple handlers for the same payload type.
+Subscribers are discovered at startup through a classpath scan. Each subscriber type is tied to a **queue name equal to the payload class's canonical name**. There is no `unregister` method, so if you need multiple handlers for the same payload type, register additional subscribers by class instead.
 
 ## Subscribers
 
-Implement `io.mangoo.async.Subscriber`. On startup, mangoo I/O registers every implementation. The queue name is the **canonical name of the payload type** (`java.lang.String` for `Subscriber<String>`).
+Implement `io.mangoo.async.Subscriber`, and mangoo I/O registers every implementation it finds on startup. The queue name is the **canonical name of the payload type**, so a `Subscriber<String>` registers under `java.lang.String`.
 
 ```java
 package subscribers;
@@ -34,7 +34,7 @@ public void notify(String message) {
 }
 ```
 
-`publish` looks up subscribers for `payload.getClass().getCanonicalName()`. There is no `unregister`. You can also call `eventBus.register("java.lang.String", AuditSubscriber.class)` yourself; classpath scanning already does that for `Subscriber` types.
+`publish` looks up subscribers for `payload.getClass().getCanonicalName()`, and again, there is no `unregister`. You can also call `eventBus.register("java.lang.String", AuditSubscriber.class)` yourself, though classpath scanning already does that for you for any `Subscriber` type.
 
 Use a dedicated payload class if you need separate queues:
 

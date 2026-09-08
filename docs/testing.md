@@ -1,8 +1,8 @@
 # Testing
 
-Integration-style HTTP tests are supported through the **`mangooio-test`** artifact. It starts the real application stack in **test** mode (same routing, config merge, and handlers as production) and exposes helpers to send requests against the configured HTTP connector.
+Integration-style HTTP tests are supported through the **`mangooio-test`** artifact. It starts the real application stack in **test** mode, with the same routing, config merge, and handlers as production, and exposes helpers to send requests against the configured HTTP connector.
 
-That approach catches issues unit tests miss: wrong routes, filter ordering, cookie handling, and template rendering. The trade-off is speed—each test class boots the app once via `TestRunner`, so keep tests focused and reuse the running instance within a class.
+That approach catches issues unit tests miss entirely: wrong routes, filter ordering, cookie handling, and template rendering. The trade-off is speed, since each test class boots the app once via `TestRunner`, so keep individual tests focused and let them share that one running instance within a class rather than starting the app repeatedly.
 
 Add the dependency to your `pom.xml`:
 
@@ -15,11 +15,11 @@ Add the dependency to your `pom.xml`:
 </dependency>
 ```
 
-Use the latest published version instead of a placeholder.
+Use the latest published version rather than the placeholder shown above.
 
 ## Starting the application
 
-Extend tests with `io.mangoo.test.TestRunner`. It starts mangoo I/O in **test** mode once per test class:
+Extend your tests with `io.mangoo.test.TestRunner`, and it starts mangoo I/O in **test** mode once per test class:
 
 ```java
 import io.mangoo.test.TestRunner;
@@ -30,7 +30,7 @@ class ApplicationControllerTest {
 }
 ```
 
-Override `beforeStartup()` / `afterStartup()` if you need system properties before `Application.start(Mode.TEST)`.
+Override `beforeStartup()` / `afterStartup()` if you need to set system properties before `Application.start(Mode.TEST)` runs.
 
 ## HTTP requests
 
@@ -53,9 +53,9 @@ void testIndex() {
 }
 ```
 
-Factories: `TestRequest.get/post/put/patch/delete/head/options(uri)`.
+Factory methods cover every verb you would need: `TestRequest.get/post/put/patch/delete/head/options(uri)`.
 
-Fluent extras on `TestResponse`:
+Chain on fluent extras before calling `execute()`:
 
 ```java
 TestRequest.post("/save")
@@ -69,11 +69,11 @@ TestRequest.post("/save")
     .execute();
 ```
 
-`withForm(Multimap)` sends `application/x-www-form-urlencoded` as POST.
+`withForm(Multimap)` sends the body as `application/x-www-form-urlencoded`, as a POST.
 
 ## Browser sessions
 
-`TestBrowser` keeps cookies across calls:
+`TestBrowser` keeps cookies across calls, so it can carry a login through to later requests:
 
 ```java
 import io.mangoo.test.http.TestBrowser;
@@ -96,8 +96,8 @@ TestResponse account = browser.to("/authenticationrequired")
 
 ## Email and concurrency
 
-`io.mangoo.test.email.SmtpMock` starts GreenMail in dev/test using `smtp.host` and `smtp.port`. Call `start()` / `stop()` and inspect `getGreenMail()`.
+`io.mangoo.test.email.SmtpMock` starts GreenMail in dev/test using `smtp.host` and `smtp.port`. Call `start()` / `stop()` around your test and inspect captured messages through `getGreenMail()`.
 
-`io.mangoo.test.concurrent.ConcurrentRunner` is a Hamcrest matcher that runs a function on many virtual threads.
+`io.mangoo.test.concurrent.ConcurrentRunner` is a Hamcrest matcher that runs a function across many virtual threads at once, useful for shaking out concurrency bugs a single-threaded test would never hit.
 
-`io.mangoo.test.hamcrest.RegexMatcher.matches(regex)` matches response bodies.
+`io.mangoo.test.hamcrest.RegexMatcher.matches(regex)` lets you assert on response bodies with a regular expression instead of an exact string match.
