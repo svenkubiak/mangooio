@@ -54,7 +54,7 @@ public final class JsonUtils {
         try {
             json = MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            LOG.error("Failed to convert object to json",  e);
+            //Intentionally left blank
         }
         
         return json;
@@ -73,7 +73,7 @@ public final class JsonUtils {
         try {
             json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            LOG.error("Failed to convert object to json",  e);
+            //Intentionally left blank
         }
         
         return json;
@@ -96,7 +96,7 @@ public final class JsonUtils {
         try {
             object = MAPPER.readValue(json, clazz);
         } catch (IOException e) {
-            LOG.error("Failed to convert json to object class",  e);
+            //Intentionally left blank
         }
 
         return object;

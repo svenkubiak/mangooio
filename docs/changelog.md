@@ -3,6 +3,7 @@
 Unreleased
 
 * Fixed an issue that prevented mvn mangooio:run from starting (svenkubiak)
+* Changed behaviour of error propagation in JsonUtils (svenkubiak)
 
 ## Version 10.11.4
 
