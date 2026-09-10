@@ -183,7 +183,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.15.2</version>
+					<version>3.16.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.plexus</groupId>
@@ -258,7 +258,7 @@
 			<dependency>
 				<groupId>io.opentelemetry.semconv</groupId>
 				<artifactId>opentelemetry-semconv</artifactId>
-				<version>1.43.0</version>
+				<version>1.44.0</version>
 			</dependency>
 			<dependency>
 				<groupId>io.opentelemetry.instrumentation</groupId>
