@@ -1,6 +1,14 @@
-## Version 10.11.4
+## Version 10.11.6
 
 Unreleased
+
+* Version bumps (svenkubiak)
+  * oopentelemetry-semconv 1.43.0 -&gt; 1.44.0
+  * mongodb-driver-sync 5.11.0 -&gt; 5.11.1
+
+## Version 10.11.5
+
+Released at 08.09.2026
 
 * Fixed an issue that prevented mvn mangooio:run from starting (svenkubiak)
 * Changed behaviour of error propagation in JsonUtils (svenkubiak)
