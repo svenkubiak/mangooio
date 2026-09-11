@@ -10,6 +10,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Objects;
 
 public class ApiKeyFilter implements PerRequestFilter {
@@ -29,9 +31,13 @@ public class ApiKeyFilter implements PerRequestFilter {
     }
 
     private boolean authorize(String authorization, String key) {
-        return StringUtils.isNotBlank(authorization) &&
-               StringUtils.isNotBlank(key) &&
-               authorization.equals(key);
+        if (StringUtils.isBlank(authorization) || StringUtils.isBlank(key)) {
+            return false;
+        }
+
+        return MessageDigest.isEqual(
+                authorization.getBytes(StandardCharsets.UTF_8),
+                key.getBytes(StandardCharsets.UTF_8));
     }
 }
 

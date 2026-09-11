@@ -11,6 +11,8 @@ import io.undertow.util.HttpString;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -97,9 +99,14 @@ public class Request {
      * @return True if the token matches, false otherwise
      */
     public boolean hasValidCsrf() {
-        return StringUtils.isNotBlank(session.getCsrf())
-                && StringUtils.isNotBlank(csrf)
-                && session.getCsrf().equals(csrf);
+        String sessionCsrf = session.getCsrf();
+        if (StringUtils.isBlank(sessionCsrf) || StringUtils.isBlank(csrf)) {
+            return false;
+        }
+
+        return MessageDigest.isEqual(
+                sessionCsrf.getBytes(StandardCharsets.UTF_8),
+                csrf.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

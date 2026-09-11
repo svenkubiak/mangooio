@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -174,8 +175,19 @@ public final class MangooUtils {
         String username = getInstance(Config.class).getApplicationAdminUsername();
         String password = getInstance(Config.class).getApplicationAdminPassword();
 
-        return StringUtils.isNoneBlank(username, password) &&
-                username.equals(form.get("username")) && password.equals(form.get("password"));
+        if (!StringUtils.isNoneBlank(username, password)) {
+            return false;
+        }
+
+        boolean usernameMatch = MessageDigest.isEqual(
+                username.getBytes(StandardCharsets.UTF_8),
+                StringUtils.defaultString(form.get("username")).getBytes(StandardCharsets.UTF_8));
+        boolean passwordMatch = MessageDigest.isEqual(
+                password.getBytes(StandardCharsets.UTF_8),
+                StringUtils.defaultString(form.get("password")).getBytes(StandardCharsets.UTF_8));
+
+        // Non-short-circuiting '&' to avoid leaking which field matched via timing
+        return usernameMatch & passwordMatch;
     }
 
     public static Cookie getAdminCookie(boolean requireTwoFactor) throws MangooJwtException {

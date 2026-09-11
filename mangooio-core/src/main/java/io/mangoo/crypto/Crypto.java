@@ -1,24 +1,21 @@
 package io.mangoo.crypto;
 
+import com.google.common.base.Preconditions;
 import io.mangoo.constants.Required;
 import io.mangoo.exceptions.MangooEncryptionException;
 import io.mangoo.utils.CommonUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.CryptoException;
-import org.bouncycastle.crypto.engines.AESLightEngine;
-import org.bouncycastle.crypto.modes.CBCBlockCipher;
-import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
@@ -30,17 +27,24 @@ public class Crypto {
     private static final Logger LOG = LogManager.getLogger(Crypto.class);
     private static final String TRANSFORMATION = "RSA/None/OAEPWITHSHA-512ANDMGF1PADDING";
     private static final String ALGORITHM = "RSA";
+    private static final String AES_GCM_TRANSFORMATION = "AES/GCM/NoPadding";
+    private static final String KEY_DERIVATION_ALGORITHM = "SHA-256";
     private static final int KEY_LENGTH = 3072;
-    private static final int KEY_INDEX_START = 0;
-    private static final int MAX_KEY_LENGTH = 32;
-    private final PaddedBufferedBlockCipher paddedBufferedBlockCipher = new PaddedBufferedBlockCipher(CBCBlockCipher.newInstance(new AESLightEngine()));
+    private static final int MIN_KEY_LENGTH = 32;
+    private static final int GCM_IV_LENGTH = 12;
+    private static final int GCM_TAG_LENGTH_BITS = 128;
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     public Crypto() {
         Security.addProvider(new BouncyCastleProvider());
     }
 
     /**
-     * Decrypts a given encrypted text using the given key
+     * Decrypts a given Base64 encoded, AES-256-GCM encrypted text using the given key.
+     * <p>
+     * The random IV is expected to be prepended to the ciphertext. Decryption fails
+     * (returns null) if the authentication tag does not verify, i.e. the ciphertext
+     * has been tampered with.
      *
      * @param encryptedText The encrypted text
      * @param key The encryption key
@@ -50,59 +54,88 @@ public class Crypto {
         Objects.requireNonNull(encryptedText, Required.ENCRYPTED_TEXT);
         Objects.requireNonNull(key, Required.KEY);
 
-        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(StandardCharsets.UTF_8)));
-        paddedBufferedBlockCipher.init(false, cipherParameters);
+        try {
+            byte[] combined = CommonUtils.decodeFromBase64(encryptedText);
+            if (combined.length <= GCM_IV_LENGTH) {
+                throw new IllegalArgumentException("Invalid encrypted payload");
+            }
 
-        return new String(cipherData(CommonUtils.decodeFromBase64(encryptedText)), StandardCharsets.UTF_8);
+            var iv = new byte[GCM_IV_LENGTH];
+            System.arraycopy(combined, 0, iv, 0, GCM_IV_LENGTH);
+
+            var cipherText = new byte[combined.length - GCM_IV_LENGTH];
+            System.arraycopy(combined, GCM_IV_LENGTH, cipherText, 0, cipherText.length);
+
+            var cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION);
+            cipher.init(Cipher.DECRYPT_MODE, deriveKey(key), new GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv));
+
+            return new String(cipher.doFinal(cipherText), StandardCharsets.UTF_8);
+        } catch (GeneralSecurityException | IllegalArgumentException e) {
+            LOG.error("Failed to decrypt data", e);
+        }
+
+        return null;
     }
 
     /**
-     * Encrypts a given plain text using the given key
+     * Encrypts a given plain text using the given key.
      * <p>
-     * Encryption is done by using AES and CBC Cipher and a key length of 256 bit
+     * Encryption is done using AES-256 in GCM mode (authenticated encryption). A fresh
+     * random 96-bit IV is generated for every call and prepended to the ciphertext, so
+     * encrypting the same plain text twice yields different results.
      *
      * @param plainText The plain text to encrypt
      * @param key The key to use for encryption
-     * @return The encrypted text or null if encryption fails
+     * @return The encrypted text (Base64 encoded) or null if encryption fails
      */
     public String encrypt(String plainText, String key) {
         Objects.requireNonNull(plainText, Required.PLAIN_TEXT);
         Objects.requireNonNull(key, Required.KEY);
 
-        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(StandardCharsets.UTF_8)));
-        paddedBufferedBlockCipher.init(true, cipherParameters);
-        
-        return new String(CommonUtils.encodeToBase64(cipherData(plainText.getBytes(StandardCharsets.UTF_8))), StandardCharsets.UTF_8);
+        try {
+            var iv = new byte[GCM_IV_LENGTH];
+            SECURE_RANDOM.nextBytes(iv);
+
+            var cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION);
+            cipher.init(Cipher.ENCRYPT_MODE, deriveKey(key), new GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv));
+            byte[] cipherText = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
+
+            var combined = new byte[iv.length + cipherText.length];
+            System.arraycopy(iv, 0, combined, 0, iv.length);
+            System.arraycopy(cipherText, 0, combined, iv.length, cipherText.length);
+
+            return new String(CommonUtils.encodeToBase64(combined), StandardCharsets.UTF_8);
+        } catch (GeneralSecurityException e) {
+            LOG.error("Failed to encrypt data", e);
+        }
+
+        return null;
     }
 
     /**
-     * Encrypts or decrypts a given byte array of data
+     * Derives a 256-bit AES key from the given secret.
+     * <p>
+     * The secret must be at least {@value #MIN_KEY_LENGTH} characters long. Instead of
+     * silently truncating the secret, the full (ASCII) secret is hashed with SHA-256 so
+     * that all of its entropy contributes to the key.
      *
-     * @param data The data to encrypt or decrypt
-     * @return A clear text or encrypted byte array
+     * @param secret The secret to derive the key from
+     * @return A 256-bit AES {@link SecretKey}
      */
-    private byte[] cipherData(byte[] data) {
-        byte[] result = null;
-        try {
-            final var buffer = new byte[paddedBufferedBlockCipher.getOutputSize(data.length)];
-
-            final int processedBytes = paddedBufferedBlockCipher.processBytes(data, 0, data.length, buffer, 0);
-            final int finalBytes = paddedBufferedBlockCipher.doFinal(buffer, processedBytes);
-
-            result = new byte[processedBytes + finalBytes];
-            System.arraycopy(buffer, 0, result, 0, result.length);
-        } catch (final CryptoException e) {
-            LOG.error("Failed to encrypt/decrypt data array", e);
-        }
-
-        return result;
-    }
-
-    public String getSizedSecret(String secret) {
+    private SecretKey deriveKey(String secret) {
         Objects.requireNonNull(secret, Required.SECRET);
-        
-        String key = RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
-        return key.length() < MAX_KEY_LENGTH ? key : key.substring(KEY_INDEX_START, MAX_KEY_LENGTH);
+
+        String sanitized = RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
+        Preconditions.checkArgument(sanitized.length() >= MIN_KEY_LENGTH,
+                "Encryption key must be at least " + MIN_KEY_LENGTH + " characters");
+
+        try {
+            var digest = MessageDigest.getInstance(KEY_DERIVATION_ALGORITHM);
+            byte[] keyBytes = digest.digest(sanitized.getBytes(StandardCharsets.UTF_8));
+            return new SecretKeySpec(keyBytes, "AES");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Failed to derive encryption key", e);
+        }
     }
     
     /**
