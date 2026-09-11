@@ -41,7 +41,7 @@ public class BinaryHandler implements HttpHandler {
                 .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
                 .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
 
-        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().put(key, value));
         exchange.getOutputStream().write(response.getBinaryBody());
     }
 }

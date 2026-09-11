@@ -2,6 +2,8 @@
 
 Unreleased
 
+* Various security hardenings (svenkubia)
+* Fixed an issue in the BinaryHandler that overwrote headers from a controller (svenkubiak)
 * Version bumps (svenkubiak)
   * oopentelemetry-semconv 1.43.0 -&gt; 1.44.0
   * mongodb-driver-sync 5.11.0 -&gt; 5.11.1
