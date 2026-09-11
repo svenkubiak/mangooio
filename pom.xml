@@ -33,7 +33,7 @@
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<javadoc.version>3.12.0</javadoc.version>
 		<modernizer.version>3.5.0</modernizer.version>
-		<opentelemetry.version>1.65.0</opentelemetry.version>
+		<opentelemetry.version>1.66.0</opentelemetry.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -318,7 +318,7 @@
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
 				<artifactId>maven-plugin-annotations</artifactId>
-				<version>3.15.2</version>
+				<version>3.16.0</version>
 			</dependency>
 			<dependency>
 				<groupId>jakarta.mail</groupId>
@@ -544,12 +544,12 @@
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk18on</artifactId>
-				<version>1.85</version>
+				<version>1.86</version>
 			</dependency>
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcpkix-jdk18on</artifactId>
-				<version>1.85</version>
+				<version>1.86</version>
 			</dependency>
 			<dependency>
 				<groupId>org.zeroturnaround</groupId>

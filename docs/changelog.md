@@ -1,12 +1,14 @@
 ## Version 10.11.6
 
-Unreleased
+Released at 11.09.2026
 
 * Various security hardenings (svenkubia)
 * Fixed an issue in the BinaryHandler that overwrote headers from a controller (svenkubiak)
 * Version bumps (svenkubiak)
   * oopentelemetry-semconv 1.43.0 -&gt; 1.44.0
+  * opentelemetry 1.65.0 -&gt; 1.66.0
   * mongodb-driver-sync 5.11.0 -&gt; 5.11.1
+  * bouncy-castle 1.85 -&gt; 1.86
 
 ## Version 10.11.5
 
