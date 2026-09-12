@@ -16,9 +16,12 @@ import io.undertow.util.StatusCodes;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class AuthenticationHandler implements HttpHandler {
+    private static final String ORIGIN_PARAMETER = "origin";
     private final Config config;
     
     @Inject
@@ -69,10 +72,32 @@ public class AuthenticationHandler implements HttpHandler {
             .forEach(entry -> exchange.getResponseHeaders().put(entry.getKey(), entry.getValue()));
 
         if (config.isAuthOrigin()) {
-            redirect = redirect + "?origin=" + exchange.getRequestURI();
+            redirect = redirect + (redirect.indexOf('?') == -1 ? '?' : '&') + ORIGIN_PARAMETER + '=' + origin(exchange);
         }
         exchange.getResponseHeaders().put(Header.LOCATION,redirect);
         exchange.endExchange();
+    }
+
+    /**
+     * Creates the value of the origin parameter for the given request, consisting of the
+     * request URI and, if present, the query string.
+     *
+     * Leading slashes are collapsed into a single one, so that the value can not be read as a
+     * protocol-relative URL pointing at a foreign host, and the result is URL encoded, so that
+     * it can not inject additional parameters into the redirect.
+     *
+     * @param exchange The HttpServerExchange
+     * @return The encoded value of the origin parameter
+     */
+    static String origin(HttpServerExchange exchange) {
+        var origin = StringUtils.defaultString(exchange.getRequestURI());
+        var queryString = exchange.getQueryString();
+
+        if (StringUtils.isNotBlank(queryString)) {
+            origin = origin + '?' + queryString;
+        }
+
+        return URLEncoder.encode('/' + StringUtils.stripStart(origin, "/"), StandardCharsets.UTF_8);
     }
     
     /**

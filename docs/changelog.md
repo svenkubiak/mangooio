@@ -3,6 +3,7 @@
 Unreleased
 
 * CORS responses now send Vary: Origin to prevent cache poisoning by shared caches (svenkubiak)
+* The origin parameter on authentication redirects is now URL encoded, keeps the query string and can no longer be protocol-relative (svenkubiak)
 * Multiple query and request parameter with same values are now rejected (svenkubiak)
 * Cookie settings for prod config are now secure=true by default (svenkubiak)
 * Removed SSE Auth (svenkubiak)
