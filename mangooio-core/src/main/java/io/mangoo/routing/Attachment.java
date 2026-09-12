@@ -26,6 +26,8 @@ public class Attachment {
     private Map<String, Class<?>> methodParameters;
     private Request request;
     private Map<String, String> requestParameter;
+    private Map<String, String> pathParameter = Map.of();
+    private Map<String, String> queryParameter = Map.of();
     private Response response;
     private Session session;
     private TemplateEngine templateEngine;
@@ -129,6 +131,14 @@ public class Attachment {
         return this.requestParameter;
     }
 
+    public Map<String, String> getPathParameter() {
+        return this.pathParameter;
+    }
+
+    public Map<String, String> getQueryParameter() {
+        return this.queryParameter;
+    }
+
     public Response getResponse() {
         return this.response;
     }
@@ -219,6 +229,16 @@ public class Attachment {
 
     public Attachment withRequestParameter(Map<String, String> requestParameter) {
         this.requestParameter = Objects.requireNonNull(requestParameter, Required.REQUEST_PARAMETER);
+        return this;
+    }
+
+    public Attachment withPathParameter(Map<String, String> pathParameter) {
+        this.pathParameter = Map.copyOf(Objects.requireNonNull(pathParameter, Required.PATH_PARAMETER));
+        return this;
+    }
+
+    public Attachment withQueryParameter(Map<String, String> queryParameter) {
+        this.queryParameter = Map.copyOf(Objects.requireNonNull(queryParameter, Required.QUERY_PARAMETER));
         return this;
     }
     

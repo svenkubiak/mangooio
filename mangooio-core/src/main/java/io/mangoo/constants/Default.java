@@ -10,6 +10,7 @@ public final class Default {
     public static final String APPLICATION_CONTROLLER = "controllers.";
     public static final String APPLICATION_LANGUAGE = "en";
     public static final String APPLICATION_NAME = "mangooio-application";
+    public static final Boolean APPLICATION_PARAMETER_STRICT = Boolean.FALSE;
     public static final String APPLICATION_TIMEZONE = "UTC";
     public static final Boolean APPLICATION_VALIDATION_PASSTHROUGH = Boolean.FALSE;
     public static final Boolean AUTHENTICATION_BLACKLIST = Boolean.FALSE;

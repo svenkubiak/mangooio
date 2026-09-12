@@ -4,6 +4,7 @@ import io.mangoo.annotations.FilterWith;
 import io.mangoo.constants.Required;
 import io.mangoo.constants.Template;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
@@ -35,6 +36,7 @@ public final class DispatcherHandler implements HttpHandler {
     private final boolean requestFilter;
     private final boolean blocking;
     private final boolean authentication;
+    private final boolean parameterStrict;
 
     public DispatcherHandler(Class<?> controllerClass, String controllerMethodName, boolean blocking, boolean authentication) {
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS);
@@ -47,6 +49,7 @@ public final class DispatcherHandler implements HttpHandler {
         this.authentication = authentication;
         this.templateEngine = Application.getInstance(TemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
+        this.parameterStrict = Application.getInstance(Config.class).isParameterStrict();
         this.requestFilter =
                 Application.getInjector()
                         .getAllBindings()
@@ -99,6 +102,11 @@ public final class DispatcherHandler implements HttpHandler {
             return;
         }
 
+        if (parameterStrict && RequestUtils.hasAmbiguousParameters(exchange)) {
+            endRequest(exchange);
+            return;
+        }
+
         Trace.start(exchange.getRequestPath());
         var attachment = Attachment.build()
                 .withControllerInstance(Application.getInstance(controllerClass))
@@ -112,6 +120,8 @@ public final class DispatcherHandler implements HttpHandler {
                 .withMethodParameterCount(methodParametersCount)
                 .withRequestFilter(requestFilter)
                 .withRequestParameter(RequestUtils.getRequestParameters(exchange))
+                .withPathParameter(RequestUtils.getPathParameters(exchange))
+                .withQueryParameter(RequestUtils.getQueryParameters(exchange))
                 .withMessages(messages)
                 .withAuthentication(authentication)
                 .withTemplateEngine(templateEngine);

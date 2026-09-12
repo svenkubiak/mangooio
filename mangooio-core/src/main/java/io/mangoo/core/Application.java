@@ -744,7 +744,10 @@ public final class Application {
     }
 
     private static RoutingHandler getRoutingHandler() {
-        var routingHandler = Handlers.routing();
+        // Route template values must not be rewritten into the query parameters, as that would
+        // make a client sent query parameter indistinguishable from - and able to override - a
+        // route parameter. They stay available through the PathTemplateMatch attachment.
+        var routingHandler = Handlers.routing(false);
         routingHandler.setFallbackHandler(getInstance(FallbackHandler.class));
 
         var config = getInstance(Config.class);

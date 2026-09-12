@@ -24,7 +24,7 @@ public class Validator implements Serializable {
     @Serial
     private static final long serialVersionUID = -714400230978999709L;
     private final Map<String, String> errors = new HashMap<>();
-    private final Messages messages;
+    private Messages messages;
     protected Map<String, String> values = new HashMap<>(); // NOSONAR Intentionally not transient
     protected Map<String, byte[]> files = new HashMap<>(); // NOSONAR Intentionally not transient
 
@@ -35,6 +35,18 @@ public class Validator implements Serializable {
 
     public Validator() {
         this.messages = Application.getInstance(Messages.class);
+    }
+
+    /**
+     * Sets the messages this validator creates its error messages with. Used to bind a
+     * validator to the locale of the current request
+     *
+     * @param messages The messages to use
+     * @return This validator
+     */
+    public Validator withMessages(Messages messages) {
+        this.messages = Objects.requireNonNull(messages, Required.MESSAGES);
+        return this;
     }
 
     /**

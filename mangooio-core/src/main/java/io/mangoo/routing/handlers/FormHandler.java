@@ -21,7 +21,12 @@ public class FormHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         final Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
         if (attachment.getForm() == null) {
-            attachment.setForm(getForm(exchange));   
+            var form = getForm(exchange);
+
+            // The form validates against the messages of the current request, so that
+            // validation errors are rendered in the locale of this request only
+            form.withMessages(attachment.getMessages());
+            attachment.setForm(form);
         }
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);

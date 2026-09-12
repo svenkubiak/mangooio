@@ -72,6 +72,10 @@ public class ParameterController {
         return Response.ok().template(PARAM_TEMPLATE).render(FOO, foo);
     }
 
+    public Response optionalQueryParam(Optional<String> foo) {
+        return Response.ok().template(PARAM_TEMPLATE).render(FOO, foo);
+    }
+
     public Response localdate(LocalDate localDate) {
         return Response
                 .ok()

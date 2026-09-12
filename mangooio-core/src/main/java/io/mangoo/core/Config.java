@@ -402,6 +402,16 @@ public class Config {
     }
 
     /**
+     * When enabled, a request whose query parameter collides with a route parameter of the
+     * matched route is rejected. The route value always wins either way.
+     *
+     * @return application.parameter.strict or default value if undefined
+     */
+    public boolean isParameterStrict() {
+        return getBoolean(Key.APPLICATION_PARAMETER_STRICT, Default.APPLICATION_PARAMETER_STRICT);
+    }
+
+    /**
      * @return smtp.host or default value if undefined
      */
     public String getSmtpHost() {

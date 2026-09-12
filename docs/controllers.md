@@ -96,6 +96,30 @@ public Response show(int id, boolean active) {
 
 Note that `id` is bound from the `{id}` path placeholder while `active` comes from the query string, purely by matching parameter names, there is no annotation required for either. This is exactly why the `-parameters` compiler flag matters so much (see [Getting started](getting-started.md)): without it, the JVM cannot tell mangoo I/O that a parameter is called `id` in the first place.
 
+If a query parameter carries the same name as a route parameter, the route value always wins: a request to `/users/1?id=2` binds `id` to `1`. A client can therefore never forge a route parameter. Set `application.parameter.strict` to `true` to reject such ambiguous requests with a `400` instead.
+
+### Which parameter to trust
+
+When you need to know where a value actually came from, take the `Request` and ask it directly:
+
+```java
+public Response show(Request request) {
+    String id = request.getPathParameter("id");       // from {id}, never client-forgeable
+    String limit = request.getQueryParameter("limit"); // from the query string, untrusted
+    return Response.ok().render();
+}
+```
+
+`request.getParameter(key)` returns the merged view described above. It cannot tell a route parameter apart from client input, so **authorization decisions must not be based on it**. In particular, if the presence of a parameter selects an operation, use `request.hasPathParameter(key)` — a client can always append a query parameter of any name:
+
+```java
+// wrong: any client can add ?id= and switch the operation
+var operation = request.getParameter("id") != null ? Operation.VIEW : Operation.LIST;
+
+// right: only the route decides
+var operation = request.hasPathParameter("id") ? Operation.VIEW : Operation.LIST;
+```
+
 Supported parameter types:
 
 - `String`

@@ -543,6 +543,34 @@ class ConfigTest {
     }
 
     @Test
+    void testIsParameterStrict() throws IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("application.parameter.strict", "true");
+        createTempConfig(configValues);
+        Config config = new Config(new Vault());
+
+        // then
+        assertThat(config.isParameterStrict(), equalTo(true));
+    }
+
+    @Test
+    void testIsParameterStrictDefaultValue() throws IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        createTempConfig(configValues);
+        Config config = new Config(new Vault());
+
+        // then
+        assertThat(config.isParameterStrict(), equalTo(Default.APPLICATION_PARAMETER_STRICT));
+    }
+
+    @Test
     void testGetSmptHost() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());

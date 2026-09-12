@@ -63,6 +63,7 @@ public final class Required {
     public static final String PART = "part can not be null or blank";
     public static final String PASSWORD = "password can not be null or blank";
     public static final String PATH = "path can not be null or blank";
+    public static final String PATH_PARAMETER = "path parameter can not be null or blank";
     public static final String PAYLOAD = "payload can not be null or blank";
     public static final String PLAIN_TEXT = "plain text can not be null or blank";
     public static final String PREFIX = "prefix can not be null or blank";
@@ -71,6 +72,7 @@ public final class Required {
     public static final String PUBLIC_KEY = "public key can not be null or blank";
     public static final String QUEUE = "queue can not be null or blank";
     public static final String QUERY = "query can not be null or blank";
+    public static final String QUERY_PARAMETER = "query parameter can not be null or blank";
     public static final String REDIRECT_TO = "redirect to can not be null or blank";
     public static final String REPLY_TO = "replyTo can not be null or blank";
     public static final String REQUEST = "request can not be null or blank" ;

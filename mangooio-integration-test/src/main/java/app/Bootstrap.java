@@ -94,6 +94,7 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/boolean").respondeWith("booleanParam"),
                 On.get().to("/string/{foo}").respondeWith("stringParam"),
                 On.get().to("/optional/{foo}").respondeWith("optionalParam"),
+                On.get().to("/optionalquery").respondeWith("optionalQueryParam"),
                 On.get().to("/string").respondeWith("stringParam"),
                 On.get().to("/int/{foo}").respondeWith("intParam"),
                 On.get().to("/integer/{foo}").respondeWith("integerParam"),

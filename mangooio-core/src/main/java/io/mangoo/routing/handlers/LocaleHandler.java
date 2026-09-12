@@ -5,6 +5,7 @@ import io.mangoo.constants.Header;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.i18n.Messages;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -30,8 +31,9 @@ public class LocaleHandler implements HttpHandler {
         Locale locale = null;
 
         var i18nCookie = exchange.getRequestCookie(config.getI18nCookieName());
-        Map<String, String> parameter = RequestUtils.getRequestParameters(exchange);
-        String lang = parameter.get("lang");
+
+        // The language is client input and never a route parameter
+        String lang = RequestUtils.getQueryParameters(exchange).get("lang");
 
         if (StringUtils.isNotBlank(lang)) {
             locale = LocaleUtils.getLocaleFromString(lang.toLowerCase());
@@ -56,7 +58,7 @@ public class LocaleHandler implements HttpHandler {
         }
 
         Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
-        attachment.getMessages().reload(locale);
+        attachment.withMessages(new Messages(locale));
         attachment.withLocale(locale);
         
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);

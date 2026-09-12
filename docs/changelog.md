@@ -2,6 +2,12 @@
 
 Released at 12.09.2026
 
+* Fixed incorrect handling of SSE connections (svenkubiak)
+* Query parameters can no longer override a route parameter of the same name (svenkubiak)
+* Added Request#getPathParameter, Request#getQueryParameter and Request#hasPathParameter to tell route parameters and client input apart (svenkubiak)
+* Added application.parameter.strict to reject requests whose query parameter collides with a route parameter (svenkubiak)
+* Messages are now resolved per request and no longer leak the locale of one request into concurrent requests (svenkubiak)
+* Resolving a message bundle no longer modifies the JVM default locale (svenkubiak)
 * Fixed incorrect cookie handling in /@admin dashboard (svenkubiak)
 
 ## Version 10.12.0

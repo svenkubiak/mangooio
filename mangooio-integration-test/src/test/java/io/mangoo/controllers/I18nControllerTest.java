@@ -10,6 +10,12 @@ import io.undertow.util.StatusCodes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -20,7 +26,10 @@ import static org.hamcrest.Matchers.*;
  */
 @ExtendWith({TestExtension.class})
 class I18nControllerTest {
-    
+    private static final int REQUESTS = 60;
+    private static final int THREADS = 8;
+
+
     @Test
     void testWithOutAdditionalHeader() {
         //given
@@ -163,5 +172,29 @@ class I18nControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("welcome"));
+    }
+
+    @Test
+    void testConcurrentRequestsDoNotShareLocale() throws Exception {
+        //given
+        var executor = Executors.newFixedThreadPool(THREADS);
+        List<Callable<String>> tasks = new ArrayList<>();
+        List<String> expected = new ArrayList<>();
+
+        for (var i = 0; i < REQUESTS; i++) {
+            String lang = i % 2 == 0 ? "de" : "en";
+            expected.add(i % 2 == 0 ? "willkommen" : "welcome");
+            tasks.add(() -> TestRequest.get("/translation?lang=" + lang).execute().getContent());
+        }
+
+        //when
+        List<Future<String>> futures = executor.invokeAll(tasks);
+        executor.shutdown();
+
+        //then every request must be answered in the locale it asked for and must not
+        //be affected by the locale of any concurrent request
+        for (var i = 0; i < REQUESTS; i++) {
+            assertThat(futures.get(i).get(), equalTo(expected.get(i)));
+        }
     }
 }

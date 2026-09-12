@@ -1,3 +1,16 @@
+## From 10.12.0 to 10.12.1
+
+Mostly a drop-in replacement, with one behaviour change around request parameters.
+
+A query parameter can no longer override a route parameter of the same name. Previously a request to `/users/1?id=2` bound `id` to `2`, which allowed a client to forge any route parameter. The route value now always wins, so the same request binds `id` to `1`.
+
+Two consequences to check in your application:
+
+* If you passed a route parameter through the query string, that no longer works. On a route `/users/{id}`, a request to `/users/?id=1` now yields an empty `id` rather than `1`. Give such endpoints a route without a placeholder.
+* If you derive an operation from the *presence* of a parameter, switch to `request.hasPathParameter(key)`. A null check on `request.getParameter(key)` cannot tell a route parameter from a query parameter a client appended, which makes it unsuitable for authorization decisions.
+
+New in this release: `Request#getPathParameter`, `Request#getQueryParameter`, `Request#hasPathParameter` and the `application.parameter.strict` option, which rejects ambiguous requests with a `400` instead of letting the route value win. It defaults to `false` in 10.x and will default to `true` in 11.0.
+
 ## From 10.10.0 to 10.11.1
 
 This is a drop-in replacement.

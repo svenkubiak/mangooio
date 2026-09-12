@@ -141,6 +141,7 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `application.language` | Default application language | `en` |
 | `application.name` | Application name (JWT issuer, logs) | `mangooio-application` |
 | `application.named` | Example named Guice binding | *(none)* |
+| `application.parameter.strict` | Reject requests whose query parameter collides with a route parameter with a `400` | `false` |
 | `application.secret` | Application secret; fallback for cookie keys | *(none)* |
 | `application.timezone` | Application timezone | `UTC` |
 | `application.validation.passthrough` | Return Bean Validation errors as JSON instead of a rendered form | `false` |

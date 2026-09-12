@@ -34,4 +34,37 @@ class ParameterPollutionTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
     }
+
+    @Test
+    void testQueryParameterCanNotOverrideRouteParameter() {
+        //given
+        final TestResponse response = TestRequest.get("/string/routevalue?foo=spoofed").execute();
+
+        //then the route value must win, a client must never be able to forge it
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("routevalue"));
+    }
+
+    @Test
+    void testQueryParameterCanNotOverrideMultipleRouteParameters() {
+        //given
+        final TestResponse response = TestRequest.get("/multiple/bar/1?foo=spoofed&bar=99").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("bar:1"));
+    }
+
+    @Test
+    void testUnrelatedQueryParameterIsKept() {
+        //given
+        final TestResponse response = TestRequest.get("/string/routevalue?other=x").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("routevalue"));
+    }
 }

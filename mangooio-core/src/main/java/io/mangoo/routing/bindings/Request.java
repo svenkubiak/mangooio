@@ -27,6 +27,8 @@ public class Request {
     private String body = Strings.EMPTY;
     private String csrf = Strings.EMPTY;
     private Map<String, String> parameter;
+    private Map<String, String> pathParameter = Map.of();
+    private Map<String, String> queryParameter = Map.of();
 
     public Request(){
         //Empty constructor for Google guice
@@ -56,6 +58,16 @@ public class Request {
     
     public Request withParameter(Map<String, String> parameter) {
         this.parameter = parameter;
+        return this;
+    }
+
+    public Request withPathParameter(Map<String, String> pathParameter) {
+        this.pathParameter = Map.copyOf(Objects.requireNonNull(pathParameter, Required.PATH_PARAMETER));
+        return this;
+    }
+
+    public Request withQueryParameter(Map<String, String> queryParameter) {
+        this.queryParameter = Map.copyOf(Objects.requireNonNull(queryParameter, Required.QUERY_PARAMETER));
         return this;
     }
     
@@ -117,7 +129,12 @@ public class Request {
     }
 
     /**
-     * Retrieves a request parameter (request or query parameter) by its name
+     * Retrieves a merged view of route and query parameter by its name, where a route parameter
+     * always wins over a query parameter of the same name
+     * <p>
+     * Authorization decisions must not be based on this method, as it can not tell a route
+     * parameter apart from client sent input. Use {@link #getPathParameter(String)} for that and
+     * {@link #getQueryParameter(String)} for client sent input.
      *
      * @param key The key to find the parameter
      * @return The value for the given or null if none found
@@ -127,12 +144,65 @@ public class Request {
     }
 
     /**
-     * Retrieves a map of request parameter (request or query parameter)
+     * Retrieves a merged map of route and query parameter, where a route parameter always wins
+     * over a query parameter of the same name
      *
-     * @return Map of request and query parameter
+     * @return Map of route and query parameter
      */
     public Map<String, String> getParameter() {
         return parameter;
+    }
+
+    /**
+     * Retrieves a route parameter by its name, e.g. {@code id} of a route {@code /users/{id}}
+     * <p>
+     * Route parameters are resolved by the router and can not be forged by a client, which makes
+     * them the only parameters an authorization decision may be based on.
+     *
+     * @param key The key to find the route parameter
+     * @return The value for the given key or null if the route declares no such parameter
+     */
+    public String getPathParameter(String key) {
+        return pathParameter.get(key);
+    }
+
+    /**
+     * @return Map of all route parameters of the matched route
+     */
+    public Map<String, String> getPathParameter() {
+        return pathParameter;
+    }
+
+    /**
+     * Checks if the matched route declares a parameter with the given name
+     * <p>
+     * Use this instead of a null check on {@link #getParameter(String)} when the presence of a
+     * parameter selects an operation, as a client can always add a query parameter of any name.
+     *
+     * @param key The key to look up
+     * @return True if the matched route declares a parameter with this name, false otherwise
+     */
+    public boolean hasPathParameter(String key) {
+        return pathParameter.containsKey(key);
+    }
+
+    /**
+     * Retrieves a query parameter by its name, e.g. {@code limit} of {@code ?limit=25}
+     * <p>
+     * Query parameters are always untrusted client input.
+     *
+     * @param key The key to find the query parameter
+     * @return The value for the given key or null if none found
+     */
+    public String getQueryParameter(String key) {
+        return queryParameter.get(key);
+    }
+
+    /**
+     * @return Map of all query parameters of the request
+     */
+    public Map<String, String> getQueryParameter() {
+        return queryParameter;
     }
 
     /**

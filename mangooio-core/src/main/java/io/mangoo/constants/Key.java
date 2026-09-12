@@ -14,6 +14,7 @@ public final class Key {
     public static final String APPLICATION_MODE = "application.mode";
     public static final String APPLICATION_NAME = "application.name";
     public static final String APPLICATION_NAMED = "application.named";
+    public static final String APPLICATION_PARAMETER_STRICT = "application.parameter.strict";
     public static final String APPLICATION_SECRET = "application.secret";
     public static final String APPLICATION_TIMEZONE = "application.timezone";
     public static final String APPLICATION_VALIDATION_PASSTHROUGH = "application.validation.passthrough";

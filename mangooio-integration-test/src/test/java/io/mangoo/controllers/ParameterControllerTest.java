@@ -106,26 +106,37 @@ class ParameterControllerTest {
     @Test
     void testOptionalQueryParameter() {
         //given
-        TestResponse response = TestRequest.get("/optional/?foo=bar").execute();
+        TestResponse response = TestRequest.get("/optionalquery?foo=bar").execute();
 
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("Optional[bar]"));
     }
-    
+
     @Test
     void testOptionalQueryParameterConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString();
-            
+
             //when
-            TestResponse response = TestRequest.get("/optional/?foo=" + uuid).execute();
+            TestResponse response = TestRequest.get("/optionalquery?foo=" + uuid).execute();
 
             //then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Optional[" + uuid + "]");
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
+    }
+
+    @Test
+    void testQueryParameterCanNotFillEmptyRouteParameter() {
+        //given a route parameter that matched an empty path segment stays empty
+        TestResponse response = TestRequest.get("/optional/?foo=bar").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("Optional.empty"));
     }
     
     @Test

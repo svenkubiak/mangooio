@@ -18,23 +18,32 @@ import java.util.ResourceBundle;
 public class Messages implements Serializable {
     @Serial
     private static final long serialVersionUID = -1713264225655435037L;
-    private Map<String, String> defaults = Default.getMessages();
+
+    /**
+     * Resolving a bundle must never fall back to the JVM default locale, as that would
+     * mix an unrelated language into the lookup. Missing locales fall back to the base bundle.
+     */
+    private static final ResourceBundle.Control NO_FALLBACK_CONTROL =
+            ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT);
+
+    private final Map<String, String> defaults = Default.getMessages();
+    private final Locale locale;
     private transient ResourceBundle bundle;
 
     public Messages() {
-        bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME, Locale.getDefault());
+        this(Locale.getDefault());
+    }
+
+    public Messages(Locale locale) {
+        this.locale = Objects.requireNonNull(locale, Required.LOCALE);
+        this.bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME, locale, NO_FALLBACK_CONTROL);
     }
 
     /**
-     * Refreshes the resource bundle by reloading the bundle with the default locale
-     * 
-     * @param locale The locale to use
+     * @return The locale this instance resolves its messages with
      */
-    public void reload(Locale locale) {
-        Objects.requireNonNull(locale, Required.LOCALE);
-
-        Locale.setDefault(Locale.ROOT); //NOSONAR
-        bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME, locale);
+    public Locale getLocale() {
+        return locale;
     }
 
     /**
@@ -44,7 +53,7 @@ public class Messages implements Serializable {
      * @return The localized value or an empty value if the given key is not configured
      */
     public String get(String key) {
-        return bundle.getString(key);
+        return bundle().getString(key);
     }
 
     /**
@@ -57,8 +66,9 @@ public class Messages implements Serializable {
      */
     @SuppressFBWarnings(justification = "Key access as intended", value = "MUI_CONTAINSKEY_BEFORE_GET")
     public String get(String key, Object... arguments) {
-        if (bundle.containsKey(key)) {
-            return MessageFormat.format(bundle.getString(key), arguments);
+        var resourceBundle = bundle();
+        if (resourceBundle.containsKey(key)) {
+            return MessageFormat.format(resourceBundle.getString(key), arguments);
         } else if (defaults.containsKey(key)) {
             return MessageFormat.format(defaults.get(key), arguments);
         } else {
@@ -66,5 +76,20 @@ public class Messages implements Serializable {
         }
 
         return Strings.EMPTY;
+    }
+
+    /**
+     * The bundle is transient, as a ResourceBundle is not serializable. It is resolved from the
+     * locale when this instance was restored from a serialized state. ResourceBundle lookups are
+     * cached, so resolving is cheap and always yields the same effectively immutable instance.
+     *
+     * @return The resource bundle for the locale of this instance
+     */
+    private ResourceBundle bundle() {
+        if (bundle == null) {
+            bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME, locale, NO_FALLBACK_CONTROL);
+        }
+
+        return bundle;
     }
 }

@@ -7,6 +7,7 @@ import io.mangoo.routing.bindings.Request;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.Methods;
+import io.undertow.util.PathTemplateMatch;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,32 +30,92 @@ public final class RequestUtils {
     }
     
     /**
-     * Converts request and query parameter into a single map
+     * Returns the route parameters of a request, e.g. {@code id} of a route {@code /foo/{id}}.
+     * <p>
+     * These are resolved by the router and can not be forged by a client, which makes them the
+     * only parameters an authorization decision may be based on.
      *
      * @param exchange The Undertow HttpServerExchange
-     * @return A single map contain both request and query parameter
+     * @return A map containing the route parameters of the request
+     */
+    public static Map<String, String> getPathParameters(HttpServerExchange exchange) {
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
+
+        final Map<String, String> pathParameter = new HashMap<>();
+
+        // Handlers that use addPathParam, e.g. PathTemplateHandler
+        exchange.getPathParameters().forEach((key, value) -> pathParameter.put(key, value.element()));
+
+        // The PathTemplateMatch of the router is authoritative and therefore applied last
+        var pathTemplateMatch = exchange.getAttachment(PathTemplateMatch.ATTACHMENT_KEY);
+        if (pathTemplateMatch != null) {
+            pathParameter.putAll(pathTemplateMatch.getParameters());
+        }
+
+        return pathParameter;
+    }
+
+    /**
+     * Returns the query parameters of a request, e.g. {@code limit} of {@code ?limit=25}.
+     * <p>
+     * These are always untrusted client input.
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @return A map containing the query parameters of the request
+     */
+    public static Map<String, String> getQueryParameters(HttpServerExchange exchange) {
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
+
+        final Map<String, String> queryParameter = new HashMap<>();
+        exchange.getQueryParameters().forEach((key, value) -> queryParameter.put(key, value.element()));
+
+        return queryParameter;
+    }
+
+    /**
+     * Converts route and query parameter into a single map, where a route parameter always wins
+     * over a query parameter of the same name
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @return A single map containing both route and query parameter
      */
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
-        final Map<String, String> requestParameter = new HashMap<>();
-        exchange.getQueryParameters().forEach((key, value) -> requestParameter.put(key, value.element()));
-        exchange.getPathParameters().forEach((key, value) -> requestParameter.put(key, value.element()));
+        final Map<String, String> requestParameter = getQueryParameters(exchange);
+        requestParameter.putAll(getPathParameters(exchange));
 
         return requestParameter;
+    }
+
+    /**
+     * Checks if a query parameter carries the same name as a route parameter of the matched route,
+     * e.g. {@code /foo/abc?id=xyz} on a route {@code /foo/{id}}.
+     * <p>
+     * Such a request is ambiguous about which value the client meant. The route value wins, but an
+     * application may want to reject the request instead.
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @return True if a query parameter collides with a route parameter, false otherwise
+     */
+    public static boolean hasAmbiguousParameters(HttpServerExchange exchange) {
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
+
+        Map<String, String> pathParameter = getPathParameters(exchange);
+        if (pathParameter.isEmpty()) {
+            return false;
+        }
+
+        return pathParameter.keySet().stream().anyMatch(exchange.getQueryParameters()::containsKey);
     }
 
     /**
      * Checks if any query parameter is present more than once in the raw query string,
      * e.g. {@code ?id=1&id=2}.
      * <p>
-     * As {@link #getRequestParameters(HttpServerExchange)} collapses each parameter to a single
+     * As {@link #getQueryParameters(HttpServerExchange)} collapses each parameter to a single
      * value, requests with duplicated query parameters are ambiguous and should be rejected to
      * avoid HTTP parameter pollution.
-     * <p>
-     * The raw query string is used deliberately: Undertow merges path template values (e.g. from a
-     * route {@code /foo/{id}}) into the parsed query parameter map, which would otherwise cause
-     * legitimate requests to be flagged as duplicates.
      *
      * @param exchange The Undertow HttpServerExchange
      * @return True if at least one query parameter key appears more than once, false otherwise
