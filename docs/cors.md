@@ -27,6 +27,8 @@ cors:
 | `headers.exposeheaders` | `Access-Control-Expose-Headers` |
 | `headers.maxage` | `Access-Control-Max-Age` in seconds |
 
+Every response to a URL matching `urlpattern` also carries **`Vary: Origin`**, including responses whose origin did *not* match `alloworigin` and therefore received no CORS headers at all. This tells shared caches and CDNs that the response depends on the request's `Origin`. Without it, a cache could store the header-less response produced for a rejected origin and later hand it to an allowed origin, which would then be blocked by the browser until the entry expires. If a controller sets its own `Vary` header, mangoo I/O leaves it untouched.
+
 `headers.maxage` is worth a second look: it tells the browser how long it may cache the result of a preflight `OPTIONS` request before asking again. A higher value means fewer preflight round trips (better for latency), but also means a change to your CORS policy takes longer to reach clients that already cached the old answer.
 
 Defaults for all of these are listed in [Configuration](configuration.md). See the [MDN CORS guide](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) if you want the full background on preflight requests and credentialed requests.

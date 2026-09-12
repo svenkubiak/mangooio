@@ -502,5 +502,24 @@ class ApplicationControllerTest {
         assertThat(response.getHeader("Access-Control-Allow-Methods"), equalTo("GET,POST,PATCH"));
         assertThat(response.getHeader("Access-Control-Expose-Headers"), equalTo("Authorization,Content-Type"));
         assertThat(response.getHeader("Access-Control-Max-Age"), equalTo("86400"));
+        assertThat(response.getHeader("Vary"), equalTo("Origin"));
+    }
+
+    @Test
+    void testCorsHeadersWithNonMatchingOrigin() {
+        //given
+        final TestResponse response = TestRequest.options("/api")
+                .withHeader("Origin", "https://evil.com")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getHeader("Access-Control-Allow-Origin"), equalTo(""));
+        assertThat(response.getHeader("Access-Control-Allow-Credentials"), equalTo(""));
+
+        //Vary must be sent even when no CORS headers are applied, so that a shared
+        //cache does not serve this response to an origin that is allowed
+        assertThat(response.getHeader("Vary"), equalTo("Origin"));
     }
 }

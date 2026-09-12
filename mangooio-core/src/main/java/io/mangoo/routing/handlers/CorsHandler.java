@@ -19,6 +19,8 @@ public class CorsHandler implements HttpHandler {
     private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
     private static final String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
     private static final String ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age";
+    private static final String VARY = "Vary";
+    private static final String ORIGIN = "Origin";
     private final Config config;
     
     @Inject
@@ -35,6 +37,10 @@ public class CorsHandler implements HttpHandler {
     }
     
     private void applyHeader(HttpServerExchange exchange) {
+        if (doesNotHaveHeader(VARY, exchange)) {
+            addHeader(exchange, VARY, ORIGIN);
+        }
+
         String origin = getOrigin(exchange);
         if (StringUtils.isNotBlank(origin) && config.getCorsAllowOrigin().matcher(origin).matches()) {
             if (doesNotHaveHeader(ACCESS_CONTROL_ALLOW_ORIGIN, exchange)) {
@@ -64,7 +70,7 @@ public class CorsHandler implements HttpHandler {
     }
 
     private String getOrigin(HttpServerExchange exchange) {
-        HeaderValues headers = exchange.getRequestHeaders().get("Origin");
+        HeaderValues headers = exchange.getRequestHeaders().get(ORIGIN);
         return headers == null ? null : headers.peekFirst();
     }
     
