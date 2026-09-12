@@ -11,6 +11,30 @@ Two consequences to check in your application:
 
 New in this release: `Request#getPathParameter`, `Request#getQueryParameter`, `Request#hasPathParameter` and the `application.parameter.strict` option, which rejects ambiguous requests with a `400` instead of letting the route value win. It defaults to `false` in 10.x and will default to `true` in 11.0.
 
+## From 10.11.6 to 10.12.0
+
+This is a drop-in replacement.
+
+## From 10.11.5 to 10.11.6
+
+This is a drop-in replacement.
+
+## From 10.11.4 to 10.11.5
+
+This is a drop-in replacement.
+
+## From 10.11.3 to 10.11.4
+
+This is a drop-in replacement.
+
+## From 10.11.2 to 10.11.3
+
+This is a drop-in replacement.
+
+## From 10.11.1 to 10.11.2
+
+This is a drop-in replacement.
+
 ## From 10.10.0 to 10.11.1
 
 This is a drop-in replacement.
