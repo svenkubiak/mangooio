@@ -1,26 +1,17 @@
 package io.mangoo.services;
 
-import com.launchdarkly.eventsource.ConnectStrategy;
 import com.launchdarkly.eventsource.EventSource;
-import com.launchdarkly.eventsource.HttpConnectStrategy;
 import com.launchdarkly.eventsource.ReadyState;
 import com.launchdarkly.eventsource.background.BackgroundEventHandler;
 import com.launchdarkly.eventsource.background.BackgroundEventSource;
 import io.mangoo.TestExtension;
-import io.mangoo.constants.ClaimKey;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.manager.ServerSentEventManager;
-import io.mangoo.utils.CommonUtils;
-import io.mangoo.utils.JwtUtils;
-import okhttp3.Headers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -28,7 +19,6 @@ import java.util.regex.Pattern;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
 
 /**
  *
@@ -68,47 +58,4 @@ class ServerSentEventServiceTest {
             await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), equalTo(true)));
         }
 	}
-	
-    @Test
-    void testSendDataWithInvalidAuthentication() throws IllegalArgumentException, MangooJwtException {
-        //given
-        Config config = Application.getInstance(Config.class);
-
-        var jwtData = JwtUtils.JwtData.create()
-                .withKey(CommonUtils.randomString(64).getBytes(StandardCharsets.UTF_8))
-                .withSecret(CommonUtils.randomString(64).getBytes(StandardCharsets.UTF_8))
-                .withIssuer(config.getApplicationName())
-                .withAudience(config.getAuthenticationCookieName())
-                .withSubject("foo")
-                .withTtlSeconds(config.getAuthenticationCookieTokenExpires())
-                .withClaims(Map.of(ClaimKey.TWO_FACTOR, "false"));
-
-        var jwt = JwtUtils.createJwt(jwtData);
-
-        String cookie = config.getAuthenticationCookieName() + "=" + jwt;
-        String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
-
-        Headers headers = new Headers.Builder()
-                .add("Accept", "text/event-stream")
-                .add("Cache-Control", "no-cache")
-                .add("Set-Cookie", cookie)
-                .build();
-
-        HttpConnectStrategy connectStrategy = ConnectStrategy.http(URI.create(url));
-        connectStrategy.connectTimeout(5, TimeUnit.SECONDS);
-        connectStrategy.headers(headers);
-
-        BackgroundEventHandler eventHandler = new SimpleEventHandler();
-        BackgroundEventSource.Builder builder = new BackgroundEventSource.Builder(eventHandler, new EventSource.Builder(connectStrategy));
-
-        try (BackgroundEventSource backgroundEventSource = builder.build()) {
-            backgroundEventSource.start();
-
-            //then
-            await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(backgroundEventSource.getEventSource().getState(), equalTo(ReadyState.CLOSED)));
-
-            //then
-            await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), not(equalTo(true))));
-        }
-    }
 }

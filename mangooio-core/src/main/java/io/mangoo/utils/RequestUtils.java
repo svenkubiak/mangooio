@@ -1,11 +1,7 @@
 package io.mangoo.utils;
 
-import io.mangoo.constants.Const;
 import io.mangoo.constants.Header;
 import io.mangoo.constants.Required;
-import io.mangoo.core.Application;
-import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Request;
 import io.undertow.server.HttpServerExchange;
@@ -78,47 +74,6 @@ public final class RequestUtils {
         contentType = contentType.toLowerCase(Locale.ENGLISH);
 
         return contentType.startsWith("application/json") || contentType.contains("+json");
-    }
-
-    /**
-     * Checks if the given header contains a valid authentication
-     *
-     * @param cookie The cookie to parse
-     * @return True if the cookie contains a valid authentication, false otherwise
-     */
-    public static boolean hasValidAuthentication(String cookie) {
-        var valid = false;
-        if (StringUtils.isNotBlank(cookie)) {
-            var config = Application.getInstance(Config.class);
-
-            String value = null;
-            String [] contents = cookie.split(";");
-            for (String content : contents) {
-                content = content.trim();
-                if (content.startsWith(config.getAuthenticationCookieName())) {
-                    value = StringUtils.substringAfter(content, config.getAuthenticationCookieName() + "=");
-                    value = Const.COOKIE_PATTERN.matcher(value).replaceAll("");
-                }
-            }
-
-            if (StringUtils.isNotBlank(value)) {
-                try {
-                    var jwtData = JwtUtils.JwtData.create()
-                                    .withKey(config.getAuthenticationCookieKey())
-                                    .withSecret(config.getAuthenticationCookieSecret())
-                                    .withIssuer(config.getApplicationName())
-                                    .withAudience(config.getAuthenticationCookieName())
-                                    .withTtlSeconds(config.getAuthenticationCookieTokenExpires());
-
-                    JwtUtils.parseJwt(value, jwtData);
-                    valid = true;
-                } catch (MangooJwtException e) {
-                    LOG.error("Failed to parse authentication cookie", e);
-                }
-            }
-        }
-        
-        return valid;
     }
 
     public static Optional<String> getAuthorizationHeader(Request request) {

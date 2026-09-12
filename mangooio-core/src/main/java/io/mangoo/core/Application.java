@@ -725,8 +725,7 @@ public final class Application {
 
         Router.getServerSentEventRoutes().forEach((ServerSentEventRoute serverSentEventRoute) ->
                 pathHandler.addExactPath(serverSentEventRoute.getUrl(),
-                        Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)
-                                .withAuthentication(serverSentEventRoute.hasAuthentication())))
+                        Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)))
         );
 
         Router.getWebSocketRoutes().forEach((WebSocketRoute webSocketRoute) -> {

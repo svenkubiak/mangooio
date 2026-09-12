@@ -1,25 +1,15 @@
 package io.mangoo.routing.handlers;
 
-import io.mangoo.constants.Header;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.manager.ServerSentEventManager;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
-import io.mangoo.utils.FileUtils;
-import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 
 import java.util.Objects;
 
 public class ServerSentEventHandler implements ServerSentEventConnectionCallback {
-    private boolean hasAuthentication;
-
-    @Deprecated(since = "10.10.0", forRemoval = true)
-    public ServerSentEventHandler withAuthentication(boolean hasAuthentication) {
-        this.hasAuthentication = hasAuthentication;
-        return this;
-    }
 
     @Override
     public void connected(ServerSentEventConnection connection, String lastEventId) {
@@ -32,17 +22,6 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
             connection.send(": ok\n\n");
         };
 
-        if (hasAuthentication) {
-            var headerValues = connection.getRequestHeaders().get(Header.COOKIE);
-            var header = headerValues != null ? headerValues.element() : null;
-
-            if (RequestUtils.hasValidAuthentication(header)) {
-                Thread.ofVirtual().start(addConnectionTask);
-            } else {
-                FileUtils.closeQuietly(connection);
-            }
-        } else {
-            Thread.ofVirtual().start(addConnectionTask);
-        }
+        Thread.ofVirtual().start(addConnectionTask);
     }
 }

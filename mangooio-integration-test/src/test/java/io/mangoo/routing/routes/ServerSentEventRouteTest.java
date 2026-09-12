@@ -54,27 +54,4 @@ class ServerSentEventRouteTest {
         
         assertThat(collectedRoutes.size(), equalTo(1));
     }
-    
-    @Test
-    void testWithAuthentication() {
-        //given
-        String url = "/" + UUID.randomUUID().toString();
-        ServerSentEventRoute serverSentEventRoute = new ServerSentEventRoute();
-        
-        //when
-        serverSentEventRoute.to(url).withAuthentication();
-        
-        //then
-        Set<ServerSentEventRoute> serverSentEventRoutes = Router.getRoutes().stream()
-                .filter(ServerSentEventRoute.class::isInstance)
-                .map(ServerSentEventRoute.class::cast)
-                .collect(Collectors.toSet());
-        
-        Set<ServerSentEventRoute> collectedRoutes = serverSentEventRoutes.stream()
-                .filter(r -> r.getUrl().equals(url))
-                .collect(Collectors.toSet());
-        
-        assertThat(collectedRoutes.size(), equalTo(1));
-        assertThat(collectedRoutes.iterator().next().hasAuthentication(), equalTo(true));
-    }
 }

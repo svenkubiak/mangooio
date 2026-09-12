@@ -160,7 +160,6 @@ public class Bootstrap implements MangooBootstrap {
          );
 
          Bind.serverSentEvent().to("/sse");
-         Bind.serverSentEvent().to("/sseauth").withAuthentication();
 
          Bind.pathResource().to("/assets/");
          Bind.fileResource().to("/robots.txt");

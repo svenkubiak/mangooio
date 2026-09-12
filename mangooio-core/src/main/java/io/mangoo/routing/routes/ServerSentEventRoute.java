@@ -28,14 +28,7 @@ public class ServerSentEventRoute implements MangooRoute {
         
         return this;
     }
-    
-    /**
-     * Sets authentication to true, default is false
-     */
-    public void withAuthentication() {
-        authentication = true;
-    }
-    
+
     @Override
     public String getUrl() {
         return url;

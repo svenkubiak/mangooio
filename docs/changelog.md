@@ -1,3 +1,13 @@
+## Version 10.12.0
+
+Unreleased
+
+* Cookie settings for prod config are now secure=true by default (svenkubiak)
+* Removed SSE Auth (svenkubiak)
+* Successful login now resets lock counter (svenkubiak)
+* Version bumps (svenkubiak)
+  * fory-core 1.7.1 -&gt; 1.7.2
+
 ## Version 10.11.6
 
 Released at 11.09.2026
