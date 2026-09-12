@@ -104,13 +104,13 @@ environments:
         port: 9090
     session:
       cookie:
-        secure: false
+        secure: true
     flash:
       cookie:
-        secure: false
+        secure: true
     authentication:
       cookie:
-        secure: false
+        secure: true
     persistence:
       mongo:
         embedded: true
