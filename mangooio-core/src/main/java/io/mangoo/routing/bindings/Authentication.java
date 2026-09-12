@@ -113,10 +113,16 @@ public class Authentication {
         Objects.requireNonNull(password, Required.SALT);
         Objects.requireNonNull(hash, Required.HASH);
 
+        if (userHasLock(identifier)) {
+            return false;
+        }
+
         var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         var authenticated = false;
-        if (!userHasLock(identifier) && CommonUtils.matchArgon2(password, salt, hash)) {
+
+        if (CommonUtils.matchArgon2(password, salt, hash)) {
             authenticated = true;
+            cache.remove(identifier);
         } else {
             cache.getAndIncrementCounter(identifier);
         }
