@@ -161,7 +161,7 @@
 				<configuration>
 					<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
 					<requiredJavaVersion>${jdk.version}</requiredJavaVersion>
-					<requiredMavenVersion>${maven.version}</requiredMavenVersion>
+					<requiredMavenVersion>${required.maven.version}</requiredMavenVersion>
 				</configuration>
 				<executions>
 					<execution>

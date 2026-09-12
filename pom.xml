@@ -25,7 +25,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>25</jdk.version>
 		<log4j.version>2.26.1</log4j.version>
-		<maven.version>4.0.0-rc-5</maven.version>
 		<required.maven.version>3.9.10</required.maven.version>
 		<junit.version>6.1.3</junit.version>
 		<enforcer.version>1.12.1</enforcer.version>
@@ -559,12 +558,12 @@
 			<dependency>
 				<groupId>org.apache.maven</groupId>
 				<artifactId>maven-core</artifactId>
-				<version>${maven.version}</version>
+				<version>${required.maven.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven</groupId>
 				<artifactId>maven-plugin-api</artifactId>
-				<version>${maven.version}</version>
+				<version>${required.maven.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.tngtech.archunit</groupId>

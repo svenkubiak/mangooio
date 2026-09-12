@@ -2,6 +2,7 @@
 
 Unreleased
 
+* Multiple query and request parameter with same value are now rejected (svenkubiak)
 * Cookie settings for prod config are now secure=true by default (svenkubiak)
 * Removed SSE Auth (svenkubiak)
 * Successful login now resets lock counter (svenkubiak)
