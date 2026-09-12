@@ -16,17 +16,13 @@ import java.util.*;
 
 public final class RequestUtils {
     private static final Logger LOG = LogManager.getLogger(RequestUtils.class);
-    private static AttachmentKey<Attachment> attachmentKey;
+    private static final AttachmentKey<Attachment> ATTACHMENT_KEY = AttachmentKey.create(Attachment.class);
 
     private RequestUtils() {
     }
-    
+
     public static AttachmentKey<Attachment> getAttachmentKey() {
-        if (attachmentKey == null) {
-            attachmentKey = AttachmentKey.create(Attachment.class);
-        }
-        
-        return attachmentKey;
+        return ATTACHMENT_KEY;
     }
     
     /**

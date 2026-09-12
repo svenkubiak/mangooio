@@ -1,3 +1,9 @@
+## Version 10.12.2
+
+Released at 12.09.2026
+
+* Fixed a potential race-condition when handing of AttachmentKey (svenkubia)
+
 ## Version 10.12.1
 
 Released at 12.09.2026

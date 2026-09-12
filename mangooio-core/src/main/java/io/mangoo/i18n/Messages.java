@@ -23,6 +23,7 @@ public class Messages implements Serializable {
      * Resolving a bundle must never fall back to the JVM default locale, as that would
      * mix an unrelated language into the lookup. Missing locales fall back to the base bundle.
      */
+
     private static final ResourceBundle.Control NO_FALLBACK_CONTROL =
             ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT);
 
