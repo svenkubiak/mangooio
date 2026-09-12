@@ -1,6 +1,8 @@
 ## From 10.12.0 to 10.12.1
 
-Mostly a drop-in replacement, with one behaviour change around request parameters.
+Mostly a drop-in replacement, with one behaviour change around request parameters and one removed method on `Messages`.
+
+### Request parameters
 
 A query parameter can no longer override a route parameter of the same name. Previously a request to `/users/1?id=2` bound `id` to `2`, which allowed a client to forge any route parameter. The route value now always wins, so the same request binds `id` to `1`.
 
@@ -10,6 +12,22 @@ Two consequences to check in your application:
 * If you derive an operation from the *presence* of a parameter, switch to `request.hasPathParameter(key)`. A null check on `request.getParameter(key)` cannot tell a route parameter from a query parameter a client appended, which makes it unsuitable for authorization decisions.
 
 New in this release: `Request#getPathParameter`, `Request#getQueryParameter`, `Request#hasPathParameter` and the `application.parameter.strict` option, which rejects ambiguous requests with a `400` instead of letting the route value win. It defaults to `false` in 10.x and will default to `true` in 11.0.
+
+### Messages
+
+`Messages#reload(Locale)` has been removed. It mutated the shared `Messages` singleton per request, so the locale of one request could leak into concurrent requests, and it called `Locale.setDefault(Locale.ROOT)`, changing the JVM default locale for the whole application.
+
+Messages are now resolved per request: the locale is passed to the constructor and is immutable for the lifetime of an instance. Replace any call to `reload` by creating an instance instead:
+
+```java
+// before
+messages.reload(locale);
+
+// now
+var messages = new Messages(locale);
+```
+
+The locale of an instance is available via `Messages#getLocale`. Bundle resolution no longer falls back to the JVM default locale; a locale without a matching `messages_xx.properties` falls back to the base `messages.properties`.
 
 ## From 10.11.6 to 10.12.0
 

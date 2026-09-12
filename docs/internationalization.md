@@ -2,7 +2,7 @@
 
 User-visible strings belong in **resource bundles**, not hard-coded inside templates or controllers. mangoo I/O loads `messages*.properties` from `src/main/resources/translations/` and resolves the active locale for you on every request.
 
-Templates call `${i18n("key")}`, with arguments if you need them. Controllers inject `Messages` to reach the same keys from Java. Locale selection follows a fixed order: an explicit `lang` parameter first, then the cookie, then the `Accept-Language` header, and finally the configured default.
+Templates call `${i18n("key")}`, with arguments if you need them. Controllers take `Messages` as a method parameter to reach the same keys from Java. Locale selection follows a fixed order: an explicit `lang` parameter first, then the cookie, then the `Accept-Language` header, and finally the configured default.
 
 ## Locale order
 
@@ -38,18 +38,16 @@ public Response localize() {
 
 ## Messages in Java
 
+Take `Messages` as a controller method parameter. That instance is created per request and carries the locale resolved by the order above.
+
 ```java
 package controllers;
 
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.Response;
-import jakarta.inject.Inject;
 
 public class I18nController {
-    @Inject
-    private Messages messages;
-
-    public Response translation() {
+    public Response translation(Messages messages) {
         String text = messages.get("welcome");
         String named = messages.get("hello", "Ada");
         return Response.ok().bodyText(text);
@@ -64,7 +62,24 @@ hello=Hello {0}
 
 `{0}` is replaced with the extra argument, and further placeholders follow the same pattern for additional arguments.
 
-You can also take `Messages` directly as a controller method parameter instead of injecting it as a field.
+> Do not inject `Messages` as a field to translate a request. An injected `Messages` is an application-wide singleton bound to the JVM default locale, not to the locale of the current request. Only the method parameter carries the request locale.
+
+## Messages outside of a request
+
+Background jobs, scheduled tasks and emails have no request locale to fall back on. Create an instance for the locale you actually want, for example the language stored on the recipient:
+
+```java
+var messages = new Messages(Locale.of(user.getLanguage()));
+
+Mail.newMail()
+        .from(from)
+        .subject(messages.get("email.forgot.password.subject"))
+        .to(user.getUsername())
+        .textMessage("emails/forgot_password.ftl", Map.of("messages", messages))
+        .send();
+```
+
+The locale is fixed for the lifetime of an instance and readable via `getLocale()`. A locale without a matching `messages_xx.properties` falls back to the base `messages.properties`, never to the JVM default locale.
 
 ## Templates
 
