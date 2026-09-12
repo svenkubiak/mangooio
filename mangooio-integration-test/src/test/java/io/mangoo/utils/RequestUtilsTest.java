@@ -455,6 +455,112 @@ class RequestUtilsTest {
         assertThrows(NullPointerException.class, () -> RequestUtils.getAuthorizationHeader(null));
     }
 
+    @Test
+    void testGetRequestParametersPathParameterWinsOverQueryParameter() {
+        //given
+        HttpServerExchange exchange = new HttpServerExchange(null);
+        exchange.addQueryParam("id", "queryValue");
+        exchange.addPathParam("id", "pathValue");
+
+        //when
+        Map<String, String> parameters = RequestUtils.getRequestParameters(exchange);
+
+        //then
+        assertThat(parameters.get("id"), equalTo("pathValue"));
+        assertThat(parameters.size(), equalTo(1));
+    }
+
+    @Test
+    void testGetRequestParametersDoesNotMutateExchange() {
+        //given
+        HttpServerExchange exchange = new HttpServerExchange(null);
+        exchange.addQueryParam("queryParam", "queryValue");
+        exchange.addPathParam("pathParam", "pathValue");
+
+        //when
+        RequestUtils.getRequestParameters(exchange);
+
+        //then the live query parameter map must not be polluted with path parameters
+        assertThat(exchange.getQueryParameters().containsKey("pathParam"), is(false));
+        assertThat(exchange.getQueryParameters().size(), equalTo(1));
+    }
+
+    @Test
+    void testHasMultipleParameterValuesWithSingleValues() {
+        //given
+        HttpServerExchange exchange = new HttpServerExchange(null);
+        exchange.setQueryString("first=foo&second=bar");
+
+        //when
+        boolean hasMultiple = RequestUtils.hasMultipleParameterValues(exchange);
+
+        //then
+        assertThat(hasMultiple, is(false));
+    }
+
+    @Test
+    void testHasMultipleParameterValuesWithEmptyParameters() {
+        //given
+        HttpServerExchange exchange = new HttpServerExchange(null);
+
+        //when
+        boolean hasMultiple = RequestUtils.hasMultipleParameterValues(exchange);
+
+        //then
+        assertThat(hasMultiple, is(false));
+    }
+
+    @Test
+    void testHasMultipleParameterValuesWithValuelessParameter() {
+        //given
+        HttpServerExchange exchange = new HttpServerExchange(null);
+        exchange.setQueryString("first&second");
+
+        //when
+        boolean hasMultiple = RequestUtils.hasMultipleParameterValues(exchange);
+
+        //then
+        assertThat(hasMultiple, is(false));
+    }
+
+    @Test
+    void testHasMultipleParameterValuesWithDuplicateQueryParameter() {
+        //given
+        HttpServerExchange exchange = new HttpServerExchange(null);
+        exchange.setQueryString("id=1&id=2");
+
+        //when
+        boolean hasMultiple = RequestUtils.hasMultipleParameterValues(exchange);
+
+        //then
+        assertThat(hasMultiple, is(true));
+    }
+
+    @Test
+    void testHasMultipleParameterValuesIgnoresPathTemplateValues() {
+        //given a route like /foo/{id} appends the path template value to the parsed query
+        //parameter deque, but the raw query string only contains the actual query parameter
+        HttpServerExchange exchange = new HttpServerExchange(null);
+        exchange.setQueryString("id=1");
+        exchange.addQueryParam("id", "1");
+        exchange.addQueryParam("id", "templateValue");
+
+        //when
+        boolean hasMultiple = RequestUtils.hasMultipleParameterValues(exchange);
+
+        //then
+        assertThat(hasMultiple, is(false));
+    }
+
+    @Test
+    void testHasMultipleParameterValuesWithNullExchange() {
+        //given
+        // No setup needed for null input
+
+        //when & then
+        assertThrows(NullPointerException.class, () -> RequestUtils.hasMultipleParameterValues(null));
+    }
+
     private String createValidJwt() {
         try {
             var jwtData = JwtUtils.JwtData.create()

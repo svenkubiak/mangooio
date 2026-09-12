@@ -149,6 +149,7 @@ public final class JwtUtils {
         }
     }
 
+    @Deprecated(forRemoval = true, since = "10.12.0")
     public static String extractSubject(String jwt, byte[] secret) throws MangooJwtException {
         Argument.requireNonBlank(jwt, Required.JWT);
         Objects.requireNonNull(secret, Required.SECRET);

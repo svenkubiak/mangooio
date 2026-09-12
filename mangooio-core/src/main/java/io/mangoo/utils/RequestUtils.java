@@ -38,11 +38,49 @@ public final class RequestUtils {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
         final Map<String, String> requestParameter = new HashMap<>();
-        final Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
-        queryParameters.putAll(exchange.getPathParameters());
-        queryParameters.forEach((key, value) -> requestParameter.put(key, value.element()));
+        exchange.getQueryParameters().forEach((key, value) -> requestParameter.put(key, value.element()));
+        exchange.getPathParameters().forEach((key, value) -> requestParameter.put(key, value.element()));
 
         return requestParameter;
+    }
+
+    /**
+     * Checks if any query parameter is present more than once in the raw query string,
+     * e.g. {@code ?id=1&id=2}.
+     * <p>
+     * As {@link #getRequestParameters(HttpServerExchange)} collapses each parameter to a single
+     * value, requests with duplicated query parameters are ambiguous and should be rejected to
+     * avoid HTTP parameter pollution.
+     * <p>
+     * The raw query string is used deliberately: Undertow merges path template values (e.g. from a
+     * route {@code /foo/{id}}) into the parsed query parameter map, which would otherwise cause
+     * legitimate requests to be flagged as duplicates.
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @return True if at least one query parameter key appears more than once, false otherwise
+     */
+    public static boolean hasMultipleParameterValues(HttpServerExchange exchange) {
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
+
+        String queryString = exchange.getQueryString();
+        if (StringUtils.isBlank(queryString)) {
+            return false;
+        }
+
+        Set<String> seenKeys = new HashSet<>();
+        for (String pair : queryString.split("&")) {
+            if (pair.isEmpty()) {
+                continue;
+            }
+
+            int index = pair.indexOf('=');
+            String key = index >= 0 ? pair.substring(0, index) : pair;
+            if (!seenKeys.add(key)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

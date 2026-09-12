@@ -2,6 +2,7 @@ package io.mangoo.routing.handlers;
 
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.constants.Required;
+import io.mangoo.constants.Template;
 import io.mangoo.core.Application;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
@@ -11,6 +12,8 @@ import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.Headers;
+import io.undertow.util.StatusCodes;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -91,6 +94,11 @@ public final class DispatcherHandler implements HttpHandler {
             return;
         }
 
+        if (RequestUtils.hasMultipleParameterValues(exchange)) {
+            endRequest(exchange);
+            return;
+        }
+
         Trace.start(exchange.getRequestPath());
         var attachment = Attachment.build()
                 .withControllerInstance(Application.getInstance(controllerClass))
@@ -114,5 +122,17 @@ public final class DispatcherHandler implements HttpHandler {
 
     private void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(LocaleHandler.class).handleRequest(exchange);
+    }
+
+    /**
+     * Ends the current request by sending an HTTP 400 status code and the default bad request template.
+     * Used when a request contains ambiguous multi-valued parameters (HTTP parameter pollution).
+     *
+     * @param exchange The HttpServerExchange
+     */
+    private void endRequest(HttpServerExchange exchange) {
+        exchange.setStatusCode(StatusCodes.BAD_REQUEST);
+        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html; charset=utf-8");
+        exchange.getResponseSender().send(Template.badRequest());
     }
 }
