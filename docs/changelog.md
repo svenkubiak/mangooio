@@ -1,6 +1,6 @@
 ## Version 10.12.0
 
-Unreleased
+Released at 12.09.2026
 
 * CORS responses now send Vary: Origin to prevent cache poisoning by shared caches (svenkubiak)
 * The origin parameter on authentication redirects is now URL encoded, keeps the query string and can no longer be protocol-relative (svenkubiak)
