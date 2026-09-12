@@ -15,6 +15,7 @@ import io.mangoo.filters.CsrfFilter;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
+import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
@@ -37,6 +38,8 @@ import java.util.concurrent.atomic.LongAdder;
 public class AdminController {
     private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
+    private static final String ADMIN_LOGIN = "/@admin/login";
+    private static final String ADMIN_TWO_FACTOR = "/@admin/twofactor";
     private static final String METRICS = "metrics";
     private static final double HUNDRED_PERCENT = 100.0;
     private final CacheProvider cacheProvider;
@@ -166,18 +169,32 @@ public class AdminController {
         form.invalidate();
         form.keep();
 
-        return Response.redirect("/@admin/login");
+        return Response.redirect(ADMIN_LOGIN);
     }
 
     @FilterWith(CsrfFilter.class)
-    public Response verify(Form form) {
+    public Response verify(Request request, Form form) {
         form.expectValue("code");
         form.expectNumeric("code");
         form.expectMaxLength("code", 6);
         form.expectMinLength("code", 6);
 
+        // The second factor is only accepted for a caller that passed the first factor
+        var claims = MangooUtils.parseAdminCookie(request)
+                .filter(MangooUtils::isTwoFactorPending)
+                .orElse(null);
+
+        if (claims == null || StringUtils.isBlank(config.getApplicationAdminSecret())) {
+            return Response.redirect(ADMIN_LOGIN);
+        }
+
         if (MangooUtils.isNotLocked() && form.isValid()) {
             if (TotpUtils.verifyTotp(config.getApplicationAdminSecret(), form.get("code"))) {
+                if (!MangooUtils.consumePreAuthentication(claims)) {
+                    return Response.redirect(ADMIN_LOGIN);
+                }
+
+                MangooUtils.resetLockCounter();
                 try {
                     return Response.redirect(ADMIN_INDEX).cookie(MangooUtils.getAdminCookie(false));
                 } catch (MangooJwtException e) {
@@ -189,8 +206,8 @@ public class AdminController {
         }
         form.invalidate();
         form.keep();
-        
-        return Response.redirect("/@admin/twofactor");
+
+        return Response.redirect(ADMIN_TWO_FACTOR);
     }
     
     public Response twofactor() {

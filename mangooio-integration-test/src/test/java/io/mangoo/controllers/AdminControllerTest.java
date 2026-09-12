@@ -164,6 +164,41 @@ class AdminControllerTest {
     }
 
     @Test
+    void testTwoFactorUnauthorized() {
+        //given
+        TestResponse response = TestRequest.get("/@admin/twofactor")
+                .withDisabledRedirects()
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
+        assertThat(response.getHeader("Location"), equalTo("/@admin/login"));
+        assertThat(response.getContent(), not(containsString("Two-Step Verification")));
+    }
+
+    @Test
+    void testVerifyWithoutFirstFactor() {
+        //given
+        Csrf csrf = TestUtils.getCsrf();
+        Multimap<String, String> parameters = ArrayListMultimap.create();
+        parameters.put("code", "123456");
+        parameters.put(Const.CSRF_TOKEN, csrf.token());
+
+        TestResponse response = TestRequest.post("/@admin/verify")
+                .withCookie(csrf.cookie())
+                .withForm(parameters)
+                .withDisabledRedirects()
+                .execute();
+
+        //then the second factor alone must never yield an admin session
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
+        assertThat(response.getHeader("Location"), equalTo("/@admin/login"));
+        assertThat(response.getContent(), not(containsString(CONTROL_PANEL)));
+    }
+
+    @Test
     void testLogin() {
         //given
         TestResponse response = TestRequest.get("/@admin/login").execute();

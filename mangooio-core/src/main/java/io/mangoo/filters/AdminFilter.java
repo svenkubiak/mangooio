@@ -1,30 +1,25 @@
 package io.mangoo.filters;
 
-import io.mangoo.constants.ClaimKey;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.utils.JwtUtils;
 import io.mangoo.utils.internal.MangooUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 
 public class AdminFilter implements PerRequestFilter {
-    private static final Logger LOG = LogManager.getLogger(AdminFilter.class);
     private static final String VERSION_TAG = MangooUtils.getVersion();
-    private static final String[] ALLOWED = {
-            "/@admin/login",
+    private static final String ADMIN_INDEX = "/@admin";
+    private static final String ADMIN_LOGIN = "/@admin/login";
+    private static final String ADMIN_TWO_FACTOR = "/@admin/twofactor";
+    private static final String[] PUBLIC = {
+            ADMIN_LOGIN,
             "/@admin/logout",
-            "/@admin/authenticate",
-            "/@admin/twofactor",
+            "/@admin/authenticate"};
+    private static final String[] PRE_AUTHENTICATED = {
+            ADMIN_TWO_FACTOR,
             "/@admin/verify"};
 
     @Override
@@ -33,35 +28,35 @@ public class AdminFilter implements PerRequestFilter {
         response.render("mangooioAdminLocale", config.getApplicationAdminLocale());
 
         var uri = request.getURI();
-        if (StringUtils.isNotBlank(uri) && Strings.CI.equalsAny(uri, ALLOWED)) {
+        if (StringUtils.isBlank(uri)) {
+            return Response.redirect(ADMIN_LOGIN).end();
+        }
+
+        if (Strings.CI.equalsAny(uri, PUBLIC)) {
             return response;
         }
 
-        var cookie = request.getCookie(MangooUtils.getAdminCookieName());
-        if (cookie != null) {
-            String value = cookie.getValue();
-            if (StringUtils.isNotBlank(value)) {
-                try {
-                    var jwtData = JwtUtils.JwtData.create()
-                            .withKey(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
-                            .withSecret(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
-                            .withIssuer(config.getApplicationName())
-                            .withAudience(MangooUtils.getAdminCookieName())
-                            .withTtlSeconds(1800);
-
-                    var jwtClaimSet = JwtUtils.parseJwt(value, jwtData);
-                    if (("true").equals(jwtClaimSet.getClaimAsString(ClaimKey.TWO_FACTOR))) {
-                        return Response.redirect("/@admin/twofactor").end();
-                    }
-
-                    response.render("version", VERSION_TAG);
-                    return response;
-                } catch (ParseException | MangooJwtException e) {
-                    LOG.error("Failed to parse admin cookie -> {}", e.getCause(), e);
-                }
-            }
+        var claims = MangooUtils.parseAdminCookie(request).orElse(null);
+        if (claims == null) {
+            return Response.redirect(ADMIN_LOGIN).end();
         }
-        
-        return Response.redirect("/@admin/login").end();
+
+        boolean twoFactorRoute = Strings.CI.equalsAny(uri, PRE_AUTHENTICATED);
+        if (MangooUtils.isTwoFactorPending(claims)) {
+            // Only the first factor has been passed, the two factor routes are the
+            // only ones reachable until the second factor has been verified
+            if (twoFactorRoute) {
+                return response;
+            }
+
+            return Response.redirect(ADMIN_TWO_FACTOR).end();
+        }
+
+        if (twoFactorRoute) {
+            return Response.redirect(ADMIN_INDEX).end();
+        }
+
+        response.render("version", VERSION_TAG);
+        return response;
     }
 }

@@ -2,8 +2,10 @@ package io.mangoo.utils.internal;
 
 import com.google.common.io.Resources;
 import com.google.common.reflect.ClassPath;
+import com.nimbusds.jwt.JWTClaimsSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.cache.Cache;
+import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
@@ -12,6 +14,7 @@ import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.exceptions.MangooTranslationException;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Form;
+import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Validator;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
@@ -43,6 +46,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Base64;
@@ -52,8 +56,11 @@ import static io.mangoo.core.Application.getInstance;
 public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
     private static final int ADMIN_LOGIN_MAX_RETRIES = 10;
+    private static final int ADMIN_COOKIE_TTL = 1800;
+    private static final int ADMIN_PRE_AUTH_COOKIE_TTL = 120;
     private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
+    private static final String MANGOOIO_ADMIN_PRE_AUTH = "mangooio-admin-pre-auth-";
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
     private static final Set<String> VALID_TIMEZONES = ZoneId.getAvailableZoneIds();
@@ -192,10 +199,17 @@ public final class MangooUtils {
 
     public static Cookie getAdminCookie(boolean requireTwoFactor) throws MangooJwtException {
         Config config = getInstance(Config.class);
+        boolean preAuthentication = requireTwoFactor && StringUtils.isNotBlank(config.getApplicationAdminSecret());
+
         Map<String, String> claims = new HashMap<>();
-        if (requireTwoFactor && StringUtils.isNotBlank(config.getApplicationAdminSecret())) {
-            claims.put("twofactor", "true");
+        if (preAuthentication) {
+            claims.put(ClaimKey.TWO_FACTOR, "true");
         }
+
+        // A cookie that only passed the first factor is short-lived, as it is solely
+        // used to get the second factor verified
+        int ttl = preAuthentication ? ADMIN_PRE_AUTH_COOKIE_TTL : ADMIN_COOKIE_TTL;
+        String subject = CommonUtils.uuidV6();
 
         try {
             var jwtData = JwtUtils.JwtData.create()
@@ -203,23 +217,94 @@ public final class MangooUtils {
                     .withSecret(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
                     .withIssuer(config.getApplicationName())
                     .withAudience(getAdminCookieName())
-                    .withSubject(CommonUtils.uuidV6())
-                    .withTtlSeconds(1800)
+                    .withSubject(subject)
+                    .withTtlSeconds(ttl)
                     .withClaims(claims);
 
             var jwt = JwtUtils.createJwt(jwtData);
+
+            if (preAuthentication) {
+                getInstance(Cache.class).put(MANGOOIO_ADMIN_PRE_AUTH + subject, Boolean.TRUE, ttl, ChronoUnit.SECONDS);
+            }
 
             return new CookieImpl(getAdminCookieName())
                     .setValue(jwt)
                     .setHttpOnly(true)
                     .setSecure(Application.inProdMode())
-                    .setExpires(DateUtils.localDateTimeToDate(LocalDateTime.now().plusSeconds(1800)))
+                    .setExpires(DateUtils.localDateTimeToDate(LocalDateTime.now().plusSeconds(ttl)))
                     .setPath("/")
                     .setSameSiteMode("Strict");
         } catch (MangooJwtException e) {
             LOG.error("Failed to create admin cookie", e);
             throw new MangooJwtException(e);
         }
+    }
+
+    /**
+     * Parses and validates the admin cookie of the given request
+     *
+     * @param request The current request
+     * @return The claims of the admin cookie or an empty Optional if the request carries no valid admin cookie
+     */
+    public static Optional<JWTClaimsSet> parseAdminCookie(Request request) {
+        Objects.requireNonNull(request, Required.REQUEST);
+
+        var cookie = request.getCookie(getAdminCookieName());
+        if (cookie == null || StringUtils.isBlank(cookie.getValue())) {
+            return Optional.empty();
+        }
+
+        Config config = getInstance(Config.class);
+        var jwtData = JwtUtils.JwtData.create()
+                .withKey(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
+                .withSecret(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
+                .withIssuer(config.getApplicationName())
+                .withAudience(getAdminCookieName())
+                .withTtlSeconds(ADMIN_COOKIE_TTL);
+
+        try {
+            return Optional.of(JwtUtils.parseJwt(cookie.getValue(), jwtData));
+        } catch (MangooJwtException e) {
+            LOG.error("Failed to parse admin cookie -> {}", e.getCause(), e);
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Checks if the given admin cookie claims only passed the first factor and
+     * still require the second factor to be verified
+     *
+     * @param claims The claims of an admin cookie
+     * @return True if the second factor is still pending, false otherwise
+     */
+    public static boolean isTwoFactorPending(JWTClaimsSet claims) {
+        Objects.requireNonNull(claims, Required.CLAIMS);
+        return ("true").equals(claims.getClaim(ClaimKey.TWO_FACTOR));
+    }
+
+    /**
+     * Invalidates the one-time pre-authentication that is bound to the subject of the given
+     * claims, so that a captured pre-authentication cookie can not be replayed
+     *
+     * @param claims The claims of an admin cookie
+     * @return True if the pre-authentication was valid and has been consumed, false otherwise
+     */
+    public static boolean consumePreAuthentication(JWTClaimsSet claims) {
+        Objects.requireNonNull(claims, Required.CLAIMS);
+
+        String subject = claims.getSubject();
+        if (!isTwoFactorPending(claims) || StringUtils.isBlank(subject)) {
+            return false;
+        }
+
+        Cache cache = getInstance(Cache.class);
+        String key = MANGOOIO_ADMIN_PRE_AUTH + subject;
+        if (cache.get(key) == null) {
+            return false;
+        }
+
+        cache.remove(key);
+        return true;
     }
 
     public static String getAdminCookieName() {

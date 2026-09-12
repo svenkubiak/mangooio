@@ -9,6 +9,7 @@ public final class Required {
     public static final String CACHE = "cache can not be null"; 
     public static final String CACHE_PROVIDER = "cacheProvider can not be null"; 
     public static final String CCS = "ccs can not be null or blank";
+    public static final String CLAIMS = "claims can not be null";
     public static final String CLASS = "class can not be null ";
     public static final String CLEARTEXT = "cleartext can not be null or blank";
     public static final String CONFIG = "config can not be null";

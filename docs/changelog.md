@@ -1,3 +1,9 @@
+## Version 10.12.1
+
+Released at 12.09.2026
+
+* Fixed incorrect cookie handling in /@admin dashboard (svenkubiak)
+
 ## Version 10.12.0
 
 Released at 12.09.2026
