@@ -91,12 +91,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>3.1.4</version>
+					<version>3.2.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>3.1.4</version>
+					<version>3.2.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -413,7 +413,7 @@
 			<dependency>
 				<groupId>org.apache.fory</groupId>
 				<artifactId>fory-core</artifactId>
-				<version>1.7.2</version>
+				<version>1.7.3</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
@@ -479,7 +479,7 @@
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
-				<version>0.61.1</version>
+				<version>0.61.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.llorllale</groupId>

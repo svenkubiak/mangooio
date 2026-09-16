@@ -1,8 +1,16 @@
+## Version 10.12.3
+
+Unrelease
+
+* Version bumps (svenkubiak)
+  * fory-core 1.7.2 -&gt; 1.7.3
+  * cactoos 0.61.1 -&gt; 0.62.0
+
 ## Version 10.12.2
 
 Released at 12.09.2026
 
-* Fixed a potential race-condition when handing of AttachmentKey (svenkubia)
+* Fixed a potential race-condition when handing of AttachmentKey (svenkubiak)
 
 ## Version 10.12.1
 
