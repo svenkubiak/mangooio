@@ -479,7 +479,7 @@
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
-				<version>0.62</version>
+				<version>0.62.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.llorllale</groupId>
