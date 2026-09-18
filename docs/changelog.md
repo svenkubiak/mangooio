@@ -4,7 +4,8 @@ Unrelease
 
 * Version bumps (svenkubiak)
   * fory-core 1.7.2 -&gt; 1.7.3
-  * cactoos 0.61.1 -&gt; 0.62.0
+  * cactoos 0.61.1 -&gt; 0.62
+  * nimbus-jwt 10.9.1 -&gt; 10.10
 
 ## Version 10.12.2
 
