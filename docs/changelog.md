@@ -3,9 +3,13 @@
 Unrelease
 
 * Version bumps (svenkubiak)
-  * fory-core 1.7.2 -&gt; 1.7.3
+  * fory-core 1.7.2 -&gt; 1.7.4
   * cactoos 0.61.1 -&gt; 0.62
   * nimbus-jwt 10.9.1 -&gt; 10.10
+  * jackson 2.22.2 -&gt; 2.22.3
+  * hibernate-validator 9.1.3.Final -&gt; 9.1.4.Final
+  * greenmail 2.1.13 -&gt; 2.1.14
+  * caffeine 3.2.4 -&gt; 3.3.0
 
 ## Version 10.12.2
 
