@@ -10,6 +10,8 @@ Unrelease
   * hibernate-validator 9.1.3.Final -&gt; 9.1.4.Final
   * greenmail 2.1.13 -&gt; 2.1.14
   * caffeine 3.2.4 -&gt; 3.3.0
+  * classgraph 4.8.195 -&gt; 4.8.196
+  * mockito-core 5.23.0 -&gt; 5.24.0
 
 ## Version 10.12.2
 
