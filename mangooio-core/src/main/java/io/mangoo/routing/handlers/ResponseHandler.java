@@ -5,7 +5,6 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Server;
 import io.mangoo.routing.Response;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
@@ -33,7 +32,10 @@ public class ResponseHandler implements HttpHandler {
             form.discard();
         }
 
-        Trace.end(exchange.getRequestPath());
+        // No Trace.end() here. Sending the response completes the exchange, which fires the
+        // completion listener that closes the remaining spans. Ending the span at this point
+        // would always come too late and is also unnecessary, as closing it from the listener
+        // covers an aborted request the same way it covers this one.
     }
 
     /**

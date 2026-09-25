@@ -24,9 +24,9 @@ public class Validator implements Serializable {
     @Serial
     private static final long serialVersionUID = -714400230978999709L;
     private final Map<String, String> errors = new HashMap<>();
-    private Messages messages;
+    private transient Messages messages; // NOSONAR Transient by design, see messages()
     protected Map<String, String> values = new HashMap<>(); // NOSONAR Intentionally not transient
-    protected Map<String, byte[]> files = new HashMap<>(); // NOSONAR Intentionally not transient
+    protected transient Map<String, byte[]> files = new HashMap<>(); // NOSONAR Transient by design, uploaded file bytes must never be serialized into the flash cookie
 
     @Inject
     public Validator(Messages messages) {
@@ -35,6 +35,41 @@ public class Validator implements Serializable {
 
     public Validator() {
         this.messages = Application.getInstance(Messages.class);
+    }
+
+    /**
+     * Retrieves the uploaded files of this validator. As the files are not part of the
+     * flash cookie serialization, the map can be absent after a form was restored from
+     * the flash scope and is lazily recreated here
+     *
+     * @return Map with the uploaded files
+     */
+    protected Map<String, byte[]> files() {
+        if (files == null) {
+            files = new HashMap<>();
+        }
+
+        return files;
+    }
+
+    /**
+     * Retrieves the messages this validator creates its error messages with.
+     * <p></p>
+     * The messages are not serialized into the flash cookie. They carry the full set of
+     * default validation texts, which would take up the better part of the available cookie
+     * budget while being static and available again on the other side anyway. A form that
+     * was restored from the flash scope is rebound to the messages of the current request by
+     * the form handler, so the fallback below only applies to a validator used outside of a
+     * request.
+     *
+     * @return The messages to build error messages with
+     */
+    protected Messages messages() {
+        if (messages == null) {
+            messages = Application.getInstance(Messages.class);
+        }
+
+        return messages;
     }
 
     /**
@@ -60,7 +95,7 @@ public class Validator implements Serializable {
         Objects.requireNonNull(name, Required.NAME);
         Objects.requireNonNull(allowedMimeTypes, Required.ALLOWED_MIME_TYPES);
 
-        byte[] bytes = files.get(name);
+        byte[] bytes = files().get(name);
         if (bytes != null) {
             try (var bais = new ByteArrayInputStream(bytes)) {
                 String detectedType = FileUtils.getMimeType(bais);
@@ -70,15 +105,15 @@ public class Validator implements Serializable {
 
                 if (!allowed) {
                     addError(name, Optional.ofNullable(message)
-                            .orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
+                            .orElse(messages().get(Validation.MIME_TYPE_KEY, name)));
                 }
             } catch (IOException e) {
                 addError(name, Optional.ofNullable(message)
-                        .orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
+                        .orElse(messages().get(Validation.MIME_TYPE_KEY, name)));
             }
         } else {
             addError(name, Optional.ofNullable(message)
-                    .orElse(messages.get(Validation.MIME_TYPE_KEY, name)));
+                    .orElse(messages().get(Validation.MIME_TYPE_KEY, name)));
         }
     }
 
@@ -102,21 +137,21 @@ public class Validator implements Serializable {
     public void expectFileMaxSize(String name, long maxFileSizeBytes, String message) {
         Objects.requireNonNull(name, Required.NAME);
 
-        byte[] bytes = files.get(name);
+        byte[] bytes = files().get(name);
         if (bytes != null) {
             try {
                 long totalSize = bytes.length;
                 if (totalSize > maxFileSizeBytes) {
                     addError(name, Optional.ofNullable(message)
-                            .orElse(messages.get(Validation.FILE_SIZE_KEY, name)));
+                            .orElse(messages().get(Validation.FILE_SIZE_KEY, name)));
                 }
             } catch (Exception e) {
                 addError(name, Optional.ofNullable(message)
-                        .orElse(messages.get(Validation.FILE_SIZE_KEY, name)));
+                        .orElse(messages().get(Validation.FILE_SIZE_KEY, name)));
             }
         } else {
             addError(name, Optional.ofNullable(message)
-                    .orElse(messages.get(Validation.FILE_SIZE_KEY, name)));
+                    .orElse(messages().get(Validation.FILE_SIZE_KEY, name)));
         }
     }
 
@@ -173,7 +208,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (StringUtils.isBlank(StringUtils.trimToNull(value))) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.REQUIRED_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.REQUIRED_KEY, name)));
         }
     }
 
@@ -185,10 +220,10 @@ public class Validator implements Serializable {
      */
     public void expectFile(String name, String message) {
         Objects.requireNonNull(name, Required.NAME);
-        byte[] bytes = files.get(name);
+        byte[] bytes = files().get(name);
 
         if (bytes == null || bytes.length == 0) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FILE_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.FILE_KEY, name)));
         }
     }
 
@@ -226,10 +261,10 @@ public class Validator implements Serializable {
 
         if (StringUtils.isNumeric(value)) {
             if (Double.parseDouble(value) < minValue) {
-                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIN_VALUE_KEY, name, minValue)));
+                addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MIN_VALUE_KEY, name, minValue)));
             }
         } else {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIN_VALUE_KEY, name, minValue)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MIN_VALUE_KEY, name, minValue)));
         }
     }
 
@@ -256,7 +291,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (value.length() < minLength) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIN_LENGTH_KEY, name, minLength)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MIN_LENGTH_KEY, name, minLength)));
         }
     }
     
@@ -304,7 +339,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!StringUtils.isNumeric(value)) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.NUMERIC_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.NUMERIC_KEY, name)));
         }
     }
     
@@ -320,7 +355,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (value.length() > maxLength) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MAX_LENGTH_KEY, name, maxLength)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MAX_LENGTH_KEY, name, maxLength)));
         }
     }
 
@@ -337,10 +372,10 @@ public class Validator implements Serializable {
 
         if (StringUtils.isNumeric(value)) {
             if (Double.parseDouble(value) > maxValue) {
-                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MAX_VALUE_KEY, name, maxValue)));
+                addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MAX_VALUE_KEY, name, maxValue)));
             }
         } else {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MAX_VALUE_KEY, name, maxValue)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MAX_VALUE_KEY, name, maxValue)));
         }
     }
 
@@ -367,7 +402,7 @@ public class Validator implements Serializable {
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse(Strings.EMPTY);
 
         if (( StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue) ) || ( StringUtils.isNotBlank(value) && !value.equals(anotherValue) )) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.EXACT_MATCH_KEY, name, anotherName)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.EXACT_MATCH_KEY, name, anotherName)));
         }
     }
 
@@ -378,7 +413,7 @@ public class Validator implements Serializable {
      * @param anotherName The field to check against
      */
     public void expectMatch(String name, String anotherName) {
-        expectMatch(name, anotherName, messages.get(Validation.MATCH_KEY, name, anotherName));
+        expectMatch(name, anotherName, messages().get(Validation.MATCH_KEY, name, anotherName));
     }
     
     /**
@@ -393,7 +428,7 @@ public class Validator implements Serializable {
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse(Strings.EMPTY);
 
         if (( StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue) ) || ( StringUtils.isNotBlank(value) && !value.equalsIgnoreCase(anotherValue.toLowerCase()))) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MATCH_KEY, name, anotherName)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MATCH_KEY, name, anotherName)));
         }
     }
 
@@ -405,7 +440,7 @@ public class Validator implements Serializable {
      */
     public void expectMatch(String name, List<String> values) {
         Objects.requireNonNull(name, Required.NAME);
-        expectMatch(name, messages.get(Validation.MATCH_VALUES_KEY, name), values);
+        expectMatch(name, messages().get(Validation.MATCH_VALUES_KEY, name), values);
     }
 
     /**
@@ -420,7 +455,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!(values).contains(value)) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MATCH_VALUES_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MATCH_VALUES_KEY, name)));
         }
     }
 
@@ -445,7 +480,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!EmailValidator.getInstance().isValid(value)) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.EMAIL_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.EMAIL_KEY, name)));
         }
     }
 
@@ -470,7 +505,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!InetAddressValidator.getInstance().isValidInet4Address(value)) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.IPV4_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.IPV4_KEY, name)));
         }
     }
     
@@ -495,7 +530,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!DomainValidator.getInstance().isValid(value)) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.DOMAIN_NAME_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.DOMAIN_NAME_KEY, name)));
         }
     }
 
@@ -520,7 +555,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!InetAddressValidator.getInstance().isValidInet6Address(value)) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.IPV6_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.IPV6_KEY, name)));
         }
     }
     
@@ -563,10 +598,10 @@ public class Validator implements Serializable {
         if (StringUtils.isNumeric(value)) {
             var doubleValue = Double.parseDouble(value);
             if (doubleValue < minValue || doubleValue > maxValue) {
-                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_VALUE_KEY, name, minValue, maxValue)));
+                addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.RANGE_VALUE_KEY, name, minValue, maxValue)));
             }
         } else {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_VALUE_KEY, name, minValue, maxValue)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.RANGE_VALUE_KEY, name, minValue, maxValue)));
         }
     }
     
@@ -583,7 +618,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (value.length() < minLength || value.length() > maxLength) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_LENGTH_KEY, name, minLength, maxLength)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.RANGE_LENGTH_KEY, name, minLength, maxLength)));
         }
     }
 
@@ -616,7 +651,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!pattern.matcher(value).matches()) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.REGEX_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.REGEX_KEY, name)));
         }
     }
 
@@ -641,7 +676,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!UrlValidator.getInstance().isValid(value)) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.URL_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.URL_KEY, name)));
         }
     }
 
@@ -655,7 +690,7 @@ public class Validator implements Serializable {
     public void expectTrue(String name, boolean value, String message) {
         Objects.requireNonNull(name, Required.NAME);
         if (!value) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.TRUE_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.TRUE_KEY, name)));
         }
     }
     
@@ -680,7 +715,7 @@ public class Validator implements Serializable {
     public void expectFalse(String name, boolean value, String message) {
         Objects.requireNonNull(name, Required.NAME);
         if (value) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FALSE_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.FALSE_KEY, name)));
         }
     }
     
@@ -705,7 +740,7 @@ public class Validator implements Serializable {
     public void expectNotNull(String name, Object object, String message) {
         Objects.requireNonNull(name, Required.NAME);
         if (object == null) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.NOTNULL_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.NOTNULL_KEY, name)));
         }
     }
     
@@ -730,7 +765,7 @@ public class Validator implements Serializable {
     public void expectNull(String name, Object object, String message) {
         Objects.requireNonNull(name, Required.NAME);
         if (object != null) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.NULL_KEY, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.NULL_KEY, name)));
         }
     }
     
@@ -742,7 +777,7 @@ public class Validator implements Serializable {
      */
     public void expectNull(String name, Object object) {
         Objects.requireNonNull(name, Required.NAME);
-        expectNull(name, object, messages.get(Validation.NULL_KEY, name));
+        expectNull(name, object, messages().get(Validation.NULL_KEY, name));
     }
     
     /**

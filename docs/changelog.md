@@ -2,6 +2,9 @@
 
 Unrelease
 
+* Fixed an issue in OTLP handling (svenkubiak)
+* Fixed an issue in form-cookie (svenkubiak)
+* Added additional unit tests for OTLP (svenkubiak)
 * Updated documentation (svenkubiak)
 * Version bumps (svenkubiak)
   * fory-core 1.7.2 -&gt; 1.7.4

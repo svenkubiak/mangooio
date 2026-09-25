@@ -8,7 +8,6 @@ import java.util.Objects;
 
 public class ServerSentEventRoute implements MangooRoute {
     private String url;
-    private boolean authentication;
 
     /**
      * Sets the URL for this route
@@ -32,9 +31,5 @@ public class ServerSentEventRoute implements MangooRoute {
     @Override
     public String getUrl() {
         return url;
-    }
-    
-    public boolean hasAuthentication() {
-        return authentication;
     }
 }

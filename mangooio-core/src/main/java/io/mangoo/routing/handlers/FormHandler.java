@@ -20,14 +20,18 @@ public class FormHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         final Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
-        if (attachment.getForm() == null) {
-            var form = getForm(exchange);
 
-            // The form validates against the messages of the current request, so that
-            // validation errors are rendered in the locale of this request only
-            form.withMessages(attachment.getMessages());
-            attachment.setForm(form);
+        var form = attachment.getForm();
+        if (form == null) {
+            form = getForm(exchange);
         }
+
+        // The form validates against the messages of the current request, so that validation
+        // errors are rendered in the locale of this request only. This also applies to a form
+        // that was restored from the flash scope: its messages are not part of the cookie, and
+        // the locale of the request that kept the form is not necessarily the one of this request
+        form.withMessages(attachment.getMessages());
+        attachment.setForm(form);
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
         nextHandler(exchange);

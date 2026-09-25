@@ -33,6 +33,7 @@ public final class Default {
     public static final String CORS_URL_PATTERN = "^http(s)?://([^/]+)(:([^/]+))?(/([^/])+)?/api(/.*)?$";
     public static final String FILES_FOLDER = "files";
     public static final String FLASH_COOKIE_NAME = "mangooio-flash";
+    public static final int FLASH_COOKIE_MAX_SIZE = 4096;
     public static final int FORM_MAX_FILES = 10;
     public static final long FORM_MAX_FILE_SIZE = 5L * 1024 * 1024;
     public static final int FORM_MAX_PARAMETERS = 1000;

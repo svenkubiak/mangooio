@@ -159,11 +159,8 @@ public class Form extends Validator {
      */
     public Optional<byte[]> getFile(String key) {
         Objects.requireNonNull(key, Required.KEY);
-        if (!files.isEmpty()) {
-            return Optional.of(files.get(key));
-        }
 
-        return Optional.empty();
+        return Optional.ofNullable(files().get(key));
     }
 
     /**
@@ -187,12 +184,15 @@ public class Form extends Validator {
         Objects.requireNonNull(inputStream, Required.INPUT_STREAM);
 
         try (var in = inputStream) {
-            files.put(key, in.readAllBytes());
+            files().put(key, in.readAllBytes());
         }
     }
  
     /**
      * Adds the form values to the flash scope
+     * <p></p>
+     * Uploaded files are never part of the flash scope, only the submitted
+     * values and the validation errors are kept across the redirect
      */
     public void keep() {
         keep = true;
@@ -213,10 +213,13 @@ public class Form extends Validator {
     public void discard() {
         if (files != null) {
             files.clear();
-            files = new HashMap<>();
-            values.clear();
-            values = new HashMap<>();
         }
+        files = new HashMap<>();
+
+        if (values != null) {
+            values.clear();
+        }
+        values = new HashMap<>();
     }
     
     public boolean isSubmitted() {

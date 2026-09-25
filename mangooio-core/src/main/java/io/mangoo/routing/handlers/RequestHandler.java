@@ -52,12 +52,12 @@ public class RequestHandler implements HttpHandler {
         attachment.setBody(getRequestBody(exchange));
         attachment.setRequest(getRequest(exchange));
 
-        Trace.startChild(exchange.getRequestPath(), Const.INVOKE_CONTROLLER);
+        Trace.startChild(exchange, Const.INVOKE_CONTROLLER);
         var response = getResponse(exchange);
         response.getCookies().forEach(exchange::setResponseCookie);
 
         attachment.setResponse(response);
-        Trace.end(Const.INVOKE_CONTROLLER);
+        Trace.end(exchange);
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
         nextHandler(exchange);

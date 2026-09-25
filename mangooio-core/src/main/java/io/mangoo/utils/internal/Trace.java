@@ -10,28 +10,26 @@ import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
-import io.opentelemetry.context.Scope;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
+import io.undertow.server.HttpServerExchange;
+import io.undertow.util.AttachmentKey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.time.Duration;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public final class Trace {
     private static final Logger LOG = LogManager.getLogger(Trace.class);
-    private static final Map<String, Span> SPANS = new ConcurrentHashMap<>();
-    private static final Map<String, Scope> SCOPES = new ConcurrentHashMap<>();
-    private static final Map<String, ScheduledFuture<?>> SCHEDULED_CLOSURES = new ConcurrentHashMap<>();
+    private static final AttachmentKey<TraceState> TRACE_STATE = AttachmentKey.create(TraceState.class);
     private static final boolean ENABLED;
-    private static final Duration AUTO_CLOSE_TIMEOUT = Duration.ofMinutes(2);
-    private static ScheduledExecutorService scheduler;
     private static SdkTracerProvider tracerProvider;
     private static OpenTelemetry openTelemetry;
 
@@ -61,9 +59,6 @@ public final class Trace {
                     .setTracerProvider(tracerProvider)
                     .build();
 
-
-            scheduler = Executors.newScheduledThreadPool(0, Thread.ofVirtual().factory());
-
             LOG.info("OpenTelemetry tracing enabled with endpoint {}", config.getOtlpEndpoint());
         } else {
             LOG.info("OpenTelemetry tracing disabled");
@@ -81,124 +76,136 @@ public final class Trace {
                 LOG.error("Failed to shutdown tracer provider cleanly", e);
             }
         }
-
-        if (scheduler != null) {
-            scheduler.shutdown();
-            try {
-                if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
-                    scheduler.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                LOG.error("Interrupted during scheduler shutdown", e);
-                scheduler.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
-        }
     }
 
-    public static void start(String process) {
-        if (!ENABLED) {return;}
+    /**
+     * Starts the root span for the given exchange. The span is attached to the exchange and is
+     * therefore isolated from any other request that is processed in parallel. An exchange
+     * completion listener ensures that every span of this exchange is ended, even if the
+     * handler chain is aborted before {@link #end(HttpServerExchange)} is reached.
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @param process The name of the span
+     */
+    public static void start(HttpServerExchange exchange, String process) {
+        if (!ENABLED || openTelemetry == null) {return;}
 
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
         Argument.requireNonBlank(process, Required.PROCESS);
 
-        if (openTelemetry != null) {
-            var tracer = openTelemetry.getTracer(Const.FRAMEWORK);
-            var span = tracer.spanBuilder(process)
-                    .setSpanKind(SpanKind.INTERNAL)
-                    .startSpan();
-
-            var scope = span.makeCurrent();
-            String key = getKey(process);
-            SPANS.put(key, span);
-            SCOPES.put(key, scope);
-
-            ScheduledFuture<?> scheduledClose = scheduler.schedule(() -> {
-                if (SPANS.containsKey(key)) {
-                    LOG.warn("Automatically closing span {} due to timeout", process);
-                    end(process);
-                }
-            }, AUTO_CLOSE_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
-
-            ScheduledFuture<?> previous = SCHEDULED_CLOSURES.put(key, scheduledClose);
-            if (previous != null) {
-                previous.cancel(false);
-            }
+        if (exchange.getAttachment(TRACE_STATE) != null) {
+            LOG.warn("Tried to start span {} but this exchange is already traced", process);
+            return;
         }
+
+        var traceState = new TraceState();
+        exchange.putAttachment(TRACE_STATE, traceState);
+        exchange.addExchangeCompleteListener((completedExchange, nextListener) -> {
+            try {
+                endAll(completedExchange);
+            } finally {
+                nextListener.proceed();
+            }
+        });
+
+        traceState.push(createSpan(process, Context.root()));
     }
 
-    public static void startChild(String parentProcess, String childProcess) {
-        if (!ENABLED) {return;}
+    /**
+     * Starts a child span of the currently innermost span of the given exchange. The parent
+     * context is propagated explicitly, so the child span is correct regardless of the thread
+     * the request is currently processed on.
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @param childProcess The name of the child span
+     */
+    public static void startChild(HttpServerExchange exchange, String childProcess) {
+        if (!ENABLED || openTelemetry == null) {return;}
 
-        Argument.requireNonBlank(parentProcess, Required.PROCESS);
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
         Argument.requireNonBlank(childProcess, Required.PROCESS);
 
-        if (openTelemetry != null) {
-            var parentSpan = SPANS.get(getKey(parentProcess));
-            if (parentSpan != null) {
-                try (var ignored = parentSpan.makeCurrent()) {
-                    var tracer = openTelemetry.getTracer(Const.FRAMEWORK);
-                    var child = tracer.spanBuilder(childProcess)
-                            .setSpanKind(SpanKind.INTERNAL)
-                            .startSpan();
-                    var scope = child.makeCurrent();
+        var traceState = exchange.getAttachment(TRACE_STATE);
+        var parent = traceState != null ? traceState.peek() : null;
 
-                    String key = getKey(childProcess);
-                    SPANS.put(key, child);
-                    SCOPES.put(key, scope);
+        if (parent == null) {
+            LOG.warn("No parent span found for {}", childProcess);
+            return;
+        }
 
-                    ScheduledFuture<?> scheduledClose = scheduler.schedule(() -> {
-                        if (SPANS.containsKey(key)) {
-                            LOG.warn("Automatically closing child span {} due to timeout", childProcess);
-                            end(childProcess);
-                        }
-                    }, AUTO_CLOSE_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
+        traceState.push(createSpan(childProcess, Context.root().with(parent)));
+    }
 
-                    ScheduledFuture<?> previous = SCHEDULED_CLOSURES.put(key, scheduledClose);
-                    if (previous != null) {
-                        previous.cancel(false);
-                    }
-                }
-            } else {
-                LOG.warn("No parent span found for {}", parentProcess);
-            }
+    /**
+     * Ends the innermost span that is currently open for the given exchange
+     *
+     * @param exchange The Undertow HttpServerExchange
+     */
+    public static void end(HttpServerExchange exchange) {
+        if (!ENABLED) {return;}
+
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
+
+        var traceState = exchange.getAttachment(TRACE_STATE);
+        var span = traceState != null ? traceState.pop() : null;
+
+        if (span != null) {
+            endSpan(span);
+        } else {
+            LOG.debug("Tried to end a span but none was open for this exchange");
         }
     }
 
-    private static String getKey(String process) {
-        Argument.requireNonBlank(process, Required.PROCESS);
+    /**
+     * Ends all spans that are still open for the given exchange and detaches the trace state
+     *
+     * @param exchange The Undertow HttpServerExchange
+     */
+    private static void endAll(HttpServerExchange exchange) {
+        var traceState = exchange.removeAttachment(TRACE_STATE);
+        if (traceState == null) {
+            return;
+        }
 
-        return process.replaceAll("[^a-z0-9]", "_")
-                .toLowerCase(Locale.ENGLISH);
+        Span span;
+        while ((span = traceState.pop()) != null) {
+            endSpan(span);
+        }
     }
 
-    public static void end(String process) {
-        if (!ENABLED) {return;}
+    private static Span createSpan(String process, Context parent) {
+        return openTelemetry.getTracer(Const.FRAMEWORK)
+                .spanBuilder(process)
+                .setSpanKind(SpanKind.INTERNAL)
+                .setParent(parent)
+                .startSpan();
+    }
 
-        Argument.requireNonBlank(process, Required.PROCESS);
+    private static void endSpan(Span span) {
+        try {
+            span.end();
+        } catch (Exception e) {
+            LOG.error("Failed to end span", e);
+        }
+    }
 
-        String key = getKey(process);
-        var span = SPANS.get(key);
-        var scope = SCOPES.get(key);
+    /**
+     * Holds the span stack of a single exchange. Access is synchronized because the exchange
+     * completion listener may run on a different thread than the handler chain.
+     */
+    private static final class TraceState {
+        private final Deque<Span> spans = new ArrayDeque<>();
 
-        if (span != null) {
-            try {
-                span.end();
-                if (scope != null) {
-                    scope.close();
-                }
-            } catch (Exception e) {
-                LOG.error("Failed to end span {}", process, e);
-            } finally {
-                SPANS.remove(key);
-                SCOPES.remove(key);
+        private synchronized void push(Span span) {
+            spans.push(span);
+        }
 
-                ScheduledFuture<?> scheduledClose = SCHEDULED_CLOSURES.remove(key);
-                if (scheduledClose != null) {
-                    scheduledClose.cancel(false);
-                }
-            }
-        } else {
-            LOG.warn("Tried to end span {} but none was found", process);
+        private synchronized Span peek() {
+            return spans.peek();
+        }
+
+        private synchronized Span pop() {
+            return spans.poll();
         }
     }
 }

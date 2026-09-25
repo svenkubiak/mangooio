@@ -2,6 +2,7 @@ package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.Const;
+import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -198,22 +199,41 @@ public class OutboundCookiesHandler implements HttpHandler {
         } else if (flash.hasContent() || form.isKept()) {
             try {
                 Map<String, String> claims = new HashMap<>(flash.getValues());
-                if (form.isKept()) {
+                boolean formKept = form.isKept();
+                if (formKept) {
                     claims.put(ClaimKey.FORM, MangooUtils.serializeFlashFormToBase64(form));
                 }
 
+                var cookieName = config.getFlashCookieName();
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getFlashCookieKey())
                         .withSecret(config.getFlashCookieSecret())
                         .withIssuer(config.getApplicationName())
-                        .withAudience(config.getFlashCookieName())
+                        .withAudience(cookieName)
                         .withSubject(CommonUtils.uuidV6())
                         .withTtlSeconds(SIXTY)
                         .withClaims(claims);
 
                 var jwt = JwtUtils.createJwt(jwtData);
 
-                var cookie = new CookieImpl(config.getFlashCookieName())
+                // The size limit applies to the finished cookie, not to the serialized form, as
+                // signing and encrypting roughly doubles the payload. Measuring the claim alone
+                // would either waste the budget or still produce a cookie the client discards.
+                // The kept form is best effort and therefore the part that gets dropped, the
+                // flash values were set deliberately by the application and are kept.
+                if (formKept && exceedsLimit(cookieName, jwt)) {
+                    Map<String, String> reduced = new HashMap<>(claims);
+                    reduced.remove(ClaimKey.FORM);
+                    jwt = JwtUtils.createJwt(jwtData.withClaims(reduced));
+
+                    LOG.warn("Kept form does not fit into the flash cookie limit of {} bytes and has been dropped", Default.FLASH_COOKIE_MAX_SIZE);
+                }
+
+                if (exceedsLimit(cookieName, jwt)) {
+                    LOG.warn("Flash cookie exceeds the limit of {} bytes and will likely be discarded by the client", Default.FLASH_COOKIE_MAX_SIZE);
+                }
+
+                var cookie = new CookieImpl(cookieName)
                         .setValue(jwt)
                         .setSecure(config.isFlashCookieSecure())
                         .setHttpOnly(true)
@@ -228,6 +248,20 @@ public class OutboundCookiesHandler implements HttpHandler {
         } else {
             //Ignore and send no cookie to the client
         }
+    }
+
+    /**
+     * Checks if a cookie exceeds the size a client is willing to accept. Following RFC 6265bis,
+     * the limit applies to the sum of the length of the cookie name and its value, the
+     * attributes do not count towards it.
+     *
+     * @param cookieName The name of the cookie
+     * @param value The value of the cookie
+     *
+     * @return True if the cookie exceeds the limit, false otherwise
+     */
+    private boolean exceedsLimit(String cookieName, String value) {
+        return cookieName.length() + value.length() > Default.FLASH_COOKIE_MAX_SIZE;
     }
 
     /**

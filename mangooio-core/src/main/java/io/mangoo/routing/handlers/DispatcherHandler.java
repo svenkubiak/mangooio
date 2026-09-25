@@ -107,7 +107,7 @@ public final class DispatcherHandler implements HttpHandler {
             return;
         }
 
-        Trace.start(exchange.getRequestPath());
+        Trace.start(exchange, exchange.getRequestPath());
         var attachment = Attachment.build()
                 .withControllerInstance(Application.getInstance(controllerClass))
                 .withControllerClass(controllerClass)
