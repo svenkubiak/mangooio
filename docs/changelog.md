@@ -1,6 +1,6 @@
 ## Version 10.13.0
 
-Unrelease
+Unreleased
 
 * Added Authentication#isValidSecondFactor(identifier, secret, totp) which applies the authentication.lock failed attempt budget to the second factor (svenkubiak)
 * Deprecated Authentication#isValidSecondFactor(secret, totp) which verifies a TOTP unthrottled (svenkubiak)
