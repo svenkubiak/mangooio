@@ -51,6 +51,11 @@ default:
 
 environments:
   test:
+    # Resolved from -Dotlp.* so the tracing test run can enable OpenTelemetry
+    # without a second config file. Unset means the keys never reach the config.
+    otlp:
+      enable: arg{}
+      endpoint: arg{}
     application:
       foo: vault{}
       bar: vault{}

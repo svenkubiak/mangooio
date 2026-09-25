@@ -1,6 +1,7 @@
 package io.mangoo.routing.bindings;
 
 import io.mangoo.TestExtension;
+import io.mangoo.utils.internal.MangooUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -652,5 +653,24 @@ class FormTest {
 
         // Then
         assertFalse(form.isSubmitted());
+    }
+
+    @Test
+    void testFlashSerializationExcludesFiles() throws IOException {
+        // Given
+        form.addValue("email", "foo@bar.com");
+        form.addFile("upload", new ByteArrayInputStream(new byte[64 * 1024]));
+
+        // When
+        String serialized = MangooUtils.serializeFlashFormToBase64(form);
+        Form deserialized = MangooUtils.deserializeFlashFormFromBase64(serialized);
+
+        // Then
+        // A 64 KiB upload would alone add roughly 87k characters of Base64, so anything
+        // in this range proves the file bytes are not part of the serialization
+        assertTrue(serialized.length() < 4096,
+                "Serialized flash form must not contain the uploaded file bytes, but was " + serialized.length() + " characters");
+        assertEquals("foo@bar.com", deserialized.getValue("email"));
+        assertTrue(deserialized.getFile("upload").isEmpty());
     }
 }
