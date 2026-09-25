@@ -7,7 +7,7 @@ Unrelease
 * Added additional unit tests for OTLP (svenkubiak)
 * Updated documentation (svenkubiak)
 * Version bumps (svenkubiak)
-  * fory-core 1.7.2 -&gt; 1.7.4
+  * fory-core 1.7.2 -&gt; 1.7.6
   * cactoos 0.61.1 -&gt; 0.62
   * nimbus-jwt 10.9.1 -&gt; 10.10
   * jackson 2.22.2 -&gt; 2.22.3
@@ -16,6 +16,7 @@ Unrelease
   * caffeine 3.2.4 -&gt; 3.3.0
   * classgraph 4.8.195 -&gt; 4.8.196
   * mockito-core 5.23.0 -&gt; 5.24.0
+  * archunit-junit5 1.5.0 -&gt; 1.5.1
 
 ## Version 10.12.2
 
