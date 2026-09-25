@@ -37,7 +37,13 @@ if (authentication.isValidLogin("subject", "password", "salt", "hash")) {
 }
 ```
 
-`isValidLogin` also applies lockout: after `authentication.lock` failed attempts (default 10), the identifier is locked in the auth cache. This happens automatically so that a brute-force attempt against one account gets throttled without you having to implement rate limiting by hand.
+`isValidLogin` also applies lockout: after `authentication.lock` failed attempts (default 10), the identifier is locked for `authentication.lock.duration` minutes (default 60). This happens automatically so that a brute-force attempt against one account gets throttled without you having to implement rate limiting by hand. A successful login clears the budget.
+
+The lockout is an **absolute** point in time, set once when the budget is used up. Further failed attempts during the lockout are rejected without extending it, so an attacker cannot keep the rightful owner of an account locked out indefinitely by simply continuing to guess.
+
+The same budget applies to the second factor, see [Two-factor authentication](#two-factor-authentication). Both steps are counted separately per identifier, so a failed password attempt never consumes the budget of the second factor and vice versa.
+
+The counter lives in the auth cache and is therefore per process. An application running several instances behind a load balancer gets one budget per instance; if you need a shared or restart-safe budget, keep it in your own data store instead.
 
 Then, once logged in, you can adjust the cookie further:
 
@@ -56,8 +62,9 @@ authentication.invalidate();   // drop the cookie immediately
 authentication.update();       // refresh the cookie on this response
 authentication.rememberMe(true);
 authentication.twoFactorAuthentication(true);
-authentication.userHasLock("subject");
-authentication.isValidSecondFactor(secret, totp);
+authentication.userHasLock("subject");              // password step
+authentication.userHasSecondFactorLock("subject");  // second factor step
+authentication.isValidSecondFactor("subject", secret, totp);
 ```
 
 `logout()` and `invalidate()` sound similar but differ in timing: `logout()` marks the cookie to expire through the normal response cycle, while `invalidate()` drops it immediately, which matters if you need the effect to be visible before the method returns, for example before redirecting.
@@ -87,13 +94,17 @@ String secret = TotpUtils.createSecret();
 String qr = TotpUtils.getQRCode("user@example.com", "My App", secret);
 String url = TotpUtils.getOtpAuthURL("user@example.com", "My App", secret);
 
-if (authentication.isValidSecondFactor(secret, totpFromUser)) {
+if (authentication.isValidSecondFactor(subject, secret, totpFromUser)) {
     authentication.twoFactorAuthentication(false);
     authentication.login(subject);
 }
 ```
 
 A typical flow: after the password check succeeds, call `login(subject)` with `twoFactorAuthentication(true)` set, redirect to your TOTP entry page, and only clear the flag once `isValidSecondFactor` confirms the code the user typed in actually matches their secret.
+
+Pass the identifier as the first argument. A TOTP has six digits and is verified without a tolerance window, so exactly one of a million codes is valid per 30-second window — that is only a second factor as long as something limits how often it may be guessed. With the identifier, the same `authentication.lock` budget as for the password step applies, counted under its own key, and a successful check clears it.
+
+The two-argument `isValidSecondFactor(secret, totp)` is **deprecated**: it verifies the code unthrottled, which makes guessing it feasible. An upstream reverse proxy only counts requests per source address and does not bound the total number of guesses; a budget per identity does.
 
 ## API keys
 

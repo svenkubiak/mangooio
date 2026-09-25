@@ -20,6 +20,7 @@ public final class Default {
     public static final Boolean AUTHENTICATION_COOKIE_SECURE = Boolean.FALSE;
     public static final long AUTHENTICATION_COOKIE_TOKEN_EXPIRES = 3600;
     public static final int AUTHENTICATION_LOCK = 10;
+    public static final int AUTHENTICATION_LOCK_DURATION = 60;
     public static final Boolean AUTHENTICATION_ORIGIN = Boolean.FALSE;
     public static final String BUNDLE_NAME = "translations/messages";
     public static final String CONNECTOR_HTTPS_CERTIFICATE_ALIAS = "certificate";

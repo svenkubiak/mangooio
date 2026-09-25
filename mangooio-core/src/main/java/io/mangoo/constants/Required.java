@@ -26,6 +26,7 @@ public final class Required {
     public static final String CSRF = "csrf can not be null or blank";
     public static final String DATA = "data can not be null or blank";
     public static final String DATASTORE = "datastore can not be null";
+    public static final String DURATION = "duration can not be null";
     public static final String ENCRYPTED_TEXT = "encrypted text can not be null or blank";
     public static final String EXPIRES = "expires can not be null or blank";
     public static final String FALLBACK = "fallback can not be null or blank";

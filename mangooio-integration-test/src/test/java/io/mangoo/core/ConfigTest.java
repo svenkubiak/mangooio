@@ -951,6 +951,35 @@ class ConfigTest {
     }
 
     @Test
+    void testAuthenticationLockDuration() throws IOException {
+        // given
+        String duration = "15";
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("authentication.lock.duration", duration);
+        createTempConfig(configValues);
+        Config config = new Config(new Vault());
+
+        // then
+        assertThat(config.getAuthenticationLockDuration(), equalTo(Integer.valueOf(duration)));
+    }
+
+    @Test
+    void testAuthenticationLockDurationDefaultValue() throws IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        createTempConfig(configValues);
+        Config config = new Config(new Vault());
+
+        // then
+        assertThat(config.getAuthenticationLockDuration(), equalTo(Default.AUTHENTICATION_LOCK_DURATION));
+    }
+
+    @Test
     void testGetUndertowMaxEntitySize() throws IOException {
         // given
         String size = "4096";

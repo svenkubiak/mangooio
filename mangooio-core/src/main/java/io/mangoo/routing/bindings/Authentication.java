@@ -1,17 +1,19 @@
 package io.mangoo.routing.bindings;
 
+import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.models.AuthenticationLock;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.TotpUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Authentication {
     private LocalDateTime expires;
@@ -100,6 +102,13 @@ public class Authentication {
     /**
      * Creates a hashed value of a given clear text password and checks if the
      * value matches a given, already hashed password
+     * <p>
+     * The check is throttled per identifier: after authentication.lock failed
+     * attempts the identifier is locked for authentication.lock.duration minutes
+     * and every further call returns false without checking the password. A
+     * successful check resets the budget. The budget of the password step is kept
+     * separately from the budget of the second factor step, see
+     * {@link #isValidSecondFactor(String, String, String)}
      *
      * @param identifier The identifier to authenticate
      * @param password The clear text password
@@ -113,7 +122,8 @@ public class Authentication {
         Objects.requireNonNull(password, Required.SALT);
         Objects.requireNonNull(hash, Required.HASH);
 
-        if (userHasLock(identifier)) {
+        var key = CacheName.AUTH_PASSWORD_PREFIX + identifier;
+        if (hasLock(key)) {
             return false;
         }
 
@@ -122,9 +132,9 @@ public class Authentication {
 
         if (CommonUtils.matchArgon2(password, salt, hash)) {
             authenticated = true;
-            cache.remove(identifier);
+            cache.remove(key);
         } else {
-            cache.getAndIncrementCounter(identifier);
+            increaseFailedAttempts(cache, key);
         }
 
         return authenticated;
@@ -175,36 +185,106 @@ public class Authentication {
  
     /**
      * Checks if a username is locked because of to many failed login attempts
-     * 
+     * <p>
+     * This refers to the password step only, see
+     * {@link #userHasSecondFactorLock(String)} for the second factor step
+     *
      * @param username The username to check
      * @return true if the user has a lock, false otherwise
      */
     public boolean userHasLock(String username) {
         Objects.requireNonNull(username, Required.USERNAME);
-        var lock = false;
-        
-        var config = Application.getInstance(Config.class);
-        var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
-        AtomicInteger counter = cache.getCounter(username);
-        if (counter != null && counter.get() > config.getAuthenticationLock()) {
-            lock = true;
-        }
-        
-        return lock;
+        return hasLock(CacheName.AUTH_PASSWORD_PREFIX + username);
     }
-    
+
+    /**
+     * Checks if an identifier is locked because of to many failed second factor attempts
+     *
+     * @param identifier The identifier to check
+     * @return true if the identifier has a lock, false otherwise
+     */
+    public boolean userHasSecondFactorLock(String identifier) {
+        Objects.requireNonNull(identifier, Required.USERNAME);
+        return hasLock(CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier);
+    }
+
     /**
      * Checks if a given number for 2FA is valid for the given secret
-     * 
+     * <p>
+     * This method performs an unthrottled check. As a TOTP has only six digits and
+     * is verified without a tolerance window, an unlimited number of attempts makes
+     * guessing it feasible. Use {@link #isValidSecondFactor(String, String, String)}
+     * instead, which keeps a failed attempt budget per identifier
+     *
+     * @param secret The plaintext secret to use for checking
+     * @param totp The number entered by the user
+     * @return True if number is valid, false otherwise
+     *
+     * @deprecated Use {@link #isValidSecondFactor(String, String, String)} instead
+     */
+    @Deprecated(since = "10.13.0", forRemoval = false)
+    public boolean isValidSecondFactor(String secret, String totp) {
+        Objects.requireNonNull(secret, Required.SECRET);
+        Objects.requireNonNull(totp, Required.TOTP);
+
+        return TotpUtils.verifyTotp(secret, totp);
+    }
+
+    /**
+     * Checks if a given number for 2FA is valid for the given secret
+     * <p>
+     * The check is throttled per identifier: after authentication.lock failed
+     * attempts the identifier is locked for authentication.lock.duration minutes
+     * and every further call returns false without checking the number. A
+     * successful check resets the budget. The budget of the second factor step is
+     * kept separately from the budget of the password step, see
+     * {@link #isValidLogin(String, String, String, String)}
+     *
+     * @param identifier The identifier the second factor is checked for
      * @param secret The plaintext secret to use for checking
      * @param totp The number entered by the user
      * @return True if number is valid, false otherwise
      */
-    public boolean isValidSecondFactor(String secret, String totp) {
+    public boolean isValidSecondFactor(String identifier, String secret, String totp) {
+        Objects.requireNonNull(identifier, Required.USERNAME);
         Objects.requireNonNull(secret, Required.SECRET);
         Objects.requireNonNull(totp, Required.TOTP);
-        
-        return TotpUtils.verifyTotp(secret, totp);
+
+        var key = CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier;
+        if (hasLock(key)) {
+            return false;
+        }
+
+        var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
+        var authenticated = false;
+
+        if (TotpUtils.verifyTotp(secret, totp)) {
+            authenticated = true;
+            cache.remove(key);
+        } else {
+            increaseFailedAttempts(cache, key);
+        }
+
+        return authenticated;
+    }
+
+    private boolean hasLock(String key) {
+        var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
+        AuthenticationLock lock = cache.get(key);
+
+        return lock != null && lock.isLocked();
+    }
+
+    private void increaseFailedAttempts(Cache cache, String key) {
+        var config = Application.getInstance(Config.class);
+
+        AuthenticationLock lock = cache.get(key);
+        if (lock == null) {
+            lock = new AuthenticationLock();
+        }
+
+        lock.increment(config.getAuthenticationLock(), Duration.ofMinutes(config.getAuthenticationLockDuration()));
+        cache.put(key, lock);
     }
 
     /**

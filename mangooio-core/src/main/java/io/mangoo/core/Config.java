@@ -482,10 +482,25 @@ public class Config {
     }
 
     /**
+     * The number of failed attempts that are allowed for an identifier before it is
+     * locked. The budget applies to the password step and to the second factor step
+     * separately, both in {@link io.mangoo.routing.bindings.Authentication}
+     *
      * @return authentication.lock or default value if undefined
      */
     public int getAuthenticationLock() {
         return getInt(Key.AUTHENTICATION_LOCK, Default.AUTHENTICATION_LOCK);
+    }
+
+    /**
+     * The duration in minutes an identifier stays locked once the failed attempt
+     * budget is used up. The lock is absolute and is not extended by further
+     * failed attempts
+     *
+     * @return authentication.lock.duration or default value if undefined
+     */
+    public int getAuthenticationLockDuration() {
+        return getInt(Key.AUTHENTICATION_LOCK_DURATION, Default.AUTHENTICATION_LOCK_DURATION);
     }
 
     /**

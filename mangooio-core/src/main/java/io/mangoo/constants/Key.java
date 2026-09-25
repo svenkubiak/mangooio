@@ -30,6 +30,7 @@ public final class Key {
     public static final String AUTHENTICATION_COOKIE_SECURE = "authentication.cookie.secure";
     public static final String AUTHENTICATION_COOKIE_TOKEN_EXPIRES = "authentication.cookie.token.expires";
     public static final String AUTHENTICATION_LOCK = "authentication.lock";
+    public static final String AUTHENTICATION_LOCK_DURATION = "authentication.lock.duration";
     public static final String AUTHENTICATION_ORIGIN = "authentication.origin";
     public static final String AUTHENTICATION_REDIRECT = "authentication.redirect.login";
     public static final String AUTHENTICATION_REDIRECT_MFA = "authentication.redirect.mfa";

@@ -1,3 +1,33 @@
+## From 10.12.2 to 10.13.0
+
+A drop-in replacement in terms of API, with three behaviour changes around the failed attempt budget in `Authentication`.
+
+### Second factor throttling
+
+`isValidSecondFactor(secret, totp)` verifies a TOTP without any limit on the number of attempts. A TOTP has six digits and is checked without a tolerance window, so exactly one of a million codes is valid per 30-second window — that is only a second factor as long as something bounds how often it may be guessed. An upstream reverse proxy counts requests per source address and does not bound the total, which an attacker sidesteps by spreading the attempts over more addresses.
+
+The method still exists but is deprecated. Pass the identifier the code is checked for and the same `authentication.lock` budget as for the password step applies:
+
+```java
+// before
+authentication.isValidSecondFactor(secret, totp);
+
+// now
+authentication.isValidSecondFactor(subject, secret, totp);
+```
+
+Use `userHasSecondFactorLock(identifier)` to query that lock; `userHasLock(identifier)` keeps referring to the password step only. Both steps are counted under separate keys, so neither consumes the budget of the other.
+
+### Lockouts are absolute
+
+A lockout used to rely on the auth cache TTL, which was reset on every write — and every failed attempt is a write. An attacker who never guessed the code could therefore keep the rightful owner of an account locked out indefinitely, one failed attempt every 59 minutes being enough, turning the protection into a denial of service against the account.
+
+The unlock timestamp is now stored with the counter, set once when the budget is used up, and not extended by further failed attempts. Its duration is configurable through the new `authentication.lock.duration` in minutes, default 60, which matches the previous cache TTL.
+
+### authentication.lock is off by one
+
+`authentication.lock` locked one attempt later than its value suggested. With the default of `10`, the lock took effect after the eleventh failed attempt. It now takes effect after the tenth, so the value is the number of failed attempts that are allowed. Raise the value by one if you depended on the old count.
+
 ## From 10.12.0 to 10.12.1
 
 Mostly a drop-in replacement, with one behaviour change around request parameters and one removed method on `Messages`.

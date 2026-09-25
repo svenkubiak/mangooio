@@ -35,7 +35,7 @@ public class CacheProvider implements Provider<Cache> {
             initBlacklistCache();
         }
         initApplicationCache();
-        initAuthenticationCache();
+        initAuthenticationCache(config);
         setDefaultApplicationCache();
     }
 
@@ -49,10 +49,15 @@ public class CacheProvider implements Provider<Cache> {
         caches.put(CacheName.APPLICATION, applicationCache);
     }
 
-    private void initAuthenticationCache() {
+    private void initAuthenticationCache(Config config) {
+        // The cache is only the cleanup mechanism for the failed attempt budget. It must
+        // never evict an entry before the lock it carries has been released, otherwise a
+        // locked identifier would be unlocked early
+        long minutes = Math.max(SIXTY, config.getAuthenticationLockDuration());
+
         Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
                 .maximumSize(FIFTY_THOUSAND)
-                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
+                .expireAfterWrite(Duration.of(minutes, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
 

@@ -156,7 +156,8 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `authentication.cookie.samesitemode` | SameSite attribute | `Strict` |
 | `authentication.cookie.secure` | Secure cookie flag | `false` |
 | `authentication.cookie.token.expires` | Token and cookie lifetime in **seconds** | `3600` |
-| `authentication.lock` | Failed logins before lockout | `10` |
+| `authentication.lock` | Failed attempts before lockout, per identifier and per step (password, second factor) | `10` |
+| `authentication.lock.duration` | Lockout duration in **minutes**, absolute and not extended by further failed attempts | `60` |
 | `authentication.origin` | Append `?origin=` on auth redirects | `false` |
 | `authentication.redirect.login` | Redirect when authentication is missing | *(none)* |
 | `authentication.redirect.mfa` | Redirect when MFA is required | *(none)* |

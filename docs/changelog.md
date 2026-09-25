@@ -2,6 +2,13 @@
 
 Unrelease
 
+* Added Authentication#isValidSecondFactor(identifier, secret, totp) which applies the authentication.lock failed attempt budget to the second factor (svenkubiak)
+* Deprecated Authentication#isValidSecondFactor(secret, totp) which verifies a TOTP unthrottled (svenkubiak)
+* Added Authentication#userHasSecondFactorLock to check the lock of the second factor step (svenkubiak)
+* The failed attempt budgets of the password step and the second factor step are now counted separately and no longer share a cache key (svenkubiak)
+* A lockout is now an absolute point in time and is no longer extended by further failed attempts (svenkubiak)
+* authentication.lock now locks on the configured attempt instead of one attempt later (svenkubiak)
+* Added authentication.lock.duration to configure the lockout duration in minutes, default 60 (svenkubiak)
 * Fixed an issue in OTLP handling (svenkubiak)
 * Fixed an issue in form-cookie (svenkubiak)
 * Added additional unit tests for OTLP (svenkubiak)
