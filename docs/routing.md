@@ -117,10 +117,14 @@ SSE routes do not use a controller at all, since there is no request/response cy
 
 ```java
 Bind.serverSentEvent().to("/sse");
-Bind.serverSentEvent().to("/sseauth").withAuthentication();
 ```
 
-An authenticated SSE route requires a valid authentication cookie, checked once when the connection is opened. See [Server-Sent Events](sse.md) for how to push data to connected clients afterward.
+See [Server-Sent Events](sse.md) for how to push data to connected clients afterward.
+
+!!! warning "SSE and WebSocket routes are not authenticated"
+    Both are registered directly on Undertow's path handler, which means they never pass through the handler chain described above. `withAuthentication()` does not exist on them, and no filter, authentication check, or CSRF protection applies. Anyone who knows the URL can connect.
+
+    This is a known limitation rather than something you can configure away: the handler chain is built around a controller method and a single request/response cycle, neither of which fits a long-lived streaming connection. Until that gap is closed, assume anything you send over SSE or WebSockets is public, and keep user-specific or otherwise sensitive data on regular controller routes.
 
 ## WebSockets
 
@@ -130,4 +134,4 @@ WebSocket routes use an Undertow `WebSocketConnectionCallback` directly, rather 
 Bind.webSocket().to("/ws").withHandler(MyWebSocketHandler.class);
 ```
 
-There is no dedicated test helper for WebSockets, unlike SSE or regular controller routes. Treat this as an available, working API rather than a fully documented, polished product feature: it gets you access to Undertow's WebSocket support without extra plumbing, but you are closer to the underlying library here than anywhere else in the framework.
+There is no dedicated test helper for WebSockets, unlike SSE or regular controller routes, and the authentication caveat above applies here as well. Treat this as an available, working API rather than a fully documented, polished product feature: it gets you access to Undertow's WebSocket support without extra plumbing, but you are closer to the underlying library here than anywhere else in the framework. If your handler needs to know who is connecting, it has to read and verify the authentication cookie off the handshake itself, since nothing upstream has done that for you.

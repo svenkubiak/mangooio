@@ -74,6 +74,8 @@ You can also call `withAuthentication()` on the controller binder so every route
 
 That last point still leaves the final decision to you: `origin` is a value a visitor chose, and it is only guaranteed to be a path on your own host, not a path that visitor is allowed to reach. Before redirecting to it after a successful login, check it against the routes your application actually serves rather than passing it straight to a redirect.
 
+Route protection covers controller routes only. SSE and WebSocket routes are registered straight on Undertow's path handler and never reach the authentication check, so `withAuthentication()` does not exist on them and no cookie is verified when a client connects. See [Routing](routing.md) for what that means in practice.
+
 Cookie names, SameSite, Secure, signing keys, and lifetimes are described in [Configuration](configuration.md). Prefer `vault{}` for `authentication.cookie.key` and `authentication.cookie.secret` rather than writing them out in `config.yaml`. See [Secrets](secrets.md).
 
 ## Two-factor authentication

@@ -2,6 +2,7 @@
 
 Unrelease
 
+* Updated documentation (svenkubiak)
 * Version bumps (svenkubiak)
   * fory-core 1.7.2 -&gt; 1.7.4
   * cactoos 0.61.1 -&gt; 0.62

@@ -39,6 +39,13 @@ form.keep();
 
 Call `form.discard()` to drop kept values once they are no longer needed.
 
+!!! note
+    Only submitted values and validation errors survive the redirect. **Uploaded files are never part of the flash scope**, since the flash scope is a cookie and file content has no business travelling through a signed and encrypted HTTP header. After a redirect, `getFile(...)` returns an empty `Optional`, so a user has to re-select the file.
+
+    There is a size limit too, and it is measured on the finished cookie rather than on the form: signing and encrypting roughly doubles the payload, so a check on the serialized form alone would either waste the available budget or still produce a cookie the browser throws away. If name plus value exceed 4096 bytes, the kept form is dropped from the cookie and a warning is logged. Flash values you set yourself are never dropped, since the kept form is the best-effort part here.
+
+    Budget in practice: the serialization carries only your submitted values and the validation errors, with a fixed overhead of well under 100 bytes, which leaves roughly 1800 bytes of actual form data within the 4096 byte cookie. That covers ordinary forms comfortably, but a form with many or very long fields can still be dropped, so watch the log for the warning rather than assuming a kept form always survives the redirect.
+
 Default upload limits, which are not configurable in `config.yaml`: 10 files, 5 MB per file, 1000 parameters, 10 000 characters per value. The HTTP body as a whole is separately limited by `undertow.maxentitysize` (4 MB by default).
 
 ## Validation
