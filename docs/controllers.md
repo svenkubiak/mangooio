@@ -68,7 +68,10 @@ return Response.ok().bodyHtml("<p>hello</p>");
 return Response.ok().bodyJson(person);
 return Response.badRequest().bodyJsonError("Invalid payload");
 return Response.ok().bodyBinary(bytes);
+return Response.ok().bodyFile(Path.of("/var/lib/app/archive.zip"));
 ```
+
+`bodyBinary` holds the whole response in the heap, so the memory an answer costs is always its own size. `bodyFile` streams the file straight from the file system to the client, which keeps that cost constant no matter how large the file is. Reach for it whenever the size of what you are sending is decided by data or by a user rather than by you, because with `bodyBinary` such a response is an unbounded allocation.
 
 Add headers and cookies with `header(...)`, `headers(...)`, and `cookie(...)`. Call `end()` when a [filter](filters.md) further down the chain should not run, for example after a filter has already produced the response it wants to send.
 

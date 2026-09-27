@@ -4,16 +4,27 @@ import io.mangoo.constants.Header;
 import io.mangoo.core.Application;
 import io.mangoo.core.Server;
 import io.mangoo.routing.Response;
+import io.mangoo.utils.FileUtils;
 import io.mangoo.utils.RequestUtils;
+import io.undertow.io.IoCallback;
+import io.undertow.io.Sender;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 
 public class ResponseHandler implements HttpHandler {
-    
+    private static final Logger LOG = LogManager.getLogger(ResponseHandler.class);
+
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         var attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
@@ -21,6 +32,8 @@ public class ResponseHandler implements HttpHandler {
 
         if (response.isRedirect()) {
             handleRedirectResponse(exchange, response);
+        } else if (response.isFile()) {
+            handleFileResponse(exchange, response);
         } else if (response.isBinary()) {
             handleBinaryResponse(exchange, response);
         } else {
@@ -47,6 +60,68 @@ public class ResponseHandler implements HttpHandler {
      */
     protected void handleBinaryResponse(HttpServerExchange exchange, Response response) {
         exchange.dispatch(exchange.getDispatchExecutor(), Application.getInstance(BinaryHandler.class).withResponse(response));
+    }
+
+    /**
+     * Handles a file response to the client by transferring the file from a FileChannel
+     * to the undertow response sender. The file is never read into the heap, the memory
+     * usage of the response is therefore independent of the size of the file.
+     *
+     * The exchange is intentionally not switched to blocking mode, so that the sender
+     * transfers the file asynchronously and the thread is not occupied for the duration
+     * of the transfer.
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @param response The response object
+     */
+    protected void handleFileResponse(HttpServerExchange exchange, Response response) {
+        exchange.setStatusCode(response.getStatusCode());
+
+        Server.headers()
+            .entrySet()
+            .stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
+
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().put(key, value));
+
+        var path = response.getFileBody();
+        final FileChannel fileChannel;
+        try {
+            // Only an explicitly set content type ends up in the response headers, the content
+            // type of the response object itself is prefilled with a default and is therefore
+            // no indication that the developer has chosen a content type
+            if (!response.getHeaders().containsKey(Header.CONTENT_TYPE)) {
+                try (var inputStream = Files.newInputStream(path)) {
+                    String mimeType = FileUtils.getMimeType(inputStream);
+                    if (StringUtils.isNotBlank(mimeType)) {
+                        exchange.getResponseHeaders().put(Header.CONTENT_TYPE, mimeType);
+                    }
+                }
+            }
+
+            exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, Files.size(path));
+            fileChannel = FileChannel.open(path, StandardOpenOption.READ);
+        } catch (IOException e) {
+            LOG.error("Failed to send file response", e);
+            exchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
+            exchange.endExchange();
+            return;
+        }
+
+        exchange.getResponseSender().transferFrom(fileChannel, new IoCallback() {
+            @Override
+            public void onComplete(HttpServerExchange httpServerExchange, Sender sender) {
+                FileUtils.closeQuietly(fileChannel);
+                IoCallback.END_EXCHANGE.onComplete(httpServerExchange, sender);
+            }
+
+            @Override
+            public void onException(HttpServerExchange httpServerExchange, Sender sender, IOException exception) {
+                FileUtils.closeQuietly(fileChannel);
+                IoCallback.END_EXCHANGE.onException(httpServerExchange, sender, exception);
+            }
+        });
     }
 
     /**

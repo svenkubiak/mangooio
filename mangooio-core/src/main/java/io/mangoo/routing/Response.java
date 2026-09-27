@@ -13,6 +13,7 @@ import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
 import org.apache.logging.log4j.util.Strings;
 
+import java.nio.file.Path;
 import java.util.*;
 
 public class Response {
@@ -25,10 +26,12 @@ public class Response {
     private String body = Strings.EMPTY;
     private String template;
     private byte[] binaryBody;
+    private Path fileBody;
     private boolean endResponse;
     private boolean rendered;
     private boolean redirect;
     private boolean binary;
+    private boolean file;
     private int statusCode = StatusCodes.OK;
 
     public Response() {
@@ -199,6 +202,10 @@ public class Response {
         return binaryBody;
     }
 
+    public Path getFileBody() {
+        return fileBody;
+    }
+
     public List<Cookie> getCookies() {
         return new ArrayList<>(cookies);
     }
@@ -221,6 +228,10 @@ public class Response {
 
     public boolean isBinary() {
         return binary;
+    }
+
+    public boolean isFile() {
+        return file;
     }
 
     public boolean isEndResponse() {
@@ -312,6 +323,26 @@ public class Response {
         this.binaryBody = Objects.requireNonNull(data, Required.DATA);
         rendered = false;
         binary = true;
+
+        return this;
+    }
+
+    /**
+     * Sets the body of the response to a file which is streamed to the client
+     * with a constant memory usage, independent of the size of the file.
+     * No rendering will be performed. Content-Type will be automatically
+     * detected if not set.
+     *
+     * The given path is not accessed here, existence and readability of the
+     * file are checked when the response is sent to the client.
+     *
+     * @param path The path of the file for the body
+     * @return The response object
+     */
+    public Response bodyFile(Path path) {
+        this.fileBody = Objects.requireNonNull(path, Required.PATH);
+        rendered = false;
+        file = true;
 
         return this;
     }

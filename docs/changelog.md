@@ -2,6 +2,7 @@
 
 Unreleased
 
+* Added Response#bodyFile(Path) which streams a file to the client with constant memory usage (svenkubiak)
 * Added Authentication#isValidSecondFactor(identifier, secret, totp) which applies the authentication.lock failed attempt budget to the second factor (svenkubiak)
 * Deprecated Authentication#isValidSecondFactor(secret, totp) which verifies a TOTP unthrottled (svenkubiak)
 * Added Authentication#userHasSecondFactorLock to check the lock of the second factor step (svenkubiak)
@@ -23,6 +24,7 @@ Unreleased
   * caffeine 3.2.4 -&gt; 3.3.0
   * classgraph 4.8.195 -&gt; 4.8.196
   * mockito-core 5.23.0 -&gt; 5.24.0
+  * mongo-driver-sync 5.12.0 -&gt; 5.13.0
   * archunit-junit5 1.5.0 -&gt; 1.5.1
 
 ## Version 10.12.2

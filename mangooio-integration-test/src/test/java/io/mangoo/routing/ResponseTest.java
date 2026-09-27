@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -287,8 +288,32 @@ class ResponseTest {
     void testAndUnrenderedHtml() {
         //given
         Response response = Response.ok().bodyHtml("");
-        
+
         //then
         assertThat(response.isRendered(), equalTo(false));
+    }
+
+    @Test
+    void testAndFileBody() {
+        //given
+        Path path = Path.of("/does/not/have/to/exist/archive.zip");
+
+        //when
+        Response response = Response.ok().bodyFile(path);
+
+        //then
+        assertThat(response.isFile(), equalTo(true));
+        assertThat(response.getFileBody(), equalTo(path));
+        assertThat(response.isBinary(), equalTo(false));
+        assertThat(response.isRendered(), equalTo(false));
+    }
+
+    @Test
+    void testAndFileBodyWithNull() {
+        //given
+        Response response = Response.ok();
+
+        //then
+        assertThrowsExactly(NullPointerException.class, () -> response.bodyFile(null));
     }
 }

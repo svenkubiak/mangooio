@@ -155,6 +155,13 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/default-xxx").respondeWith("defaultXXX")
          );
          
+         // FileController
+         Bind.controller(FileController.class).withRoutes(
+                On.get().to("/file").respondeWith("file"),
+                On.get().to("/file/contenttype").respondeWith("fileWithContentType"),
+                On.get().to("/file/missing").respondeWith("missingFile")
+         );
+
          // SubController
          Bind.controller(SubController.class).withRoutes(
                  On.get().to("/subcontroller").respondeWith("check")
