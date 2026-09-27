@@ -302,12 +302,42 @@ public class Authentication {
     }
 
     /**
-     * Checks if the authentication class contains an authentication
+     * Checks if this authentication carries a subject, regardless of whether the
+     * authentication has been completed
+     * <p>
+     * A subject is already present after the password step has succeeded, which is
+     * also the point at which the authentication cookie is issued. If two-factor
+     * authentication is required, the second factor is at that moment still
+     * outstanding, see {@link #isTwoFactor()}
+     * <p>
+     * This method must not be used to decide whether a request is authorized. Use
+     * {@link #isValid()} for that, which is only true once every required step has
+     * been completed. Use this method only where the incomplete state is the state
+     * being worked on, for example on the page that asks for the second factor
      *
-     * @return True if authentication contains an authentication, false otherwise
+     * @return True if a subject is present, false otherwise
+     */
+    public boolean hasSubject() {
+        return StringUtils.isNotBlank(subject);
+    }
+
+    /**
+     * Checks if this authentication is complete, meaning that a subject is present
+     * and no further authentication step is outstanding
+     * <p>
+     * This is the method to use for authorization decisions. It returns false while
+     * a required second factor has not been verified yet, even though a subject is
+     * present and {@link #getSubject()} returns it
+     * <p>
+     * Note that the framework provides an Authentication object on every request,
+     * not only on routes bound with withAuthentication(). Code that derives access
+     * from {@link #getSubject()} without consulting this method grants access to a
+     * user whose second factor is still pending
+     *
+     * @return True if a subject is present and no second factor is outstanding, false otherwise
      */
     public boolean isValid() {
-        return StringUtils.isNotBlank(subject);
+        return hasSubject() && !isTwoFactor();
     }
 
     public String getId() {

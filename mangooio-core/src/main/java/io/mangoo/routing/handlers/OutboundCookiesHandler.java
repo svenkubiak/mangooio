@@ -113,6 +113,11 @@ public class OutboundCookiesHandler implements HttpHandler {
 
     /**
      * Sets the authentication cookie to the current HttpServerExchange
+     * <p>
+     * The decision whether a cookie is written is made on
+     * {@link io.mangoo.routing.bindings.Authentication#hasSubject()} and must not be
+     * changed to isValid(): while a second factor is outstanding isValid() is false,
+     * and the second factor step would be left without a cookie to carry its state
      *
      * @param exchange The Undertow HttpServerExchange
      */
@@ -134,7 +139,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setDiscard(true);
             
             exchange.setResponseCookie(cookie);
-        } else if (authentication.isValid()) {
+        } else if (authentication.hasSubject()) {
             var authCookie = exchange.getRequestCookie(config.getAuthenticationCookieName());
             if (authCookie == null || authentication.isUpdate()) {
                 var now = LocalDateTime.now();

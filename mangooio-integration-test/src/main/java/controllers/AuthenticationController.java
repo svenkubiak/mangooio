@@ -6,7 +6,7 @@ import io.mangoo.routing.bindings.Form;
 
 public class AuthenticationController {
     private static final String SUBJECT = "mysubject";
-    private static final String SECRET = "MyVoiceIsMySecret";
+    public static final String SECRET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
     private static final String AUTHENTICATIONREQUIRED = "/authenticationrequired";
 
     public Response notauthenticated(Authentication authentication) {
@@ -39,11 +39,25 @@ public class AuthenticationController {
     }
     
     public Response factorize(Form form, Authentication authentication) {
-        if (authentication.isValid() && authentication.isValidSecondFactor(SECRET, form.getString("twofactor").orElse(""))) {
+        if (authentication.hasSubject() && authentication.isValidSecondFactor(authentication.getSubject(), SECRET, form.getString("twofactor").orElse(""))) {
+            authentication.twoFactorAuthentication(false);
+            authentication.update();
+
             return Response.redirect(AUTHENTICATIONREQUIRED);
         }
-        
+
         return Response.redirect("/");
+    }
+
+    /**
+     * Reports the authentication state on a route that is not bound with
+     * withAuthentication(), which is the path an application takes when it builds
+     * its own filter on top of the Authentication object
+     */
+    public Response state(Authentication authentication) {
+        return Response.ok().bodyText(authentication.hasSubject()
+                + ":" + authentication.isValid()
+                + ":" + authentication.isTwoFactor());
     }
 
     public Response logout(Authentication authentication) {

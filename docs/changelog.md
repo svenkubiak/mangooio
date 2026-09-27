@@ -3,6 +3,8 @@
 Unreleased
 
 * Added Response#bodyFile(Path) which streams a file to the client with constant memory usage (svenkubiak)
+* **Behaviour change** Authentication#isValid now means "fully authenticated" and returns false while a second factor is outstanding, it was previously only a check for the presence of a subject (svenkubiak)
+* Added Authentication#hasSubject which provides the previous behaviour of isValid, a check whether a subject is present regardless of an outstanding second factor (svenkubiak)
 * Added Authentication#isValidSecondFactor(identifier, secret, totp) which applies the authentication.lock failed attempt budget to the second factor (svenkubiak)
 * Deprecated Authentication#isValidSecondFactor(secret, totp) which verifies a TOTP unthrottled (svenkubiak)
 * Added Authentication#userHasSecondFactorLock to check the lock of the second factor step (svenkubiak)

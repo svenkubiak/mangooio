@@ -36,14 +36,14 @@ public class AuthenticationHandler implements HttpHandler {
         if (attachment.hasAuthentication()) {
             var authentication = attachment.getAuthentication();
             
-            if (!authentication.isValid()) {
+            if (!authentication.hasSubject()) {
                 var redirect = config.getString(Key.AUTHENTICATION_REDIRECT);
                 if (StringUtils.isNotBlank(redirect)) {
                     endRequest(exchange, redirect);
                 } else {
                     endRequest(exchange);
                 }
-            } else if (authentication.isValid() && authentication.isTwoFactor()) {
+            } else if (authentication.isTwoFactor()) {
                 var redirect = config.getString(Key.AUTHENTICATION_REDIRECT_MFA, config.getString(Key.AUTHENTICATION_REDIRECT));
                 if (StringUtils.isNotBlank(redirect)) {
                     endRequest(exchange, redirect);

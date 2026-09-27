@@ -40,6 +40,7 @@ default:
   authentication:
     redirect:
       login: /login
+      mfa: /twofactor
     cookie:
       name: test-authentication
       secret: oObVaXmpokhImaLyCtg8lzL1PC4pBuDe9zSCH2Suvv2eSN2b4UUDtBcFlyq5JEHB

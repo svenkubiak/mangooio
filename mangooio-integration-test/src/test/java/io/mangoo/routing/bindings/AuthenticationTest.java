@@ -269,4 +269,69 @@ class AuthenticationTest {
         //then
         assertThat(authentication.isRememberMe(), equalTo(true));
     }
+
+    @Test
+    void testHasSubjectWithoutLogin() {
+        //given
+        Authentication authentication = Authentication.create();
+
+        //then
+        assertThat(authentication.hasSubject(), equalTo(false));
+        assertThat(authentication.isValid(), equalTo(false));
+    }
+
+    @Test
+    void testIsValidWithoutSecondFactor() {
+        //given
+        Authentication authentication = Authentication.create();
+
+        //when
+        authentication.login("foo");
+
+        //then
+        assertThat(authentication.hasSubject(), equalTo(true));
+        assertThat(authentication.isTwoFactor(), equalTo(false));
+        assertThat(authentication.isValid(), equalTo(true));
+    }
+
+    @Test
+    void testIsValidWithPendingSecondFactor() {
+        //given
+        Authentication authentication = Authentication.create();
+
+        //when
+        authentication.login("foo").twoFactorAuthentication(true);
+
+        //then
+        assertThat(authentication.hasSubject(), equalTo(true));
+        assertThat(authentication.isTwoFactor(), equalTo(true));
+        assertThat(authentication.isValid(), equalTo(false));
+    }
+
+    @Test
+    void testIsValidAfterSecondFactorVerified() {
+        //given
+        Authentication authentication = Authentication.create();
+        authentication.login("foo").twoFactorAuthentication(true);
+
+        //when
+        authentication.twoFactorAuthentication(false);
+
+        //then
+        assertThat(authentication.hasSubject(), equalTo(true));
+        assertThat(authentication.isValid(), equalTo(true));
+    }
+
+    @Test
+    void testIsValidWithPendingSecondFactorAndNoSubject() {
+        //given
+        Authentication authentication = Authentication.create();
+
+        //when
+        authentication.twoFactorAuthentication(true);
+
+        //then
+        assertThat(authentication.hasSubject(), equalTo(false));
+        assertThat(authentication.isValid(), equalTo(false));
+    }
 }

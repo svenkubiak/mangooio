@@ -56,7 +56,8 @@ authentication.twoFactorAuthentication(true); // require TOTP next
 
 ```java
 authentication.getSubject();   // logged-in subject, or null
-authentication.isValid();      // subject is present
+authentication.isValid();      // authentication is complete, use this for authorization
+authentication.hasSubject();   // a subject is present, second factor may still be pending
 authentication.logout();       // expire the cookie
 authentication.invalidate();   // drop the cookie immediately
 authentication.update();       // refresh the cookie on this response
@@ -66,6 +67,10 @@ authentication.userHasLock("subject");              // password step
 authentication.userHasSecondFactorLock("subject");  // second factor step
 authentication.isValidSecondFactor("subject", secret, totp);
 ```
+
+`isValid()` and `hasSubject()` are not interchangeable. `hasSubject()` is the raw check whether a subject is set, which is already the case right after the password step, because that is when the authentication cookie is issued. `isValid()` additionally requires that no second factor is outstanding, and it is the one to base an authorization decision on. Use `hasSubject()` only where the incomplete state is exactly the state you are working on, which in practice is the page that asks for the TOTP.
+
+This matters because an `Authentication` object is bound on every request, not only on routes bound with `withAuthentication()`. A filter or controller method on an unprotected route that derives access from `getSubject()` alone lets a visitor in who knows the password but not the second factor.
 
 `logout()` and `invalidate()` sound similar but differ in timing: `logout()` marks the cookie to expire through the normal response cycle, while `invalidate()` drops it immediately, which matters if you need the effect to be visible before the method returns, for example before redirecting.
 
@@ -100,7 +105,9 @@ if (authentication.isValidSecondFactor(subject, secret, totpFromUser)) {
 }
 ```
 
-A typical flow: after the password check succeeds, call `login(subject)` with `twoFactorAuthentication(true)` set, redirect to your TOTP entry page, and only clear the flag once `isValidSecondFactor` confirms the code the user typed in actually matches their secret.
+A typical flow: after the password check succeeds, call `login(subject)` with `twoFactorAuthentication(true)` set, redirect to your TOTP entry page, and only clear the flag once `isValidSecondFactor` confirms the code the user typed in actually matches their secret. Call `update()` afterwards so the cleared flag reaches the cookie on that same response.
+
+While the flag is set, `isValid()` returns false, so the TOTP entry page itself has to use `hasSubject()` to find the subject the code is being checked for.
 
 Pass the identifier as the first argument. A TOTP has six digits and is verified without a tolerance window, so exactly one of a million codes is valid per 30-second window — that is only a second factor as long as something limits how often it may be guessed. With the identifier, the same `authentication.lock` budget as for the password step applies, counted under its own key, and a successful check clears it.
 

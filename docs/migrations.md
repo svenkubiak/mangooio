@@ -1,6 +1,34 @@
 ## From 10.12.2 to 10.13.0
 
-A drop-in replacement in terms of API, with three behaviour changes around the failed attempt budget in `Authentication`.
+A drop-in replacement in terms of API, with a changed meaning of `Authentication#isValid` and three behaviour changes around the failed attempt budget in `Authentication`.
+
+### isValid now means fully authenticated
+
+`isValid()` used to be nothing but `isNotBlank(subject)`. A subject is set as soon as the password step has succeeded, which is also when the authentication cookie is issued — at that point a required second factor is still outstanding. The name reads as "this authentication is valid", and an `Authentication` object is bound on every request, not only on routes bound with `withAuthentication()`. Application code that builds its own filter or derives authorization from `getSubject()` on an unbound route therefore granted access to a visitor who knew the password but not the second factor.
+
+`isValid()` now additionally requires that no second factor is outstanding:
+
+```java
+// before, and still available under the new name
+authentication.hasSubject();   // isNotBlank(subject)
+
+// now
+authentication.isValid();      // hasSubject() && !isTwoFactor()
+```
+
+Nothing has to be changed for authorization checks; they become stricter on their own, which is the point of redefining the existing method rather than adding a new one.
+
+Code that runs **during** the second factor step has to switch. The page that accepts the TOTP sees an authentication whose subject is set and whose second factor is still pending, so `isValid()` is false there:
+
+```java
+// before
+if (authentication.isValid() && authentication.isValidSecondFactor(subject, secret, totp)) {
+
+// now
+if (authentication.hasSubject() && authentication.isValidSecondFactor(authentication.getSubject(), secret, totp)) {
+```
+
+Routes bound with `withAuthentication()` are unaffected and keep redirecting to `authentication.redirect.login` when no subject is present and to `authentication.redirect.mfa` when the second factor is pending.
 
 ### Second factor throttling
 

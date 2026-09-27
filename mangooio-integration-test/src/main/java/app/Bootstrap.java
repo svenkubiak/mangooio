@@ -80,6 +80,9 @@ public class Bootstrap implements MangooBootstrap {
         Bind.controller(AuthenticationController.class)
         .withRoutes(
                 On.post().to("/dologin").respondeWith("doLogin"),
+                On.post().to("/dologintwofactor").respondeWith("doLoginTwoFactor"),
+                On.post().to("/factorize").respondeWith("factorize"),
+                On.get().to("/authenticationstate").respondeWith("state"),
                 On.post().to("/login").respondeWith("login"),
                 On.get().to("/login").respondeWith("login"),
                 On.get().to("/subject").respondeWith("subject"),
