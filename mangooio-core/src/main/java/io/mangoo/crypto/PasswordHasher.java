@@ -10,12 +10,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
+import org.bouncycastle.util.Arrays;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 /**
  * Computes Argon2id hashes and limits how many of them may run at the same time
@@ -31,8 +33,11 @@ import java.util.concurrent.TimeUnit;
  * derives it from the configured memory cost and the heap available to the JVM,
  * clamped to [{@value #MIN_CONCURRENCY}, {@value #MAX_CONCURRENCY}]
  * <p>
- * <strong>Changing the Argon2 parameters invalidates every stored hash.</strong> See
- * {@link Argon2Settings}
+ * Hashes are returned in the PHC string format, see {@link Argon2Hash}, so that they
+ * carry the parameters they were computed with. Verification uses the parameters of the
+ * stored hash, never the current configuration. Changing the configured parameters is
+ * therefore safe, existing hashes keep verifying and {@link #needsRehash(String)} points
+ * out which of them should be recomputed on the next successful login
  */
 @Singleton
 public class PasswordHasher {
@@ -43,7 +48,6 @@ public class PasswordHasher {
     private static final int KB = 1024;
     private static final double HEADROOM_FACTOR = 1.2;
     private static final double BUDGET_FACTOR = 0.5;
-    private static final Base64.Encoder BASE64_ENCODER = Base64.getEncoder();
 
     private final Semaphore semaphore;
     private final Argon2Settings settings;
@@ -82,7 +86,7 @@ public class PasswordHasher {
      *
      * @param cleartext The clear text
      * @param salt The salt
-     * @return A Base64 encoded String
+     * @return An Argon2id hash in the PHC string format, see {@link Argon2Hash}
      *
      * @throws MangooHashingException If no slot became available within the configured timeout
      */
@@ -90,6 +94,83 @@ public class PasswordHasher {
         Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
         Argument.requireNonBlank(salt, Required.SALT);
 
+        byte[] saltBytes = salt.getBytes(StandardCharsets.UTF_8);
+        byte[] hash = throttled(() -> compute(cleartext, saltBytes, settings, HASH_LENGTH));
+
+        return new Argon2Hash(settings, saltBytes, hash).encode();
+    }
+
+    /**
+     * Verifies a given clear text against an already hashed value
+     * <p>
+     * A hash in PHC format is verified with the parameters and the salt it carries, the
+     * current configuration is deliberately ignored. A hash that is not in PHC format was
+     * created before mangoo I/O embedded the parameters and is verified with
+     * {@link Argon2Settings#LEGACY} and the given salt, so that an upgrade does not lock
+     * out existing users. Use {@link #needsRehash(String)} after a successful verification
+     * to find out whether the hash should be recomputed
+     *
+     * @param cleartext The clear text
+     * @param salt The salt, only used for a hash that is not in PHC format
+     * @param stored The stored hash
+     * @return True if the clear text matches the stored hash, false otherwise
+     *
+     * @throws MangooHashingException If no slot became available within the configured timeout
+     */
+    public boolean matches(String cleartext, String salt, String stored) {
+        Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
+        Argument.requireNonBlank(salt, Required.SALT);
+        Argument.requireNonBlank(stored, Required.HASH);
+
+        Argon2Hash expected;
+        try {
+            expected = Argon2Hash.isPhcFormat(stored)
+                    ? Argon2Hash.parse(stored)
+                    : legacy(stored, salt);
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Rejected a login, the stored hash is malformed", e);
+            return false;
+        }
+
+        byte[] actual = throttled(() -> compute(cleartext, expected.salt(), expected.settings(), expected.hash().length));
+
+        return Arrays.constantTimeAreEqual(expected.hash(), actual);
+    }
+
+    /**
+     * Checks whether a stored hash was created with something else than the current
+     * configuration and should be replaced
+     * <p>
+     * True for a hash that is not in PHC format and for a PHC hash whose parameters
+     * differ from the configured ones. <strong>Only evaluate this after
+     * {@link #matches(String, String, String)} returned true</strong>, the clear text is
+     * needed to compute the replacement and a failed login must not trigger a rehash
+     *
+     * @param stored The stored hash
+     * @return True if the hash should be recomputed with the current parameters, false otherwise
+     */
+    public boolean needsRehash(String stored) {
+        Argument.requireNonBlank(stored, Required.HASH);
+
+        if (!Argon2Hash.isPhcFormat(stored)) {
+            return true;
+        }
+
+        try {
+            return !settings.equals(Argon2Hash.parse(stored).settings());
+        } catch (IllegalArgumentException e) { //NOSONAR a malformed hash is replaced, not reported
+            return true;
+        }
+    }
+
+    private static Argon2Hash legacy(String stored, String salt) {
+        return new Argon2Hash(
+                Argon2Settings.LEGACY,
+                salt.getBytes(StandardCharsets.UTF_8),
+                Base64.getDecoder().decode(stored));
+    }
+
+    private <T> T throttled(Supplier<T> computation) {
         try {
             if (!semaphore.tryAcquire(timeoutMillis, TimeUnit.MILLISECONDS)) {
                 LOG.warn("Rejected an Argon2 hashing request, all {} slots were taken for more than {} ms. Consider raising authentication.hashing.concurrency", concurrency, timeoutMillis);
@@ -101,28 +182,28 @@ public class PasswordHasher {
         }
 
         try {
-            return compute(cleartext, salt);
+            return computation.get();
         } finally {
             semaphore.release();
         }
     }
 
-    private String compute(String cleartext, String salt) {
+    private static byte[] compute(String cleartext, byte[] salt, Argon2Settings settings, int length) {
         var argon2 = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
                 .withVersion(Argon2Parameters.ARGON2_VERSION_13)
                 .withParallelism(settings.parallelism())
                 .withMemoryAsKB(settings.memoryKb())
-                .withSalt(salt.getBytes(StandardCharsets.UTF_8))
+                .withSalt(salt)
                 .withIterations(settings.iterations())
                 .build();
 
         var argon2Generator = new Argon2BytesGenerator();
         argon2Generator.init(argon2);
 
-        var hash = new byte[HASH_LENGTH];
+        var hash = new byte[length];
         argon2Generator.generateBytes(cleartext.getBytes(StandardCharsets.UTF_8), hash);
 
-        return BASE64_ENCODER.encodeToString(hash);
+        return hash;
     }
 
     /**
@@ -157,12 +238,17 @@ public class PasswordHasher {
         return config.getAuthenticationHashingTimeout();
     }
 
+    /**
+     * Reads the configured Argon2id parameters and refuses anything below the lower
+     * bounds mangoo I/O accepts. The application fails to start rather than hashing
+     * weaker than intended
+     */
     private static Argon2Settings settings(Config config) {
         Objects.requireNonNull(config, Required.CONFIG);
         return new Argon2Settings(
                 config.getAuthenticationHashingMemory(),
                 config.getAuthenticationHashingIterations(),
-                config.getAuthenticationHashingParallelism());
+                config.getAuthenticationHashingParallelism()).requireNotWeakerThanMinimum();
     }
 
     /**

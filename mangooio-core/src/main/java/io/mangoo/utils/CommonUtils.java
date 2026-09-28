@@ -19,7 +19,6 @@ import org.apache.fory.config.Language;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
-import org.bouncycastle.util.Arrays;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -73,8 +72,8 @@ public final class CommonUtils {
      * 
      * @param cleartext The clear text
      * @param salt The salt
-     * 
-     * @return A Base64 encoded String
+     *
+     * @return An Argon2id hash in the PHC string format, see {@link io.mangoo.crypto.Argon2Hash}
      *
      * @throws MangooHashingException If no hashing slot became available in time
      */
@@ -90,7 +89,7 @@ public final class CommonUtils {
      *
      * @param cleartext The clear text
      *
-     * @return A Base64 encoded String
+     * @return An Argon2id hash in the PHC string format, see {@link io.mangoo.crypto.Argon2Hash}
      *
      * @throws MangooHashingException If no hashing slot became available in time
      */
@@ -103,11 +102,18 @@ public final class CommonUtils {
     
     /**
      * Matches a given clear text with salt using Argon2Id against an already Argon2Id hashed value
-     * 
+     * <p>
+     * A hash in the PHC string format is verified with the parameters and the salt it carries,
+     * the current configuration is deliberately ignored. A hash that is not in PHC format was
+     * created by an earlier mangoo I/O version and is verified with the parameters that version
+     * used (m=80000, t=6, p=2) and the given salt, so that an upgrade does not lock out existing
+     * users. Use {@link #needsRehash(String)} after this method returned true to find out whether
+     * the stored hash should be replaced
+     *
      * @param cleartext The clear text
-     * @param salt The salt
-     * @param hash The hashed value for comparison (must be Base64 encoded)
-     * 
+     * @param salt The salt, only used for a hash that is not in PHC format
+     * @param hash The hashed value for comparison
+     *
      * @return True if hashes match, false otherwise
      *
      * @throws MangooHashingException If no hashing slot became available in time. This is
@@ -119,14 +125,16 @@ public final class CommonUtils {
         Argument.requireNonBlank(salt, Required.SALT);
         Argument.requireNonBlank(hash, Required.HASH);
 
-        return Arrays.areEqual(hashArgon2(cleartext, salt).getBytes(StandardCharsets.UTF_8), hash.getBytes(StandardCharsets.UTF_8));
+        return Application.getInstance(PasswordHasher.class).matches(cleartext, salt, hash);
     }
 
     /**
      * Matches a given clear text using the application secret as salt using Argon2Id against an already Argon2Id hashed value
+     * <p>
+     * Legacy hashes and rehashing behave as described in {@link #matchArgon2(String, String, String)}
      *
      * @param cleartext The clear text
-     * @param hash The hashed value for comparison (must be Base64 encoded)
+     * @param hash The hashed value for comparison
      *
      * @return True if hashes match, false otherwise
      *
@@ -140,7 +148,32 @@ public final class CommonUtils {
 
         var salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
 
-        return Arrays.areEqual(hashArgon2(cleartext, salt).getBytes(StandardCharsets.UTF_8), hash.getBytes(StandardCharsets.UTF_8));
+        return matchArgon2(cleartext, salt, hash);
+    }
+
+    /**
+     * Checks whether a stored hash was created with something else than the currently
+     * configured Argon2id parameters and should be replaced
+     * <p>
+     * True for a hash that is not in the PHC string format, it was created by an earlier
+     * mangoo I/O version, and for a PHC hash whose embedded parameters differ from the
+     * configured ones
+     * <p>
+     * <strong>Only evaluate this after {@link #matchArgon2(String, String, String)} or
+     * {@link #matchArgon2(String, String)} returned true.</strong> Recomputing a hash needs
+     * the clear text, which is only known to be correct after a successful verification, and
+     * a failed login must never trigger a rehash. The typical use is to call
+     * {@link #hashArgon2(String, String)} with the same clear text and salt right after a
+     * successful login and to store the result
+     *
+     * @param hash The stored hash
+     *
+     * @return True if the hash should be recomputed with the current parameters, false otherwise
+     */
+    public static boolean needsRehash(String hash) {
+        Argument.requireNonBlank(hash, Required.HASH);
+
+        return Application.getInstance(PasswordHasher.class).needsRehash(hash);
     }
     
     /**

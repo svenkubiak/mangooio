@@ -157,9 +157,9 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `authentication.cookie.secure` | Secure cookie flag | `false` |
 | `authentication.cookie.token.expires` | Token and cookie lifetime in **seconds** | `3600` |
 | `authentication.hashing.concurrency` | Maximum number of Argon2 hashes computed at the same time; `0` derives it from the configured memory cost and the heap, clamped to 2..8 | `0` |
-| `authentication.hashing.iterations` | Argon2id iterations (time cost); **changing this invalidates every stored hash** | `6` |
-| `authentication.hashing.memory` | Argon2id memory cost in **KiB**; **changing this invalidates every stored hash** | `80000` |
-| `authentication.hashing.parallelism` | Argon2id lanes; **changing this invalidates every stored hash** | `2` |
+| `authentication.hashing.iterations` | Argon2id iterations (time cost); minimum `2` | `3` |
+| `authentication.hashing.memory` | Argon2id memory cost in **KiB**; minimum `8192` | `32768` |
+| `authentication.hashing.parallelism` | Argon2id lanes; minimum `1` | `1` |
 | `authentication.hashing.timeout` | Time in **milliseconds** a request waits for a free hashing slot | `5000` |
 | `authentication.lock` | Failed attempts before lockout, per identifier and per step (password, second factor) | `10` |
 | `authentication.lock.duration` | Lockout duration in **minutes**, absolute and not extended by further failed attempts | `60` |
@@ -218,11 +218,14 @@ A couple of these are worth calling out by name. `authentication.cookie.samesite
 
 ### Argon2 hashing
 
-`CommonUtils.hashArgon2` and `CommonUtils.matchArgon2` compute Argon2id, and a single computation holds `authentication.hashing.memory` KiB of heap for its entire duration — roughly 78 MB with the default of 80000 KiB. Undertow starts with eight worker threads per core, so without a limit a few dozen concurrent logins can request several gigabytes at once and take the JVM down with an OutOfMemoryError.
+`CommonUtils.hashArgon2` and `CommonUtils.matchArgon2` compute Argon2id, and a single computation holds `authentication.hashing.memory` KiB of heap for its entire duration — 32 MB with the default of 32768 KiB. Undertow starts with eight worker threads per core, so without a limit a few dozen concurrent logins can request several gigabytes at once and take the JVM down with an OutOfMemoryError.
 
 The framework therefore caps how many hashes run at the same time. A call that finds every slot taken waits up to `authentication.hashing.timeout` milliseconds and is then rejected with a `MangooHashingException`, which is unchecked and does not change any signature. `Authentication#isValidLogin` catches it, logs it and returns `false` without counting a failed attempt, so an overload situation cannot lock a user out. Every other caller sees the exception and ends up in the `ExceptionHandler`, which answers it with a `503` rather than a silent "wrong password".
 
 The default `authentication.hashing.concurrency: 0` derives the number of slots from the configured memory cost and half of the heap the JVM may use, clamped to a range of 2 to 8. The effective value is logged on INFO at startup. Set an explicit value to override the heuristic; a high value effectively switches the gate off.
 
-!!! warning
-    Changing `authentication.hashing.memory`, `authentication.hashing.iterations` or `authentication.hashing.parallelism` invalidates every hash that has already been stored. Affected users can no longer log in. Only change these values together with a mechanism that rehashes a password on the next successful login.
+The defaults `m=32768`, `t=3`, `p=1` sit above the OWASP minimum of 19 MiB and two iterations and below RFC 9106's low-memory profile. `p=1` is deliberate: BouncyCastle's `Argon2BytesGenerator` computes the lanes sequentially, so a higher parallelism does not shorten a single hash, it only spreads the same memory over more lanes. A server gets its parallelism from concurrent requests, not from lanes inside one hash.
+
+Values below `authentication.hashing.memory: 8192`, `authentication.hashing.iterations: 2` or `authentication.hashing.parallelism: 1` are rejected with an `IllegalArgumentException` at startup. The application refuses to start rather than hashing weaker than intended.
+
+Changing the parameters is safe: a hash carries the parameters it was created with, see [Password hashing](authentication.md#password-hashing), and is always verified with those. `CommonUtils.needsRehash` reports hashes that were created with anything else than the current configuration.

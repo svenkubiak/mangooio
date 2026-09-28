@@ -104,12 +104,60 @@ authentication:
 
 If your application built this gating itself — a semaphore around the hashing calls, sized from a hardcoded copy of the framework's memory constant — remove it in the same step. Double gating is the worst of both worlds: the two limits multiply into unnecessary waiting, and the application side copy goes silently wrong the moment the framework changes its memory cost.
 
-### Argon2 parameters are configurable
+### Argon2 parameters are configurable, and the defaults went down
 
-`authentication.hashing.memory` (80000 KiB), `authentication.hashing.iterations` (6) and `authentication.hashing.parallelism` (2) expose the Argon2id parameters. The defaults are exactly the values the framework used before, so nothing changes unless you set them.
+`authentication.hashing.memory`, `authentication.hashing.iterations` and `authentication.hashing.parallelism` expose the Argon2id parameters, with new defaults:
 
-!!! warning
-    Changing any of these three invalidates every hash that has already been stored. The affected users can no longer log in, and there is no way to recover the old hash. A change is only feasible together with a mechanism that rehashes the password on the next successful login, while still verifying against the old parameters until that has happened.
+| | before | now |
+| --- | --- | --- |
+| `authentication.hashing.memory` | 80000 KiB | 32768 KiB |
+| `authentication.hashing.iterations` | 6 | 3 |
+| `authentication.hashing.parallelism` | 2 | 1 |
+
+The old values cost about twelve times what OWASP recommends for Argon2id (19 MiB, two iterations) — roughly 230 ms and 91 MB of heap per verification, for around 3.6 bits of effective password strength over the new ones. The new defaults still sit above the OWASP minimum and cost about 100 ms and 32 MB. `p=1` because BouncyCastle's `Argon2BytesGenerator` computes the lanes sequentially: a higher parallelism never shortened a hash, it only spread the same memory over more lanes.
+
+Values below 8192 KiB, two iterations or one lane are rejected with an `IllegalArgumentException` at startup instead of hashing weaker than intended.
+
+Set the old values explicitly if you want to keep them:
+
+```yaml
+authentication:
+  hashing:
+    memory: 80000
+    iterations: 6
+    parallelism: 2
+```
+
+### Hashes are stored in PHC format
+
+`CommonUtils.hashArgon2` now returns the standard PHC string instead of a bare Base64 encoding of the raw hash bytes:
+
+```
+$argon2id$v=19$m=32768,t=3,p=1$<salt-b64>$<hash-b64>
+```
+
+`matchArgon2` verifies with the parameters and the salt embedded in the stored hash, never with the current configuration. That is what makes the parameter change above safe.
+
+**Existing hashes keep working.** A stored value that does not start with `$` is a hash from an earlier version and is verified with the parameters that version used (`m=80000,t=6,p=2`) and the salt you pass in. Nobody is locked out by the upgrade.
+
+The new `CommonUtils.needsRehash(hash)` reports a legacy hash, and a PHC hash whose parameters differ from the current configuration, as outdated. Call it after a successful login to migrate a stored hash transparently:
+
+```java
+if (authentication.isValidLogin(identifier, password, salt, hash)) {
+    if (CommonUtils.needsRehash(hash)) {
+        user.setPassword(CommonUtils.hashArgon2(password, salt));
+        datastore.save(user);
+    }
+    authentication.login(identifier);
+}
+```
+
+Two things to be aware of:
+
+* **Only evaluate `needsRehash` after a successful verification.** Recomputing the hash needs the clear text, and only a successful login proves it is the right one.
+* **The salt is part of the stored string now**, as the PHC format prescribes. If you passed a secret as the salt — `hashArgon2(cleartext)` uses `application.secret` — it stops being secret once the hash is stored. Use a per-user random salt instead. For the same reason the salt argument of `matchArgon2` is ignored for a PHC hash: the embedded one is used, which also lets you rotate the salt on rehash.
+
+Column width is worth a look before the upgrade: a PHC string is around 110 characters where the old value was 44.
 
 ## From 10.12.0 to 10.12.1
 

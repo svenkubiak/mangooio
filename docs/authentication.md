@@ -29,10 +29,37 @@ String hash = CommonUtils.hashArgon2("password", "salt");
 
 Store the hash (and the salt) with your user record; never store the plain password anywhere, not even temporarily in a log line.
 
-Because Argon2id is memory-hard, every call holds `authentication.hashing.memory` KiB of heap (78 MB by default) for as long as it runs. The framework limits how many of these computations may run at the same time, so that a burst of concurrent logins cannot exhaust the heap. A call that finds every slot taken waits up to `authentication.hashing.timeout` milliseconds and is then rejected with a `MangooHashingException`. See [Argon2 hashing](configuration.md#argon2-hashing) for the configuration and for what happens on the individual call sites.
+The returned value is a PHC string that carries the parameters and the salt it was created with:
+
+```
+$argon2id$v=19$m=32768,t=3,p=1$<salt-b64>$<hash-b64>
+```
+
+Because the parameters travel with the hash, `matchArgon2` verifies with the parameters of the *stored* hash and never with the current configuration. Changing `authentication.hashing.memory`, `authentication.hashing.iterations` or `authentication.hashing.parallelism` therefore does not lock anybody out.
+
+!!! note
+    The salt ends up in the stored string, as the PHC format prescribes. If you pass a secret as the salt — `hashArgon2(cleartext)` uses `application.secret` — it is no longer secret once the hash is stored. Use a per-user random salt and keep a pepper out of the hash.
+
+Because Argon2id is memory-hard, every call holds `authentication.hashing.memory` KiB of heap (32 MB by default) for as long as it runs. The framework limits how many of these computations may run at the same time, so that a burst of concurrent logins cannot exhaust the heap. A call that finds every slot taken waits up to `authentication.hashing.timeout` milliseconds and is then rejected with a `MangooHashingException`. See [Argon2 hashing](configuration.md#argon2-hashing) for the configuration and for what happens on the individual call sites.
+
+### Rehashing
+
+A stored value that is not in PHC format was created by a mangoo I/O version before 10.13.0. It is verified with the parameters that version used (`m=80000,t=6,p=2`) and the salt you pass in, so an upgrade does not lock out existing users.
+
+`CommonUtils.needsRehash` tells you whether a stored hash should be replaced — true for a legacy hash and for a PHC hash whose parameters differ from the current configuration:
+
+```java
+if (authentication.isValidLogin(identifier, password, salt, hash)) {
+    if (CommonUtils.needsRehash(hash)) {
+        user.setPassword(CommonUtils.hashArgon2(password, salt));
+        datastore.save(user);
+    }
+    authentication.login(identifier);
+}
+```
 
 !!! warning
-    `authentication.hashing.memory`, `authentication.hashing.iterations` and `authentication.hashing.parallelism` make the Argon2 parameters configurable. Changing any of them invalidates every hash that has already been stored, and the affected users can no longer log in. Only change them together with a mechanism that rehashes a password on the next successful login.
+    Only evaluate `needsRehash` **after** a successful verification. Recomputing a hash needs the clear text, and only a successful login proves that the clear text is the right one.
 
 ## Login
 

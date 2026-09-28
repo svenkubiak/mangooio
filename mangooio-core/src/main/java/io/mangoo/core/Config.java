@@ -531,12 +531,12 @@ public class Config {
     }
 
     /**
-     * The Argon2id memory cost in kibibytes
+     * The Argon2id memory cost in kibibytes, at least
+     * {@value io.mangoo.crypto.Argon2Settings#MIN_MEMORY_KB}
      * <p>
-     * <strong>Changing this value invalidates every hash that has already been
-     * stored.</strong> Users whose password was hashed with a different memory cost
-     * can no longer log in. Only change it together with a rehash on the next
-     * successful login
+     * A hash carries the memory cost it was created with, changing this value does not
+     * invalidate stored hashes. They keep verifying with their own parameters and
+     * {@link io.mangoo.utils.CommonUtils#needsRehash(String)} reports them as outdated
      *
      * @return authentication.hashing.memory or default value if undefined
      */
@@ -545,12 +545,12 @@ public class Config {
     }
 
     /**
-     * The Argon2id number of iterations (time cost)
+     * The Argon2id number of iterations (time cost), at least
+     * {@value io.mangoo.crypto.Argon2Settings#MIN_ITERATIONS}
      * <p>
-     * <strong>Changing this value invalidates every hash that has already been
-     * stored.</strong> Users whose password was hashed with a different number of
-     * iterations can no longer log in. Only change it together with a rehash on the
-     * next successful login
+     * A hash carries the iterations it was created with, changing this value does not
+     * invalidate stored hashes. They keep verifying with their own parameters and
+     * {@link io.mangoo.utils.CommonUtils#needsRehash(String)} reports them as outdated
      *
      * @return authentication.hashing.iterations or default value if undefined
      */
@@ -559,15 +559,16 @@ public class Config {
     }
 
     /**
-     * The Argon2id number of lanes
+     * The Argon2id number of lanes, at least
+     * {@value io.mangoo.crypto.Argon2Settings#MIN_PARALLELISM}
      * <p>
      * Note that the underlying Argon2BytesGenerator computes the lanes sequentially,
-     * raising this value does not increase CPU utilization
+     * raising this value does not increase CPU utilization. It only spreads the same
+     * amount of memory over more lanes, which is why the default is 1
      * <p>
-     * <strong>Changing this value invalidates every hash that has already been
-     * stored.</strong> Users whose password was hashed with a different parallelism
-     * can no longer log in. Only change it together with a rehash on the next
-     * successful login
+     * A hash carries the parallelism it was created with, changing this value does not
+     * invalidate stored hashes. They keep verifying with their own parameters and
+     * {@link io.mangoo.utils.CommonUtils#needsRehash(String)} reports them as outdated
      *
      * @return authentication.hashing.parallelism or default value if undefined
      */

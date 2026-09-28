@@ -1,6 +1,12 @@
 package io.mangoo.utils;
 
 import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.core.Config;
+import io.mangoo.crypto.Argon2Hash;
+import io.mangoo.crypto.Argon2Settings;
+import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
+import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,6 +14,8 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -121,6 +129,85 @@ class CommonUtilsTest {
     }
 
     @Test
+    void testHashArgon2IsPhcFormattedWithTheConfiguredParameters() {
+        //given
+        String cleartext = "test-password";
+        String salt = "test-salt";
+        var config = Application.getInstance(Config.class);
+
+        //when
+        String hash = CommonUtils.hashArgon2(cleartext, salt);
+
+        //then
+        assertThat(hash, startsWith("$argon2id$v=19$m=%s,t=%s,p=%s$".formatted(
+                config.getAuthenticationHashingMemory(),
+                config.getAuthenticationHashingIterations(),
+                config.getAuthenticationHashingParallelism())));
+        assertThat(hash.split("\\$").length, equalTo(6));
+    }
+
+    @Test
+    void testFreshHashDoesNotNeedRehash() {
+        //given
+        String hash = CommonUtils.hashArgon2("test-password", "test-salt");
+
+        //then
+        assertThat(CommonUtils.needsRehash(hash), equalTo(false));
+    }
+
+    @Test
+    void testLegacyHashStillMatchesAndNeedsRehash() {
+        //given a bare Base64 hash as earlier mangoo I/O versions stored it
+        String cleartext = "test-password";
+        String salt = "test-salt";
+        String legacy = legacyHash(cleartext, salt);
+
+        //then
+        assertThat(CommonUtils.matchArgon2(cleartext, salt, legacy), equalTo(true));
+        assertThat(CommonUtils.matchArgon2("wrong-password", salt, legacy), equalTo(false));
+        assertThat(CommonUtils.needsRehash(legacy), equalTo(true));
+    }
+
+    @Test
+    void testHashWithForeignParametersStillMatchesAndNeedsRehash() {
+        //given a PHC hash created with parameters the application is not configured with
+        String cleartext = "test-password";
+        String salt = "test-salt";
+        String hash = phcHash(cleartext, salt, new Argon2Settings(8192, 2, 1));
+
+        //then
+        assertThat(CommonUtils.matchArgon2(cleartext, salt, hash), equalTo(true));
+        assertThat(CommonUtils.matchArgon2("wrong-password", salt, hash), equalTo(false));
+        assertThat(CommonUtils.needsRehash(hash), equalTo(true));
+    }
+
+    private static String legacyHash(String cleartext, String salt) {
+        return Base64.getEncoder().encodeToString(argon2(cleartext, salt, Argon2Settings.LEGACY));
+    }
+
+    private static String phcHash(String cleartext, String salt, Argon2Settings settings) {
+        return new Argon2Hash(settings, salt.getBytes(StandardCharsets.UTF_8), argon2(cleartext, salt, settings)).encode();
+    }
+
+    private static byte[] argon2(String cleartext, String salt, Argon2Settings settings) {
+        var parameters = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
+                .withVersion(Argon2Parameters.ARGON2_VERSION_13)
+                .withParallelism(settings.parallelism())
+                .withMemoryAsKB(settings.memoryKb())
+                .withSalt(salt.getBytes(StandardCharsets.UTF_8))
+                .withIterations(settings.iterations())
+                .build();
+
+        var generator = new Argon2BytesGenerator();
+        generator.init(parameters);
+
+        var hash = new byte[32];
+        generator.generateBytes(cleartext.getBytes(StandardCharsets.UTF_8), hash);
+
+        return hash;
+    }
+
+    @Test
     void testMatchArgon2WithSalt() {
         //given
         String cleartext = "test-password";
@@ -150,12 +237,27 @@ class CommonUtilsTest {
     }
 
     @Test
-    void testMatchArgon2WithSaltWrongSalt() {
-        //given
+    void testMatchArgon2WithSaltIgnoresTheGivenSaltForAPhcHash() {
+        //given a PHC hash carries the salt it was created with
+        String cleartext = "test-password";
+        String salt = "test-salt";
+        String otherSalt = "wrong-salt";
+        String hash = CommonUtils.hashArgon2(cleartext, salt);
+
+        //when
+        boolean match = CommonUtils.matchArgon2(cleartext, otherSalt, hash);
+
+        //then the embedded salt is used, so the salt may be rotated without locking out users
+        assertThat(match, equalTo(true));
+    }
+
+    @Test
+    void testMatchArgon2WithSaltWrongSaltForALegacyHash() {
+        //given a legacy hash has no salt of its own, the given one is used
         String cleartext = "test-password";
         String salt = "test-salt";
         String wrongSalt = "wrong-salt";
-        String hash = CommonUtils.hashArgon2(cleartext, salt);
+        String hash = legacyHash(cleartext, salt);
 
         //when
         boolean match = CommonUtils.matchArgon2(cleartext, wrongSalt, hash);
