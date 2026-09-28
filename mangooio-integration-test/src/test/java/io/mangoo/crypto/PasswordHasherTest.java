@@ -164,13 +164,28 @@ class PasswordHasherTest {
     }
 
     @Test
-    void testTheGivenSaltIsIgnoredForAPhcHash() {
-        //given the salt travels with the hash
+    void testTheGivenSaltMustMatchTheEmbeddedOne() {
+        //given the salt travels with the hash, but is not taken from there on verification
         var passwordHasher = new PasswordHasher(2, 5000, FAST);
         String hash = passwordHasher.hash(CLEARTEXT, SALT);
 
         //then
-        assertThat(passwordHasher.matches(CLEARTEXT, "a completely different salt", hash), equalTo(true));
+        assertThat(passwordHasher.matches(CLEARTEXT, SALT, hash), equalTo(true));
+        assertThat(passwordHasher.matches(CLEARTEXT, "a completely different salt", hash), equalTo(false));
+    }
+
+    @Test
+    void testATamperedEmbeddedSaltIsRejected() {
+        //given an attacker replaced the embedded salt with one of their own
+        var passwordHasher = new PasswordHasher(2, 5000, FAST);
+        String hash = passwordHasher.hash(CLEARTEXT, SALT);
+        String tampered = new Argon2Hash(
+                FAST,
+                "attacker".getBytes(StandardCharsets.UTF_8),
+                Argon2Hash.parse(hash).hash()).encode();
+
+        //then
+        assertThat(passwordHasher.matches(CLEARTEXT, SALT, tampered), equalTo(false));
     }
 
     @Test

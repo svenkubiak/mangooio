@@ -103,15 +103,16 @@ public final class CommonUtils {
     /**
      * Matches a given clear text with salt using Argon2Id against an already Argon2Id hashed value
      * <p>
-     * A hash in the PHC string format is verified with the parameters and the salt it carries,
-     * the current configuration is deliberately ignored. A hash that is not in PHC format was
-     * created by an earlier mangoo I/O version and is verified with the parameters that version
-     * used (m=80000, t=6, p=2) and the given salt, so that an upgrade does not lock out existing
-     * users. Use {@link #needsRehash(String)} after this method returned true to find out whether
-     * the stored hash should be replaced
+     * A hash in the PHC string format is verified with the parameters it carries, the current
+     * configuration is deliberately ignored. The given salt must be the one the hash was created
+     * with, a mismatch is a failed verification and not silently verified against the embedded
+     * salt. A hash that is not in PHC format was created by an earlier mangoo I/O version and is
+     * verified with the parameters that version used (m=80000, t=6, p=2) and the given salt, so
+     * that an upgrade does not lock out existing users. Use {@link #needsRehash(String)} after
+     * this method returned true to find out whether the stored hash should be replaced
      *
      * @param cleartext The clear text
-     * @param salt The salt, only used for a hash that is not in PHC format
+     * @param salt The salt the hash was created with
      * @param hash The hashed value for comparison
      *
      * @return True if hashes match, false otherwise

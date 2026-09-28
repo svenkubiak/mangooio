@@ -37,6 +37,8 @@ $argon2id$v=19$m=32768,t=3,p=1$<salt-b64>$<hash-b64>
 
 Because the parameters travel with the hash, `matchArgon2` verifies with the parameters of the *stored* hash and never with the current configuration. Changing `authentication.hashing.memory`, `authentication.hashing.iterations` or `authentication.hashing.parallelism` therefore does not lock anybody out.
 
+The salt you pass to `matchArgon2` still has to be the one the hash was created with. The embedded salt is not used as a fallback: if the two differ, the verification fails. A hash whose embedded salt someone swapped out is rejected rather than verified against the attacker's salt.
+
 !!! note
     The salt ends up in the stored string, as the PHC format prescribes. If you pass a secret as the salt — `hashArgon2(cleartext)` uses `application.secret` — it is no longer secret once the hash is stored. Use a per-user random salt and keep a pepper out of the hash.
 

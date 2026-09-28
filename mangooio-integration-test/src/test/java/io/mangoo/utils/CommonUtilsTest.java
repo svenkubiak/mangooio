@@ -237,18 +237,18 @@ class CommonUtilsTest {
     }
 
     @Test
-    void testMatchArgon2WithSaltIgnoresTheGivenSaltForAPhcHash() {
-        //given a PHC hash carries the salt it was created with
+    void testMatchArgon2WithSaltWrongSalt() {
+        //given a PHC hash carries the salt it was created with, but it is not taken from there
         String cleartext = "test-password";
         String salt = "test-salt";
-        String otherSalt = "wrong-salt";
+        String wrongSalt = "wrong-salt";
         String hash = CommonUtils.hashArgon2(cleartext, salt);
 
         //when
-        boolean match = CommonUtils.matchArgon2(cleartext, otherSalt, hash);
+        boolean match = CommonUtils.matchArgon2(cleartext, wrongSalt, hash);
 
-        //then the embedded salt is used, so the salt may be rotated without locking out users
-        assertThat(match, equalTo(true));
+        //then
+        assertThat(match, equalTo(false));
     }
 
     @Test

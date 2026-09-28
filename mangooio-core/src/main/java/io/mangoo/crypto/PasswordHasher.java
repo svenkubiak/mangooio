@@ -103,15 +103,17 @@ public class PasswordHasher {
     /**
      * Verifies a given clear text against an already hashed value
      * <p>
-     * A hash in PHC format is verified with the parameters and the salt it carries, the
-     * current configuration is deliberately ignored. A hash that is not in PHC format was
-     * created before mangoo I/O embedded the parameters and is verified with
-     * {@link Argon2Settings#LEGACY} and the given salt, so that an upgrade does not lock
-     * out existing users. Use {@link #needsRehash(String)} after a successful verification
-     * to find out whether the hash should be recomputed
+     * A hash in PHC format is verified with the parameters it carries, the current
+     * configuration is deliberately ignored. The given salt must be the one the hash was
+     * created with, a mismatch is a failed verification and not silently verified against
+     * the embedded salt. A hash that is not in PHC format was created before mangoo I/O
+     * embedded the parameters and is verified with {@link Argon2Settings#LEGACY} and the
+     * given salt, so that an upgrade does not lock out existing users. Use
+     * {@link #needsRehash(String)} after a successful verification to find out whether the
+     * hash should be recomputed
      *
      * @param cleartext The clear text
-     * @param salt The salt, only used for a hash that is not in PHC format
+     * @param salt The salt the hash was created with
      * @param stored The stored hash
      * @return True if the clear text matches the stored hash, false otherwise
      *
@@ -122,17 +124,23 @@ public class PasswordHasher {
         Argument.requireNonBlank(salt, Required.SALT);
         Argument.requireNonBlank(stored, Required.HASH);
 
+        byte[] saltBytes = salt.getBytes(StandardCharsets.UTF_8);
+
         Argon2Hash expected;
         try {
             expected = Argon2Hash.isPhcFormat(stored)
                     ? Argon2Hash.parse(stored)
-                    : legacy(stored, salt);
+                    : new Argon2Hash(Argon2Settings.LEGACY, saltBytes, Base64.getDecoder().decode(stored));
         } catch (IllegalArgumentException e) {
             LOG.warn("Rejected a login, the stored hash is malformed", e);
             return false;
         }
 
-        byte[] actual = throttled(() -> compute(cleartext, expected.salt(), expected.settings(), expected.hash().length));
+        if (!Arrays.constantTimeAreEqual(expected.salt(), saltBytes)) {
+            return false;
+        }
+
+        byte[] actual = throttled(() -> compute(cleartext, saltBytes, expected.settings(), expected.hash().length));
 
         return Arrays.constantTimeAreEqual(expected.hash(), actual);
     }
@@ -161,13 +169,6 @@ public class PasswordHasher {
         } catch (IllegalArgumentException e) { //NOSONAR a malformed hash is replaced, not reported
             return true;
         }
-    }
-
-    private static Argon2Hash legacy(String stored, String salt) {
-        return new Argon2Hash(
-                Argon2Settings.LEGACY,
-                salt.getBytes(StandardCharsets.UTF_8),
-                Base64.getDecoder().decode(stored));
     }
 
     private <T> T throttled(Supplier<T> computation) {

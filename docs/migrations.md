@@ -136,7 +136,7 @@ authentication:
 $argon2id$v=19$m=32768,t=3,p=1$<salt-b64>$<hash-b64>
 ```
 
-`matchArgon2` verifies with the parameters and the salt embedded in the stored hash, never with the current configuration. That is what makes the parameter change above safe.
+`matchArgon2` verifies with the parameters embedded in the stored hash, never with the current configuration. That is what makes the parameter change above safe. The salt argument keeps its meaning: it still has to be the salt the hash was created with, the embedded one is not used as a fallback.
 
 **Existing hashes keep working.** A stored value that does not start with `$` is a hash from an earlier version and is verified with the parameters that version used (`m=80000,t=6,p=2`) and the salt you pass in. Nobody is locked out by the upgrade.
 
@@ -155,7 +155,7 @@ if (authentication.isValidLogin(identifier, password, salt, hash)) {
 Two things to be aware of:
 
 * **Only evaluate `needsRehash` after a successful verification.** Recomputing the hash needs the clear text, and only a successful login proves it is the right one.
-* **The salt is part of the stored string now**, as the PHC format prescribes. If you passed a secret as the salt — `hashArgon2(cleartext)` uses `application.secret` — it stops being secret once the hash is stored. Use a per-user random salt instead. For the same reason the salt argument of `matchArgon2` is ignored for a PHC hash: the embedded one is used, which also lets you rotate the salt on rehash.
+* **The salt is part of the stored string now**, as the PHC format prescribes. If you passed a secret as the salt — `hashArgon2(cleartext)` uses `application.secret` — it stops being secret once the hash is stored. Use a per-user random salt instead. Note that this does not make the salt argument of `matchArgon2` optional: a hash only verifies against the salt it was created with, and a tampered embedded salt is rejected instead of being trusted.
 
 Column width is worth a look before the upgrade: a PHC string is around 110 characters where the old value was 44.
 
