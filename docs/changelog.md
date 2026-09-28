@@ -7,6 +7,8 @@ Unreleased
 * **Behaviour change** Authentication#isValid now means "fully authenticated" and returns false while a second factor is outstanding, the previous behaviour is available as Authentication#hasSubject and Authentication#isValidLogin now fails closed without counting a failed attempt (svenkubiak)
 * Added Authentication#isValidSecondFactor(identifier, secret, totp) which applies the authentication.lock failed attempt budget to the second factor, deprecating the unthrottled Authentication#isValidSecondFactor(secret, totp), and Authentication#userHasSecondFactorLock (svenkubiak)
 * **Behaviour change** The failed attempt budgets of the password step and the second factor step are now counted separately, a lockout is an absolute point in time, authentication.lock locks on the configured attempt instead of one attempt later and the new authentication.lock.duration configures its duration in minutes (svenkubiak)
+* Added form.maxfilesize to configure the maximum size of a single uploaded file, the default stays at 5 MiB and note that undertow.maxentitysize still caps the whole request body one layer earlier (svenkubiak)
+* The FormHandler now logs on WARN why it rejected a form, including the offending size and the limit, instead of failing the request without a single log line (svenkubiak)
 * Added Response#bodyFile(Path) which streams a file to the client with constant memory usage (svenkubiak)
 * The mangoo I/O test runner no longer starts the application twice when JUnit invokes beforeAll of several test classes at the same time (svenkubiak)
 * Fixed an issue in OTLP handling and in form-cookie, added additional unit tests for OTLP (svenkubiak)

@@ -583,6 +583,19 @@ public class Config {
     }
 
     /**
+     * The maximum size in bytes of a single uploaded file
+     * <p>
+     * This limit applies per file, after the request body has passed
+     * undertow.maxentitysize. Raising it alone is not enough: a body that exceeds
+     * undertow.maxentitysize is already rejected one layer earlier
+     *
+     * @return form.maxfilesize or default value if undefined
+     */
+    public long getFormMaxFileSize() {
+        return getLong(Key.FORM_MAX_FILE_SIZE, Default.FORM_MAX_FILE_SIZE);
+    }
+
+    /**
      * @return session.cookie.secret or application secret if undefined
      */
     public byte[] getSessionCookieSecret() {

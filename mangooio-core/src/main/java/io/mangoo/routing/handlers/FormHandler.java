@@ -1,7 +1,9 @@
 package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.Default;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.RequestUtils;
@@ -10,12 +12,24 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.form.FormData.FormValue;
 import io.undertow.server.handlers.form.FormDataParser;
 import io.undertow.server.handlers.form.FormParserFactory;
+import jakarta.inject.Inject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Deque;
+import java.util.Objects;
 
 public class FormHandler implements HttpHandler {
+    private static final Logger LOG = LogManager.getLogger(FormHandler.class);
+    private final long maxFileSize;
+
+    @Inject
+    public FormHandler(Config config) {
+        Objects.requireNonNull(config, Required.CONFIG);
+        this.maxFileSize = config.getFormMaxFileSize();
+    }
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
@@ -65,7 +79,7 @@ public class FormHandler implements HttpHandler {
             var fileCount = 0;
             for (String name : formData) {
                 if (name == null || name.isBlank() || name.length() > 200) {
-                    throw new IOException("Invalid parameter name");
+                    throw rejected(exchange, "Invalid parameter name");
                 }
 
                 Deque<FormValue> values = formData.get(name);
@@ -76,19 +90,21 @@ public class FormHandler implements HttpHandler {
                 for (FormValue value : values) {
                     parameterCount++;
                     if (parameterCount > Default.FORM_MAX_PARAMETERS) {
-                        throw new IOException("Too many parameters");
+                        throw rejected(exchange, "Too many parameters, limit is " + Default.FORM_MAX_PARAMETERS);
                     }
 
                     if (value.isFileItem()) {
                         fileCount++;
                         if (fileCount > Default.FORM_MAX_FILES) {
-                            throw new IOException("Too many file uploads");
+                            throw rejected(exchange, "Too many file uploads, limit is " + Default.FORM_MAX_FILES);
                         }
 
                         var fileItem = value.getFileItem();
                         var size = fileItem.getFileSize();
-                        if (size > Default.FORM_MAX_FILE_SIZE) {
-                            throw new IOException("Uploaded file too large");
+                        if (size > maxFileSize) {
+                            throw rejected(exchange, "Uploaded file too large: parameter '" + name + "' has "
+                                    + size + " bytes, limit is " + maxFileSize
+                                    + " bytes, raise form.maxfilesize to allow it");
                         }
 
                         form.addFile(name, fileItem.getInputStream());
@@ -99,7 +115,8 @@ public class FormHandler implements HttpHandler {
                         }
 
                         if (val.length() > Default.FORM_MAX_VALUE_LENGTH) {
-                            throw new IOException("Parameter value too long");
+                            throw rejected(exchange, "Parameter value too long: parameter '" + name + "' has "
+                                    + val.length() + " characters, limit is " + Default.FORM_MAX_VALUE_LENGTH);
                         }
 
                         form.addValue(name, val);
@@ -111,6 +128,25 @@ public class FormHandler implements HttpHandler {
         }
 
         return form;
+    }
+
+    /**
+     * Logs why a form was rejected and creates the exception to throw
+     * <p>
+     * The exception is raised before any controller runs, so the request never reaches
+     * application code that could log it. Without this line the client only sees an
+     * error status with no body and nothing explains it on the server side
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @param reason The reason the form was rejected
+     *
+     * @return An IOException carrying the reason
+     */
+    private IOException rejected(HttpServerExchange exchange, String reason) {
+        LOG.warn("Rejected form of request {} {}: {}",
+                exchange.getRequestMethod(), exchange.getRequestURI(), reason);
+
+        return new IOException(reason);
     }
 
     /**

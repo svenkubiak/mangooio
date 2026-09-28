@@ -52,6 +52,7 @@ public final class Key {
     public static final String CORS_HEADERS_EXPOSE_HEADERS = "cors.headers.exposeheaders";
     public static final String CORS_HEADERS_MAX_AGE = "cors.headers.maxage";
     public static final String CORS_URL_PATTERN = "cors.urlpattern";
+    public static final String FORM_MAX_FILE_SIZE = "form.maxfilesize";
     public static final String FLASH_COOKIE_NAME = "flash.cookie.name";
     public static final String FLASH_COOKIE_SECRET = "flash.cookie.secret";
     public static final String FLASH_COOKIE_KEY = "flash.cookie.key";

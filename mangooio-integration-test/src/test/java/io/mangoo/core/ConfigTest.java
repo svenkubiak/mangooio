@@ -1009,6 +1009,35 @@ class ConfigTest {
     }
 
     @Test
+    void testGetFormMaxFileSize() throws IOException {
+        // given
+        String size = "67108864";
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("form.maxfilesize", size);
+        createTempConfig(configValues);
+        Config config = new Config(new Vault());
+
+        // then
+        assertThat(config.getFormMaxFileSize(), equalTo(Long.valueOf(size)));
+    }
+
+    @Test
+    void testGetFormMaxFileSizeDefaultValue() throws IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        createTempConfig(configValues);
+        Config config = new Config(new Vault());
+
+        // then
+        assertThat(config.getFormMaxFileSize(), equalTo(Default.FORM_MAX_FILE_SIZE));
+    }
+
+    @Test
     void testGetSessionCookieSecret() throws IOException {
         // given
         String key = UUID.randomUUID().toString();

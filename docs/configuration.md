@@ -182,6 +182,7 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `flash.cookie.name` | Flash cookie name | `mangooio-flash` |
 | `flash.cookie.key` | Flash JWT signing key | *(none)* |
 | `flash.cookie.secret` | Flash JWT encryption secret | *(none)* |
+| `form.maxfilesize` | Maximum size of a single uploaded file in bytes | `5242880` |
 | `i18n.cookie.name` | Locale cookie name | `mangooio-i18n` |
 | `metrics.enable` | Collect request metrics for the admin dashboard | `false` |
 | `otlp.enable` | Enable OpenTelemetry export | `false` |
@@ -213,7 +214,7 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `smtp.username` | SMTP username | *(none)* |
 | `undertow.maxentitysize` | Maximum HTTP entity size in bytes | `4194304` |
 
-A couple of these are worth calling out by name. `authentication.cookie.samesitemode` and `session.cookie.samesitemode` both default to `Strict`, which is the safest choice against CSRF but also means the cookie will not be sent on cross-site navigations at all (a link from another domain, for instance); loosen it to `Lax` if your login flow depends on that. `undertow.maxentitysize` caps request body size at 4 MiB by default, mostly to stop an accidental (or malicious) huge upload from eating memory before your controller even gets a chance to reject it; raise it deliberately if your application genuinely needs larger uploads.
+A couple of these are worth calling out by name. `authentication.cookie.samesitemode` and `session.cookie.samesitemode` both default to `Strict`, which is the safest choice against CSRF but also means the cookie will not be sent on cross-site navigations at all (a link from another domain, for instance); loosen it to `Lax` if your login flow depends on that. `undertow.maxentitysize` caps request body size at 4 MiB by default, mostly to stop an accidental (or malicious) huge upload from eating memory before your controller even gets a chance to reject it; raise it deliberately if your application genuinely needs larger uploads. That raise alone is only half the story, though: `form.maxfilesize` caps every single uploaded file at 5 MiB on top of it, for the same reason. The two limits sit behind each other, and an upload has to pass both — plus whatever a reverse proxy in front of the application allows, such as nginx's `client_max_body_size`. Raising only one of them moves the failure to another layer instead of removing it. A form that trips `form.maxfilesize` is rejected before any controller runs; the `FormHandler` logs the reason on WARN and the request is answered with a `400`.
 
 ### Argon2 hashing
 
