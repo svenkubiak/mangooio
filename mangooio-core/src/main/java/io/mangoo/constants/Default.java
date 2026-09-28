@@ -19,6 +19,11 @@ public final class Default {
     public static final String AUTHENTICATION_COOKIE_SAME_SITE_MODE = "Strict";
     public static final Boolean AUTHENTICATION_COOKIE_SECURE = Boolean.FALSE;
     public static final long AUTHENTICATION_COOKIE_TOKEN_EXPIRES = 3600;
+    public static final int AUTHENTICATION_HASHING_CONCURRENCY = 0;
+    public static final int AUTHENTICATION_HASHING_ITERATIONS = 6;
+    public static final int AUTHENTICATION_HASHING_MEMORY = 80000;
+    public static final int AUTHENTICATION_HASHING_PARALLELISM = 2;
+    public static final long AUTHENTICATION_HASHING_TIMEOUT = 5000;
     public static final int AUTHENTICATION_LOCK = 10;
     public static final int AUTHENTICATION_LOCK_DURATION = 60;
     public static final Boolean AUTHENTICATION_ORIGIN = Boolean.FALSE;

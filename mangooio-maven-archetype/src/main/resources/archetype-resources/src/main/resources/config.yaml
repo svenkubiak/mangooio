@@ -25,6 +25,19 @@ default:
       key: vault{}
       secure: true
   authentication:
+    hashing:
+      # Maximum number of Argon2 hashes computed at the same time, 0 derives the
+      # value from the configured memory cost and the available heap.
+      # Time in milliseconds a request waits for a free slot before hashing is
+      # rejected with a MangooHashingException
+      concurrency: 0
+      timeout: 5000
+      # WARNING Changing memory, iterations or parallelism invalidates every hash
+      # that has already been stored. Affected users can no longer log in. Only
+      # change these together with a rehash on the next successful login
+      # memory: 80000
+      # iterations: 6
+      # parallelism: 2
     redirect: /login
     cookie:
       name: ${application-name}-authentication

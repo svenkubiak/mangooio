@@ -3,6 +3,16 @@
 Unreleased
 
 * Added Response#bodyFile(Path) which streams a file to the client with constant memory usage (svenkubiak)
+* **Behaviour change** The number of Argon2 computations that run at the same time is now limited, CommonUtils#hashArgon2 and CommonUtils#matchArgon2 throw an unchecked MangooHashingException once a call waited longer than authentication.hashing.timeout for a free slot (svenkubiak)
+* The gating is enabled by default and is an OOM protection, a single Argon2 computation holds around 78 MB of heap and Undertow starts with eight worker threads per core (svenkubiak)
+* Added io.mangoo.crypto.PasswordHasher which performs the hashing and holds the limit (svenkubiak)
+* Added authentication.hashing.concurrency to configure the maximum number of concurrent hashes, default 0 derives it from the configured memory cost and the available heap, clamped to 2..8, a high value effectively disables the gate (svenkubiak)
+* Added authentication.hashing.timeout to configure the time in milliseconds a call waits for a free slot, default 5000 (svenkubiak)
+* Added authentication.hashing.memory, authentication.hashing.iterations and authentication.hashing.parallelism to configure the Argon2 parameters, defaults 80000 KB, 6 and 2 are the values used so far (svenkubiak)
+* **Warning** Changing authentication.hashing.memory, authentication.hashing.iterations or authentication.hashing.parallelism invalidates every hash that has already been stored, affected users can no longer log in, only change them together with a rehash on the next successful login (svenkubiak)
+* Authentication#isValidLogin now fails closed and returns false when no hashing slot becomes available, without counting a failed attempt (svenkubiak)
+* A MangooHashingException that reaches the ExceptionHandler is now answered with 503 Service Unavailable instead of 500 (svenkubiak)
+* The mangoo I/O test runner no longer starts the application twice when JUnit invokes beforeAll of several test classes at the same time (svenkubiak)
 * **Behaviour change** Authentication#isValid now means "fully authenticated" and returns false while a second factor is outstanding, it was previously only a check for the presence of a subject (svenkubiak)
 * Added Authentication#hasSubject which provides the previous behaviour of isValid, a check whether a subject is present regardless of an outstanding second factor (svenkubiak)
 * Added Authentication#isValidSecondFactor(identifier, secret, totp) which applies the authentication.lock failed attempt budget to the second factor (svenkubiak)
@@ -15,6 +25,7 @@ Unreleased
 * Fixed an issue in OTLP handling (svenkubiak)
 * Fixed an issue in form-cookie (svenkubiak)
 * Added additional unit tests for OTLP (svenkubiak)
+* Documented the complete login flow with and without two-factor authentication (svenkubiak)
 * Updated documentation (svenkubiak)
 * Version bumps (svenkubiak)
   * fory-core 1.7.2 -&gt; 1.7.6

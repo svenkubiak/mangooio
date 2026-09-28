@@ -156,6 +156,11 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `authentication.cookie.samesitemode` | SameSite attribute | `Strict` |
 | `authentication.cookie.secure` | Secure cookie flag | `false` |
 | `authentication.cookie.token.expires` | Token and cookie lifetime in **seconds** | `3600` |
+| `authentication.hashing.concurrency` | Maximum number of Argon2 hashes computed at the same time; `0` derives it from the configured memory cost and the heap, clamped to 2..8 | `0` |
+| `authentication.hashing.iterations` | Argon2id iterations (time cost); **changing this invalidates every stored hash** | `6` |
+| `authentication.hashing.memory` | Argon2id memory cost in **KiB**; **changing this invalidates every stored hash** | `80000` |
+| `authentication.hashing.parallelism` | Argon2id lanes; **changing this invalidates every stored hash** | `2` |
+| `authentication.hashing.timeout` | Time in **milliseconds** a request waits for a free hashing slot | `5000` |
 | `authentication.lock` | Failed attempts before lockout, per identifier and per step (password, second factor) | `10` |
 | `authentication.lock.duration` | Lockout duration in **minutes**, absolute and not extended by further failed attempts | `60` |
 | `authentication.origin` | Append `?origin=` on auth redirects | `false` |
@@ -209,3 +214,14 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `undertow.maxentitysize` | Maximum HTTP entity size in bytes | `4194304` |
 
 A couple of these are worth calling out by name. `authentication.cookie.samesitemode` and `session.cookie.samesitemode` both default to `Strict`, which is the safest choice against CSRF but also means the cookie will not be sent on cross-site navigations at all (a link from another domain, for instance); loosen it to `Lax` if your login flow depends on that. `undertow.maxentitysize` caps request body size at 4 MiB by default, mostly to stop an accidental (or malicious) huge upload from eating memory before your controller even gets a chance to reject it; raise it deliberately if your application genuinely needs larger uploads.
+
+### Argon2 hashing
+
+`CommonUtils.hashArgon2` and `CommonUtils.matchArgon2` compute Argon2id, and a single computation holds `authentication.hashing.memory` KiB of heap for its entire duration — roughly 78 MB with the default of 80000 KiB. Undertow starts with eight worker threads per core, so without a limit a few dozen concurrent logins can request several gigabytes at once and take the JVM down with an OutOfMemoryError.
+
+The framework therefore caps how many hashes run at the same time. A call that finds every slot taken waits up to `authentication.hashing.timeout` milliseconds and is then rejected with a `MangooHashingException`, which is unchecked and does not change any signature. `Authentication#isValidLogin` catches it, logs it and returns `false` without counting a failed attempt, so an overload situation cannot lock a user out. Every other caller sees the exception and ends up in the `ExceptionHandler`, which answers it with a `503` rather than a silent "wrong password".
+
+The default `authentication.hashing.concurrency: 0` derives the number of slots from the configured memory cost and half of the heap the JVM may use, clamped to a range of 2 to 8. The effective value is logged on INFO at startup. Set an explicit value to override the heuristic; a high value effectively switches the gate off.
+
+!!! warning
+    Changing `authentication.hashing.memory`, `authentication.hashing.iterations` or `authentication.hashing.parallelism` invalidates every hash that has already been stored. Affected users can no longer log in. Only change these values together with a mechanism that rehashes a password on the next successful login.

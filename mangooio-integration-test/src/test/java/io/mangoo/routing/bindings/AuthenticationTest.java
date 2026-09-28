@@ -6,12 +6,16 @@ import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.CacheName;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.exceptions.MangooHashingException;
 import io.mangoo.models.AuthenticationLock;
+import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.TotpUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,6 +23,7 @@ import java.util.UUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 /**
  * 
@@ -87,6 +92,30 @@ class AuthenticationTest {
 
         //then
         assertThat(authentication.userHasLock(identifier), equalTo(true));
+    }
+
+    @Test
+    void testHashingOverloadFailsClosedWithoutCountingAFailedAttempt() {
+        //given
+        Authentication authentication = Application.getInstance(Authentication.class);
+        String identifier = identifier();
+
+        //when the hashing is rejected because no slot became available
+        boolean valid;
+        try (MockedStatic<CommonUtils> commonUtils = Mockito.mockStatic(CommonUtils.class)) {
+            commonUtils.when(() -> CommonUtils.matchArgon2(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                    .thenThrow(new MangooHashingException("No Argon2 hashing slot became available"));
+
+            valid = authentication.isValidLogin(identifier, "bla", SALT, VALID_HASH);
+        }
+
+        //then the login fails closed
+        assertThat(valid, equalTo(false));
+
+        //and the failed attempt budget is untouched
+        AuthenticationLock lock = authCache().get(CacheName.AUTH_PASSWORD_PREFIX + identifier);
+        assertThat(lock, nullValue());
+        assertThat(authentication.userHasLock(identifier), equalTo(false));
     }
 
     @Test

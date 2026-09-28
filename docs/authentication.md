@@ -29,6 +29,11 @@ String hash = CommonUtils.hashArgon2("password", "salt");
 
 Store the hash (and the salt) with your user record; never store the plain password anywhere, not even temporarily in a log line.
 
+Because Argon2id is memory-hard, every call holds `authentication.hashing.memory` KiB of heap (78 MB by default) for as long as it runs. The framework limits how many of these computations may run at the same time, so that a burst of concurrent logins cannot exhaust the heap. A call that finds every slot taken waits up to `authentication.hashing.timeout` milliseconds and is then rejected with a `MangooHashingException`. See [Argon2 hashing](configuration.md#argon2-hashing) for the configuration and for what happens on the individual call sites.
+
+!!! warning
+    `authentication.hashing.memory`, `authentication.hashing.iterations` and `authentication.hashing.parallelism` make the Argon2 parameters configurable. Changing any of them invalidates every hash that has already been stored, and the affected users can no longer log in. Only change them together with a mechanism that rehashes a password on the next successful login.
+
 ## Login
 
 ```java
@@ -38,6 +43,8 @@ if (authentication.isValidLogin("subject", "password", "salt", "hash")) {
 ```
 
 `isValidLogin` also applies lockout: after `authentication.lock` failed attempts (default 10), the identifier is locked for `authentication.lock.duration` minutes (default 60). This happens automatically so that a brute-force attempt against one account gets throttled without you having to implement rate limiting by hand. A successful login clears the budget.
+
+If no hashing slot becomes available within `authentication.hashing.timeout`, `isValidLogin` fails closed and returns `false`. The failed attempt budget stays untouched in that case, an overload situation must not lock a user out.
 
 The lockout is an **absolute** point in time, set once when the budget is used up. Further failed attempts during the lockout are rejected without extending it, so an attacker cannot keep the rightful owner of an account locked out indefinitely by simply continuing to guess.
 
@@ -72,6 +79,8 @@ authentication.isValidSecondFactor("subject", secret, totp);
 
 This matters because an `Authentication` object is bound on every request, not only on routes bound with `withAuthentication()`. A filter or controller method on an unprotected route that derives access from `getSubject()` alone lets a visitor in who knows the password but not the second factor.
 
+`userHasLock()` and `userHasSecondFactorLock()` are queries, not a step you have to perform. `isValidLogin()` and `isValidSecondFactor()` check the lock before doing any work and count the failed attempt afterwards, both on their own. Query the lock only where you want to show "this account is locked" instead of the same "login failed" that a wrong password produces.
+
 `logout()` and `invalidate()` sound similar but differ in timing: `logout()` marks the cookie to expire through the normal response cycle, while `invalidate()` drops it immediately, which matters if you need the effect to be visible before the method returns, for example before redirecting.
 
 ## Protecting routes
@@ -101,17 +110,124 @@ String url = TotpUtils.getOtpAuthURL("user@example.com", "My App", secret);
 
 if (authentication.isValidSecondFactor(subject, secret, totpFromUser)) {
     authentication.twoFactorAuthentication(false);
-    authentication.login(subject);
+    authentication.update();
 }
 ```
 
-A typical flow: after the password check succeeds, call `login(subject)` with `twoFactorAuthentication(true)` set, redirect to your TOTP entry page, and only clear the flag once `isValidSecondFactor` confirms the code the user typed in actually matches their secret. Call `update()` afterwards so the cleared flag reaches the cookie on that same response.
+A typical flow: after the password check succeeds, call `login(subject)` with `twoFactorAuthentication(true)` set, redirect to your TOTP entry page, and only clear the flag once `isValidSecondFactor` confirms the code the user typed in actually matches their secret. Call `update()` afterwards so the cleared flag reaches the cookie on that same response. See [Complete login flow](#complete-login-flow) for both steps written out.
 
 While the flag is set, `isValid()` returns false, so the TOTP entry page itself has to use `hasSubject()` to find the subject the code is being checked for.
 
 Pass the identifier as the first argument. A TOTP has six digits and is verified without a tolerance window, so exactly one of a million codes is valid per 30-second window — that is only a second factor as long as something limits how often it may be guessed. With the identifier, the same `authentication.lock` budget as for the password step applies, counted under its own key, and a successful check clears it.
 
 The two-argument `isValidSecondFactor(secret, totp)` is **deprecated**: it verifies the code unthrottled, which makes guessing it feasible. An upstream reverse proxy only counts requests per source address and does not bound the total number of guesses; a budget per identity does.
+
+## Complete login flow
+
+The flows below show every call to `Authentication` a controller needs — and nothing else. In particular there is no lock handling in them: `isValidLogin` and `isValidSecondFactor` check the lock before they do any work and count the failed attempt afterwards, both on their own. Querying the lock is a separate, optional step, see [Telling a lock apart](#telling-a-lock-apart).
+
+### Without two-factor
+
+```java
+public Response doLogin(Form form, Authentication authentication, Flash flash) {
+    String username = form.get("username");
+    User user = userService.findByUsername(username);
+
+    if (user == null || !authentication.isValidLogin(username, form.get("password"), user.getSalt(), user.getPassword())) {
+        flash.putError("message", "Login failed");
+        return Response.redirect("/login");
+    }
+
+    authentication.login(username);
+    if (form.getBoolean("remember").orElse(false)) {
+        authentication.rememberMe();
+    }
+
+    return Response.redirect("/dashboard");
+}
+```
+
+No `update()` here: no authentication cookie exists yet, so the response writes a fresh one on its own.
+
+### With two-factor
+
+The password step is the same up to the last two calls:
+
+```java
+    authentication.login(username);
+    authentication.twoFactorAuthentication(true);
+
+    return Response.redirect("/twofactor");
+```
+
+From here on `isValid()` is false and `hasSubject()` is true. The cookie is written regardless and carries the flag, which is what keeps the second step stateless.
+
+The page that asks for the code must **not** be bound with `withAuthentication()`. That route protection redirects to `authentication.redirect.mfa` exactly while the flag is set, so the TOTP page would redirect to itself:
+
+```java
+public Response twofactor(Authentication authentication) {
+    if (!authentication.hasSubject()) {
+        return Response.redirect("/login");
+    }
+
+    return Response.ok().render();
+}
+```
+
+```java
+public Response doTwofactor(Form form, Authentication authentication, Flash flash) {
+    if (!authentication.hasSubject()) {
+        return Response.redirect("/login");
+    }
+
+    String subject = authentication.getSubject();
+    User user = userService.findByUsername(subject);
+
+    if (!authentication.isValidSecondFactor(subject, user.getTotpSecret(), form.get("totp"))) {
+        flash.putError("message", "Invalid code");
+        return Response.redirect("/twofactor");
+    }
+
+    authentication.twoFactorAuthentication(false);
+    authentication.update();
+
+    return Response.redirect("/dashboard");
+}
+```
+
+`update()` is mandatory in this step. The authentication cookie already exists at this point and is only rewritten when it is missing or when `update()` asked for it — without it the cookie keeps `twoFactor=true` and the next request sends the user back to `/twofactor`.
+
+### Logout
+
+```java
+public Response doLogout(Authentication authentication) {
+    authentication.logout();
+    return Response.redirect("/");
+}
+```
+
+### Telling a lock apart
+
+Nothing above has to change for the lockout to work. A locked identifier makes `isValidLogin` return `false` without checking the password, which is the same `false` a wrong password produces — so the user is told "login failed" while the account is in fact locked.
+
+Add a lock query only if you want a different message for that case:
+
+```java
+    if (authentication.userHasLock(username)) {
+        flash.putError("message", "Account is temporarily locked, try again later");
+        return Response.redirect("/login");
+    }
+```
+
+`userHasSecondFactorLock(subject)` does the same for the TOTP step. Both are read-only: they neither consume an attempt nor set a lock, so an extra query costs nothing but also protects nothing on its own.
+
+Be aware that this is a trade-off, not a free improvement. A message that distinguishes "locked" from "wrong password" confirms to whoever triggered the lock that the identifier exists. On a login form that already reveals existing accounts elsewhere, for example on registration or password reset, that changes nothing; on one that deliberately does not, keep the single generic message.
+
+### What the controller does not see
+
+A hashing overload is reported to `isValidLogin` as `false`, indistinguishable from a wrong password. That is deliberate, see [Argon2 hashing](configuration.md#argon2-hashing); the failed attempt budget stays untouched, so the situation cannot lock anyone out. If you need to tell the two apart, call `CommonUtils.matchArgon2` yourself and catch `MangooHashingException` — at the price of losing the built-in lock handling.
+
+Your own hashing outside the login path, on registration or a password change, needs no `try`/`catch`. The unchecked `MangooHashingException` travels to the `ExceptionHandler` and becomes a `503`. Catching it and returning `false` would turn an overload into a silent "wrong password".
 
 ## API keys
 

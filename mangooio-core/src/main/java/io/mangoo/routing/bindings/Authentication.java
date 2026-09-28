@@ -6,16 +6,20 @@ import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.exceptions.MangooHashingException;
 import io.mangoo.models.AuthenticationLock;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.TotpUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Authentication {
+    private static final Logger LOG = LogManager.getLogger(Authentication.class);
     private LocalDateTime expires;
     private String subject;
     private String id;
@@ -109,6 +113,11 @@ public class Authentication {
      * successful check resets the budget. The budget of the password step is kept
      * separately from the budget of the second factor step, see
      * {@link #isValidSecondFactor(String, String, String)}
+     * <p>
+     * If no Argon2 hashing slot becomes available within
+     * authentication.hashing.timeout the check fails closed and returns false. The
+     * failed attempt budget is not touched in that case, an overload situation must
+     * not lock out a user
      *
      * @param identifier The identifier to authenticate
      * @param password The clear text password
@@ -130,11 +139,15 @@ public class Authentication {
         var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         var authenticated = false;
 
-        if (CommonUtils.matchArgon2(password, salt, hash)) {
-            authenticated = true;
-            cache.remove(key);
-        } else {
-            increaseFailedAttempts(cache, key);
+        try {
+            if (CommonUtils.matchArgon2(password, salt, hash)) {
+                authenticated = true;
+                cache.remove(key);
+            } else {
+                increaseFailedAttempts(cache, key);
+            }
+        } catch (MangooHashingException e) {
+            LOG.error("Failed to check login credentials", e);
         }
 
         return authenticated;

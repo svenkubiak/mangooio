@@ -10,6 +10,8 @@ import io.mangoo.constants.Key;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.crypto.PasswordHasher;
+import io.mangoo.exceptions.MangooHashingException;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.fory.Fory;
 import org.apache.fory.ThreadSafeFory;
@@ -17,8 +19,6 @@ import org.apache.fory.config.Language;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
-import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
-import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.bouncycastle.util.Arrays;
 
 import java.io.IOException;
@@ -65,31 +65,24 @@ public final class CommonUtils {
     
     /**
      * Hashes a given clear text  with a given salt using Argon2Id hashing
+     * <p>
+     * The number of computations that may run at the same time is limited, see
+     * {@link PasswordHasher}. A call waits for a free slot and is rejected with a
+     * {@link MangooHashingException} once it waited longer than
+     * authentication.hashing.timeout
      * 
      * @param cleartext The clear text
      * @param salt The salt
      * 
      * @return A Base64 encoded String
+     *
+     * @throws MangooHashingException If no hashing slot became available in time
      */
     public static String hashArgon2(String cleartext, String salt) {
         Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
         Argument.requireNonBlank(salt, Required.SALT);
 
-        var argon2 = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
-                .withVersion(Argon2Parameters.ARGON2_VERSION_13)
-                .withParallelism(2)
-                .withMemoryAsKB(80000)
-                .withSalt(salt.getBytes(StandardCharsets.UTF_8))
-                .withIterations(6)
-                .build();
-
-        var argon2Generator = new Argon2BytesGenerator();
-        argon2Generator.init(argon2);
-
-        var hash = new byte[32];
-        argon2Generator.generateBytes(cleartext.getBytes(StandardCharsets.UTF_8), hash);
-
-        return BASE64_ENCODER.encodeToString(hash);
+        return Application.getInstance(PasswordHasher.class).hash(cleartext, salt);
     }
 
     /**
@@ -98,6 +91,8 @@ public final class CommonUtils {
      * @param cleartext The clear text
      *
      * @return A Base64 encoded String
+     *
+     * @throws MangooHashingException If no hashing slot became available in time
      */
     public static String hashArgon2(String cleartext) {
         Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
@@ -114,6 +109,10 @@ public final class CommonUtils {
      * @param hash The hashed value for comparison (must be Base64 encoded)
      * 
      * @return True if hashes match, false otherwise
+     *
+     * @throws MangooHashingException If no hashing slot became available in time. This is
+     *         deliberately not reported as a mismatch, an overload situation and a wrong
+     *         password must stay distinguishable for the caller
      */
     public static boolean matchArgon2(String cleartext, String salt, String hash) {
         Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
@@ -130,6 +129,10 @@ public final class CommonUtils {
      * @param hash The hashed value for comparison (must be Base64 encoded)
      *
      * @return True if hashes match, false otherwise
+     *
+     * @throws MangooHashingException If no hashing slot became available in time. This is
+     *         deliberately not reported as a mismatch, an overload situation and a wrong
+     *         password must stay distinguishable for the caller
      */
     public static boolean matchArgon2(String cleartext, String hash) {
         Argument.requireNonBlank(cleartext, Required.CLEARTEXT);

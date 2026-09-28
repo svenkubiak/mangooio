@@ -29,6 +29,11 @@ public final class Key {
     public static final String AUTHENTICATION_COOKIE_KEY = "authentication.cookie.key";
     public static final String AUTHENTICATION_COOKIE_SECURE = "authentication.cookie.secure";
     public static final String AUTHENTICATION_COOKIE_TOKEN_EXPIRES = "authentication.cookie.token.expires";
+    public static final String AUTHENTICATION_HASHING_CONCURRENCY = "authentication.hashing.concurrency";
+    public static final String AUTHENTICATION_HASHING_ITERATIONS = "authentication.hashing.iterations";
+    public static final String AUTHENTICATION_HASHING_MEMORY = "authentication.hashing.memory";
+    public static final String AUTHENTICATION_HASHING_PARALLELISM = "authentication.hashing.parallelism";
+    public static final String AUTHENTICATION_HASHING_TIMEOUT = "authentication.hashing.timeout";
     public static final String AUTHENTICATION_LOCK = "authentication.lock";
     public static final String AUTHENTICATION_LOCK_DURATION = "authentication.lock.duration";
     public static final String AUTHENTICATION_ORIGIN = "authentication.origin";

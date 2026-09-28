@@ -1,6 +1,30 @@
 ## From 10.12.2 to 10.13.0
 
-A drop-in replacement in terms of API, with a changed meaning of `Authentication#isValid` and three behaviour changes around the failed attempt budget in `Authentication`.
+A drop-in replacement in terms of API, with a changed meaning of `Authentication#isValid`, three behaviour changes around the failed attempt budget in `Authentication`, and a new limit on concurrent Argon2 hashing.
+
+### What has to change in a controller
+
+A login flow **without** two-factor authentication needs no change at all. `isValidLogin(identifier, password, salt, hash)`, `login(subject)` and `rememberMe()` keep their signature and their meaning.
+
+A flow **with** two-factor authentication has exactly two places to touch, both on the page that accepts the TOTP:
+
+```java
+// before
+if (authentication.isValid() && authentication.isValidSecondFactor(secret, totp)) {
+
+// now
+if (authentication.hasSubject() && authentication.isValidSecondFactor(subject, secret, totp)) {
+```
+
+`isValid()` is false while a second factor is outstanding, so it no longer works as the guard of that page, and the two-argument `isValidSecondFactor` is deprecated because it verifies the code unthrottled. See [isValid now means fully authenticated](#isvalid-now-means-fully-authenticated) and [Second factor throttling](#second-factor-throttling) for the reasoning.
+
+Three things that look like they might have changed, but did not:
+
+- **The lock handling stays inside the framework.** `isValidLogin` and `isValidSecondFactor` check the lock before doing any work and count the failed attempt afterwards, on their own, exactly as before. `userHasLock` and `userHasSecondFactorLock` are read-only queries for the error message, not a step you have to add.
+- **`update()` is needed in the same place as before.** The authentication cookie is written when none exists or when `update()` asked for it, which is unchanged. The second factor step still has to call it so the cleared flag reaches the cookie.
+- **Authorization checks stay as they are.** `isValid()` becomes stricter on its own; that is the point of redefining it rather than adding a new method.
+
+What does change without any code edit is the behaviour of the failed attempt budget, see the three sections below, and the fact that `isValidLogin` can now return `false` because the machine is out of hashing slots rather than because the password was wrong, see [Argon2 hashing is now gated](#argon2-hashing-is-now-gated).
 
 ### isValid now means fully authenticated
 
@@ -55,6 +79,37 @@ The unlock timestamp is now stored with the counter, set once when the budget is
 ### authentication.lock is off by one
 
 `authentication.lock` locked one attempt later than its value suggested. With the default of `10`, the lock took effect after the eleventh failed attempt. It now takes effect after the tenth, so the value is the number of failed attempts that are allowed. Raise the value by one if you depended on the old count.
+
+### Argon2 hashing is now gated
+
+A single Argon2id computation holds around 78 MB of heap for as long as it runs, and nothing limited how many of them could run at the same time. Undertow starts with eight worker threads per core, so on an eight core machine 64 requests can sit in a hash at once — roughly 5 GB of heap demand. A handful of parallel logins is enough to take a small heap down with an OutOfMemoryError.
+
+The hashing now runs through the new `io.mangoo.crypto.PasswordHasher`, which caps the number of concurrent computations. `CommonUtils.hashArgon2` and `CommonUtils.matchArgon2` keep their signature and delegate, so no call site has to change. What does change is that they can now throw:
+
+```java
+// unchecked, no signature change, but callers under load will see it
+throw new MangooHashingException("No Argon2 hashing slot became available within 5000 ms");
+```
+
+`Authentication#isValidLogin` catches it, logs it and returns `false` — the login path stays fail-closed, and the failed attempt budget is not touched, so an overload situation cannot lock a user out. Every other caller gets the exception passed through to the `ExceptionHandler`. For registration or a password change that is the honest outcome: a `503` rather than a silent `false` that looks like "wrong password".
+
+The default `authentication.hashing.concurrency: 0` derives the number of slots from the configured memory cost and half of the heap, clamped to a range of 2 to 8. The effective value is logged on INFO at startup. Raise it if your application hashes on more paths than login, or set it high to effectively switch the gate off:
+
+```yaml
+authentication:
+  hashing:
+    concurrency: 0
+    timeout: 5000
+```
+
+If your application built this gating itself — a semaphore around the hashing calls, sized from a hardcoded copy of the framework's memory constant — remove it in the same step. Double gating is the worst of both worlds: the two limits multiply into unnecessary waiting, and the application side copy goes silently wrong the moment the framework changes its memory cost.
+
+### Argon2 parameters are configurable
+
+`authentication.hashing.memory` (80000 KiB), `authentication.hashing.iterations` (6) and `authentication.hashing.parallelism` (2) expose the Argon2id parameters. The defaults are exactly the values the framework used before, so nothing changes unless you set them.
+
+!!! warning
+    Changing any of these three invalidates every hash that has already been stored. The affected users can no longer log in, and there is no way to recover the old hash. A change is only feasible together with a mechanism that rehashes the password on the next successful login, while still verifying against the old parameters until that has happened.
 
 ## From 10.12.0 to 10.12.1
 

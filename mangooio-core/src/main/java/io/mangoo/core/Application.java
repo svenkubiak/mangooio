@@ -20,6 +20,7 @@ import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.Required;
+import io.mangoo.crypto.PasswordHasher;
 import io.mangoo.crypto.Vault;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Sort;
@@ -119,6 +120,7 @@ public final class Application {
             prepareInjector();
             applicationInitialized();
             prepareConfig();
+            preparePasswordHasher();
             Thread scan = Thread.ofVirtual().start(() -> {
                 try (var scanResult = scanClasspath()) {
                     prepareScheduler(scanResult);
@@ -142,6 +144,14 @@ public final class Application {
             showLogo();
             started = true;
         }
+    }
+
+    /**
+     * Instantiates the PasswordHasher singleton at startup so the effective Argon2
+     * hashing concurrency is logged before the first login rather than on the first hash
+     */
+    private static void preparePasswordHasher() {
+        getInstance(PasswordHasher.class);
     }
 
     private static void logCheck() {

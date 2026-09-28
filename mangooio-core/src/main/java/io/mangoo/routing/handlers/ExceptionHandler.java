@@ -5,6 +5,7 @@ import io.mangoo.constants.Header;
 import io.mangoo.constants.Template;
 import io.mangoo.core.Application;
 import io.mangoo.core.Server;
+import io.mangoo.exceptions.MangooHashingException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
@@ -64,6 +65,10 @@ public class ExceptionHandler implements HttpHandler {
     private int resolveStatus(Throwable root) {
         if (root instanceof IllegalArgumentException) {
             return StatusCodes.BAD_REQUEST;
+        }
+
+        if (root instanceof MangooHashingException) {
+            return StatusCodes.SERVICE_UNAVAILABLE;
         }
 
         if (root instanceof IOException) {

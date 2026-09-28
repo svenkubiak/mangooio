@@ -38,6 +38,11 @@ default:
   metrics:
     enable: true
   authentication:
+    # Raised well above the derived default so parallel hashing tests do not
+    # serialize on the Argon2 concurrency gate
+    hashing:
+      concurrency: 32
+      timeout: 30000
     redirect:
       login: /login
       mfa: /twofactor

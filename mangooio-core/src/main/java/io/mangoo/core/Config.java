@@ -504,6 +504,78 @@ public class Config {
     }
 
     /**
+     * The maximum number of Argon2 hash computations that may run at the same time.
+     * A single computation occupies authentication.hashing.memory kibibytes of heap
+     * for its entire duration, an unlimited number of concurrent computations can
+     * exhaust the heap
+     * <p>
+     * The default 0 derives the value from the configured memory cost and the heap
+     * available to the JVM, clamped to a range of 2 to 8. Any value greater than 0
+     * is used as is
+     *
+     * @return authentication.hashing.concurrency or default value if undefined
+     */
+    public int getAuthenticationHashingConcurrency() {
+        return getInt(Key.AUTHENTICATION_HASHING_CONCURRENCY, Default.AUTHENTICATION_HASHING_CONCURRENCY);
+    }
+
+    /**
+     * The time in milliseconds a caller waits for a free hashing slot before the
+     * hashing is rejected with a
+     * {@link io.mangoo.exceptions.MangooHashingException}
+     *
+     * @return authentication.hashing.timeout or default value if undefined
+     */
+    public long getAuthenticationHashingTimeout() {
+        return getLong(Key.AUTHENTICATION_HASHING_TIMEOUT, Default.AUTHENTICATION_HASHING_TIMEOUT);
+    }
+
+    /**
+     * The Argon2id memory cost in kibibytes
+     * <p>
+     * <strong>Changing this value invalidates every hash that has already been
+     * stored.</strong> Users whose password was hashed with a different memory cost
+     * can no longer log in. Only change it together with a rehash on the next
+     * successful login
+     *
+     * @return authentication.hashing.memory or default value if undefined
+     */
+    public int getAuthenticationHashingMemory() {
+        return getInt(Key.AUTHENTICATION_HASHING_MEMORY, Default.AUTHENTICATION_HASHING_MEMORY);
+    }
+
+    /**
+     * The Argon2id number of iterations (time cost)
+     * <p>
+     * <strong>Changing this value invalidates every hash that has already been
+     * stored.</strong> Users whose password was hashed with a different number of
+     * iterations can no longer log in. Only change it together with a rehash on the
+     * next successful login
+     *
+     * @return authentication.hashing.iterations or default value if undefined
+     */
+    public int getAuthenticationHashingIterations() {
+        return getInt(Key.AUTHENTICATION_HASHING_ITERATIONS, Default.AUTHENTICATION_HASHING_ITERATIONS);
+    }
+
+    /**
+     * The Argon2id number of lanes
+     * <p>
+     * Note that the underlying Argon2BytesGenerator computes the lanes sequentially,
+     * raising this value does not increase CPU utilization
+     * <p>
+     * <strong>Changing this value invalidates every hash that has already been
+     * stored.</strong> Users whose password was hashed with a different parallelism
+     * can no longer log in. Only change it together with a rehash on the next
+     * successful login
+     *
+     * @return authentication.hashing.parallelism or default value if undefined
+     */
+    public int getAuthenticationHashingParallelism() {
+        return getInt(Key.AUTHENTICATION_HASHING_PARALLELISM, Default.AUTHENTICATION_HASHING_PARALLELISM);
+    }
+
+    /**
      * @return undertow.maxentitysize or default value if undefined
      */
     public long getUndertowMaxEntitySize() {

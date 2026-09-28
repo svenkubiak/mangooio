@@ -14,15 +14,23 @@ import org.junit.platform.suite.api.Suite;
 @SuppressWarnings("all")
 @Suite(failIfNoTests = false)
 public class TestRunner implements BeforeAllCallback, AutoCloseable {
-    private boolean started = false;
-    
+    private static final Object LOCK = new Object();
+    private static boolean started = false;
+
+    /*
+     * JUnit creates one extension instance per test class and may invoke beforeAll of
+     * several classes at the same time. The startup must therefore be guarded across
+     * instances, a second concurrent Application#start would bind the same ports twice
+     */
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        if (!started) {
-            beforeStartup();
-            Application.start(Mode.TEST);  
-            started = true;
-            afterStartup();
+        synchronized (LOCK) {
+            if (!started) {
+                beforeStartup();
+                Application.start(Mode.TEST);
+                started = true;
+                afterStartup();
+            }
         }
     }
     
