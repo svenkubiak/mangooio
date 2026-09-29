@@ -140,9 +140,10 @@ public class PasswordHasher {
             return false;
         }
 
-        byte[] actual = throttled(() -> compute(cleartext, saltBytes, expected.settings(), expected.hash().length));
+        byte[] expectedHash = expected.hash();
+        byte[] actual = throttled(() -> compute(cleartext, saltBytes, expected.settings(), expectedHash.length));
 
-        return Arrays.constantTimeAreEqual(expected.hash(), actual);
+        return Arrays.constantTimeAreEqual(expectedHash, actual);
     }
 
     /**

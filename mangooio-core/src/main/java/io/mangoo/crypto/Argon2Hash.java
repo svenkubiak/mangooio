@@ -2,6 +2,7 @@ package io.mangoo.crypto;
 
 import io.mangoo.constants.Required;
 import io.mangoo.utils.Argument;
+import org.bouncycastle.util.Arrays;
 
 import java.util.Base64;
 import java.util.HashMap;
@@ -20,6 +21,9 @@ import java.util.Set;
  * Salt and hash are Base64 encoded without padding as the format requires. Because the
  * parameters travel with the hash, the configured parameters can be changed without
  * locking out users whose password was hashed with the previous ones
+ * <p>
+ * Salt and hash are copied on the way in and on the way out, so that a caller can not
+ * change a hash it has already handed over or read back
  *
  * @param settings The Argon2id parameters the hash was computed with
  * @param salt The raw salt bytes
@@ -41,6 +45,25 @@ public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
         Objects.requireNonNull(settings, Required.SETTINGS);
         Objects.requireNonNull(salt, Required.SALT);
         Objects.requireNonNull(hash, Required.HASH);
+
+        salt = salt.clone();
+        hash = hash.clone();
+    }
+
+    /**
+     * @return A copy of the raw salt bytes
+     */
+    @Override
+    public byte[] salt() {
+        return salt.clone();
+    }
+
+    /**
+     * @return A copy of the raw hash bytes
+     */
+    @Override
+    public byte[] hash() {
+        return hash.clone();
     }
 
     /**
@@ -62,10 +85,10 @@ public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
      * @throws IllegalArgumentException If the value is not a well-formed Argon2id PHC string
      */
     public static Argon2Hash parse(String value) {
-        Argument.requireNonBlank(value, Required.HASH);
-        Argument.check(isPhcFormat(value), "Not an " + ALGORITHM + " hash in PHC format");
+        String phc = Argument.requireNonBlank(value, Required.HASH);
+        Argument.check(isPhcFormat(phc), "Not an " + ALGORITHM + " hash in PHC format");
 
-        String[] segments = value.split("\\$", -1);
+        String[] segments = phc.split("\\$", -1);
         Argument.check(segments.length == SEGMENTS, "Malformed " + ALGORITHM + " PHC string");
         Argument.check(("v=" + VERSION).equals(segments[2]), "Unsupported Argon2 version in " + segments[2]);
 
@@ -118,5 +141,45 @@ public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
                 + PARALLELISM + "=" + settings.parallelism() + "$"
                 + BASE64_ENCODER.encodeToString(salt) + "$"
                 + BASE64_ENCODER.encodeToString(hash);
+    }
+
+    /**
+     * Compares salt and hash by their content, the generated implementation of a record
+     * would compare the arrays by identity and never report two equal hashes as equal
+     * <p>
+     * The byte arrays are compared in constant time, so that the comparison does not
+     * reveal how many leading bytes of a hash a caller guessed correctly
+     *
+     * @param object The object to compare with
+     * @return True if both hashes carry the same parameters, salt and hash bytes
+     */
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof Argon2Hash other
+                && settings.equals(other.settings)
+                && Arrays.constantTimeAreEqual(salt, other.salt)
+                && Arrays.constantTimeAreEqual(hash, other.hash);
+    }
+
+    /**
+     * @return A hash code over the content of salt and hash, consistent with {@link #equals(Object)}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(settings, Arrays.hashCode(salt), Arrays.hashCode(hash));
+    }
+
+    /**
+     * Deliberately reports only the length of salt and hash. This type carries credential
+     * material and its string representation ends up in log statements and debuggers, use
+     * {@link #encode()} to obtain the actual value
+     *
+     * @return A representation of this hash without the salt and hash bytes
+     */
+    @Override
+    public String toString() {
+        return "Argon2Hash[settings=" + settings
+                + ", salt=" + salt.length + " bytes"
+                + ", hash=" + hash.length + " bytes]";
     }
 }

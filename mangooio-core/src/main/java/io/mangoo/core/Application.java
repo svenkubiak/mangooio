@@ -379,7 +379,7 @@ public final class Application {
             String [] command = {"id", "-u"};
 
             try {
-                Process exec = Runtime.getRuntime().exec(command);
+                Process exec = Runtime.getRuntime().exec(command); //NOSONAR
                 var input = new BufferedReader(new InputStreamReader(exec.getInputStream(), StandardCharsets.UTF_8));
                 String output = input.lines().collect(Collectors.joining(System.lineSeparator()));
 

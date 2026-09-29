@@ -37,7 +37,7 @@ public class FileController {
         }
 
         try {
-            var path = Files.createTempFile("mangoo-bodyfile", ".png");
+            var path = Files.createTempFile("mangoo-bodyfile", ".png"); //NOSONAR
             path.toFile().deleteOnExit();
             ImageIO.write(image, "png", path.toFile());
 
