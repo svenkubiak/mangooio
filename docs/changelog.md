@@ -1,6 +1,6 @@
 ## Version 10.13.0
 
-Unreleased
+Released at 29.09.2026
 
 * **Behaviour change** Argon2 hashing is now gated as an OOM protection since a single computation holds the configured memory cost of heap for its entire duration, the new io.mangoo.crypto.PasswordHasher holds the limit, CommonUtils#hashArgon2 and CommonUtils#matchArgon2 throw an unchecked MangooHashingException when no slot becomes available in time and the ExceptionHandler answers it with 503 instead of 500 (svenkubiak)
 * Added authentication.hashing.concurrency and authentication.hashing.timeout to configure the gate and authentication.hashing.memory, authentication.hashing.iterations and authentication.hashing.parallelism to configure the Argon2 parameters, values below 8192 KiB, 2 iterations or 1 lane are rejected at startup (svenkubiak)
