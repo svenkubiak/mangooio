@@ -1,12 +1,10 @@
 ## From 10.12.2 to 10.13.0
 
-A drop-in replacement in terms of API, with a changed meaning of `Authentication#isValid`, three behaviour changes around the failed attempt budget in `Authentication`, and a new limit on concurrent Argon2 hashing.
+API-compatible, with a changed meaning of `Authentication#isValid`, three behaviour changes around the failed attempt budget, and a new limit on concurrent Argon2 hashing.
 
 ### What has to change in a controller
 
-A login flow **without** two-factor authentication needs no change at all. `isValidLogin(identifier, password, salt, hash)`, `login(subject)` and `rememberMe()` keep their signature and their meaning.
-
-A flow **with** two-factor authentication has exactly two places to touch, both on the page that accepts the TOTP:
+A login flow **without** two-factor authentication needs no change. With two-factor authentication, two things change on the page that accepts the TOTP:
 
 ```java
 // before
@@ -16,49 +14,28 @@ if (authentication.isValid() && authentication.isValidSecondFactor(secret, totp)
 if (authentication.hasSubject() && authentication.isValidSecondFactor(subject, secret, totp)) {
 ```
 
-`isValid()` is false while a second factor is outstanding, so it no longer works as the guard of that page, and the two-argument `isValidSecondFactor` is deprecated because it verifies the code unthrottled. See [isValid now means fully authenticated](#isvalid-now-means-fully-authenticated) and [Second factor throttling](#second-factor-throttling) for the reasoning.
+`isValid()` is false while a second factor is outstanding, so it no longer guards that page, and the two-argument `isValidSecondFactor` is deprecated because it verifies unthrottled.
 
-Three things that look like they might have changed, but did not:
+Unchanged: lock handling stays inside the framework — `isValidLogin` and `isValidSecondFactor` check the lock and count the failed attempt on their own, `userHasLock` and `userHasSecondFactorLock` are read-only queries for the error message. `update()` is needed in the same place as before, and authorization checks stay as they are; they become stricter on their own.
 
-- **The lock handling stays inside the framework.** `isValidLogin` and `isValidSecondFactor` check the lock before doing any work and count the failed attempt afterwards, on their own, exactly as before. `userHasLock` and `userHasSecondFactorLock` are read-only queries for the error message, not a step you have to add.
-- **`update()` is needed in the same place as before.** The authentication cookie is written when none exists or when `update()` asked for it, which is unchanged. The second factor step still has to call it so the cleared flag reaches the cookie.
-- **Authorization checks stay as they are.** `isValid()` becomes stricter on its own; that is the point of redefining it rather than adding a new method.
-
-What does change without any code edit is the behaviour of the failed attempt budget, see the three sections below, and the fact that `isValidLogin` can now return `false` because the machine is out of hashing slots rather than because the password was wrong, see [Argon2 hashing is now gated](#argon2-hashing-is-now-gated).
+What changes without any code edit is the failed attempt budget, see the three sections below, and the fact that `isValidLogin` can return `false` because the machine is out of hashing slots rather than because the password was wrong.
 
 ### isValid now means fully authenticated
 
-`isValid()` used to be nothing but `isNotBlank(subject)`. A subject is set as soon as the password step has succeeded, which is also when the authentication cookie is issued — at that point a required second factor is still outstanding. The name reads as "this authentication is valid", and an `Authentication` object is bound on every request, not only on routes bound with `withAuthentication()`. Application code that builds its own filter or derives authorization from `getSubject()` on an unbound route therefore granted access to a visitor who knew the password but not the second factor.
-
-`isValid()` now additionally requires that no second factor is outstanding:
+`isValid()` used to be nothing but `isNotBlank(subject)`, which is already true after the password step while a required second factor is still outstanding. Since an `Authentication` is bound on every request, not only on routes bound with `withAuthentication()`, application code with its own filter granted access to a visitor who knew the password but not the second factor.
 
 ```java
-// before, and still available under the new name
-authentication.hasSubject();   // isNotBlank(subject)
-
-// now
-authentication.isValid();      // hasSubject() && !isTwoFactor()
-```
-
-Nothing has to be changed for authorization checks; they become stricter on their own, which is the point of redefining the existing method rather than adding a new one.
-
-Code that runs **during** the second factor step has to switch. The page that accepts the TOTP sees an authentication whose subject is set and whose second factor is still pending, so `isValid()` is false there:
-
-```java
-// before
-if (authentication.isValid() && authentication.isValidSecondFactor(subject, secret, totp)) {
-
-// now
-if (authentication.hasSubject() && authentication.isValidSecondFactor(authentication.getSubject(), secret, totp)) {
+authentication.hasSubject();   // the old isValid(): isNotBlank(subject)
+authentication.isValid();      // now: hasSubject() && !isTwoFactor()
 ```
 
 Routes bound with `withAuthentication()` are unaffected and keep redirecting to `authentication.redirect.login` when no subject is present and to `authentication.redirect.mfa` when the second factor is pending.
 
 ### Second factor throttling
 
-`isValidSecondFactor(secret, totp)` verifies a TOTP without any limit on the number of attempts. A TOTP has six digits and is checked without a tolerance window, so exactly one of a million codes is valid per 30-second window — that is only a second factor as long as something bounds how often it may be guessed. An upstream reverse proxy counts requests per source address and does not bound the total, which an attacker sidesteps by spreading the attempts over more addresses.
+`isValidSecondFactor(secret, totp)` verified a TOTP without any attempt limit — six digits, no tolerance window, so one of a million codes is valid per 30-second window. A reverse proxy counting per source address does not bound the total, which an attacker sidesteps with more addresses.
 
-The method still exists but is deprecated. Pass the identifier the code is checked for and the same `authentication.lock` budget as for the password step applies:
+The method is deprecated. Pass the identifier the code is checked for and the same `authentication.lock` budget as for the password step applies:
 
 ```java
 // before
@@ -68,41 +45,37 @@ authentication.isValidSecondFactor(secret, totp);
 authentication.isValidSecondFactor(subject, secret, totp);
 ```
 
-Use `userHasSecondFactorLock(identifier)` to query that lock; `userHasLock(identifier)` keeps referring to the password step only. Both steps are counted under separate keys, so neither consumes the budget of the other.
+Query that lock with `userHasSecondFactorLock(identifier)`; `userHasLock(identifier)` keeps referring to the password step only. Both are counted under separate keys, so neither consumes the budget of the other.
 
 ### Lockouts are absolute
 
-A lockout used to rely on the auth cache TTL, which was reset on every write — and every failed attempt is a write. An attacker who never guessed the code could therefore keep the rightful owner of an account locked out indefinitely, one failed attempt every 59 minutes being enough, turning the protection into a denial of service against the account.
-
-The unlock timestamp is now stored with the counter, set once when the budget is used up, and not extended by further failed attempts. Its duration is configurable through the new `authentication.lock.duration` in minutes, default 60, which matches the previous cache TTL.
+A lockout used to rely on the auth cache TTL, which every failed attempt reset — an attacker could keep the rightful owner locked out indefinitely with one attempt every 59 minutes. The unlock timestamp is now stored with the counter, set once when the budget is used up, and not extended by further attempts. Its duration is configurable through the new `authentication.lock.duration` in minutes, default 60, matching the previous cache TTL.
 
 ### authentication.lock is off by one
 
-`authentication.lock` locked one attempt later than its value suggested. With the default of `10`, the lock took effect after the eleventh failed attempt. It now takes effect after the tenth, so the value is the number of failed attempts that are allowed. Raise the value by one if you depended on the old count.
+`authentication.lock` locked one attempt later than its value suggested: with the default of `10`, after the eleventh failed attempt. It now takes effect after the tenth, so the value is the number of failed attempts that are allowed. Raise it by one if you depended on the old count.
 
 ### Argon2 hashing is now gated
 
-A single Argon2id computation holds around 78 MB of heap for as long as it runs, and nothing limited how many of them could run at the same time. Undertow starts with eight worker threads per core, so on an eight core machine 64 requests can sit in a hash at once — roughly 5 GB of heap demand. A handful of parallel logins is enough to take a small heap down with an OutOfMemoryError.
+A single Argon2id computation held around 78 MB of heap with nothing limiting concurrency. Undertow starts eight worker threads per core, so on an eight core machine 64 requests can hash at once — roughly 5 GB, enough to take a small heap down with an OutOfMemoryError.
 
-The hashing now runs through the new `io.mangoo.crypto.PasswordHasher`, which caps the number of concurrent computations. `CommonUtils.hashArgon2` and `CommonUtils.matchArgon2` keep their signature and delegate, so no call site has to change. What does change is that they can now throw:
+Hashing now runs through the new `io.mangoo.crypto.PasswordHasher`, which caps concurrent computations. `CommonUtils.hashArgon2` and `CommonUtils.matchArgon2` keep their signature and delegate, but can now throw:
 
 ```java
 // unchecked, no signature change, but callers under load will see it
 throw new MangooHashingException("No Argon2 hashing slot became available within 5000 ms");
 ```
 
-`Authentication#isValidLogin` catches it, logs it and returns `false` — the login path stays fail-closed, and the failed attempt budget is not touched, so an overload situation cannot lock a user out. Every other caller gets the exception passed through to the `ExceptionHandler`. For registration or a password change that is the honest outcome: a `503` rather than a silent `false` that looks like "wrong password".
-
-The default `authentication.hashing.concurrency: 0` derives the number of slots from the configured memory cost and half of the heap, clamped to a range of 2 to 8. The effective value is logged on INFO at startup. Raise it if your application hashes on more paths than login, or set it high to effectively switch the gate off:
+`Authentication#isValidLogin` catches it, logs it and returns `false` without touching the failed attempt budget, so an overload cannot lock a user out. Every other caller gets the exception passed through to the `ExceptionHandler` — for registration or a password change a `503` is the honest outcome, rather than a silent `false` that looks like "wrong password".
 
 ```yaml
 authentication:
   hashing:
-    concurrency: 0
+    concurrency: 0   # 0 derives the slots from memory cost and half the heap, clamped to 2..8
     timeout: 5000
 ```
 
-If your application built this gating itself — a semaphore around the hashing calls, sized from a hardcoded copy of the framework's memory constant — remove it in the same step. Double gating is the worst of both worlds: the two limits multiply into unnecessary waiting, and the application side copy goes silently wrong the moment the framework changes its memory cost.
+The effective value is logged on INFO at startup. Raise it if your application hashes on more paths than login, or set it high to switch the gate off. If your application built this gating itself, remove it in the same step: the two limits multiply into unnecessary waiting, and a hardcoded copy of the framework's memory constant goes silently wrong the moment that constant changes.
 
 ### Argon2 parameters are configurable, and the defaults went down
 
@@ -114,9 +87,7 @@ If your application built this gating itself — a semaphore around the hashing 
 | `authentication.hashing.iterations` | 6 | 3 |
 | `authentication.hashing.parallelism` | 2 | 1 |
 
-The old values cost about twelve times what OWASP recommends for Argon2id (19 MiB, two iterations) — roughly 230 ms and 91 MB of heap per verification, for around 3.6 bits of effective password strength over the new ones. The new defaults still sit above the OWASP minimum and cost about 100 ms and 32 MB. `p=1` because BouncyCastle's `Argon2BytesGenerator` computes the lanes sequentially: a higher parallelism never shortened a hash, it only spread the same memory over more lanes.
-
-Values below 8192 KiB, two iterations or one lane are rejected with an `IllegalArgumentException` at startup instead of hashing weaker than intended.
+The old values cost about twelve times what OWASP recommends for Argon2id (19 MiB, two iterations) — roughly 230 ms and 91 MB of heap per verification, for around 3.6 bits of effective password strength. The new defaults still sit above the OWASP minimum at about 100 ms and 32 MB. `p=1` because BouncyCastle's `Argon2BytesGenerator` computes the lanes sequentially: a higher parallelism never shortened a hash, it only spread the same memory over more lanes. Values below 8192 KiB, two iterations or one lane are rejected with an `IllegalArgumentException` at startup.
 
 Set the old values explicitly if you want to keep them:
 
@@ -136,11 +107,11 @@ authentication:
 $argon2id$v=19$m=32768,t=3,p=1$<salt-b64>$<hash-b64>
 ```
 
-`matchArgon2` verifies with the parameters embedded in the stored hash, never with the current configuration. That is what makes the parameter change above safe. The salt argument keeps its meaning: it still has to be the salt the hash was created with, the embedded one is not used as a fallback.
+`matchArgon2` verifies with the parameters embedded in the stored hash, never with the current configuration — that is what makes the parameter change above safe. The salt argument keeps its meaning: it still has to be the salt the hash was created with, the embedded one is not used as a fallback.
 
-**Existing hashes keep working.** A stored value that does not start with `$` is a hash from an earlier version and is verified with the parameters that version used (`m=80000,t=6,p=2`) and the salt you pass in. Nobody is locked out by the upgrade.
+**Existing hashes keep working.** A stored value that does not start with `$` is verified with the parameters the earlier version used (`m=80000,t=6,p=2`) and the salt you pass in. Nobody is locked out by the upgrade.
 
-The new `CommonUtils.needsRehash(hash)` reports a legacy hash, and a PHC hash whose parameters differ from the current configuration, as outdated. Call it after a successful login to migrate a stored hash transparently:
+The new `CommonUtils.needsRehash(hash)` reports a legacy hash, and a PHC hash whose parameters differ from the current configuration, as outdated. Call it after a successful login to migrate transparently:
 
 ```java
 if (authentication.isValidLogin(identifier, password, salt, hash)) {
@@ -155,9 +126,13 @@ if (authentication.isValidLogin(identifier, password, salt, hash)) {
 Two things to be aware of:
 
 * **Only evaluate `needsRehash` after a successful verification.** Recomputing the hash needs the clear text, and only a successful login proves it is the right one.
-* **The salt is part of the stored string now**, as the PHC format prescribes. If you passed a secret as the salt — `hashArgon2(cleartext)` uses `application.secret` — it stops being secret once the hash is stored. Use a per-user random salt instead. Note that this does not make the salt argument of `matchArgon2` optional: a hash only verifies against the salt it was created with, and a tampered embedded salt is rejected instead of being trusted.
+* **The salt is part of the stored string now**, as the PHC format prescribes. If you passed a secret as the salt — `hashArgon2(cleartext)` uses `application.secret` — it stops being secret once the hash is stored. Use a per-user random salt instead.
 
 Column width is worth a look before the upgrade: a PHC string is around 110 characters where the old value was 44.
+
+## From 10.12.1 to 10.12.2
+
+This is a drop-in replacement.
 
 ## From 10.12.0 to 10.12.1
 
