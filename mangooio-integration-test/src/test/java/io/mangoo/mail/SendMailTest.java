@@ -95,8 +95,10 @@ class SendMailTest {
             .send();
         
         //then
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(file.delete(), equalTo(true)));
+        // The attachment is read lazily while the mail is transmitted on a virtual thread,
+        // so the file must not be deleted before the message has been received.
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(file.delete(), equalTo(true)));
     }
     
     @Test

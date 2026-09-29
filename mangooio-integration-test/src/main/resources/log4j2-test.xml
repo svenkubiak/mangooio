@@ -6,6 +6,40 @@
 		</Console>
 	</Appenders>
 	<Loggers>
+		<!--
+			Third party components announce their version and their effective configuration
+			on startup. None of that says anything about the test run, so it is kept out of
+			the build log.
+		-->
+		<Logger name="com.icegreen.greenmail" level="warn" />
+		<Logger name="de.svenkubiak.embeddedmongodb" level="warn" />
+		<Logger name="io.undertow" level="warn" />
+		<Logger name="org.hibernate.validator" level="warn" />
+		<Logger name="org.mongodb.driver" level="warn" />
+		<Logger name="org.xnio" level="warn" />
+
+		<!--
+			The vault is opened once per injector and the hasher logs its limits once per
+			instance, which the test run does hundreds of times.
+		-->
+		<Logger name="io.mangoo.crypto.Vault" level="warn" />
+
+		<!--
+			AuthenticationTest feeds malformed hashes on purpose, every one of them is a
+			rejected login the hasher reports.
+		-->
+		<Logger name="io.mangoo.crypto.PasswordHasher" level="error" />
+
+		<!--
+			TracingTest raises this logger to debug and attaches its own appender. Without
+			the declaration it would get the root logger config instead and put the whole
+			test run on debug. The appender reference is pinned to info so that the debug
+			events the test collects do not also reach the console.
+		-->
+		<Logger name="io.mangoo.utils.internal.Trace" level="info" additivity="false">
+			<AppenderRef ref="Console" level="info" />
+		</Logger>
+
 		<Root level="info">
 			<AppenderRef ref="Console" />
 		</Root>

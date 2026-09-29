@@ -131,8 +131,8 @@ public class PasswordHasher {
             expected = Argon2Hash.isPhcFormat(stored)
                     ? Argon2Hash.parse(stored)
                     : new Argon2Hash(Argon2Settings.LEGACY, saltBytes, Base64.getDecoder().decode(stored));
-        } catch (IllegalArgumentException e) {
-            LOG.warn("Rejected a login, the stored hash is malformed", e);
+        } catch (IllegalArgumentException e) { //NOSONAR the message names the defect, the stack trace is always the same
+            LOG.warn("Rejected a login, the stored hash is malformed: {}", e.getMessage());
             return false;
         }
 

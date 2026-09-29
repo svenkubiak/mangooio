@@ -67,6 +67,12 @@ class TracingTest {
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
         LoggerConfig traceLogger = context.getConfiguration().getLoggerConfig(TRACE_LOGGER);
 
+        // getLoggerConfig falls back to the root config for a logger the configuration does
+        // not declare. Raising that one to debug would put the whole test run on debug and
+        // bury the build log under Undertow request tracing.
+        assertEquals(TRACE_LOGGER, traceLogger.getName(),
+                "log4j2-test.xml must declare a logger for " + TRACE_LOGGER);
+
         // Trace reports an underflow on debug level, which the test configuration does not
         // emit. Without raising the level the assertions below would silently pass on a
         // broken implementation.
