@@ -339,7 +339,7 @@
 			<dependency>
 				<groupId>org.apache.tika</groupId>
 				<artifactId>tika-core</artifactId>
-				<version>4.0.0</version>
+				<version>4.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
@@ -414,7 +414,7 @@
 			<dependency>
 				<groupId>org.apache.fory</groupId>
 				<artifactId>fory-core</artifactId>
-				<version>1.7.5</version>
+				<version>1.7.6</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
@@ -480,7 +480,7 @@
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
-				<version>0.62.0</version>
+				<version>0.63.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.llorllale</groupId>
@@ -495,7 +495,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>33.7.1-jre</version>
+				<version>33.7.2-jre</version>
 			</dependency>
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
@@ -575,7 +575,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.20.0</version>
+				<version>3.21.0</version>
 			</dependency>
 			<dependency>
 				<groupId>net.jawr</groupId>

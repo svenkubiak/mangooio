@@ -1,3 +1,14 @@
+## Version 10.13.1
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * guava 33.7.1-jre -&gt; 33.7.2-jre
+  * tika 4.0.0 -&gt; 4.1.0
+  * commons-lang3 3.20.0 -&gt; 3.21.0
+  * cactoos 0.62.0 -&gt; 0.63.0
+  * fory 1.7.5 -&gt; 1.7.5
+
 ## Version 10.13.0
 
 Released at 29.09.2026
