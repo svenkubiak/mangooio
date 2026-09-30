@@ -29,6 +29,7 @@ class ServerSentEventManagerTest {
     private static final int THREADS = 16;
     private static final String BROADCAST = "broadcast";
     private static final String CHURN = "churn";
+    private static final String REMOVED = "removed";
 
     private ServerSentEventConnection connection(String uri) {
         var connection = Mockito.mock(ServerSentEventConnection.class);
@@ -120,6 +121,39 @@ class ServerSentEventManagerTest {
         } finally {
             kept.forEach(manager::removeConnection);
         }
+    }
+
+    @Test
+    void testRemoveConnectionByKey() {
+        //given
+        var manager = Application.getInstance(ServerSentEventManager.class);
+        var key = "sse-custom-key";
+        var connection = connection("/sse-custom");
+
+        //when a connection is held under a key other than its request URI
+        manager.addConnection(key, connection);
+        manager.send(key, BROADCAST);
+
+        //then
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> Mockito.verify(connection, Mockito.atLeastOnce()).send(BROADCAST));
+
+        //when it is removed by its request URI
+        manager.removeConnection(connection);
+        manager.send(key, CHURN);
+
+        //then it is still there, as it was never held under that URI
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> Mockito.verify(connection, Mockito.atLeastOnce()).send(CHURN));
+
+        //when it is removed by its key
+        manager.removeConnection(key, connection);
+        manager.send(key, REMOVED);
+
+        //then
+        await().pollDelay(1, TimeUnit.SECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> Mockito.verify(connection, Mockito.never()).send(REMOVED));
     }
 
     private void invokeAll(List<Callable<Void>> tasks) throws Exception {

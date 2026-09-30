@@ -1,5 +1,6 @@
 package io.mangoo.routing.routes;
 
+import handlers.ClientServerSentEventHandler;
 import io.mangoo.TestExtension;
 import io.mangoo.routing.Router;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,8 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 @ExtendWith({TestExtension.class})
 class ServerSentEventRouteTest {
@@ -53,5 +56,29 @@ class ServerSentEventRouteTest {
                 .collect(Collectors.toSet());
         
         assertThat(collectedRoutes.size(), equalTo(1));
+    }
+
+    @Test
+    void testWithHandler() {
+        //given
+        ServerSentEventRoute serverSentEventRoute = new ServerSentEventRoute();
+
+        //when
+        serverSentEventRoute.to("/" + UUID.randomUUID()).withHandler(ClientServerSentEventHandler.class);
+
+        //then
+        assertThat(serverSentEventRoute.getHandler(), equalTo(ClientServerSentEventHandler.class));
+    }
+
+    @Test
+    void testWithoutHandler() {
+        //given
+        ServerSentEventRoute serverSentEventRoute = new ServerSentEventRoute();
+
+        //when
+        serverSentEventRoute.to("/" + UUID.randomUUID());
+
+        //then
+        assertThat(serverSentEventRoute.getHandler(), is(nullValue()));
     }
 }

@@ -47,6 +47,7 @@ import io.undertow.server.RoutingHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
+import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 import io.undertow.util.Methods;
 import io.undertow.websockets.WebSocketConnectionCallback;
 import org.apache.commons.lang3.RegExUtils;
@@ -733,9 +734,14 @@ public final class Application {
     private static void createRoutes() {
         pathHandler = new PathHandler(getRoutingHandler());
 
-        Router.getServerSentEventRoutes().forEach((ServerSentEventRoute serverSentEventRoute) ->
-                pathHandler.addExactPath(serverSentEventRoute.getUrl(),
-                        Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)))
+        Router.getServerSentEventRoutes().forEach((ServerSentEventRoute serverSentEventRoute) -> {
+                    Class<? extends ServerSentEventConnectionCallback> clazz = serverSentEventRoute.getHandler();
+                    ServerSentEventConnectionCallback callback = clazz == null
+                            ? getInstance(ServerSentEventHandler.class)
+                            : getInstance(clazz);
+
+                    pathHandler.addExactPath(serverSentEventRoute.getUrl(), Handlers.serverSentEvents(callback));
+                }
         );
 
         Router.getWebSocketRoutes().forEach((WebSocketRoute webSocketRoute) -> {

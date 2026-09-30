@@ -15,7 +15,7 @@ public class WebSocketRoute implements MangooRoute {
      * Sets the URL for this route
      *
      * @param url The URL for this route
-     * @return ServerSentEventRoute instance
+     * @return WebSocketRoute instance
      */
     public WebSocketRoute to(String url) {
         Objects.requireNonNull(url, Required.URL);
@@ -25,7 +25,7 @@ public class WebSocketRoute implements MangooRoute {
         }
         this.url = url;
 
-        Router.addRoute(this, "sse");
+        Router.addRoute(this, "websocket");
 
         return this;
     }

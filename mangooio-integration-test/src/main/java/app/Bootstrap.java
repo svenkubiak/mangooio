@@ -2,6 +2,7 @@ package app;
 
 import controllers.*;
 import controllers.subcontrollers.SubController;
+import handlers.ClientServerSentEventHandler;
 import io.mangoo.constants.Header;
 import io.mangoo.core.Server;
 import io.mangoo.enums.Http;
@@ -171,6 +172,7 @@ public class Bootstrap implements MangooBootstrap {
          );
 
          Bind.serverSentEvent().to("/sse");
+         Bind.serverSentEvent().to("/sse/client").withHandler(ClientServerSentEventHandler.class);
 
          Bind.pathResource().to("/assets/");
          Bind.fileResource().to("/robots.txt");

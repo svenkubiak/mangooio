@@ -2,6 +2,9 @@
 
 Unreleased
 
+* Added an optional ServerSentEventRoute#withHandler(Class) which replaces the default ServerSentEventHandler of an SSE route with a connection callback of the application, so that a connection can be inspected, rejected or keyed per client instead of per request URI, a route without it keeps the previous broadcast behaviour and a custom handler is responsible for registering the connection and for attaching a close task itself (svenkubiak)
+* Added ServerSentEventManager#removeConnection(key, connection) which removes a connection from a given key, as the existing removeConnection(connection) can only find a connection that is held under its request URI (svenkubiak)
+* WebSocketRoute#to now registers itself as type "websocket" instead of "sse", which only affected the startup log and let a URL bound as both a WebSocket and a request route slip through the duplicate detection (svenkubiak)
 * Version bumps (svenkubiak)
   * guava 33.7.1-jre -&gt; 33.7.2-jre
   * tika 4.0.0 -&gt; 4.1.0

@@ -119,12 +119,18 @@ SSE routes do not use a controller at all, since there is no request/response cy
 Bind.serverSentEvent().to("/sse");
 ```
 
-See [Server-Sent Events](sse.md) for how to push data to connected clients afterward.
+An SSE route optionally takes its own Undertow `ServerSentEventConnectionCallback`, which replaces the default handler and lets the application inspect, reject, or individually key a connection as it is established:
+
+```java
+Bind.serverSentEvent().to("/sse/client").withHandler(MyServerSentEventHandler.class);
+```
+
+See [Server-Sent Events](sse.md) for how to push data to connected clients afterward, and for what a custom handler has to take care of itself.
 
 !!! warning "SSE and WebSocket routes are not authenticated"
     Both are registered directly on Undertow's path handler, which means they never pass through the handler chain described above. `withAuthentication()` does not exist on them, and no filter, authentication check, or CSRF protection applies. Anyone who knows the URL can connect.
 
-    This is a known limitation rather than something you can configure away: the handler chain is built around a controller method and a single request/response cycle, neither of which fits a long-lived streaming connection. Until that gap is closed, assume anything you send over SSE or WebSockets is public, and keep user-specific or otherwise sensitive data on regular controller routes.
+    This is a known limitation rather than something you can configure away: the handler chain is built around a controller method and a single request/response cycle, neither of which fits a long-lived streaming connection. What both route types do offer is a connection callback of your own, which is the one place where the handshake is still in reach: a custom handler can read and verify a token or cookie itself and refuse the connection. Without that, assume anything you send over SSE or WebSockets is public, and keep user-specific or otherwise sensitive data on regular controller routes.
 
 ## WebSockets
 
