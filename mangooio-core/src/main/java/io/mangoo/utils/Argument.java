@@ -1,6 +1,5 @@
 package io.mangoo.utils;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
@@ -9,7 +8,6 @@ import java.util.regex.Pattern;
 public final class Argument  {
     private Argument() {}
 
-    @NonNull
     public static String requireNonBlank(String string, String message) {
         if (StringUtils.isBlank(string)) {
             throw new IllegalArgumentException(message);
