@@ -38,6 +38,7 @@ default:
   metrics:
     enable: true
   authentication:
+    blacklist: true
     # Raised well above the derived default so parallel hashing tests do not
     # serialize on the Argon2 concurrency gate
     hashing:

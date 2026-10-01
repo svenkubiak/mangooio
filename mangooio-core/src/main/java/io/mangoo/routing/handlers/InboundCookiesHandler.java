@@ -6,6 +6,7 @@ import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
+import io.mangoo.interfaces.TokenBlacklist;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
@@ -30,11 +31,13 @@ import java.util.Objects;
 public class InboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
     private final Config config;
+    private final TokenBlacklist tokenBlacklist;
     private Form form;
 
     @Inject
-    public InboundCookiesHandler(Config config) {
+    public InboundCookiesHandler(Config config, TokenBlacklist tokenBlacklist) {
         this.config = Objects.requireNonNull(config, Required.CONFIG);
+        this.tokenBlacklist = Objects.requireNonNull(tokenBlacklist, "tokenBlacklist can not be null");
     }
     
     @Override
@@ -115,7 +118,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
 
                 if (!(config.isAuthenticationBlacklist()
-                        && CommonUtils.isBlacklisted(jwtClaimsSet.getJWTID()))) {
+                        && tokenBlacklist.isRevoked(jwtClaimsSet.getJWTID(), jwtClaimsSet.getSubject(), jwtClaimsSet.getIssueTime().toInstant()))) {
 
                     authentication = Authentication.create()
                             .rememberMe(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.REMEMBER_ME)))

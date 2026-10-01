@@ -19,7 +19,7 @@ The vault is a PKCS12 keystore file named `vault.p12`. Enable it in `config.yaml
 ```yaml
 default:
   application:
-    secret: this-must-be-at-least-64-characters-long-and-kept-secret
+    secret: <exactly-64-bytes-kept-secret>
     vault:
       enable: true
 ```
@@ -30,7 +30,13 @@ On first start, the application creates `vault.p12` and fills it with random 64-
 - `session.cookie.secret` / `session.cookie.key`
 - `flash.cookie.secret` / `flash.cookie.key`
 
+On Linux and macOS `vault.p12` is readable and writable by its owner only. Windows file systems have no POSIX permissions, there the file inherits the access rights of its directory, so keep the application in a directory only your own user can access.
+
 Each mode (`dev`, `test`, `prod`) gets its own prefixed copies of those keys, so a `vault.p12` generated on your laptop in dev mode cannot be used to forge a session cookie against a production deployment, even if a developer machine gets compromised. That isolation is the entire reason the vault is keyed per mode instead of once per application.
+
+### Secret and key length
+
+The cookie secrets (`*.cookie.secret`) and `application.secret` are used directly as encryption key for `dir` with `A256CBC_HS512`. That algorithm accepts a key of exactly 512 bit, so these values must be **exactly 64 bytes** long — not more, not less. Bytes count, not characters: a non-ASCII character such as `ä` takes two bytes in UTF-8. The cookie keys (`*.cookie.key`) are used for HS512 signing and must be **at least 64 bytes**. The application refuses to start if a value does not meet these rules. The secrets the vault generates always fulfill them.
 
 ### Vault password
 

@@ -87,4 +87,24 @@ class HttpMethodsTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
+
+    @Test
+    void testAnyOfDelete() {
+        //given
+        final TestResponse response = TestRequest.delete("/anyof").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+    }
+
+    @Test
+    void testAnyOfPatch() {
+        //given
+        final TestResponse response = TestRequest.patch("/anyof").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+    }
 }

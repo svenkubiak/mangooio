@@ -206,7 +206,7 @@ public final class JwtUtils {
     }
 
     public record JwtData(
-            byte[] secret,        // encryption/decryption key (32 bytes)
+            byte[] secret,        // encryption/decryption key (exactly 64 bytes, A256CBC_HS512)
             byte[] key,           // signing/verifying key
             String issuer,
             String audience,

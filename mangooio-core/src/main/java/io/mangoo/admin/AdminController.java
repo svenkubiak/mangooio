@@ -188,20 +188,20 @@ public class AdminController {
             return Response.redirect(ADMIN_LOGIN);
         }
 
-        if (MangooUtils.isNotLocked() && form.isValid()) {
+        if (MangooUtils.isSecondFactorNotLocked() && form.isValid()) {
             if (TotpUtils.verifyTotp(config.getApplicationAdminSecret(), form.get("code"))) {
                 if (!MangooUtils.consumePreAuthentication(claims)) {
                     return Response.redirect(ADMIN_LOGIN);
                 }
 
-                MangooUtils.resetLockCounter();
+                MangooUtils.resetSecondFactorLockCounter();
                 try {
                     return Response.redirect(ADMIN_INDEX).cookie(MangooUtils.getAdminCookie(false));
                 } catch (MangooJwtException e) {
-                    MangooUtils.invalidAuthentication();
+                    MangooUtils.invalidSecondFactor();
                 }
             } else {
-                MangooUtils.invalidAuthentication();
+                MangooUtils.invalidSecondFactor();
             }
         }
         form.invalidate();

@@ -48,13 +48,12 @@ cache.resetCounter("logins");
 
 ## Named caches
 
-The application cache is the default, but two more caches exist out of the box:
+The application cache is the default, but one more cache exists out of the box:
 
 | Name (`CacheName`) | Use | Eviction |
 |---|---|---|
 | `APPLICATION` | Default `Cache` injection | 30 days after write, 50 000 keys |
 | `AUTH` | Failed attempt budgets for login and second factor | 60 minutes after write, or `authentication.lock.duration` if longer |
-| `BLACKLIST` | Created only if `authentication.blacklist` is true | 60 minutes after write |
 
 ```java
 @Inject

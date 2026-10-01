@@ -22,7 +22,6 @@ public class CacheProvider implements Provider<Cache> {
     private static final long SIXTY = 60;
     private static final long THIRTY = 30;
     private static final long FIFTY_THOUSAND = 50000;
-    private static final long FIVE_THOUSAND = 5000;
     private final Map<String, Cache> caches = new HashMap<>();
     private Cache cache;
 
@@ -31,9 +30,6 @@ public class CacheProvider implements Provider<Cache> {
     public CacheProvider(Config config) {
         Objects.requireNonNull(config, Required.CONFIG);
 
-        if (config.isAuthenticationBlacklist()) {
-            initBlacklistCache();
-        }
         initApplicationCache();
         initAuthenticationCache(config);
         setDefaultApplicationCache();
@@ -64,16 +60,6 @@ public class CacheProvider implements Provider<Cache> {
         caches.put(CacheName.AUTH, authenticationCache);
     }
 
-    private void initBlacklistCache() {
-        Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
-                .maximumSize(FIVE_THOUSAND)
-                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
-                .recordStats()
-                .build());
-
-        caches.put(CacheName.BLACKLIST, authenticationCache);
-    }
-
     private void setDefaultApplicationCache() {
         cache = getCache(CacheName.APPLICATION);
     }
@@ -100,7 +86,7 @@ public class CacheProvider implements Provider<Cache> {
         Argument.requireNonBlank(name, Required.NAME);
         Objects.requireNonNull(cache, Required.CACHE);
 
-        if (Stream.of(CacheName.APPLICATION, CacheName.BLACKLIST, CacheName.AUTH)
+        if (Stream.of(CacheName.APPLICATION, CacheName.AUTH)
                 .noneMatch(s -> s.equalsIgnoreCase(name))) {
             caches.put(name, cache);
         }

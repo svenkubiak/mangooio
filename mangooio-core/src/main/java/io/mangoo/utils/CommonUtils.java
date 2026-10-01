@@ -3,15 +3,13 @@ package io.mangoo.utils;
 import com.fasterxml.uuid.Generators;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
-import io.mangoo.cache.CacheProvider;
-import io.mangoo.constants.CacheName;
-import io.mangoo.constants.Const;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.crypto.PasswordHasher;
 import io.mangoo.exceptions.MangooHashingException;
+import io.mangoo.interfaces.TokenBlacklist;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.fory.Fory;
 import org.apache.fory.ThreadSafeFory;
@@ -27,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.*;
 
 public final class CommonUtils {
@@ -477,23 +476,36 @@ public final class CommonUtils {
         return content;
     }
 
+    /**
+     * Checks if the token with the given ID (jti) is revoked
+     *
+     * @param id The ID of the token
+     * @return True if the token is revoked, false otherwise
+     *
+     * @deprecated Use {@link TokenBlacklist#isRevoked(String, String, Instant)} instead
+     */
+    @Deprecated(since = "10.14.0", forRemoval = true)
     public static boolean isBlacklisted(String id) {
         Argument.requireNonBlank(id, Required.ID);
 
-        var authCache = Application
-                .getInstance(CacheProvider.class)
-                .getCache(CacheName.BLACKLIST);
-
-        return authCache.get(Const.BLACKLIST_PREFIX + id) != null;
+        return Application.getInstance(TokenBlacklist.class).isRevoked(id, null, null);
     }
 
+    /**
+     * Revokes the token with the given ID (jti) for the maximum lifetime of an authentication token
+     *
+     * @param id The ID of the token
+     *
+     * @deprecated Use {@link TokenBlacklist#revoke(String, Instant)} to revoke a single token or
+     * {@link TokenBlacklist#revokeSubject(String)} to revoke all tokens of a subject instead
+     */
+    @Deprecated(since = "10.14.0", forRemoval = true)
     public static void blacklist(String id) {
         Argument.requireNonBlank(id, Required.ID);
 
-        var authCache = Application
-                .getInstance(CacheProvider.class)
-                .getCache(CacheName.BLACKLIST);
+        var config = Application.getInstance(Config.class);
+        long maxTokenLifetime = Math.max(config.getAuthenticationCookieRememberExpires(), config.getAuthenticationCookieTokenExpires());
 
-        authCache.put(Const.BLACKLIST_PREFIX + id, Strings.EMPTY);
+        Application.getInstance(TokenBlacklist.class).revoke(id, Instant.now().plusSeconds(maxTokenLifetime));
     }
 }

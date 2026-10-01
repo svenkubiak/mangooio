@@ -6,6 +6,7 @@ import io.mangoo.constants.Key;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Mode;
+import io.mangoo.utils.Argument;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.internal.MangooUtils;
 import jakarta.inject.Singleton;
@@ -25,24 +26,28 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Singleton
 public class Vault {
@@ -76,11 +81,16 @@ public class Vault {
                 loadSecret();
                 loadKeyStore();
                 loadPrefix();
-                createSecrets();
-                createCertificate();
+
+                boolean changed = createSecrets();
+                changed |= createCertificate();
+                if (changed) {
+                    store();
+                }
+
                 cleanUp();
             }
-        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
+        } catch (IOException | GeneralSecurityException e) {
             throw new IllegalStateException("Failed to init keystore", e);
         }
     }
@@ -99,8 +109,14 @@ public class Vault {
         }
     }
 
-    private void loadKeyStore() throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
-        if (Files.exists(path)) {
+    private void loadKeyStore() throws IOException, GeneralSecurityException {
+        if (Files.exists(path) && Files.size(path) == 0) {
+            // A vault file without content holds no secrets, e.g. left behind by an earlier
+            // version that failed while creating the vault, it is therefore created anew
+            LOG.warn("Found empty vault at {}, creating a new vault", path);
+        }
+
+        if (Files.exists(path) && Files.size(path) > 0) {
             try (var inputStream = Files.newInputStream(path, StandardOpenOption.READ)) {
                 keyStore.load(inputStream, secret);
                 LOG.info("Loaded existing vault from {}", path);
@@ -109,18 +125,12 @@ public class Vault {
                 throw e;
             }
         } else {
-            try (var outputStream = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
-                Set<PosixFilePermission> perms = EnumSet.of(
-                        PosixFilePermission.OWNER_READ,
-                        PosixFilePermission.OWNER_WRITE);
-                Files.setPosixFilePermissions(path, perms);
-
+            try {
                 keyStore.load(null, secret);
-                keyStore.store(outputStream, secret);
+                store();
                 LOG.info("Created new vault at {}", path);
-            } catch (IllegalStateException | IOException | NoSuchAlgorithmException | CertificateException |
-                     KeyStoreException e) {
-                LOG.error("Failed to load vault from {}", path, e); //NOSONAR
+            } catch (IOException | GeneralSecurityException e) {
+                LOG.error("Failed to create vault at {}", path, e); //NOSONAR
                 throw e;
             }
         }
@@ -204,23 +214,76 @@ public class Vault {
         this.prefix = Application.getMode().toString().toLowerCase() + ".";
     }
 
-    private void createSecrets() {
-        for (String key : KEYS) {
-            if (!exists(prefix + key)) {
-                put(key, CommonUtils.randomString(64));
+    /**
+     * Creates the cookie secrets and keys for every mode if they do not exist yet
+     *
+     * @return True if the keystore has been changed and needs to be stored, false otherwise
+     */
+    private boolean createSecrets() throws KeyStoreException {
+        var changed = false;
+        for (Mode mode : Mode.values()) {
+            for (String key : KEYS) {
+                String alias = mode.toString().toLowerCase(Locale.ENGLISH) + "." + key;
+                if (!exists(alias)) {
+                    keyStore.setEntry(alias, secretKeyEntry(CommonUtils.randomString(64)), new KeyStore.PasswordProtection(secret));
+                    changed = true;
+                }
             }
         }
 
-        Stream.of(Mode.values())
-            .forEach(value -> {
-                String mode = value.toString().toLowerCase(Locale.ENGLISH) + ".";
-                for (String suffix : KEYS) {
-                    String fullKey = mode + suffix;
-                    if (!exists(fullKey)) {
-                        put(fullKey, CommonUtils.randomString(64));
+        return removeMisplacedSecrets() || changed;
+    }
+
+    /**
+     * Removes the secrets that earlier versions created with a doubled mode prefix,
+     * e.g. dev.prod.session.cookie.secret. These were never read.
+     *
+     * @return True if the keystore has been changed, false otherwise
+     */
+    private boolean removeMisplacedSecrets() throws KeyStoreException {
+        var changed = false;
+        for (Mode outer : Mode.values()) {
+            for (Mode inner : Mode.values()) {
+                for (String key : KEYS) {
+                    String alias = outer.toString().toLowerCase(Locale.ENGLISH) + "." + inner.toString().toLowerCase(Locale.ENGLISH) + "." + key;
+                    if (exists(alias)) {
+                        keyStore.deleteEntry(alias);
+                        changed = true;
                     }
                 }
-            });
+            }
+        }
+
+        return changed;
+    }
+
+    private static KeyStore.SecretKeyEntry secretKeyEntry(String value) {
+        return new KeyStore.SecretKeyEntry(new SecretKeySpec(value.getBytes(StandardCharsets.UTF_8), "AES"));
+    }
+
+    /**
+     * Stores the keystore atomically. The keystore is written to a temporary file in the
+     * same directory first, which then replaces the vault file. The existing vault file is
+     * therefore never truncated or left incomplete, even if storing fails or the process
+     * is killed.
+     */
+    private void store() throws IOException, GeneralSecurityException {
+        Path tempFile = createTempFile(path.toAbsolutePath().getParent());
+        try {
+            try (var channel = FileChannel.open(tempFile, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+                 var outputStream = Channels.newOutputStream(channel)) {
+                keyStore.store(outputStream, secret);
+                channel.force(true);
+            }
+
+            try {
+                Files.move(tempFile, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(tempFile, path, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
     }
 
     public String get(String key) {
@@ -249,22 +312,67 @@ public class Vault {
         return null;
     }
 
+    /**
+     * Stores a value in the vault. The vault file is replaced atomically, if storing fails
+     * the vault file and the in-memory vault keep their previous state.
+     *
+     * @param key The key of the value
+     * @param value The value, must not be blank
+     *
+     * @throws IllegalArgumentException if key or value is blank
+     * @throws IllegalStateException if the vault is not enabled or the value could not be stored
+     */
     public void put(String key, String value) {
-        Objects.requireNonNull(key, Required.KEY);
-        Objects.requireNonNull(value, Required.VALUE);
-        key = prefix + key;
-
-        try (var outputStream = Files.newOutputStream(path)) {
-            SecretKey secretKey = new SecretKeySpec(value.getBytes(StandardCharsets.UTF_8), "AES");
-
-            var secretKeyEntry = new KeyStore.SecretKeyEntry(secretKey);
-            var protectionParam = new KeyStore.PasswordProtection(secret);
-
-            keyStore.setEntry(key, secretKeyEntry, protectionParam);
-            keyStore.store(outputStream, secret);
-        } catch (Exception e) {
-            LOG.error("Failed to add key", e);
+        Argument.requireNonBlank(key, Required.KEY);
+        Argument.requireNonBlank(value, Required.VALUE);
+        if (keyStore == null) {
+            throw new IllegalStateException("Vault is not enabled");
         }
+
+        String alias = prefix + key;
+        var protection = new KeyStore.PasswordProtection(secret);
+        KeyStore.Entry previous = null;
+        try {
+            previous = keyStore.getEntry(alias, protection);
+            keyStore.setEntry(alias, secretKeyEntry(value), protection);
+            store();
+        } catch (IOException | GeneralSecurityException e) {
+            restore(alias, previous, protection);
+            throw new IllegalStateException("Failed to store key '" + key + "' in vault", e);
+        }
+    }
+
+    private void restore(String alias, KeyStore.Entry previous, KeyStore.PasswordProtection protection) {
+        try {
+            if (previous == null) {
+                if (keyStore.containsAlias(alias)) {
+                    keyStore.deleteEntry(alias);
+                }
+            } else {
+                keyStore.setEntry(alias, previous, protection);
+            }
+        } catch (KeyStoreException e) {
+            LOG.error("Failed to restore previous value of key '{}' in vault", alias, e);
+        }
+    }
+
+    /**
+     * Creates the temporary file for storing the vault. On file systems with POSIX
+     * permissions the file is readable and writable by the owner only from the moment it
+     * is created. Other file systems, e.g. NTFS, do not support POSIX permissions, the file
+     * then inherits the access rights of its directory.
+     */
+    private static Path createTempFile(Path directory) throws IOException {
+        if (Files.getFileStore(directory).supportsFileAttributeView(PosixFileAttributeView.class)) {
+            return Files.createTempFile(directory, ".vault", ".tmp",
+                    PosixFilePermissions.asFileAttribute(EnumSet.of(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE)));
+        }
+
+        return Files.createTempFile(directory, ".vault", ".tmp");
+    }
+
+    Path getPath() {
+        return path;
     }
 
     public SSLContext getSSLContext(String alias) {
@@ -290,7 +398,12 @@ public class Vault {
           return null;
     }
 
-    private void createCertificate() {
+    /**
+     * Creates a self-signed certificate if it does not exist yet
+     *
+     * @return True if the keystore has been changed and needs to be stored, false otherwise
+     */
+    private boolean createCertificate() {
         String alias = Optional
                 .ofNullable(config.get(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS))
                 .orElse(Default.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
@@ -328,10 +441,13 @@ public class Vault {
                         .getCertificate(certHolder);
 
                 keyStore.setKeyEntry(alias, keyPair.getPrivate(), secret, new X509Certificate[]{certificate});
+                return true;
             } catch (CertIOException | OperatorCreationException | CertificateException | KeyStoreException |
                      NoSuchAlgorithmException | NoSuchProviderException e) {
                 LOG.error("Failed to create certificate", e);
             }
         }
+
+        return false;
     }
 }

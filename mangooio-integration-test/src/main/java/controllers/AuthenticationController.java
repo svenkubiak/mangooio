@@ -32,6 +32,11 @@ public class AuthenticationController {
         return Response.redirect(AUTHENTICATIONREQUIRED);
     }
     
+    public Response doLoginWithSubject(Authentication authentication, String subject) {
+        authentication.login(subject);
+        return Response.redirect(AUTHENTICATIONREQUIRED);
+    }
+
     public Response doLoginTwoFactor(Authentication authentication) {
         authentication.login(SUBJECT).twoFactorAuthentication(true);
         

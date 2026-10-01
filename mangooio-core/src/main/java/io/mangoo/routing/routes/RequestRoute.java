@@ -58,6 +58,26 @@ public class RequestRoute implements MangooRoute {
     }
     
     /**
+     * Creates a copy of this route for a single HTTP method. Used to register
+     * a route with multiple HTTP methods as separate routes, one per method.
+     *
+     * @param method The HTTP method of the copy
+     * @return A new RequestRoute instance
+     */
+    RequestRoute forMethod(Http method) {
+        Objects.requireNonNull(method, Required.HTTP_METHOD);
+
+        var requestRoute = new RequestRoute(method);
+        requestRoute.url = url;
+        requestRoute.controllerClass = controllerClass;
+        requestRoute.controllerMethod = controllerMethod;
+        requestRoute.blocking = blocking;
+        requestRoute.authentication = authentication;
+
+        return requestRoute;
+    }
+
+    /**
      * Sets the controller class of this request
      * 
      * @param clazz The controller class

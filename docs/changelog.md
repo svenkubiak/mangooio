@@ -1,7 +1,17 @@
 ## Version 10.14.0
 
+Released at 01.10.2027
+
 * Fixed an issue in the Scheduler that could break a scheduled task (svenkubiak)
 * Fixed an issue that did not call the ExceptionHandler on all HTTP methods (svenkubia)
+* Added io.mangoo.interfaces.TokenBlacklist as extension point for revoking authentication cookies, the default in-memory implementation can be replaced by binding an own implementation, e.g. backed by Redis or MongoDB (svenkubiak)
+* Added TokenBlacklist#revokeSubject which revokes all authentication cookies of a subject issued before a given point in time, e.g. after a password change (svenkubiak)
+* Fixed an issue where a revoked authentication cookie became valid again after 60 minutes or after 5000 revocations, a revocation now lasts until the token expires (svenkubiak)
+* **Deprecation** CommonUtils#blacklist and CommonUtils#isBlacklisted are deprecated for removal, use TokenBlacklist instead (svenkubiak)
+* Fixed an issue where a failing Vault#put, e.g. with an empty value, left an empty vault.p12 behind and thereby destroyed all stored secrets, the vault file is now replaced atomically via a temporary file (svenkubiak)
+* Fixed an issue where the vault was rewritten on every start, the secrets of all modes are now created once and stored in a single write, secrets with a doubled mode prefix from earlier versions are removed (svenkubiak)
+* Fixed an issue where the vault could not be created on Windows, as setting POSIX file permissions is not supported there, which prevented the application from starting, an empty vault.p12 left behind by such a failed start is now created anew (svenkubiak)
+* **Behaviour change** Vault#put now throws an IllegalArgumentException for a blank key or value and an IllegalStateException if the value could not be stored, instead of only logging the error (svenkubiak)
 
 ## Version 10.13.1
 

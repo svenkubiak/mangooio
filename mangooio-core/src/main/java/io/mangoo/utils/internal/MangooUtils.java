@@ -60,6 +60,8 @@ public final class MangooUtils {
     private static final int ADMIN_PRE_AUTH_COOKIE_TTL = 120;
     private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
+    private static final String MANGOOIO_ADMIN_TWO_FACTOR_LOCKED_UNTIL = "mangooio-admin-twofactor-locked-until";
+    private static final String MANGOOIO_ADMIN_TWO_FACTOR_LOCK_COUNT = "mangooio-admin-twofactor-lock-count";
     private static final String MANGOOIO_ADMIN_PRE_AUTH = "mangooio-admin-pre-auth-";
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
@@ -311,22 +313,66 @@ public final class MangooUtils {
         return Application.inProdMode() ? "__Host-" + Default.APPLICATION_ADMIN_COOKIE_NAME : Default.APPLICATION_ADMIN_COOKIE_NAME;
     }
 
+    /**
+     * Records a failed attempt of the admin password step
+     */
     public static void invalidAuthentication() {
-        AtomicInteger counter = getInstance(Cache.class).getAndIncrementCounter(MANGOOIO_ADMIN_LOCK_COUNT);
-        if (counter.intValue() >= ADMIN_LOGIN_MAX_RETRIES) {
-            getInstance(Cache.class).put(MANGOOIO_ADMIN_LOCKED_UNTIL, LocalDateTime.now().plusMinutes(60));
-        }
-
-        getInstance(Cache.class).put(MANGOOIO_ADMIN_LOCK_COUNT, counter);
+        invalidAttempt(MANGOOIO_ADMIN_LOCK_COUNT, MANGOOIO_ADMIN_LOCKED_UNTIL);
     }
 
+    /**
+     * @return True if the admin password step is not locked, false otherwise
+     */
     public static boolean isNotLocked() {
-        LocalDateTime lockedUntil = getInstance(Cache.class).get(MANGOOIO_ADMIN_LOCKED_UNTIL);
+        return isNotLocked(MANGOOIO_ADMIN_LOCKED_UNTIL);
+    }
+
+    /**
+     * Resets the failed attempts of the admin password step
+     */
+    public static void resetLockCounter() {
+        resetLock(MANGOOIO_ADMIN_LOCK_COUNT, MANGOOIO_ADMIN_LOCKED_UNTIL);
+    }
+
+    /**
+     * Records a failed attempt of the admin second factor step. The budget is kept separately
+     * from the password step, so a successful password login does not reset it
+     */
+    public static void invalidSecondFactor() {
+        invalidAttempt(MANGOOIO_ADMIN_TWO_FACTOR_LOCK_COUNT, MANGOOIO_ADMIN_TWO_FACTOR_LOCKED_UNTIL);
+    }
+
+    /**
+     * @return True if the admin second factor step is not locked, false otherwise
+     */
+    public static boolean isSecondFactorNotLocked() {
+        return isNotLocked(MANGOOIO_ADMIN_TWO_FACTOR_LOCKED_UNTIL);
+    }
+
+    /**
+     * Resets the failed attempts of the admin second factor step
+     */
+    public static void resetSecondFactorLockCounter() {
+        resetLock(MANGOOIO_ADMIN_TWO_FACTOR_LOCK_COUNT, MANGOOIO_ADMIN_TWO_FACTOR_LOCKED_UNTIL);
+    }
+
+    private static void invalidAttempt(String countKey, String lockedUntilKey) {
+        AtomicInteger counter = getInstance(Cache.class).getAndIncrementCounter(countKey);
+        if (counter.intValue() >= ADMIN_LOGIN_MAX_RETRIES) {
+            getInstance(Cache.class).put(lockedUntilKey, LocalDateTime.now().plusMinutes(60));
+        }
+
+        getInstance(Cache.class).put(countKey, counter);
+    }
+
+    private static boolean isNotLocked(String lockedUntilKey) {
+        LocalDateTime lockedUntil = getInstance(Cache.class).get(lockedUntilKey);
         return lockedUntil == null || lockedUntil.isBefore(LocalDateTime.now());
     }
 
-    public static void resetLockCounter() {
-        getInstance(Cache.class).resetCounter(MANGOOIO_ADMIN_LOCK_COUNT);
+    private static void resetLock(String countKey, String lockedUntilKey) {
+        getInstance(Cache.class).resetCounter(countKey);
+        getInstance(Cache.class).remove(lockedUntilKey);
     }
 
     public static void mergeMaps(Map<String, Object> baseMap, Map<String, Object> overrideMap) {

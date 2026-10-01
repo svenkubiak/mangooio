@@ -279,4 +279,41 @@ The filter accepts `Authorization: Bearer super-secret`. This is a single shared
 
 ## Blacklist
 
-Set `authentication.blacklist` to `true` to enable a dedicated cache used by `CommonUtils.blacklist(id)` / `CommonUtils.isBlacklisted(id)`. This is useful for revoking a specific token or subject before its natural expiry, for example immediately after a user changes their password and every previously issued cookie for that account should stop working right away.
+Set `authentication.blacklist` to `true` to revoke authentication cookies before their natural expiry. Revocations are handled by an `io.mangoo.interfaces.TokenBlacklist`, which you can inject like any other component.
+
+* **Logout.** `authentication.logout()` and `authentication.invalidate()` revoke the token of the current cookie automatically. A copy of that cookie, for example a stolen one, is rejected from then on until the token would have expired anyway.
+* **All tokens of an account.** `revokeSubject(subject)` revokes every token of a subject that was issued before now, for example right after a user changed their password or an account was compromised. Tokens issued afterwards, such as a new login in the same request, stay valid, so the user is not locked out.
+
+```java
+@Inject
+private TokenBlacklist tokenBlacklist;
+
+public Response changePassword(Authentication authentication) {
+    // ... update the password
+    tokenBlacklist.revokeSubject(authentication.getSubject());
+    authentication.login(authentication.getSubject());
+    return Response.redirect("/");
+}
+```
+
+Every revocation is kept exactly as long as the revoked token could still be valid, that is until its expiry or, for a subject, for the longest token lifetime (`authentication.cookie.remember.expires` or `authentication.cookie.token.expires`).
+
+The default implementation keeps revocations **in memory**. That has two consequences you should be aware of:
+
+* Revocations do not survive a restart or a deployment.
+* With more than one instance behind a load balancer, a revocation only applies to the instance that received it.
+
+If either matters for you, bind your own implementation backed by a shared store such as Redis or MongoDB in your `Module`. The framework picks it up instead of the default one:
+
+```java
+public class Module extends AbstractModule {
+    @Override
+    protected void configure() {
+        bind(TokenBlacklist.class).to(RedisTokenBlacklist.class);
+    }
+}
+```
+
+To invalidate every issued authentication cookie at once, independent of the blacklist, rotate `authentication.cookie.secret`.
+
+`CommonUtils.blacklist(id)` and `CommonUtils.isBlacklisted(id)` are deprecated and delegate to the `TokenBlacklist`. Note that they only ever worked on a token ID; to revoke all tokens of an account use `revokeSubject`.

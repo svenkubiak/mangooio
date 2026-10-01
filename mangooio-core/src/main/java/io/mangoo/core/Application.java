@@ -50,7 +50,6 @@ import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 import io.undertow.util.Methods;
 import io.undertow.websockets.WebSocketConnectionCallback;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -77,7 +76,7 @@ public final class Application {
     }
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final long START = System.currentTimeMillis();
-    private static final int KEY_MIN_BIT_LENGTH = 512;
+    private static final int SECRET_BIT_LENGTH = 512;
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
     private static final String SCHEDULER = "io.mangoo.annotations.Run";
@@ -555,53 +554,16 @@ public final class Application {
             failsafe();
         }
 
-        int bitLength = getBitLength(config.getApplicationSecret());
-        if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Application requires a 512 bit application secret. The current property for application.secret has currently only {} bits.", bitLength);
-            failsafe();
-        }
-
-        bitLength = getBitLength(new String(config.getAuthenticationCookieSecret(), StandardCharsets.UTF_8));
-        if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Authentication cookie requires a 512 bit encryption secret. The current property for authentication.cookie.secret has only {} bits.", bitLength);
-            failsafe();
-        }
-        bitLength = getBitLength(new String(config.getSessionCookieSecret(), StandardCharsets.UTF_8));
-        if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Session cookie secret a 512 bit encryption secret. The current property for session.cookie.secret has only {} bits.", bitLength);
-            failsafe();
-        }
-
-        bitLength = getBitLength(new String(config.getFlashCookieSecret(), StandardCharsets.UTF_8));
-        if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Flash cookie requires a 512 bit encryption secret. The current property for flash.cookie.secret has only {} bits.", bitLength);
-            failsafe();
-        }
-
-        bitLength = getBitLength(new String(config.getFlashCookieKey(), StandardCharsets.UTF_8));
-        if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Flash cookie requires a 512 bit signing key. The current property for flash.cookie.key has only {} bits.", bitLength);
-            failsafe();
-        }
-
-        bitLength = getBitLength(new String(config.getAuthenticationCookieKey(), StandardCharsets.UTF_8));
-        if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Authentication cookie requires a 512 bit signing key. The current property for authentication.cookie.key has only {} bits.", bitLength);
-            failsafe();
-        }
-
-        bitLength = getBitLength(new String(config.getSessionCookieKey(), StandardCharsets.UTF_8));
-        if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Session cookie requires a 512 bit signing key. The current property for session.cookie.key has only {} bits.", bitLength);
-            failsafe();
-        }
+        checkSecret(Key.APPLICATION_SECRET, config.getApplicationSecret().getBytes(StandardCharsets.UTF_8));
+        checkSecret(Key.AUTHENTICATION_COOKIE_SECRET, config.getAuthenticationCookieSecret());
+        checkSecret(Key.SESSION_COOKIE_SECRET, config.getSessionCookieSecret());
+        checkSecret(Key.FLASH_COOKIE_SECRET, config.getFlashCookieSecret());
+        checkKey(Key.AUTHENTICATION_COOKIE_KEY, config.getAuthenticationCookieKey());
+        checkKey(Key.SESSION_COOKIE_KEY, config.getSessionCookieKey());
+        checkKey(Key.FLASH_COOKIE_KEY, config.getFlashCookieKey());
 
         if (StringUtils.isNotBlank(config.getString(Key.APPLICATION_API_KEY))) {
-            bitLength = getBitLength(config.getString(Key.APPLICATION_API_KEY));
-            if (bitLength < KEY_MIN_BIT_LENGTH) {
-                LOG.error("API key requires a 512 bit key length. The current property for api.length has only {} bits.", bitLength);
-                failsafe();
-            }
+            checkKey(Key.APPLICATION_API_KEY, config.getString(Key.APPLICATION_API_KEY).getBytes(StandardCharsets.UTF_8));
         }
 
         if (config.getAllConfigurations().containsKey(Key.APPLICATION_ALLOWED_ORIGINS) && StringUtils.isBlank(config.getString(Key.APPLICATION_ALLOWED_ORIGINS))) {
@@ -872,10 +834,40 @@ public final class Application {
         LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", System.currentTimeMillis() - START, mode);
     }
 
-    private static int getBitLength(String secret) {
-        Objects.requireNonNull(secret, Required.SECRET);
+    /**
+     * Fails the application startup if the given secret is not exactly 512 bit (64 bytes) long.
+     * Secrets are used as encryption key with dir and A256CBC_HS512, which requires a key of
+     * exactly 512 bit; any other length fails on every encryption and decryption at runtime.
+     *
+     * @param property The name of the config property
+     * @param secret The secret bytes as used for encryption
+     */
+    private static void checkSecret(String property, byte[] secret) {
+        if (!isValidSecret(secret)) {
+            LOG.error("{} must be exactly 512 bit (64 bytes) as it is used as AES-256/HMAC-512 encryption key, but has {} bits.", property, CommonUtils.bitLength(secret));
+            failsafe();
+        }
+    }
 
-        return CommonUtils.bitLength(RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", Strings.EMPTY));
+    /**
+     * Fails the application startup if the given key is shorter than 512 bit (64 bytes)
+     *
+     * @param property The name of the config property
+     * @param key The key bytes as used for signing
+     */
+    private static void checkKey(String property, byte[] key) {
+        if (!isValidKey(key)) {
+            LOG.error("{} must be at least 512 bit (64 bytes) as it is used as HMAC-512 signing key, but has only {} bits.", property, CommonUtils.bitLength(key));
+            failsafe();
+        }
+    }
+
+    static boolean isValidSecret(byte[] secret) {
+        return secret != null && CommonUtils.bitLength(secret) == SECRET_BIT_LENGTH;
+    }
+
+    static boolean isValidKey(byte[] key) {
+        return key != null && CommonUtils.bitLength(key) >= SECRET_BIT_LENGTH;
     }
 
     private static List<Module> getModules() {

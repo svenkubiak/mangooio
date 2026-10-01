@@ -142,16 +142,16 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `application.name` | Application name (JWT issuer, logs) | `mangooio-application` |
 | `application.named` | Example named Guice binding | *(none)* |
 | `application.parameter.strict` | Reject requests whose query parameter collides with a route parameter with a `400` | `false` |
-| `application.secret` | Application secret; fallback for cookie keys | *(none)* |
+| `application.secret` | Application secret; fallback for cookie secrets and keys (exactly 64 bytes) | *(none)* |
 | `application.timezone` | Application timezone | `UTC` |
 | `application.validation.passthrough` | Return Bean Validation errors as JSON instead of a rendered form | `false` |
 | `application.vault.enable` | Enable the PKCS12 vault | *(none)* |
 | `application.vault.path` | Directory of `vault.p12` in prod | *(none)* |
 | `application.vault.secret` | Vault password (min. 64 characters) | *(none)* |
-| `authentication.blacklist` | Enable authentication blacklist cache | `false` |
+| `authentication.blacklist` | Enable revocation of authentication cookies, see [Blacklist](authentication.md#blacklist) | `false` |
 | `authentication.cookie.name` | Authentication cookie name | `mangooio-auth` |
-| `authentication.cookie.key` | JWT signing key; falls back to `application.secret` | *(none)* |
-| `authentication.cookie.secret` | JWT encryption secret; falls back to `application.secret` | *(none)* |
+| `authentication.cookie.key` | JWT signing key (min. 64 bytes); falls back to `application.secret` | *(none)* |
+| `authentication.cookie.secret` | JWT encryption secret (exactly 64 bytes); falls back to `application.secret` | *(none)* |
 | `authentication.cookie.remember.expires` | Remember-me lifetime in **seconds** | `2592000` |
 | `authentication.cookie.samesitemode` | SameSite attribute | `Strict` |
 | `authentication.cookie.secure` | Secure cookie flag | `false` |
@@ -180,8 +180,8 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `cors.headers.maxage` | `Access-Control-Max-Age` | `864000` |
 | `cors.urlpattern` | Regex of request URLs that receive CORS headers | `^http(s)?://([^/]+)(:([^/]+))?(/([^/])+)?/api(/.*)?$` |
 | `flash.cookie.name` | Flash cookie name | `mangooio-flash` |
-| `flash.cookie.key` | Flash JWT signing key | *(none)* |
-| `flash.cookie.secret` | Flash JWT encryption secret | *(none)* |
+| `flash.cookie.key` | Flash JWT signing key (min. 64 bytes) | *(none)* |
+| `flash.cookie.secret` | Flash JWT encryption secret (exactly 64 bytes) | *(none)* |
 | `form.maxfilesize` | Maximum size of a single uploaded file in bytes | `5242880` |
 | `i18n.cookie.name` | Locale cookie name | `mangooio-i18n` |
 | `metrics.enable` | Collect request metrics for the admin dashboard | `false` |
@@ -199,8 +199,8 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `scheduler.enable` | Enable `@Run` scheduling | `true` |
 | `session.cookie.expires` | Persist the session cookie beyond the browser session | `false` |
 | `session.cookie.name` | Session cookie name | `mangooio-session` |
-| `session.cookie.key` | Session JWT signing key | *(none)* |
-| `session.cookie.secret` | Session JWT encryption secret | *(none)* |
+| `session.cookie.key` | Session JWT signing key (min. 64 bytes) | *(none)* |
+| `session.cookie.secret` | Session JWT encryption secret (exactly 64 bytes) | *(none)* |
 | `session.cookie.samesitemode` | SameSite attribute | `Strict` |
 | `session.cookie.secure` | Secure cookie flag (also used for flash) | `false` |
 | `session.cookie.token.expires` | Session token lifetime in **seconds** | `3600` |

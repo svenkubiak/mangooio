@@ -6,6 +6,7 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.interfaces.TokenBlacklist;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
@@ -16,6 +17,7 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
 import jakarta.inject.Inject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,11 +33,13 @@ public class OutboundCookiesHandler implements HttpHandler {
     private static final String SAME_SITE_MODE = "Strict";
     private static final int SIXTY = 60;
     private final Config config;
+    private final TokenBlacklist tokenBlacklist;
     private Attachment attachment;
 
     @Inject
-    public OutboundCookiesHandler(Config config) {
+    public OutboundCookiesHandler(Config config, TokenBlacklist tokenBlacklist) {
         this.config = Objects.requireNonNull(config, Required.CONFIG);
+        this.tokenBlacklist = Objects.requireNonNull(tokenBlacklist, "tokenBlacklist can not be null");
     }
     
     @Override
@@ -125,8 +129,8 @@ public class OutboundCookiesHandler implements HttpHandler {
         var authentication = attachment.getAuthentication();
         if (authentication.isInvalid() || authentication.isLogout()) {
             String id = authentication.getId();
-            if (config.isAuthenticationBlacklist() && !CommonUtils.isBlacklisted(id)) {
-               CommonUtils.blacklist(id);
+            if (config.isAuthenticationBlacklist() && StringUtils.isNotBlank(id)) {
+                tokenBlacklist.revoke(id, authentication.getExpires().atZone(config.getApplicationTimeZone()).toInstant());
             }
 
             var cookie = new CookieImpl(config.getAuthenticationCookieName())

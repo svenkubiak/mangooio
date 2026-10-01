@@ -17,9 +17,6 @@ String random = CommonUtils.randomString(32);
 
 byte[] encoded = CommonUtils.encodeToBase64("payload");
 byte[] decoded = CommonUtils.decodeFromBase64(new String(encoded, StandardCharsets.UTF_8));
-
-CommonUtils.blacklist("subject");
-boolean blocked = CommonUtils.isBlacklisted("subject");
 ```
 
 `hashArgon2(cleartext)` hashes without an explicit salt. The number of Argon2 computations running at the same time is capped, see [Argon2 hashing](configuration.md#argon2-hashing); both `hashArgon2` and `matchArgon2` throw an unchecked `MangooHashingException` when no slot becomes available within `authentication.hashing.timeout`. `matchArgon2` deliberately does not report this as a mismatch, so that "wrong password" and "system overloaded" stay distinguishable. `bitLength` checks key material length. `registerSerializable` / `serializeToBase64` use Apache Fory under the hood; register your classes at startup, and only ever deserialize trusted data.
