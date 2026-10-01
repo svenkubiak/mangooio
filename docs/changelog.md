@@ -1,3 +1,9 @@
+## Version 10.14.1
+
+Released at 01.10.2026
+
+* Fixed failed maven release (svenkubiak)
+
 ## Version 10.14.0
 
 Released at 01.10.2026
