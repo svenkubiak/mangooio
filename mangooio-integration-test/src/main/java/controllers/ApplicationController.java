@@ -51,6 +51,10 @@ public class ApplicationController {
         
         return Response.ok();
     }
+
+    public Response illegalArgument() {
+        throw new IllegalArgumentException("illegal argument");
+    }
     
     public Response route() {
         return Response.ok().render();

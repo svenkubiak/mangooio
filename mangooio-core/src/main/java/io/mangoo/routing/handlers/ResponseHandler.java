@@ -59,7 +59,7 @@ public class ResponseHandler implements HttpHandler {
      * @param response The response object
      */
     protected void handleBinaryResponse(HttpServerExchange exchange, Response response) {
-        exchange.dispatch(exchange.getDispatchExecutor(), Application.getInstance(BinaryHandler.class).withResponse(response));
+        exchange.dispatch(exchange.getDispatchExecutor(), ExceptionHandler.wrap(Application.getInstance(BinaryHandler.class).withResponse(response)));
     }
 
     /**

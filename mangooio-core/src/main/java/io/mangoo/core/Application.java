@@ -811,11 +811,9 @@ public final class Application {
 
         HttpHandler httpHandler;
         if (config.isMetricsEnable()) {
-            httpHandler = MetricsHandler.HANDLER_WRAPPER.wrap(Handlers.exceptionHandler(pathHandler)
-                    .addExceptionHandler(Throwable.class, getInstance(ExceptionHandler.class)));
+            httpHandler = MetricsHandler.HANDLER_WRAPPER.wrap(ExceptionHandler.wrap(pathHandler));
         } else {
-            httpHandler = Handlers.exceptionHandler(pathHandler)
-                    .addExceptionHandler(Throwable.class, getInstance(ExceptionHandler.class));
+            httpHandler = ExceptionHandler.wrap(pathHandler);
         }
 
         var builder = Undertow.builder()

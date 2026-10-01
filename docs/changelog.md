@@ -1,6 +1,7 @@
 ## Version 10.14.0
 
 * Fixed an issue in the Scheduler that could break a scheduled task (svenkubiak)
+* Fixed an issue that did not call the ExceptionHandler on all HTTP methods (svenkubia)
 
 ## Version 10.13.1
 

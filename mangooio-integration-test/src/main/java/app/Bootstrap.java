@@ -122,6 +122,8 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/").respondeWith("index").withNonBlocking(),
                 On.anyOf(Http.DELETE, Http.PATCH).to("/anyof").respondeWith("index").withNonBlocking(),
                 On.get().to("/error").respondeWith("error"),
+                On.post().to("/error").respondeWith("error"),
+                On.post().to("/illegal-argument").respondeWith("illegalArgument"),
                 On.get().to("/named").respondeWith("named"),
                 On.get().to("/route").respondeWith("route"),
                 On.post().to("/").respondeWith("index"),

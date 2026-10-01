@@ -9,6 +9,7 @@ import io.mangoo.exceptions.MangooHashingException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
+import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
@@ -20,6 +21,19 @@ import java.io.IOException;
 
 public class ExceptionHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(ExceptionHandler.class);
+
+    /**
+     * Wraps the given handler so that any exception thrown by it is handled by this ExceptionHandler.
+     * Must be used whenever a handler is dispatched to another thread, as the dispatched handler
+     * runs as a new root handler outside the exception handler of the server.
+     *
+     * @param next The handler to wrap
+     * @return The wrapped handler
+     */
+    public static HttpHandler wrap(HttpHandler next) {
+        return Handlers.exceptionHandler(next)
+                .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class));
+    }
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {

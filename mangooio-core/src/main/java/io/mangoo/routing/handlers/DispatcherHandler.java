@@ -37,6 +37,7 @@ public final class DispatcherHandler implements HttpHandler {
     private final boolean blocking;
     private final boolean authentication;
     private final boolean parameterStrict;
+    private final HttpHandler dispatchHandler = ExceptionHandler.wrap(this);
 
     public DispatcherHandler(Class<?> controllerClass, String controllerMethodName, boolean blocking, boolean authentication) {
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS);
@@ -93,7 +94,7 @@ public final class DispatcherHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         if ((RequestUtils.isPostPutPatch(exchange) || blocking) && exchange.isInIoThread()) {
-            exchange.dispatch(this);
+            exchange.dispatch(dispatchHandler);
             return;
         }
 
