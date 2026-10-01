@@ -1,3 +1,7 @@
+## Version 10.14.0
+
+* Fixed an issue in the Scheduler that could break a scheduled task (svenkubiak)
+
 ## Version 10.13.1
 
 Released at 30.09.2026

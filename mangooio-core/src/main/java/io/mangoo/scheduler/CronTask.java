@@ -9,57 +9,88 @@ import io.mangoo.core.Application;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class CronTask implements Runnable {
     private static final Logger LOG = LogManager.getLogger(CronTask.class);
-    private final Class<?> clazz;
-    private final String methodName;
+    private final Runnable task;
+    private final String name;
     private final ExecutionTime executionTime;
-    
+    private final ScheduledExecutorService scheduler;
+    private final Executor executor;
+    private final Clock clock;
+    private ZonedDateTime lastSlot;
+
     public CronTask(Class<?> clazz, String methodName, String cron) {
+        this(new Task(Objects.requireNonNull(clazz, Required.CLASS), Objects.requireNonNull(methodName, Required.METHOD)),
+                clazz.getName() + "." + methodName,
+                cron,
+                Application.getScheduledExecutorService(),
+                Application.getExecutorService(),
+                Clock.systemDefaultZone());
+    }
+
+    CronTask(Runnable task, String name, String cron, ScheduledExecutorService scheduler, Executor executor, Clock clock) {
         Objects.requireNonNull(cron, Required.CRON);
-        this.clazz = Objects.requireNonNull(clazz, Required.CLASS);
-        this.methodName = Objects.requireNonNull(methodName, Required.METHOD);
+        this.task = Objects.requireNonNull(task, "task can not be null");
+        this.name = Objects.requireNonNull(name, "name can not be null");
+        this.scheduler = Objects.requireNonNull(scheduler, "scheduler can not be null");
+        this.executor = Objects.requireNonNull(executor, "executor can not be null");
+        this.clock = Objects.requireNonNull(clock, "clock can not be null");
         this.executionTime = ExecutionTime.forCron(new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX)).parse(cron));
     }
 
+    /**
+     * Hands the execution of the task over to the executor and schedules the
+     * next execution once the task has finished. Never calls itself recursively.
+     */
     @Override
-    @SuppressWarnings("all")
     public void run() {
         try {
-            long delay = delay();
-            if (delay > 0) {
-                Task task = new Task(clazz, methodName);
-                Application.getScheduledExecutorService().schedule(task, delay, TimeUnit.SECONDS).get();
-            }
-        } catch (Exception e) {
-            LOG.error("Failed to execute scheduled cron task on class '{}' with annotated method '{}'", clazz.getName(), methodName, e);
+            executor.execute(() -> {
+                try {
+                    task.run();
+                } catch (RuntimeException e) {
+                    LOG.error("Failed to execute scheduled cron task '{}'", name, e);
+                } finally {
+                    schedule();
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            LOG.debug("Executor rejected cron task '{}', stopping", name);
         }
-        
-        run();
-    }
-    
-    private long delay() throws ExecutionException, InterruptedException {
-        if (secondsToNextExecution() == 0) {
-            try (ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory())) {
-                executor.schedule(() -> {}, 1, TimeUnit.SECONDS).get();
-            }
-        }
-
-        return secondsToNextExecution();
     }
 
-    private long secondsToNextExecution() {
-        return executionTime
-                .timeToNextExecution(ZonedDateTime.now())
-                .orElse(Duration.ofSeconds(-1))
-                .getSeconds();
+    /**
+     * Schedules the next execution of the task
+     *
+     * @return The ScheduledFuture of the next execution or null if there is no further execution
+     */
+    @SuppressWarnings("java:S1452")
+    public ScheduledFuture<?> schedule() {
+        var now = ZonedDateTime.now(clock);
+        var base = lastSlot != null && lastSlot.isAfter(now) ? lastSlot : now;
+
+        var next = executionTime.nextExecution(base);
+        if (next.isEmpty()) {
+            LOG.warn("Cron task '{}' has no further execution and will not be scheduled again", name);
+            return null;
+        }
+
+        lastSlot = next.orElseThrow();
+        try {
+            return scheduler.schedule(this, Duration.between(now, lastSlot).toMillis(), TimeUnit.MILLISECONDS);
+        } catch (RejectedExecutionException e) {
+            LOG.debug("Scheduler rejected cron task '{}', stopping", name);
+            return null;
+        }
     }
 }

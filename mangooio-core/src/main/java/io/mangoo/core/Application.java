@@ -270,7 +270,10 @@ public final class Application {
                 quartzCron.validate();
 
                 var cronTask = new CronTask(classInfo.loadClass(), methodInfo.getName(), at);
-                ScheduledFuture<?> scheduledFuture = scheduledExecutorService.schedule(() -> executorService.submit(cronTask), 0, TimeUnit.SECONDS);
+                ScheduledFuture<?> scheduledFuture = cronTask.schedule();
+                if (scheduledFuture == null) {
+                    throw new IllegalArgumentException("Cron '" + at + "' has no further execution");
+                }
                 getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), at, scheduledFuture, true));
 
                 LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);
