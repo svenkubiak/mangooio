@@ -30,10 +30,7 @@ class ServerSentEventRouteHandlerTest {
     private static final String DEFAULT_URL = "/sse";
     private static final String CLIENT_URL = "/sse/client";
 
-    /**
-     * Records every event of a single connection, so that a targeted send can be told
-     * apart from a broadcast
-     */
+    // Records every event of a single connection, so a targeted send can be told apart from a broadcast.
     private static class RecordingEventHandler implements BackgroundEventHandler {
         private final List<String> events = new CopyOnWriteArrayList<>();
 

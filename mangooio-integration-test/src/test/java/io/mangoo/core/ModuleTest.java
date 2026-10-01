@@ -16,11 +16,6 @@ import java.util.logging.Logger;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-/**
- * 
- * @author sven.kubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class ModuleTest {
 	@Test

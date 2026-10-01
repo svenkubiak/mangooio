@@ -52,11 +52,6 @@ public class InboundCookiesHandler implements HttpHandler {
         nextHandler(exchange);
     }
 
-    /**
-     * Retrieves the current session from the HttpServerExchange
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
     protected Session getSessionCookie(HttpServerExchange exchange) {
         var session = Session.create()
                 .withContent(new HashMap<>())
@@ -95,11 +90,6 @@ public class InboundCookiesHandler implements HttpHandler {
         return session;
     }
 
-    /**
-     * Retrieves the current authentication from the HttpServerExchange
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
     protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
         var authentication = Authentication.create()
                 .withSubject(null)
@@ -138,11 +128,6 @@ public class InboundCookiesHandler implements HttpHandler {
         return authentication;
     }
 
-    /**
-     * Retrieves the flash cookie from the current
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
     protected Flash getFlashCookie(HttpServerExchange exchange) {
         var flash = Flash.create();
         
@@ -174,14 +159,6 @@ public class InboundCookiesHandler implements HttpHandler {
         return flash;
     }
     
-    /**
-     * Retrieves the value of a cookie with a given name from a HttpServerExchange
-     * 
-     * @param exchange The exchange containing the cookie
-     * @param cookieName The name of the cookie
-     * 
-     * @return The value of the cookie or null if none found
-     */
     private String getCookieValue(HttpServerExchange exchange, String cookieName) {
         String value = null;
         var cookie = exchange.getRequestCookie(cookieName);
@@ -192,12 +169,6 @@ public class InboundCookiesHandler implements HttpHandler {
         return value;
     }
 
-    /**
-     * Handles the next request in the handler chain
-     *
-     * @param exchange The HttpServerExchange
-     * @throws Exception Thrown when an exception occurs
-     */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(AuthenticationHandler.class).handleRequest(exchange);
     }

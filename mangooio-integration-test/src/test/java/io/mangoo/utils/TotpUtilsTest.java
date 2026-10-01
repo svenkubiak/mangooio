@@ -16,7 +16,6 @@ class TotpUtilsTest {
     @Test
     void testCreateSecret() {
         //given
-        // No setup needed - method generates random secret
 
         //when
         String secret = TotpUtils.createSecret();
@@ -25,14 +24,12 @@ class TotpUtilsTest {
         assertThat(secret, not(nullValue()));
         assertThat(secret, not(emptyString()));
         assertThat(secret.length(), equalTo(64));
-        // Should contain only valid Base32 characters (A-Z, 2-7)
         assertThat(secret, matchesRegex("^[A-Z2-7]{64}$"));
     }
 
     @Test
     void testCreateSecretUniqueness() {
         //given
-        // No setup needed - method generates random secret
 
         //when
         String secret1 = TotpUtils.createSecret();
@@ -45,7 +42,6 @@ class TotpUtilsTest {
     @Test
     void testCreateSecretMultipleTimes() {
         //given
-        // No setup needed - method generates random secret
 
         //when
         String secret1 = TotpUtils.createSecret();
@@ -61,7 +57,6 @@ class TotpUtilsTest {
     @Test
     void testCreateSecretCharacterRange() {
         //given
-        // No setup needed - method generates random secret
 
         //when
         String secret = TotpUtils.createSecret();
@@ -69,7 +64,6 @@ class TotpUtilsTest {
         //then
         assertThat(secret, not(nullValue()));
         assertThat(secret.length(), equalTo(64));
-        // Check that all characters are in the valid range (A-Z, 2-7)
         for (char c : secret.toCharArray()) {
             assertThat(c, anyOf(
                     allOf(greaterThanOrEqualTo('A'), lessThanOrEqualTo('Z')),
@@ -173,7 +167,6 @@ class TotpUtilsTest {
         //then
         assertThat(totp1, not(nullValue()));
         assertThat(totp2, not(nullValue()));
-        // TOTP values should be the same when generated at the same time
         assertThat(totp1, equalTo(totp2));
     }
 
@@ -328,7 +321,6 @@ class TotpUtilsTest {
         //then
         assertThat(qrCode, not(nullValue()));
         assertThat(qrCode, not(emptyString()));
-        // Should be a valid Base64 string
         assertThat(qrCode, matchesRegex("^[A-Za-z0-9+/]*={0,2}$"));
         // Should be a reasonable length for a QR code image
         assertThat(qrCode.length(), greaterThan(800));
@@ -665,7 +657,6 @@ class TotpUtilsTest {
 
         //then
         assertThat(otpauthURL, not(nullValue()));
-        // Should match the expected otpauth URL format
         Pattern otpauthPattern = Pattern.compile("^otpauth://totp/[^?]+\\?secret=[^&]+&algorithm=SHA512&issuer=[^&]+&digits=6&period=30$");
         assertThat(otpauthURL, matchesPattern(otpauthPattern));
     }
@@ -697,9 +688,7 @@ class TotpUtilsTest {
         //then
         assertThat(qrCode, not(nullValue()));
         assertThat(otpauthURL, not(nullValue()));
-        // QR code should be a valid Base64 string
         assertThat(qrCode, matchesRegex("^[A-Za-z0-9+/]*={0,2}$"));
-        // otpauth URL should contain the expected parameters
         assertThat(otpauthURL, containsString("secret=" + secret));
         assertThat(otpauthURL, containsString("algorithm=SHA512"));
         assertThat(otpauthURL, containsString("issuer=" + issuer));

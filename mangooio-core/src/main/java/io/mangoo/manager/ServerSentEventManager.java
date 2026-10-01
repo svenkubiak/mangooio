@@ -16,22 +16,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ServerSentEventManager {
     private static final Logger LOG = LogManager.getLogger(ServerSentEventManager.class);
 
-    /**
-     * Connections are held in a CopyOnWriteArrayList, as sending is read-dominated and
-     * iterates without holding the map lock. All mutations run inside the compute block of
-     * the map, so that adding and removing a connection can not interleave.
-     */
+    // CopyOnWriteArrayList as sending is read-dominated; all mutations run inside compute, so adding and removing can not interleave.
     private static final Map<String, List<ServerSentEventConnection>> SERVER_SENT_EVENT_CONNECTIONS = new ConcurrentHashMap<>();
 
-    /**
-     * Adds a connection under the given key. The default ServerSentEventHandler uses the
-     * request URI of the connection as the key, so that every connection of a route is
-     * addressed at once. A custom connection callback is free to use a key of its own,
-     * e.g. one derived from a query parameter, to address a single client.
-     *
-     * @param key The key to hold the connection under
-     * @param connection The connection to add
-     */
+    /** The default handler uses the request URI as key; a custom connection callback may use a key of its own to address a single client. */
     public void addConnection(String key, ServerSentEventConnection connection) {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(connection, Required.CONNECTION);
@@ -45,26 +33,13 @@ public class ServerSentEventManager {
         });
     }
 
-    /**
-     * Removes a connection which is held under its request URI. A connection that was
-     * added under a key of its own has to be removed with
-     * {@link #removeConnection(String, ServerSentEventConnection)}, as it can not be
-     * found by its request URI.
-     *
-     * @param connection The connection to remove
-     */
+    /** Only finds connections held under their request URI; use {@link #removeConnection(String, ServerSentEventConnection)} for a custom key. */
     public void removeConnection(ServerSentEventConnection connection) {
         Objects.requireNonNull(connection, Required.CONNECTION);
 
         removeConnection(connection.getRequestURI(), connection);
     }
 
-    /**
-     * Removes a connection from the given key
-     *
-     * @param key The key the connection was added under
-     * @param connection The connection to remove
-     */
     public void removeConnection(String key, ServerSentEventConnection connection) {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(connection, Required.CONNECTION);
@@ -75,13 +50,7 @@ public class ServerSentEventManager {
         });
     }
 
-    /**
-     * Sends data to every open connection held under the given key. Sending runs on a
-     * virtual thread, so this method returns without waiting for the connections.
-     *
-     * @param key The key the connections are held under
-     * @param data The data to send
-     */
+    /** Sends on a virtual thread and returns without waiting for the connections. */
     public void send(String key, String data) {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(data, Required.DATA);
@@ -89,8 +58,7 @@ public class ServerSentEventManager {
         Thread.ofVirtual().start(() -> {
             for (ServerSentEventConnection connection : SERVER_SENT_EVENT_CONNECTIONS.getOrDefault(key, List.of())) {
                 if (connection.isOpen()) {
-                    // A connection can be closed between the check and the send, and a single
-                    // failing connection must not cut the broadcast short for the remaining ones
+                    // A connection can close between check and send, and one failing connection must not abort the broadcast.
                     try {
                         connection.send(data);
                     } catch (RuntimeException e) {

@@ -18,11 +18,6 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.when;
 
-/**
- *
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class ServerSentEventManagerTest {
     private static final int CONNECTIONS = 200;

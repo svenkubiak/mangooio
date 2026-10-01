@@ -25,11 +25,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 @Execution(ExecutionMode.SAME_THREAD)
 class AuthenticationTest {

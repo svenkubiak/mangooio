@@ -49,12 +49,7 @@ public final class CommonUtils {
     }
 
     /**
-     * Registers a class for serialization and deserialization via {@link #serializeToBase64(Serializable)}
-     * and {@link #deserializeFromBase64(String)}.
-     * <p>
-     * Must be invoked during application startup before first use. Only deserialize data from trusted sources.
-     *
-     * @param type The class to register
+     * Must be called during application startup before first use; only deserialize data from trusted sources.
      */
     public static void registerSerializable(Class<?> type) {
         Objects.requireNonNull(type, Required.CLASS);
@@ -62,19 +57,8 @@ public final class CommonUtils {
     }
     
     /**
-     * Hashes a given clear text  with a given salt using Argon2Id hashing
-     * <p>
-     * The number of computations that may run at the same time is limited, see
-     * {@link PasswordHasher}. A call waits for a free slot and is rejected with a
-     * {@link MangooHashingException} once it waited longer than
-     * authentication.hashing.timeout
-     * 
-     * @param cleartext The clear text
-     * @param salt The salt
-     *
-     * @return An Argon2id hash in the PHC string format, see {@link io.mangoo.crypto.Argon2Hash}
-     *
-     * @throws MangooHashingException If no hashing slot became available in time
+     * Returns an Argon2id hash in the PHC string format.
+     * Throws {@link MangooHashingException} if no hashing slot becomes available within authentication.hashing.timeout.
      */
     public static String hashArgon2(String cleartext, String salt) {
         Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
@@ -84,13 +68,7 @@ public final class CommonUtils {
     }
 
     /**
-     * Hashes a given clear text with the application secret as salt using Argon2Id hashing
-     *
-     * @param cleartext The clear text
-     *
-     * @return An Argon2id hash in the PHC string format, see {@link io.mangoo.crypto.Argon2Hash}
-     *
-     * @throws MangooHashingException If no hashing slot became available in time
+     * Uses the application secret as salt; throws MangooHashingException if no hashing slot becomes available in time.
      */
     public static String hashArgon2(String cleartext) {
         Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
@@ -100,25 +78,8 @@ public final class CommonUtils {
     }
     
     /**
-     * Matches a given clear text with salt using Argon2Id against an already Argon2Id hashed value
-     * <p>
-     * A hash in the PHC string format is verified with the parameters it carries, the current
-     * configuration is deliberately ignored. The given salt must be the one the hash was created
-     * with, a mismatch is a failed verification and not silently verified against the embedded
-     * salt. A hash that is not in PHC format was created by an earlier mangoo I/O version and is
-     * verified with the parameters that version used (m=80000, t=6, p=2) and the given salt, so
-     * that an upgrade does not lock out existing users. Use {@link #needsRehash(String)} after
-     * this method returned true to find out whether the stored hash should be replaced
-     *
-     * @param cleartext The clear text
-     * @param salt The salt the hash was created with
-     * @param hash The hashed value for comparison
-     *
-     * @return True if hashes match, false otherwise
-     *
-     * @throws MangooHashingException If no hashing slot became available in time. This is
-     *         deliberately not reported as a mismatch, an overload situation and a wrong
-     *         password must stay distinguishable for the caller
+     * PHC hashes are verified with their embedded parameters, legacy non-PHC hashes with the former defaults (m=80000, t=6, p=2) and the given salt.
+     * Throws {@link MangooHashingException} instead of returning false if no hashing slot becomes available in time.
      */
     public static boolean matchArgon2(String cleartext, String salt, String hash) {
         Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
@@ -129,18 +90,7 @@ public final class CommonUtils {
     }
 
     /**
-     * Matches a given clear text using the application secret as salt using Argon2Id against an already Argon2Id hashed value
-     * <p>
-     * Legacy hashes and rehashing behave as described in {@link #matchArgon2(String, String, String)}
-     *
-     * @param cleartext The clear text
-     * @param hash The hashed value for comparison
-     *
-     * @return True if hashes match, false otherwise
-     *
-     * @throws MangooHashingException If no hashing slot became available in time. This is
-     *         deliberately not reported as a mismatch, an overload situation and a wrong
-     *         password must stay distinguishable for the caller
+     * Uses the application secret as salt, otherwise behaves like {@link #matchArgon2(String, String, String)}.
      */
     public static boolean matchArgon2(String cleartext, String hash) {
         Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
@@ -152,23 +102,8 @@ public final class CommonUtils {
     }
 
     /**
-     * Checks whether a stored hash was created with something else than the currently
-     * configured Argon2id parameters and should be replaced
-     * <p>
-     * True for a hash that is not in the PHC string format, it was created by an earlier
-     * mangoo I/O version, and for a PHC hash whose embedded parameters differ from the
-     * configured ones
-     * <p>
-     * <strong>Only evaluate this after {@link #matchArgon2(String, String, String)} or
-     * {@link #matchArgon2(String, String)} returned true.</strong> Recomputing a hash needs
-     * the clear text, which is only known to be correct after a successful verification, and
-     * a failed login must never trigger a rehash. The typical use is to call
-     * {@link #hashArgon2(String, String)} with the same clear text and salt right after a
-     * successful login and to store the result
-     *
-     * @param hash The stored hash
-     *
-     * @return True if the hash should be recomputed with the current parameters, false otherwise
+     * True for legacy non-PHC hashes and for hashes whose parameters differ from the current configuration.
+     * Only evaluate after matchArgon2 returned true, as a failed login must never trigger a rehash.
      */
     public static boolean needsRehash(String hash) {
         Argument.requireNonBlank(hash, Required.HASH);
@@ -177,11 +112,7 @@ public final class CommonUtils {
     }
     
     /**
-     * Hashes a given clear text data with SHA3-512
-     * For simple hashing tasks
-     * 
-     * @param data The clear text data
-     * @return SHA512 hashed value or null if hashing failed
+     * Uses SHA3-512; returns null if hashing failed.
      */
     public static String hexSHA512(String data) {
         Argument.requireNonBlank(data, Required.DATA);
@@ -199,11 +130,7 @@ public final class CommonUtils {
     }
     
     /**
-     * Serializes a registered object into a Base64 encoded data string.
      * The object's class must be registered via {@link #registerSerializable(Class)} first.
-     *
-     * @param object The object to serialize
-     * @return The base64 encoded data string
      */
     public static String serializeToBase64(Serializable object)  {
         Objects.requireNonNull(object, Required.OBJECT);
@@ -213,12 +140,7 @@ public final class CommonUtils {
     }
     
     /**
-     * Deserializes a given Base64 encoded data string into a registered object.
-     * Only use with trusted data. The object's class must be registered via {@link #registerSerializable(Class)} first.
-     *
-     * @param data The base64 encoded data string
-     * @param <T> Just for JavaDoc can be ignored
-     * @return The required object
+     * Only use with trusted data; the object's class must be registered via {@link #registerSerializable(Class)} first.
      */
     @SuppressWarnings("unchecked")
     public static <T> T deserializeFromBase64(String data) {
@@ -228,139 +150,64 @@ public final class CommonUtils {
         return (T) FORY.deserialize(bytes);
     }
     
-    /**
-     * Encodes a given string to a Base64 byte array
-     * 
-     * @param data The data to convert
-     * @return The converted byte array
-     */
     public static byte[] encodeToBase64(String data) {
         Argument.requireNonBlank(data, Required.DATA);
         return BASE64_ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * URL Encodes a given string to a Base64 byte array
-     *
-     * @param data The data to convert
-     * @return The converted byte array
-     */
     public static byte[] urlEncodeToBase64(String data) {
         Argument.requireNonBlank(data, Required.DATA);
         return BASE64_URL_ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * URL Encodes a given string to a Base64 byte array without padding
-     *
-     * @param data The data to convert
-     * @return The converted byte array
-     */
     public static byte[] urlEncodeWithoutPaddingToBase64(String data) {
         Argument.requireNonBlank(data, Required.DATA);
         return BASE64_URL_ENCODER.withoutPadding().encode(data.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * URL Encodes a given string to a Base64 byte array without padding
-     *
-     * @param data The data to convert
-     * @return The converted byte array
-     */
     public static String urlEncodeWithoutPaddingToBase64(byte [] data) {
         Objects.requireNonNull(data, Required.DATA);
         return BASE64_URL_ENCODER.withoutPadding().encodeToString(data);
     }
 
-    /**
-     * URL Encodes a given string to a Base64 byte array
-     *
-     * @param data The data to convert
-     * @return The converted byte array
-     */
     public static byte[] urlDecodeFromBase64(byte[] data) {
         Objects.requireNonNull(data, Required.DATA);
         return BASE64_URL_DECODER.decode(data);
     }
 
-    /**
-     * URL Encodes a given string to a Base64 byte array
-     *
-     * @param data The data to convert
-     * @return The converted byte array
-     */
     public static byte[] urlDecodeFromBase64(String data) {
         Argument.requireNonBlank(data, Required.DATA);
         return BASE64_URL_DECODER.decode(data.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * Encodes a given string to a Base32 string
-     *
-     * @param data The data to convert
-     * @return The converted byte array
-     */
     public static String encodeToBase32(String data) {
         Argument.requireNonBlank(data, Required.DATA);
         return BASE32_ENCODER.encodeToString(data.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * Encodes a given string to a Base64 byte array
-     *
-     * @param data The data to convert
-     * @return The converted byte array
-     */
     public static byte[] encodeToBase64(byte[] data) {
         Objects.requireNonNull(data, Required.DATA);
         return BASE64_ENCODER.encode(data);
     }
     
-    /**
-     * Decodes a given Base64 encoded string to a byte array
-     * 
-     * @param data The data to convert
-     * @return The converted byte array
-     */
     public static byte[] decodeFromBase64(String data) {
         Argument.requireNonBlank(data, Required.DATA);
         return BASE64_DECODER.decode(data);
     }
 
-    /**
-     * Creates a UUIDv6 random String
-     *
-     * @return UUIDv6 String
-     */
     public static String uuidV6() {
         return Generators.timeBasedReorderedGenerator().generate().toString();
     }
 
-    /**
-     * Creates a UUIDv7 random String
-     *
-     * @return UUIDv7 String
-     */
     public static String uuidV7() {
         return Generators.timeBasedEpochRandomGenerator().generate().toString();
     }
 
-    /**
-     * Creates a UUIDv4 random String
-     *
-     * @return UUIDv4 String
-     */
     public static String uuidV4() {
         return Generators.randomBasedGenerator().generate().toString();
     }
 
 
-    /**
-     * Calculates the bit length of a given byte array
-     *
-     * @param bytes The byte array
-     * @return The number of bit
-     */
     public static int bitLength(byte[] bytes) {
         Objects.requireNonNull(bytes, Required.BYTES);
         int byteLength = bytes.length;
@@ -375,35 +222,17 @@ public final class CommonUtils {
         return length;
     }
 
-    /**
-     * Calculates the bit length of a given string
-     *
-     * @param string The string
-     * @return The number of bit
-     */
     public static int bitLength(String string) {
         Argument.requireNonBlank(string, Required.STRING);
         return bitLength(string.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * Copies a given map to a new map instance
-     *
-     * @param originalMap The map to copy
-     * @return A new Map instance with value from originalMap
-     */
     public static Map<String, String> copyMap(Map<String, String> originalMap) {
         Objects.requireNonNull(originalMap, Required.MAP);
 
         return new HashMap<>(originalMap);
     }
 
-    /**
-     * Copies a given map to a new map instance
-     *
-     * @param originalMap The map to copy
-     * @return A new Map instance with value from originalMap
-     */
     public static Map<String, String> toStringMap(Map<String, Object> originalMap) {
         Objects.requireNonNull(originalMap, Required.MAP);
 
@@ -417,14 +246,7 @@ public final class CommonUtils {
     }
 
     /**
-     * Generates a random string with the given length.
-     * <p>
-     * Based on commons-lang3 RandomStringUtils using SecureRandom
-     * <p>
-     * Uses: uppercase letters, lowercase letters and numbers 0-9
-     *
-     * @param length The length of the random string
-     * @return A random String
+     * Uses SecureRandom and the URL-safe Base64 alphabet.
      */
     public static String randomString(int length) {
         Preconditions.checkArgument(length >= MIN_LENGTH, "Length must be at least " + MIN_LENGTH + " characters for security");
@@ -438,12 +260,6 @@ public final class CommonUtils {
         return token.substring(0, length);
     }
 
-    /**
-     * Checks if a resource exists in the classpath
-     *
-     * @param name The name of the resource
-     * @return True if the resources exists, false otherwise
-     */
     public static boolean resourceExists(String name) {
         Argument.requireNonBlank(name, Required.NAME);
 
@@ -451,17 +267,14 @@ public final class CommonUtils {
         try {
             resource = Resources.getResource(name);
         } catch (IllegalArgumentException e) { // NOSONAR Intentionally not logging or throwing this exception
-            // Intentionally left blank
+            // A missing resource is reported as false
         }
 
         return resource != null;
     }
 
     /**
-     * Reads the content of a local resource to String
-     *
-     * @param resource The resource path
-     * @return The content of the resource or null
+     * Returns an empty string if the resource cannot be read.
      */
     public static String readResourceToString(String resource) {
         Argument.requireNonBlank(resource, Required.RESOURCE);
@@ -470,18 +283,13 @@ public final class CommonUtils {
         try {
             content = Resources.toString(Resources.getResource(resource), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            // Intentionally left blank
+            // An unreadable resource yields an empty string
         }
 
         return content;
     }
 
     /**
-     * Checks if the token with the given ID (jti) is revoked
-     *
-     * @param id The ID of the token
-     * @return True if the token is revoked, false otherwise
-     *
      * @deprecated Use {@link TokenBlacklist#isRevoked(String, String, Instant)} instead
      */
     @Deprecated(since = "10.14.0", forRemoval = true)
@@ -492,12 +300,7 @@ public final class CommonUtils {
     }
 
     /**
-     * Revokes the token with the given ID (jti) for the maximum lifetime of an authentication token
-     *
-     * @param id The ID of the token
-     *
-     * @deprecated Use {@link TokenBlacklist#revoke(String, Instant)} to revoke a single token or
-     * {@link TokenBlacklist#revokeSubject(String)} to revoke all tokens of a subject instead
+     * @deprecated Use {@link TokenBlacklist#revoke(String, Instant)} or {@link TokenBlacklist#revokeSubject(String)} instead
      */
     @Deprecated(since = "10.14.0", forRemoval = true)
     public static void blacklist(String id) {

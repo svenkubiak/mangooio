@@ -37,93 +37,54 @@ public final class Template {
     private Template () {
     }
 
-    /**
-     * @return The relative path of the admin template
-     */
     public static String adminPath() {
         return ADMIN_TEMPLATE_PATH;
     }
 
-    /**
-     * @return The relative path of the cache template
-     */
     public static String cachePath() {
         return CACHE_TEMPLATE_PATH;
     }
 
-    /**
-     * @return The relative path of the scheduler template
-     */
     public static String schedulerPath() {
         return SCHEDULER_TEMPLATE_PATH;
     }
 
-    /**
-     * @return The relative path of the cache template
-     */
     public static String twoFactorPath() {
         return TWO_FACTOR_TEMPLATE_PATH;
     }
 
-    /**
-     * @return The relative path of the login template
-     */
     public static String loginPath() {
         return LOGIN_TEMPLATE_PATH;
     }
 
-    /**
-     * @return The content of the default not found template
-     */
     public static String notFound() {
         return NOT_FOUND_CONTENT;
     }
 
-    /**
-     * @return The content of the default internal server error template
-     */
     public static String internalServerError() {
         return INTERNAL_SERVER_ERROR_CONTENT;
     }
 
-    /**
-     * @return The content of the default ok template
-     */
     public static String ok() {
         return OK_CONTENT;
     }
 
-    /**
-     * @return The content of the default bad request template
-     */
     public static String badRequest() {
         return BAD_REQUEST_CONTENT;
     }
 
-    /**
-     * @return The content of the default forbidden template
-     */
     public static String forbidden() {
         return FORBIDDEN_CONTENT;
     }
 
-    /**
-     * @return The content of the default xxx template
-     */
     public static String xxx() {
         return XXX_CONTENT;
     }
 
-    /**
-     * @return The relative path of the tools template
-     */
     public static String toolsPath() {
         return TOOLS_TEMPLATE_PATH;
     }
 
-    /**
-     * @return The content of the default unauthorized template
-     */
     public static String unauthorized() {
         return UNAUTHORIZED_CONTENT;
     }

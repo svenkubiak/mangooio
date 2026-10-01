@@ -40,10 +40,8 @@ public class FormHandler implements HttpHandler {
             form = getForm(exchange);
         }
 
-        // The form validates against the messages of the current request, so that validation
-        // errors are rendered in the locale of this request only. This also applies to a form
-        // that was restored from the flash scope: its messages are not part of the cookie, and
-        // the locale of the request that kept the form is not necessarily the one of this request
+        // Always use the messages of this request, also for a form restored from the flash cookie,
+        // so that validation errors are rendered in the locale of the current request.
         form.withMessages(attachment.getMessages());
         attachment.setForm(form);
 
@@ -51,13 +49,6 @@ public class FormHandler implements HttpHandler {
         nextHandler(exchange);
     }
 
-    /**
-     * Retrieves the form parameter from a request
-     *
-     * @param exchange The Undertow HttpServerExchange
-     *
-     * @throws IOException If form parsing fails
-     */
     protected Form getForm(HttpServerExchange exchange) throws IOException {
         final Form form = Application.getInstance(Form.class);
         if (!RequestUtils.isPostPutPatch(exchange)) {
@@ -130,18 +121,7 @@ public class FormHandler implements HttpHandler {
         return form;
     }
 
-    /**
-     * Logs why a form was rejected and creates the exception to throw
-     * <p>
-     * The exception is raised before any controller runs, so the request never reaches
-     * application code that could log it. Without this line the client only sees an
-     * error status with no body and nothing explains it on the server side
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @param reason The reason the form was rejected
-     *
-     * @return An IOException carrying the reason
-     */
+    // Logged here because the exception is raised before any controller runs, so nothing else would explain the rejection on the server side.
     private IOException rejected(HttpServerExchange exchange, String reason) {
         LOG.warn("Rejected form of request {} {}: {}",
                 exchange.getRequestMethod(), exchange.getRequestURI(), reason);
@@ -149,12 +129,6 @@ public class FormHandler implements HttpHandler {
         return new IOException(reason);
     }
 
-    /**
-     * Handles the next request in the handler chain
-     *
-     * @param exchange The HttpServerExchange
-     * @throws Exception Thrown when an exception occurs
-     */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(RequestHandler.class).handleRequest(exchange);
     }

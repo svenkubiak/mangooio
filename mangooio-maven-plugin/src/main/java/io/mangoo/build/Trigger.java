@@ -24,14 +24,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This is a refactored version of
- * DelayedRestartTrigger.java from the Ninja Web Framework
- *
- * Original source code can be found here:
+ * Refactored version of DelayedRestartTrigger.java from the Ninja Web Framework:
  * https://github.com/ninjaframework/ninja/blob/develop/ninja-maven-plugin/src/main/java/ninja/build/DelayedRestartTrigger.java
- *
- * @author svenkubiak
- *
  */
 public class Trigger extends Thread {
     private static final Logger LOG = LogManager.getLogger(Trigger.class);
@@ -116,7 +110,7 @@ public class Trigger extends Thread {
         try {
             Thread.sleep(settleDownMillis);
         } catch (InterruptedException e) {
-            //intentionally left blank
+            // An interrupt only ends the settle-down wait early
         }
     }
 

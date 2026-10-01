@@ -10,11 +10,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Indexed {
-    /**
-     * Specifies that a given field is used as an index in the database
-     *
-     * @return The filter (either ascending or descending), default ascending
-     */
     public Sort sort() default Sort.ASCENDING;
     public boolean unique() default false;
     public boolean caseSensitive() default true;

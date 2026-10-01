@@ -10,11 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-/**
- * 
- * @author sven.kubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class HttpMethodsTest {
     

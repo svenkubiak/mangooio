@@ -18,11 +18,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.mockito.Mockito.mock;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class ResponseTest {
     

@@ -20,11 +20,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-/**
- *
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class ApplicationControllerTest {
     private static final String JSON = "{\"foo\":\"bar\"}";

@@ -65,12 +65,6 @@ public class LocaleHandler implements HttpHandler {
         nextHandler(exchange);
     }
 
-    /**
-     * Handles the next request in the handler chain
-     *
-     * @param exchange The HttpServerExchange
-     * @throws Exception Thrown when an exception occurs
-     */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(InboundCookiesHandler.class).handleRequest(exchange);
     }

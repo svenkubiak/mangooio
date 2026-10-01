@@ -125,15 +125,6 @@ public class TemplateEngine {
         return templateName.endsWith(TEMPLATE_SUFFIX) ? templateName : (templateName + TEMPLATE_SUFFIX);
     }
 
-    /**
-     * Retrieves the lines of code where an exception occurred
-     *
-     * @param errorLine The line number of the exception
-     * @param sourcePath The path to the source code file
-     * @return A list of source code with the exception and surrounding lines
-     *
-     * @throws IOException If an IO exception occurs
-     */
     @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN")
     private List<Source> getSources(int errorLine, String sourcePath) throws IOException {
         Objects.requireNonNull(sourcePath, Required.SOURCE_PATH);
@@ -164,9 +155,6 @@ public class TemplateEngine {
         return sources;
     }
 
-    /**
-     * @return The OS specific path to src/main/java
-     */
     private String getBaseDirectory() {
        return new StringBuilder()
             .append(System.getProperty("user.dir"))
@@ -179,12 +167,6 @@ public class TemplateEngine {
             .toString();
     }
 
-    /**
-     * Retrieves the source code file name from an StackTraceElement
-     *
-     * @param stackTraceElement The StackTraceElement to check
-     * @return Source code filename
-     */
     private String getSourceCodePath(StackTraceElement stackTraceElement) {
         Objects.requireNonNull(stackTraceElement, Required.STACK_TRACE_ELEMENT);
 

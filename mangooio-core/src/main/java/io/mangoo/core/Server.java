@@ -27,12 +27,7 @@ public final class Server {
         return headers;
     }
     
-    /**
-     * Sets a custom header that is used globally on server responses
-     * 
-     * @param header The name of the header
-     * @param value The value of the header
-     */
+    /** Sets a header that is added to every server response. */
     public static void header(HttpString header, String value) {
         Objects.requireNonNull(header, Required.HEADER);
         

@@ -46,7 +46,7 @@ public class Session {
     }
 
     /**
-     * Invalidates the session by sending expiring the client cookie
+     * Expires the session cookie on the client.
      */
     public void invalidate() {
         invalid = true;
@@ -56,52 +56,26 @@ public class Session {
         keep = true;
     }
 
-    /**
-     * Checks if the session has at least one entry
-     *
-     * @return True if the session has at least one entry, false otherwise
-     */
     public boolean hasContent() {
         return !values.isEmpty();
     }
 
-    /**
-     * Retrieves a specific value from the session
-     *
-     * @param key The key
-     * @return The value or null if none present
-     */
     public String get(String key) {
         return values.get(key);
     }
 
-    /**
-     * @return All values of the session
-     */
     public Map<String, String> getValues() {
         return values;
     }
 
-    /**
-     * @return The expiry date of the session
-     */
     public LocalDateTime getExpires() {
         return expires;
     }
 
-    /**
-     * @return The csrf token of the session
-     */
     public String getCsrf() {
         return csrf;
     }
 
-    /**
-     * Adds a value to the session, overwriting an existing value
-     *
-     * @param key The key to store the value
-     * @param value The value to store
-     */
     public void put(String key, String value) {
         if (INVALID_CHARACTERS.contains(key) || INVALID_CHARACTERS.contains(value)) {
             LOG.error("Session key or value can not contain the following characters: spaces, |, & or :");
@@ -111,19 +85,11 @@ public class Session {
         }
     }
 
-    /**
-     * Removes a value with a given key from the session
-     *
-     * @param key The key to remove
-     */
     public void remove(String key) {
         values.remove(key);
         changed = true;
     }
 
-    /**
-     * Clears the complete session
-     */
     public void clear() {
         values = new HashMap<>();
         invalid = true;

@@ -42,7 +42,6 @@ class CoreUtilsTest {
     @Test
     void testGetVersion() {
         //given
-        // No setup needed for static method
 
         //when
         String version = MangooUtils.getVersion();
@@ -55,7 +54,6 @@ class CoreUtilsTest {
     @Test
     void testGetLanguages() throws MangooTranslationException {
         //given
-        // No setup needed for static method
 
         //when
         Set<String> languages = MangooUtils.getLanguages();
@@ -68,7 +66,6 @@ class CoreUtilsTest {
     @Test
     void testGetRootFolder() {
         //given
-        // No setup needed for static method
 
         //when
         String rootFolder = MangooUtils.getRootFolder();
@@ -150,7 +147,6 @@ class CoreUtilsTest {
     @Test
     void testGetAdminCookieWithoutTwoFactor() throws MangooJwtException {
         //given
-        // No setup needed for static method
 
         //when
         Cookie cookie = MangooUtils.getAdminCookie(false);
@@ -168,7 +164,6 @@ class CoreUtilsTest {
     @Test
     void testGetAdminCookieWithTwoFactor() throws MangooJwtException {
         //given
-        // No setup needed for static method
 
         //when
         Cookie cookie = MangooUtils.getAdminCookie(true);
@@ -186,7 +181,6 @@ class CoreUtilsTest {
     @Test
     void testGetAdminCookieName() {
         //given
-        // No setup needed for static method
 
         //when
         String cookieName = MangooUtils.getAdminCookieName();
@@ -443,7 +437,6 @@ class CoreUtilsTest {
     @Test
     void testFlattenMapWithNullMap() {
         //given
-        // No setup needed for null input
 
         //when & then
         NullPointerException exception = assertThrows(NullPointerException.class,

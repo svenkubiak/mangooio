@@ -50,7 +50,6 @@ public final class JwtUtils {
 
             JWTClaimsSet claimsSet = claimsBuilder.build();
 
-            // Step 1: Sign JWT using KEY with HS512
             var jwsHeader = new JWSHeader.Builder(JWSAlgorithm.HS512)
                     .type(JOSEObjectType.JWT)
                     .build();
@@ -59,7 +58,6 @@ public final class JwtUtils {
             var signer = new MACSigner(jwtData.key());
             signedJWT.sign(signer);
 
-            // Step 2: Encrypt with SECRET using direct encryption with AES256-GCM
             var jweHeader = new JWEHeader.Builder(
                     JWEAlgorithm.DIR,
                     EncryptionMethod.A256CBC_HS512)
@@ -82,7 +80,6 @@ public final class JwtUtils {
         validate(jwtData);
 
         try {
-            // Step 1: Parse encrypted JWE
             var jweObject = JWEObject.parse(jwt);
 
             if (!JWEAlgorithm.DIR.equals(jweObject.getHeader().getAlgorithm())) {
@@ -92,24 +89,20 @@ public final class JwtUtils {
                 throw new JOSEException("Unexpected JWE encryption method: " + jweObject.getHeader().getEncryptionMethod());
             }
 
-            // Step 2: Decrypt using SECRET with direct decryption
             var decrypter = new DirectDecrypter(jwtData.secret());
             jweObject.decrypt(decrypter);
 
-            // Step 3: Extract and parse Signed JWT
             var signedJWT = SignedJWT.parse(jweObject.getPayload().toString());
 
             if (!JWSAlgorithm.HS512.equals(signedJWT.getHeader().getAlgorithm())) {
                 throw new JOSEException("Unexpected JWS algorithm: " + signedJWT.getHeader().getAlgorithm());
             }
 
-            // Step 4: Verify signature using KEY
             var verifier = new MACVerifier(jwtData.key());
             if (!signedJWT.verify(verifier)) {
                 throw new JOSEException("JWT signature verification failed");
             }
 
-            // Validate claims
             var claims = signedJWT.getJWTClaimsSet();
             var now = Instant.now();
 
@@ -126,7 +119,7 @@ public final class JwtUtils {
                 throw new JOSEException("Audience mismatch");
             }
 
-            long skew = 30; // allowable clock skew
+            long skew = 30;
 
             if (exp.toInstant().isBefore(now.minusSeconds(skew))) {
                 throw new JOSEException("Token expired");
@@ -156,7 +149,6 @@ public final class JwtUtils {
         Preconditions.checkArgument(secret.length > 0, Required.SECRET);
 
         try {
-            // Step 1: Parse encrypted JWE
             var jweObject = JWEObject.parse(jwt);
 
             if (!JWEAlgorithm.DIR.equals(jweObject.getHeader().getAlgorithm())) {
@@ -166,14 +158,12 @@ public final class JwtUtils {
                 throw new JOSEException("Unexpected JWE encryption method: " + jweObject.getHeader().getEncryptionMethod());
             }
 
-            // Step 2: Decrypt using SECRET (necessary to access payload)
             var decrypter = new DirectDecrypter(secret);
             jweObject.decrypt(decrypter);
 
-            // Step 3: Extract and parse Signed JWT without verifying signature
             var signedJWT = SignedJWT.parse(jweObject.getPayload().toString());
 
-            // Step 4: Extract claims WITHOUT signature verification
+            // The signature is NOT verified here
             var claims = signedJWT.getJWTClaimsSet();
 
             return claims.getSubject();
@@ -194,8 +184,8 @@ public final class JwtUtils {
 
     private static void validate(JwtData jwtData) {
         Objects.requireNonNull(jwtData, Required.JWT_DATA);
-        Objects.requireNonNull(jwtData.secret(), Required.SECRET); // encryption secret must exist
-        Objects.requireNonNull(jwtData.key(), Required.KEY);       // signing key must exist
+        Objects.requireNonNull(jwtData.secret(), Required.SECRET);
+        Objects.requireNonNull(jwtData.key(), Required.KEY);
         Argument.requireNonBlank(jwtData.issuer(), Required.ISSUER);
         Argument.requireNonBlank(jwtData.audience(), Required.AUDIENCE);
         Preconditions.checkArgument(jwtData.ttlSeconds() > 0, "TTL must be greater than 0.");
@@ -206,8 +196,8 @@ public final class JwtUtils {
     }
 
     public record JwtData(
-            byte[] secret,        // encryption/decryption key (exactly 64 bytes, A256CBC_HS512)
-            byte[] key,           // signing/verifying key
+            byte[] secret,        // exactly 64 bytes (A256CBC_HS512)
+            byte[] key,
             String issuer,
             String audience,
             String subject,

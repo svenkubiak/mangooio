@@ -18,11 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class AdminControllerTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";

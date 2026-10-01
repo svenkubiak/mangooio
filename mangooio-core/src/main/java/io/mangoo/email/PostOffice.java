@@ -60,11 +60,7 @@ public class PostOffice {
         this.session = Session.getInstance(properties, authenticator);
     }
 
-    /**
-     * Processes the given mail message and passes it to the underlying SMTP handling
-     *
-     * @param mail The mail to send
-     */
+    /** Sends the mail synchronously; failures are logged and not thrown to the caller. */
     public void send(Mail mail) {
         Objects.requireNonNull(mail, Required.MAIL);
 

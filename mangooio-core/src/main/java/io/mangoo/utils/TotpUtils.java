@@ -24,9 +24,7 @@ public class TotpUtils {
     }
 
     /**
-     * Generates a 64 byte (512 bit) secret
-     *
-     * @return A 64 characters random string based on SecureRandom
+     * Returns a random 64 character Base32 secret.
      */
     public static String createSecret() {
         var buffer = new StringBuilder(BYTES_SECRET);
@@ -42,14 +40,6 @@ public class TotpUtils {
         return buffer.toString();
     }
 
-    /**
-     * Creates the current TOTP based on the following default values:
-     * SHA512 algorithm, 6 digits, 30 seconds time period
-     * 
-     * @param secret The secret to use
-     * 
-     * @return The totp value or null if generation failed
-     */
     public static String getTotp(String secret) {
         Argument.requireNonBlank(secret, Required.SECRET);
 
@@ -64,15 +54,6 @@ public class TotpUtils {
         return totp.now();
     }
 
-    /**
-     * Verifies a given TOTP based on the following default values:
-     * SHA512 algorithm, 6 digits, 30 seconds time period
-     *
-     * @param secret The secret to use
-     * @param totp The TOTP to verify
-     *
-     * @return True if the TOTP is valid, false otherwise
-     */
     public static boolean verifyTotp(String secret, String totp) {
         Argument.requireNonBlank(secret, Required.SECRET);
         Argument.requireNonBlank(totp, Required.TOTP);
@@ -89,13 +70,7 @@ public class TotpUtils {
     }
 
     /**
-     * Generates a QR code image as a base64 PNG
-     *
-     * @param name The name of the account
-     * @param issuer The name of the issuer
-     * @param secret The secret to use
-     *
-     * @return The QR code as a base64 PNG image
+     * Returns the QR code as a base64 encoded PNG image.
      */
     public static String getQRCode(String name, String issuer, String secret) {
         Argument.requireNonBlank(name, Required.NAME);
@@ -112,15 +87,6 @@ public class TotpUtils {
         return new String(CommonUtils.encodeToBase64(qrCodeBytes), StandardCharsets.UTF_8);
     }
 
-    /**
-     * Generates an OtpAuth url to share a secret with a user
-     * 
-     * @param name The name of the account
-     * @param issuer The name of the issuer
-     * @param secret The secret to use
-     *
-     * @return An OtpAuth url
-     */
     public static String getOtpAuthURL(String name, String issuer, String secret) {
         Argument.requireNonBlank(name, Required.ACCOUNT_NAME);
         Argument.requireNonBlank(secret, Required.SECRET);

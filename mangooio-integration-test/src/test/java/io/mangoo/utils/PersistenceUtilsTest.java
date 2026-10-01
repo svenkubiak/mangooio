@@ -15,18 +15,15 @@ class PersistenceUtilsTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        // Save the original state of the COLLECTIONS map
         Field collectionsField = PersistenceUtils.class.getDeclaredField("COLLECTIONS");
         collectionsField.setAccessible(true);
         originalCollections = new java.util.concurrent.ConcurrentHashMap<>((Map<String, String>) collectionsField.get(null));
         
-        // Clear the collections map for each test
         ((Map<String, String>) collectionsField.get(null)).clear();
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        // Restore the original state of the COLLECTIONS map
         Field collectionsField = PersistenceUtils.class.getDeclaredField("COLLECTIONS");
         collectionsField.setAccessible(true);
         Map<String, String> collections = (Map<String, String>) collectionsField.get(null);
@@ -406,8 +403,6 @@ class PersistenceUtilsTest {
         assertThat(retrievedValue, equalTo(value));
     }
 
-    // Helper inner class for testing
     private static class InnerTestClass {
-        // Empty class for testing
     }
 }

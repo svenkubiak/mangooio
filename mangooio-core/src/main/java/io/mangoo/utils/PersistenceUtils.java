@@ -12,12 +12,6 @@ public final class PersistenceUtils {
     private PersistenceUtils(){
     }
 
-    /**
-     * Adds a collection to be retrieved for the datastore
-     *
-     * @param key The key of the collection
-     * @param value The value/name of the collection
-     */
     public static void addCollection(String key, String value) {
         Argument.requireNonBlank(key, Required.KEY);
         Argument.requireNonBlank(value, Required.VALUE);
@@ -25,12 +19,6 @@ public final class PersistenceUtils {
         COLLECTIONS.put(key, value);
     }
 
-    /**
-     * Returns a collection name based on the given class
-     *
-     * @param clazz The class to lookup
-     * @return The name of the collection
-     */
     public static String getCollectionName(Class<?> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS);
 

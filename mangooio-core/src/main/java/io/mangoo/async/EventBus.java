@@ -18,13 +18,7 @@ public class EventBus<T> {
     private final AtomicLong handledEvents = new AtomicLong();
     private final AtomicLong numSubscribers = new AtomicLong();
 
-    /**
-     * Register a subscriber class on a provided queue
-     *
-     * @param queue The name of the queue (case-sensitive), which is the binary name of the
-     *              event class as returned by {@link Class#getName()}, e.g. com.example.Events$OrderCreated
-     * @param subscriber The subscriber of the queue
-     */
+    /** The queue is the binary name of the event class as returned by {@link Class#getName()}, e.g. com.example.Events$OrderCreated. */
     public void register(String queue, Class<?> subscriber) {
         Objects.requireNonNull(queue, Required.QUEUE);
         Objects.requireNonNull(subscriber, Required.SUBSCRIBER);
@@ -33,12 +27,7 @@ public class EventBus<T> {
         numSubscribers.addAndGet(1);
     }
 
-    /**
-     * Publishes a payload to a queue which is then recieved
-     * by all registered subscribers
-     *
-     * @param payload the playload to send
-     */
+    /** Delivers the payload asynchronously to all subscribers of its class; subscriber failures are only logged. */
     @SuppressWarnings("all")
     public void publish(T payload) {
         Objects.requireNonNull(payload, Required.PAYLOAD);

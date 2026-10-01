@@ -26,23 +26,16 @@ public final class RequestUtils {
     }
     
     /**
-     * Returns the route parameters of a request, e.g. {@code id} of a route {@code /foo/{id}}.
-     * <p>
-     * These are resolved by the router and can not be forged by a client, which makes them the
-     * only parameters an authorization decision may be based on.
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return A map containing the route parameters of the request
+     * Route parameters are resolved by the router and cannot be forged by a client, so only they may be used for authorization decisions.
      */
     public static Map<String, String> getPathParameters(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
         final Map<String, String> pathParameter = new HashMap<>();
 
-        // Handlers that use addPathParam, e.g. PathTemplateHandler
         exchange.getPathParameters().forEach((key, value) -> pathParameter.put(key, value.element()));
 
-        // The PathTemplateMatch of the router is authoritative and therefore applied last
+        // The router's PathTemplateMatch is authoritative and therefore applied last
         var pathTemplateMatch = exchange.getAttachment(PathTemplateMatch.ATTACHMENT_KEY);
         if (pathTemplateMatch != null) {
             pathParameter.putAll(pathTemplateMatch.getParameters());
@@ -52,12 +45,7 @@ public final class RequestUtils {
     }
 
     /**
-     * Returns the query parameters of a request, e.g. {@code limit} of {@code ?limit=25}.
-     * <p>
-     * These are always untrusted client input.
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return A map containing the query parameters of the request
+     * Query parameters are always untrusted client input.
      */
     public static Map<String, String> getQueryParameters(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
@@ -69,11 +57,7 @@ public final class RequestUtils {
     }
 
     /**
-     * Converts route and query parameter into a single map, where a route parameter always wins
-     * over a query parameter of the same name
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return A single map containing both route and query parameter
+     * A route parameter always wins over a query parameter of the same name.
      */
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
@@ -85,14 +69,8 @@ public final class RequestUtils {
     }
 
     /**
-     * Checks if a query parameter carries the same name as a route parameter of the matched route,
-     * e.g. {@code /foo/abc?id=xyz} on a route {@code /foo/{id}}.
-     * <p>
-     * Such a request is ambiguous about which value the client meant. The route value wins, but an
-     * application may want to reject the request instead.
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return True if a query parameter collides with a route parameter, false otherwise
+     * Returns true if a query parameter has the same name as a route parameter, e.g. /foo/abc?id=xyz on /foo/{id}.
+     * The route value wins, but an application may want to reject such a request.
      */
     public static boolean hasAmbiguousParameters(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
@@ -106,15 +84,8 @@ public final class RequestUtils {
     }
 
     /**
-     * Checks if any query parameter is present more than once in the raw query string,
-     * e.g. {@code ?id=1&id=2}.
-     * <p>
-     * As {@link #getQueryParameters(HttpServerExchange)} collapses each parameter to a single
-     * value, requests with duplicated query parameters are ambiguous and should be rejected to
-     * avoid HTTP parameter pollution.
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return True if at least one query parameter key appears more than once, false otherwise
+     * Returns true if a query parameter key appears more than once in the raw query string.
+     * getQueryParameters keeps only one value per key, so such requests should be rejected to avoid HTTP parameter pollution.
      */
     public static boolean hasMultipleParameterValues(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
@@ -140,24 +111,12 @@ public final class RequestUtils {
         return false;
     }
 
-    /**
-     * Checks if the request is a POST, PUT or PATCH request
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return True if the request is a POST, PUT or PATCH request, false otherwise
-     */
     public static boolean isPostPutPatch(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
         return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod()) || (Methods.PATCH).equals(exchange.getRequestMethod());
     }
     
-    /**
-     * Checks if the requests content-type contains application/json
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return True if the request content-type contains application/json, false otherwise
-     */
     public static boolean isJsonRequest(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 

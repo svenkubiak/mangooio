@@ -33,14 +33,8 @@ import org.zeroturnaround.exec.StartedProcess;
 import org.zeroturnaround.exec.listener.ProcessListener;
 
 /**
- * This is a refactored version of
- * RunClassInSeparateJvmMachine.java from the Ninja Web Framework
- *
- * Original source code can be found here:
+ * Refactored version of RunClassInSeparateJvmMachine.java from the Ninja Web Framework:
  * https://github.com/ninjaframework/ninja/blob/develop/ninja-maven-plugin/src/main/java/ninja/build/DelayedRestartTrigger.java
- *
- * @author svenkubiak
- *
  */
 public class Runner {
     private static final Logger LOG = LogManager.getLogger(Runner.class);

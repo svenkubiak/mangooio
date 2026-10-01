@@ -187,7 +187,6 @@ class JsonUtilsTest {
         assertThat(json, containsString("John"));
         assertThat(json, containsString("30"));
         assertThat(json, containsString("true"));
-        // Pretty JSON should contain newlines and indentation
         assertThat(json, containsString("\n"));
     }
 
@@ -707,7 +706,6 @@ class JsonUtilsTest {
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
-    // Test classes for JSON serialization/deserialization
     private static class TestObject {
         private String name;
         private int age;

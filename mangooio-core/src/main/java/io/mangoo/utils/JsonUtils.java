@@ -42,10 +42,7 @@ public final class JsonUtils {
     }
     
     /**
-     * Converts a given object to a JSON string
-     * 
-     * @param object The object to convert
-     * @return JSON string or null if conversion fails
+     * Returns an empty string if the conversion fails.
      */
     public static String toJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT);
@@ -54,17 +51,14 @@ public final class JsonUtils {
         try {
             json = MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            //Intentionally left blank
+            // A failed conversion returns an empty string
         }
         
         return json;
     }
     
     /**
-     * Converts a given object to a JSON string
-     * 
-     * @param object The object to convert
-     * @return JSON string or null if conversion fails
+     * Returns an empty string if the conversion fails.
      */
     public static String toPrettyJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT);
@@ -73,20 +67,14 @@ public final class JsonUtils {
         try {
             json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            //Intentionally left blank
+            // A failed conversion returns an empty string
         }
         
         return json;
     }
 
     /**
-     * Converts a given JSON string to a given Class
-     *
-     * @param json The JSON string to convert
-     * @param clazz The Class to convert to
-     * @param <T> Javadoc wants this, just ignore it
-     *
-     * @return The converted class or null if conversion fails
+     * Returns null if the conversion fails.
      */
     public static <T> T toObject(String json, Class<T> clazz) {
         Argument.requireNonBlank(json, Required.JSON);
@@ -96,21 +84,14 @@ public final class JsonUtils {
         try {
             object = MAPPER.readValue(json, clazz);
         } catch (IOException e) {
-            //Intentionally left blank
+            // A failed conversion returns null
         }
 
         return object;
     }
 
     /**
-     * Converts a given JSON string to a given Class and
-     * tries to create an "empty" instance of the class if conversion fails
-     *
-     * @param json The JSON string to convert
-     * @param clazz The Class to convert to
-     * @param <T> Javadoc wants this, just ignore it
-     *
-     * @return The converted class or an instance of UnprocessableContent if conversion and fallback fails
+     * Falls back to a new instance of the class, or to UnprocessableContent if that fails too.
      */
     @SuppressWarnings("unchecked")
     public static <T> T toObjectWithFallback(String json, Class<T> clazz) {
@@ -121,24 +102,20 @@ public final class JsonUtils {
         try {
             object = MAPPER.readValue(json, clazz);
         } catch (IOException e) {
-            //Intentionally left blank
+            // Fall back to a new instance below
         }
 
         try {
             return (object != null) ? object : clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            //Intentionally left blank
+            // Fall back to UnprocessableContent below
         }
 
         return (T) new UnprocessableContent();
     }
 
     /**
-     * Converts a given JSON to a map while fattening all keys, e.g
-     * one.two.three
-     *
-     * @param json The JSON string to convert
-     * @return A flat map containing the JSON data
+     * Flattens nested keys, e.g. one.two.three; returns an empty map if the JSON is invalid.
      */
     public static Map<String, String> toFlatMap(String json) {
         Argument.requireNonBlank(json, Required.JSON);
@@ -147,15 +124,12 @@ public final class JsonUtils {
         try {
             addKeys(Strings.EMPTY, new ObjectMapper().readTree(json), map);
         } catch (Exception e) {
-            //Intentionally left blank
+            // Invalid JSON returns an empty map
         }
 
         return map;
     }
 
-    /**
-     * @return The used Jackson ObjectMapper
-     */
     public static ObjectMapper getMapper() {
         return MAPPER;
     }

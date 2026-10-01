@@ -2,23 +2,17 @@ package io.mangoo.interfaces;
 
 public interface MangooBootstrap {
     
-    /**
-     * Place all routes for your application in this method
-     */
     void initializeRoutes();
     
     /**
-     * Executed after config is loaded and Google Guice injector is initialized
+     * Called after the config is loaded and the Guice injector is initialized.
      */
     void applicationInitialized();
 
-    /**
-     * Executed after the application is completely started
-     */
     void applicationStarted();
     
     /**
-     * Executed after forcible signal of JVM shutdown has been sent
+     * Called from the JVM shutdown hook.
      */
     void applicationStopped();
 }

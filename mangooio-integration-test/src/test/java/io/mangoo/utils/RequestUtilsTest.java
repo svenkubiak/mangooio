@@ -192,7 +192,6 @@ class RequestUtilsTest {
     @Test
     void testGetAttachmentKey() {
         //given
-        // No setup needed for static method
 
         //when
         AttachmentKey<Attachment> attachmentKey = RequestUtils.getAttachmentKey();
@@ -205,7 +204,6 @@ class RequestUtilsTest {
     @Test
     void testGetAttachmentKeyReturnsSameInstance() {
         //given
-        // No setup needed for static method
 
         //when
         AttachmentKey<Attachment> attachmentKey1 = RequestUtils.getAttachmentKey();
@@ -347,7 +345,6 @@ class RequestUtilsTest {
     @Test
     void testGetRequestParametersWithNullExchange() {
         //given
-        // No setup needed for null input
 
         //when & then
         assertThrows(NullPointerException.class, () -> RequestUtils.getRequestParameters(null));
@@ -421,7 +418,6 @@ class RequestUtilsTest {
     @Test
     void testIsPostPutPatchWithNullExchange() {
         //given
-        // No setup needed for null input
 
         //when & then
         assertThrows(NullPointerException.class, () -> RequestUtils.isPostPutPatch(null));
@@ -494,7 +490,6 @@ class RequestUtilsTest {
     @Test
     void testIsJsonRequestWithNullExchange() {
         //given
-        // No setup needed for null input
 
         //when & then
         assertThrows(NullPointerException.class, () -> RequestUtils.isJsonRequest(null));
@@ -515,7 +510,6 @@ class RequestUtilsTest {
     @Test
     void testGetAuthorizationHeaderWithNullRequest() {
         //given
-        // No setup needed for null input
 
         //when & then
         assertThrows(NullPointerException.class, () -> RequestUtils.getAuthorizationHeader(null));
@@ -621,7 +615,6 @@ class RequestUtilsTest {
     @Test
     void testHasMultipleParameterValuesWithNullExchange() {
         //given
-        // No setup needed for null input
 
         //when & then
         assertThrows(NullPointerException.class, () -> RequestUtils.hasMultipleParameterValues(null));

@@ -18,11 +18,6 @@ import java.util.UUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class MailTest {
     

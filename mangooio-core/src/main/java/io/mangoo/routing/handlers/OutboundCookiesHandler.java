@@ -53,11 +53,6 @@ public class OutboundCookiesHandler implements HttpHandler {
         nextHandler(exchange);
     }
 
-    /**
-     * Sets the session cookie to the current HttpServerExchange
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
     protected void setSessionCookie(HttpServerExchange exchange) {
         var session = attachment.getSession();
 
@@ -115,16 +110,7 @@ public class OutboundCookiesHandler implements HttpHandler {
         }
     }
 
-    /**
-     * Sets the authentication cookie to the current HttpServerExchange
-     * <p>
-     * The decision whether a cookie is written is made on
-     * {@link io.mangoo.routing.bindings.Authentication#hasSubject()} and must not be
-     * changed to isValid(): while a second factor is outstanding isValid() is false,
-     * and the second factor step would be left without a cookie to carry its state
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
+    // Must decide on hasSubject() and not isValid(): isValid() is false while a second factor is outstanding, which would leave that step without a cookie.
     protected void setAuthenticationCookie(HttpServerExchange exchange) {
         var authentication = attachment.getAuthentication();
         if (authentication.isInvalid() || authentication.isLogout()) {
@@ -185,11 +171,6 @@ public class OutboundCookiesHandler implements HttpHandler {
         }
     }
 
-    /**
-     * Sets the flash cookie to current HttpServerExchange
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
     protected void setFlashCookie(HttpServerExchange exchange) {
         var flash = attachment.getFlash();
         var form = attachment.getForm();
@@ -225,11 +206,8 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                 var jwt = JwtUtils.createJwt(jwtData);
 
-                // The size limit applies to the finished cookie, not to the serialized form, as
-                // signing and encrypting roughly doubles the payload. Measuring the claim alone
-                // would either waste the budget or still produce a cookie the client discards.
-                // The kept form is best effort and therefore the part that gets dropped, the
-                // flash values were set deliberately by the application and are kept.
+                // The limit applies to the finished cookie, as signing and encrypting roughly doubles the payload.
+                // If it is exceeded, the best-effort kept form is dropped while the flash values are kept.
                 if (formKept && exceedsLimit(cookieName, jwt)) {
                     Map<String, String> reduced = new HashMap<>(claims);
                     reduced.remove(ClaimKey.FORM);
@@ -259,26 +237,11 @@ public class OutboundCookiesHandler implements HttpHandler {
         }
     }
 
-    /**
-     * Checks if a cookie exceeds the size a client is willing to accept. Following RFC 6265bis,
-     * the limit applies to the sum of the length of the cookie name and its value, the
-     * attributes do not count towards it.
-     *
-     * @param cookieName The name of the cookie
-     * @param value The value of the cookie
-     *
-     * @return True if the cookie exceeds the limit, false otherwise
-     */
+    // Following RFC 6265bis, the limit applies to the length of name plus value; attributes do not count.
     private boolean exceedsLimit(String cookieName, String value) {
         return cookieName.length() + value.length() > Default.FLASH_COOKIE_MAX_SIZE;
     }
 
-    /**
-     * Handles the next request in the handler chain
-     *
-     * @param exchange The HttpServerExchange
-     * @throws Exception Thrown when an exception occurs
-     */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         if (config.isCorsEnable()) {
             Application.getInstance(CorsHandler.class).handleRequest(exchange);            

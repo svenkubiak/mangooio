@@ -16,11 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-/**
- *
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class JsonControllerTest {
     private static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json; charset=UTF-8";

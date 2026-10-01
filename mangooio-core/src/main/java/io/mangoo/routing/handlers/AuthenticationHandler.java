@@ -58,10 +58,6 @@ public class AuthenticationHandler implements HttpHandler {
         }
     }
     
-    /**
-     * Ends the current request by sending an HTTP 302 status code and a direct to the given URL
-     * @param exchange The HttpServerExchange
-     */
     private void endRequest(HttpServerExchange exchange, String redirect) {
         exchange.setStatusCode(StatusCodes.FOUND);
         
@@ -78,17 +74,7 @@ public class AuthenticationHandler implements HttpHandler {
         exchange.endExchange();
     }
 
-    /**
-     * Creates the value of the origin parameter for the given request, consisting of the
-     * request URI and, if present, the query string.
-     *
-     * Leading slashes are collapsed into a single one, so that the value can not be read as a
-     * protocol-relative URL pointing at a foreign host, and the result is URL encoded, so that
-     * it can not inject additional parameters into the redirect.
-     *
-     * @param exchange The HttpServerExchange
-     * @return The encoded value of the origin parameter
-     */
+    // Leading slashes are collapsed and the value is URL encoded to prevent open redirects to foreign hosts and parameter injection.
     static String origin(HttpServerExchange exchange) {
         var origin = StringUtils.defaultString(exchange.getRequestURI());
         var queryString = exchange.getQueryString();
@@ -100,10 +86,6 @@ public class AuthenticationHandler implements HttpHandler {
         return URLEncoder.encode('/' + StringUtils.stripStart(origin, "/"), StandardCharsets.UTF_8);
     }
     
-    /**
-     * Ends the current request by sending an HTTP 403 status code and the default forbidden template
-     * @param exchange The HttpServerExchange
-     */
     private void endRequest(HttpServerExchange exchange) {
         exchange.setStatusCode(StatusCodes.FORBIDDEN);
         
@@ -117,12 +99,6 @@ public class AuthenticationHandler implements HttpHandler {
         exchange.getResponseSender().send(Template.unauthorized());
     }
     
-    /**
-     * Handles the next request in the handler chain
-     *
-     * @param exchange The HttpServerExchange
-     * @throws Exception Thrown when an exception occurs
-     */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(FormHandler.class).handleRequest(exchange);
     }

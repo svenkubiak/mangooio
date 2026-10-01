@@ -36,11 +36,6 @@ public final class FileUtils {
         }
     }
 
-    /**
-     * Closes a closeable without throwing an exception
-     *
-     * @param closeable The closeable
-     */
     public static void closeQuietly(final Closeable closeable) {
         try {
             if (closeable != null) {
@@ -51,12 +46,6 @@ public final class FileUtils {
         }
     }
 
-    /**
-     * Converts a given file size into a readable file size including unit
-     *
-     * @param size The size in bytes to convert
-     * @return Readable files size, e.g. 24 MB
-     */
     public static String readableFileSize(long size) {
         if (size <= 0) {
             return "0";
@@ -67,10 +56,7 @@ public final class FileUtils {
     }
 
     /**
-     * Reads the content of a file to a String
-     *
-     * @param path The path of the file
-     * @return The content of the file or null
+     * Returns an empty string if the file cannot be read.
      */
     public static String readFileToString(Path path) {
         Objects.requireNonNull(path, Required.PATH);
@@ -79,17 +65,14 @@ public final class FileUtils {
         try {
             content = Files.readString(path);
         } catch (IOException e) {
-            // Intentionally left blank
+            // An unreadable file yields an empty string
         }
 
         return content;
     }
 
     /**
-     * Reads the content of a file to a String
-     *
-     * @param path The path of the file
-     * @return The content of the file or null
+     * Returns an empty string if the file cannot be read.
      */
     public static String readFileToString(String path) {
         Argument.requireNonBlank(path, Required.PATH);

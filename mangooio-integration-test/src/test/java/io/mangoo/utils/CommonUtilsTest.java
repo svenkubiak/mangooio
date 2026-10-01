@@ -885,7 +885,6 @@ class CommonUtilsTest {
         assertThat(exception.getMessage(), containsString("resource can not be null"));
     }
 
-    // Helper class for serialization tests
     private static class TestSerializableObject implements Serializable {
         private static final long serialVersionUID = 1L;
         private final String value;

@@ -89,15 +89,7 @@ public class Config {
         return inputStream;
     }
 
-    /**
-     * Parses a given property key and value and resolves the placeholders env{}, arg{} and vault{}.
-     * A placeholder is resolved from its source first, i.e. the environment variable, the system
-     * property or the vault. A value given in the braces, e.g. arg{default}, is only used as
-     * fallback if the source has no value.
-     *
-     * @param key The property key
-     * @param value The property value
-     */
+    // Placeholders are resolved from their source first; a default given in the braces is only used as fallback.
     private void parse(String key, String value) {
         if (value.startsWith("env{")) {
             resolve(key, value, "env{", System.getenv(toEnvKey(key)));
@@ -127,9 +119,6 @@ public class Config {
                 .trim();
     }
 
-    /**
-     * Validates if each config value has been decrypted and parsed correctly
-     */
     public void validate() {
         for (Map.Entry<String, String> entry : values.entrySet()) {
             String value = entry.getValue();
@@ -140,11 +129,6 @@ public class Config {
         }
     }
 
-    /**
-     * Converts config values to standard java properties
-     *
-     * @return Properties instance with config values
-     */
     public Properties toProperties() {
         var properties = new Properties();
         properties.putAll(values);
@@ -152,33 +136,14 @@ public class Config {
         return properties;
     }
 
-    /**
-     * Retrieves a configuration value with the given key
-     *
-     * @param key The key of the configuration value (e.g. application.name)
-     * @return The configured value as String or null if the key is not configured
-     */
     public String getString(String key) {
         return values.get(key);
     }
 
-    /**
-     * Retrieves a configuration value with the given key
-     *
-     * @param key The key of the configuration value (e.g. application.name)
-     * @param defaultValue The default value to return of no key is found
-     * @return The configured value as String or the passed defaultValue if the key is not configured
-     */
     public String getString(String key, String defaultValue) {
         return values.getOrDefault(key, defaultValue);
     }
 
-    /**
-     * Retrieves a configuration value with the given key
-     *
-     * @param key The key of the configuration value (e.g. application.name)
-     * @return The configured value as int or 0 if the key is not configured
-     */
     public int getInt(String key) {
         final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
@@ -188,12 +153,6 @@ public class Config {
         return Integer.parseInt(value);
     }
 
-    /**
-     * Retrieves a configuration value with the given key
-     *
-     * @param key The key of the configuration value (e.g. application.name)
-     * @return The configured value as long or 0 if the key is not configured
-     */
     public long getLong(String key) {
         final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
@@ -203,13 +162,6 @@ public class Config {
         return Long.parseLong(value);
     }
 
-    /**
-     * Retrieves a configuration value with the given key
-     *
-     * @param key The key of the configuration value (e.g. application.name)
-     * @param defaultValue The default value to return of no key is found
-     * @return The configured value as int or the passed defaultValue if the key is not configured
-     */
     public long getLong(String key, long defaultValue) {
         final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
@@ -219,13 +171,6 @@ public class Config {
         return Long.parseLong(value);
     }
 
-    /**
-     * Retrieves a configuration value with the given key
-     *
-     * @param key The key of the configuration value (e.g. application.name)
-     * @param defaultValue The default value to return of no key is found
-     * @return The configured value as int or the passed defautlValue if the key is not configured
-     */
     public int getInt(String key, int defaultValue) {
         final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
@@ -235,12 +180,6 @@ public class Config {
         return Integer.parseInt(value);
     }
 
-    /**
-     * Retrieves a configuration value with the given key
-     *
-     * @param key The key of the configuration value (e.g. application.name)
-     * @return The configured value as boolean or false if the key is not configured
-     */
     public Boolean getBoolean(String key) {
         final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
@@ -250,13 +189,6 @@ public class Config {
         return Boolean.valueOf(value);
     }
 
-    /**
-     * Retrieves a configuration value with the given key
-     *
-     * @param key The key of the configuration value (e.g. application.name)
-     * @param defaultValue The default value to return of no key is found
-     * @return The configured value as boolean or the passed defaultValue if the key is not configured
-     */
     public Boolean getBoolean(String key, Boolean defaultValue) {
         final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
@@ -266,372 +198,191 @@ public class Config {
         return Boolean.valueOf(value);
     }
 
-    /**
-     * @return All configuration options of the current environment
-     */
     public Map<String, String> getAllConfigurations() {
         return new ConcurrentHashMap<>(values);
     }
 
-    /**
-     * @return application.name from config.yaml
-     */
     public String getApplicationName() {
         return getString(Key.APPLICATION_NAME, Default.APPLICATION_NAME);
     }
 
-    /**
-     * @return flash.cookie.name or default value if undefined
-     */
     public String getFlashCookieName() {
         return getString(Key.FLASH_COOKIE_NAME, Default.FLASH_COOKIE_NAME);
     }
 
-    /**
-     * @return session.cookie.name from config.yaml or default value if undefined
-     */
     public String getSessionCookieName() {
         return getString(Key.SESSION_COOKIE_NAME, Default.SESSION_COOKIE_NAME);
     }
 
-    /**
-     * @return application.secret from config.yaml
-     */
     public String getApplicationSecret() {
         return getString(Key.APPLICATION_SECRET);
     }
 
-    /**
-     * @return authentication.cookie.name from config.yaml or default value if undefined
-     */
     public String getAuthenticationCookieName() {
         return getString(Key.AUTHENTICATION_COOKIE_NAME, Default.AUTHENTICATION_COOKIE_NAME);
     }
 
-    /**
-     * @return session.cookie.token.expires from config.yaml or default value if undefined
-     */
     public long getSessionCookieTokenExpires() {
         return getLong(Key.SESSION_COOKIE_TOKEN_EXPIRES, Default.SESSION_COOKIE_TOKEN_EXPIRES);
     }
 
-    /**
-     * @return session.cookie.secure from config.yaml or default value if undefined
-     */
     public boolean isSessionCookieSecure() {
         return getBoolean(Key.SESSION_COOKIE_SECURE, Default.SESSION_COOKIE_SECURE);
     }
 
-    /**
-     * @return authentication.cookie.secure from config.yaml or default value if undefined
-     */
     public boolean isAuthenticationCookieSecure() {
         return getBoolean(Key.AUTHENTICATION_COOKIE_SECURE, Default.AUTHENTICATION_COOKIE_SECURE);
     }
 
-    /**
-     * @return i18n.cookie.name from config.yaml or default value if undefined
-     */
     public String getI18nCookieName() {
         return getString(Key.I18N_COOKIE_NAME, Default.I18N_COOKIE_NAME);
     }
 
-    /**
-     * @return calls isSessionCookieSecure()
-     */
     public boolean isFlashCookieSecure() {
         return isSessionCookieSecure();
     }
 
-    /**
-     * @return application.language from config.yaml or default value if undefined
-     */
     public String getApplicationLanguage() {
         return getString(Key.APPLICATION_LANGUAGE, Default.APPLICATION_LANGUAGE);
     }
 
-    /**
-     * @return application.admin.username from config.yaml or null if undefined
-     */
     public String getApplicationAdminUsername() {
         return getString(Key.APPLICATION_ADMIN_USERNAME, null);
     }
 
-    /**
-     * @return application.admin.password from config.yaml or null if undefined
-     */
     public String getApplicationAdminPassword() {
         return getString(Key.APPLICATION_ADMIN_PASSWORD, null);
     }
 
-    /**
-     * @return authentication.cookie.remember.expires from config.yaml or default value if undefined
-     */
     public long getAuthenticationCookieRememberExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES, Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES);
     }
 
-    /**
-     * @return application.controller from config.yaml or default value if undefined
-     */
     public String getApplicationController() {
         return getString(Key.APPLICATION_CONTROLLER, Default.APPLICATION_CONTROLLER);
     }
 
-    /**
-     * @return application.admin.enable or default value if undefined
-     */
     public boolean isApplicationAdminEnable() {
         return getBoolean(Key.APPLICATION_ADMIN_ENABLE, Default.APPLICATION_ADMIN_ENABLE);
     }
 
-    /**
-     * When enabled, a request whose query parameter collides with a route parameter of the
-     * matched route is rejected. The route value always wins either way.
-     *
-     * @return application.parameter.strict or default value if undefined
-     */
+    /** If enabled, a request whose query parameter collides with a route parameter is rejected; the route value always wins. */
     public boolean isParameterStrict() {
         return getBoolean(Key.APPLICATION_PARAMETER_STRICT, Default.APPLICATION_PARAMETER_STRICT);
     }
 
-    /**
-     * @return smtp.host or default value if undefined
-     */
     public String getSmtpHost() {
         return getString(Key.SMTP_HOST, Default.SMTP_HOST);
     }
 
-    /**
-     * @return smtp.port or default value if undefined
-     */
     public int getSmtpPort() {
         return getInt(Key.SMTP_PORT, Default.SMTP_PORT);
     }
 
-    /**
-     * @return smtp.username or null value if undefined
-     */
     public String getSmtpUsername() {
         return getString(Key.SMTP_USERNAME, null);
     }
 
-    /**
-     * @return smtp.username or null value if undefined
-     */
     public String getSmtpPassword() {
         return getString(Key.SMTP_PASSWORD, null);
     }
 
-    /**
-     * @return smtp.from or default value if undefined
-     */
     public String getSmtpFrom() {
         return getString(Key.SMTP_FROM, Default.SMTP_FROM);
     }
 
-    /**
-     * @return jvm property http.host or connector.http.host or null if undefined
-     */
     public String getConnectorHttpHost() {
         return getString(Key.CONNECTOR_HTTP_HOST, null);
     }
 
-    /**
-     * @return jvm property http.port or connector.http.port or 0 if undefined
-     */
     public int getConnectorHttpPort() {
         return getInt(Key.CONNECTOR_HTTP_PORT, 0);
     }
 
-    /**
-     * @return connector.https.host or null if undefined
-     */
     public String getConnectorHttpsHost() {
         return getString(Key.CONNECTOR_HTTPS_HOST, null);
     }
 
-    /**
-     * @return connector.https.port or 0 if undefined
-     */
     public int getConnectorHttpsPort() {
         return getInt(Key.CONNECTOR_HTTPS_PORT, 0);
     }
 
-    /**
-     * @return metrics.enable or default value if undefined
-     */
     public boolean isMetricsEnable() {
         return getBoolean(Key.METRICS_ENABLE, Default.METRICS_ENABLE);
     }
 
-    /**
-     * The number of failed attempts that are allowed for an identifier before it is
-     * locked. The budget applies to the password step and to the second factor step
-     * separately, both in {@link io.mangoo.routing.bindings.Authentication}
-     *
-     * @return authentication.lock or default value if undefined
-     */
+    /** Failed attempts allowed per identifier, counted separately for the password and the second factor step. */
     public int getAuthenticationLock() {
         return getInt(Key.AUTHENTICATION_LOCK, Default.AUTHENTICATION_LOCK);
     }
 
-    /**
-     * The duration in minutes an identifier stays locked once the failed attempt
-     * budget is used up. The lock is absolute and is not extended by further
-     * failed attempts
-     *
-     * @return authentication.lock.duration or default value if undefined
-     */
+    /** Lock duration in minutes; the lock is not extended by further failed attempts. */
     public int getAuthenticationLockDuration() {
         return getInt(Key.AUTHENTICATION_LOCK_DURATION, Default.AUTHENTICATION_LOCK_DURATION);
     }
 
-    /**
-     * The maximum number of Argon2 hash computations that may run at the same time.
-     * A single computation occupies authentication.hashing.memory kibibytes of heap
-     * for its entire duration, an unlimited number of concurrent computations can
-     * exhaust the heap
-     * <p>
-     * The default 0 derives the value from the configured memory cost and the heap
-     * available to the JVM, clamped to a range of 2 to 8. Any value greater than 0
-     * is used as is
-     *
-     * @return authentication.hashing.concurrency or default value if undefined
-     */
+    /** Limits concurrent Argon2 computations, as each occupies the configured memory; 0 derives the limit from the heap (clamped to 2 to 8). */
     public int getAuthenticationHashingConcurrency() {
         return getInt(Key.AUTHENTICATION_HASHING_CONCURRENCY, Default.AUTHENTICATION_HASHING_CONCURRENCY);
     }
 
-    /**
-     * The time in milliseconds a caller waits for a free hashing slot before the
-     * hashing is rejected with a
-     * {@link io.mangoo.exceptions.MangooHashingException}
-     *
-     * @return authentication.hashing.timeout or default value if undefined
-     */
+    /** Milliseconds to wait for a free hashing slot before a {@link io.mangoo.exceptions.MangooHashingException} is thrown. */
     public long getAuthenticationHashingTimeout() {
         return getLong(Key.AUTHENTICATION_HASHING_TIMEOUT, Default.AUTHENTICATION_HASHING_TIMEOUT);
     }
 
-    /**
-     * The Argon2id memory cost in kibibytes, at least
-     * {@value io.mangoo.crypto.Argon2Settings#MIN_MEMORY_KB}
-     * <p>
-     * A hash carries the memory cost it was created with, changing this value does not
-     * invalidate stored hashes. They keep verifying with their own parameters and
-     * {@link io.mangoo.utils.CommonUtils#needsRehash(String)} reports them as outdated
-     *
-     * @return authentication.hashing.memory or default value if undefined
-     */
+    /** Changing this does not invalidate stored hashes; {@link io.mangoo.utils.CommonUtils#needsRehash(String)} reports them as outdated. */
     public int getAuthenticationHashingMemory() {
         return getInt(Key.AUTHENTICATION_HASHING_MEMORY, Default.AUTHENTICATION_HASHING_MEMORY);
     }
 
-    /**
-     * The Argon2id number of iterations (time cost), at least
-     * {@value io.mangoo.crypto.Argon2Settings#MIN_ITERATIONS}
-     * <p>
-     * A hash carries the iterations it was created with, changing this value does not
-     * invalidate stored hashes. They keep verifying with their own parameters and
-     * {@link io.mangoo.utils.CommonUtils#needsRehash(String)} reports them as outdated
-     *
-     * @return authentication.hashing.iterations or default value if undefined
-     */
+    /** Changing this does not invalidate stored hashes; {@link io.mangoo.utils.CommonUtils#needsRehash(String)} reports them as outdated. */
     public int getAuthenticationHashingIterations() {
         return getInt(Key.AUTHENTICATION_HASHING_ITERATIONS, Default.AUTHENTICATION_HASHING_ITERATIONS);
     }
 
-    /**
-     * The Argon2id number of lanes, at least
-     * {@value io.mangoo.crypto.Argon2Settings#MIN_PARALLELISM}
-     * <p>
-     * Note that the underlying Argon2BytesGenerator computes the lanes sequentially,
-     * raising this value does not increase CPU utilization. It only spreads the same
-     * amount of memory over more lanes, which is why the default is 1
-     * <p>
-     * A hash carries the parallelism it was created with, changing this value does not
-     * invalidate stored hashes. They keep verifying with their own parameters and
-     * {@link io.mangoo.utils.CommonUtils#needsRehash(String)} reports them as outdated
-     *
-     * @return authentication.hashing.parallelism or default value if undefined
-     */
+    /** Lanes are computed sequentially, so raising this does not increase CPU utilization. Changing it does not invalidate stored hashes. */
     public int getAuthenticationHashingParallelism() {
         return getInt(Key.AUTHENTICATION_HASHING_PARALLELISM, Default.AUTHENTICATION_HASHING_PARALLELISM);
     }
 
-    /**
-     * @return undertow.maxentitysize or default value if undefined
-     */
     public long getUndertowMaxEntitySize() {
         return getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE);
     }
 
-    /**
-     * The maximum size in bytes of a single uploaded file
-     * <p>
-     * This limit applies per file, after the request body has passed
-     * undertow.maxentitysize. Raising it alone is not enough: a body that exceeds
-     * undertow.maxentitysize is already rejected one layer earlier
-     *
-     * @return form.maxfilesize or default value if undefined
-     */
+    /** Per-file limit; a request body exceeding undertow.maxentitysize is already rejected before. */
     public long getFormMaxFileSize() {
         return getLong(Key.FORM_MAX_FILE_SIZE, Default.FORM_MAX_FILE_SIZE);
     }
 
-    /**
-     * @return session.cookie.secret or application secret if undefined
-     */
     public byte[] getSessionCookieSecret() {
         return getString(Key.SESSION_COOKIE_SECRET, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
-    /**
-     * @return authentication.cookie.secret or application secret if undefined
-     */
     public byte[] getAuthenticationCookieSecret() {
         return getString(Key.AUTHENTICATION_COOKIE_SECRET, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
-    /**
-     * @return flash.cookie.secret or application secret if undefined
-     */
     public byte[] getFlashCookieSecret() {
         return getString(Key.FLASH_COOKIE_SECRET, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
-    /**
-     * @return scheduler.enable or default value if undefined
-     */
     public boolean isSchedulerEnabled() {
         return getBoolean(Key.SCHEDULER_ENABLE, Default.SCHEDULER_ENABLE);
     }
 
-    /**
-     * @return application.admin.secret or null if undefined
-     */
     public String getApplicationAdminSecret() {
         return getString(Key.APPLICATION_ADMIN_SECRET, null);
     }
 
-    /**
-     * @return smtp.debug or default value if undefined
-     */
     public boolean isSmtpDebug() {
         return getBoolean(Key.SMTP_DEBUG, Default.SMTP_DEBUG);
     }
 
-    /**
-     * @return cors.enable or default value if undefined
-     */
     public boolean isCorsEnable() {
         return getBoolean(Key.CORS_ENABLE, Default.CORS_ENABLE);
     }
 
-    /**
-     * @return cors.urlpattern as compiled pattern or default value if undefined
-     */
     public Pattern getCorsUrlPattern() {
         if (corsUrl == null) {
             corsUrl = Pattern.compile(getString(Key.CORS_URL_PATTERN, Default.CORS_URL_PATTERN));
@@ -639,9 +390,6 @@ public class Config {
         return corsUrl;
     }
 
-    /**
-     * @return cors.policyclass as compiled pattern or default value if undefined
-     */
     public Pattern getCorsAllowOrigin() {
         if (corsAllowOrigin == null) {
             corsAllowOrigin = Pattern.compile(getString(Key.CORS_ALLOW_ORIGIN, Default.CORS_ALLOW_ORIGIN));
@@ -650,215 +398,118 @@ public class Config {
         return corsAllowOrigin;
     }
 
-    /**
-     * @return cors.headers.allowcredentials or default value if undefined
-     */
     public String getCorsHeadersAllowCredentials() {
         return getString(Key.CORS_HEADERS_ALLOW_CREDENTIALS, Default.CORS_HEADERS_ALLOW_CREDENTIALS.toString());
     }
 
-    /**
-     * @return cors.headers.allowheaders or default value if undefined
-     */
     public String getCorsHeadersAllowHeaders() {
         return getString(Key.CORS_HEADERS_ALLOW_HEADERS, Default.CORS_HEADERS_ALLOW_HEADERS);
     }
 
-    /**
-     * @return cors.headers.allowheaders or default value if undefined
-     */
     public String getCorsHeadersAllowMethods() {
         return getString(Key.CORS_HEADERS_ALLOW_METHODS, Default.CORS_HEADERS_ALLOW_METHODS);
     }
 
-    /**
-     * @return cors.headers.exposeheaders or default value if undefined
-     */
     public String getCorsHeadersExposeHeaders() {
         return getString(Key.CORS_HEADERS_EXPOSE_HEADERS, Default.CORS_HEADERS_EXPOSE_HEADERS);
     }
 
-    /**
-     * @return cors.headers.maxage or default value if undefined
-     */
     public String getCorsHeadersMaxAge() {
         return getString(Key.CORS_HEADERS_MAX_AGE, Default.CORS_HEADERS_MAX_AGE);
     }
 
-    /**
-     * @return persistence.mongo.host or default value if undefined
-     * @param prefix The prefix to use
-     */
     public String getMongoHost(String prefix) {
         return getString(prefix + Key.PERSISTENCE_MONGO_HOST, Default.PERSISTENCE_MONGO_HOST);
     }
 
-    /**
-     * @return persistence.mongo.port or default value if undefined
-     * @param prefix The prefix to use
-     */
     public int getMongoPort(String prefix) {
         return getInt(prefix + Key.PERSISTENCE_MONGO_PORT, Default.PERSISTENCE_MONGO_PORT);
     }
 
-    /**
-     * @return persistence.mongo.username or null if undefined
-     * @param prefix The prefix to use
-     */
     public String getMongoUsername(String prefix) {
         return getString(prefix + Key.PERSISTENCE_MONGO_USERNAME, null);
     }
 
-    /**
-     * @return persistence.mongo.password or null if undefined
-     * @param prefix The prefix to use
-     */
     public String getMongoPassword(String prefix) {
         return getString(prefix + Key.PERSISTENCE_MONGO_PASSWORD, null);
     }
 
-    /**
-     * @return persistence.mongo.authdb or null if undefined
-     * @param prefix The prefix to use
-     */
     public String getMongoAuthDB(String prefix) {
         return getString(prefix + Key.PERSISTENCE_MONGO_AUTHDB, null);
     }
 
-    /**
-     * @return persistence.mongo.auth or default value if undefined
-     * @param prefix The prefix to use
-     */
     public Boolean isMongoAuth(String prefix) {
         return getBoolean(prefix + Key.PERSISTENCE_MONGO_AUTH, Default.PERSISTENCE_MONGO_AUTH);
     }
 
-    /**
-     * @return persistence.mongo.dbname or default value if undefined
-     * @param prefix The prefix to use
-     */
     public String getMongoDbName(String prefix) {
         return getString(prefix + Key.PERSISTENCE_MONGO_DBNAME, Default.PERSISTENCE_MONGO_DBNAME);
     }
 
-    /**
-     * @return persistence.mongo.embedded or default value if undefined
-     * @param prefix The prefix to use
-     */
     public Boolean isMongoEmbedded(String prefix) {
         return getBoolean(prefix + Key.PERSISTENCE_MONGO_EMBEDDED, Default.PERSISTENCE_MONGO_EMBEDDED);
     }
 
-    /**
-     * @return session.cookie.expires or default value if undefined
-     */
     public Boolean isSessionCookieExpires() {
         return getBoolean(Key.SESSION_COOKIE_EXPIRES, Default.SESSION_COOKIE_EXPIRES);
     }
 
-    /**
-     * @return authentication.cookie.expires or default value if undefined
-     */
     public long getAuthenticationCookieTokenExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_TOKEN_EXPIRES, Default.AUTHENTICATION_COOKIE_TOKEN_EXPIRES);
     }
 
-    /**
-     * @return smtp.authentication or default value if undefined
-     */
     public boolean isSmtpAuthentication() {
         return getBoolean(Key.SMTP_AUTHENTICATION, Default.SMTP_AUTHENTICATION);
     }
 
-    /**
-     * @return mongo.enable or default value if undefined
-     */
     public boolean isPersistenceEnabled() {
         return getBoolean(Key.PERSISTENCE_ENABLE, Default.PERSISTENCE_ENABLE);
     }
 
-    /**
-     * @return smtp.protocol or default value if undefined
-     */
     public String getSmtpProtocol() {
         return getString(Key.SMTP_PROTOCOL, Default.SMTP_PROTOCOL);
     }
 
-    /**
-     * @return authentication.origin or default value if undefined
-     */
     public boolean isAuthOrigin() {
         return getBoolean(Key.AUTHENTICATION_ORIGIN, Default.AUTHENTICATION_ORIGIN);
     }
 
-    /**
-     * @return application.admin.locale or default value if undefined
-     */
     public Object getApplicationAdminLocale() {
         return getString(Key.APPLICATION_ADMIN_LOCALE, Default.APPLICATION_ADMIN_LOCALE);
     }
 
-    /**
-     * @return authentication.cookie.samesitemode or default value if undefined
-     */
     public String getAuthenticationCookieSameSiteMode() {
         return getString(Key.AUTHENTICATION_COOKIE_SAME_SITE_MODE, Default.AUTHENTICATION_COOKIE_SAME_SITE_MODE);
     }
 
-    /**
-     * @return session.cookie.samesitemode or default value if undefined
-     */
     public String getSessionCookieSameSiteMode() {
         return getString(Key.SESSION_COOKIE_SAME_SITE_MODE, Default.SESSION_COOKIE_SAME_SITE_MODE);
     }
 
-    /**
-     *
-     * @return application.vault.secret or null if undefined
-     */
     public String getApplicationVaultSecret() {
         return getString(Key.APPLICATION_VAULT_SECRET, null);
     }
 
-    /**
-     *
-     * @return application.vault.path or null if undefined
-     */
     public String getApplicationVaultPath() {
         return getString(Key.APPLICATION_VAULT_PATH, null);
     }
 
-    /**
-     * @return session.cookie.key or application.secret if undefined
-     */
     public byte[] getSessionCookieKey() {
         return getString(Key.SESSION_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
-    /**
-     * @return flash.cookie.key or application.secret if undefined
-     */
     public byte[] getFlashCookieKey() {
         return getString(Key.FLASH_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
-    /**
-     * @return authentication.cookie.key or application.secret if undefined
-     */
     public byte[] getAuthenticationCookieKey() {
         return getString(Key.AUTHENTICATION_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
-    /**
-     * @return connector.https.certificate.alias or default value if undefined
-     */
     public String getConnectorHttpsCertificateAlias() {
         return getString(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS, Default.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
     }
 
-    /**
-     * @return authentication.blacklist or default value if undefined
-     */
     public boolean isAuthenticationBlacklist() {
         return getBoolean(Key.AUTHENTICATION_BLACKLIST, Default.AUTHENTICATION_BLACKLIST);
     }
@@ -867,30 +518,18 @@ public class Config {
         return valid;
     }
 
-    /**
-     * @return otlp.enable or default value if undefined
-     */
     public boolean isOtlpEnable() {
         return getBoolean(Key.OTLP_ENABLE, Default.OTLP_ENABLE);
     }
 
-    /**
-     * @return otlp.endpoint or null if undefined
-     */
     public String getOtlpEndpoint() {
         return getString(Key.OTLP_ENDPOINT, null);
     }
 
-    /**
-     * @return application.validation.passthrough
-     */
     public boolean isValidationPassthrough() {
         return getBoolean(Key.APPLICATION_VALIDATION_PASSTHROUGH, Default.APPLICATION_VALIDATION_PASSTHROUGH);
     }
 
-    /**
-     * @return application.timezone or UTC if unconfigured or incorrect
-     */
     public String getApplicationTimezone() {
         var timezone = getString(Key.APPLICATION_TIMEZONE);
         if (MangooUtils.isValidTimeZone(timezone)) {

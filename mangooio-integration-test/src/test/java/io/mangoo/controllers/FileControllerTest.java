@@ -22,11 +22,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
-/**
- *
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class FileControllerTest {
     private static final int FIVE_SECONDS = 5;

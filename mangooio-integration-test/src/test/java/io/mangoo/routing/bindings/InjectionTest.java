@@ -24,11 +24,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class InjectionTest {
 

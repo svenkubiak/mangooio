@@ -33,16 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Verifies the tracing code path, which is skipped entirely when otlp is disabled.
- * <p></p>
- * This class only runs in the dedicated surefire execution that sets -Dotlp.enable=true,
- * see the tracing-tests execution in pom.xml. Running it without that property would pass
- * vacuously, as every Trace method returns immediately when tracing is off.
- * <p></p>
- * The span state lives on the HttpServerExchange, so a defect shows up as a span that is
- * never closed, closed twice, or attributed to the wrong request. None of that surfaces as
- * a failing request, which is why the assertions are made on the diagnostics Trace logs
- * rather than on the responses alone.
+ * Only runs in the tracing-tests surefire execution with -Dotlp.enable=true, otherwise every Trace method returns immediately and the tests pass vacuously.
+ * Assertions are made on the Trace diagnostics logs, as span defects do not surface as failing requests.
  */
 @ExtendWith({TestExtension.class})
 @Execution(ExecutionMode.SAME_THREAD)
@@ -67,15 +59,11 @@ class TracingTest {
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
         LoggerConfig traceLogger = context.getConfiguration().getLoggerConfig(TRACE_LOGGER);
 
-        // getLoggerConfig falls back to the root config for a logger the configuration does
-        // not declare. Raising that one to debug would put the whole test run on debug and
-        // bury the build log under Undertow request tracing.
+        // getLoggerConfig falls back to the root config for undeclared loggers, and raising that to debug would flood the build log.
         assertEquals(TRACE_LOGGER, traceLogger.getName(),
                 "log4j2-test.xml must declare a logger for " + TRACE_LOGGER);
 
-        // Trace reports an underflow on debug level, which the test configuration does not
-        // emit. Without raising the level the assertions below would silently pass on a
-        // broken implementation.
+        // Trace reports underflows on debug, which the test configuration does not emit, so the assertions would otherwise pass vacuously.
         previousLevel = traceLogger.getLevel();
         traceLogger.setLevel(Level.DEBUG);
         traceLogger.addAppender(appender, Level.DEBUG, null);
@@ -133,9 +121,7 @@ class TracingTest {
 
     @Test
     void abortedRequestsDoNotLeaveSpansOpen() {
-        // An unauthenticated call on a protected route ends the exchange in the
-        // AuthenticationHandler, so the ResponseHandler that would pop the root span
-        // is never reached. The exchange completion listener has to close it instead.
+        // The AuthenticationHandler ends the exchange before the ResponseHandler, so the completion listener has to close the root span.
         for (var i = 0; i < 100; i++) {
             TestRequest.get("/authenticationrequired").execute();
         }
@@ -145,8 +131,7 @@ class TracingTest {
 
     @Test
     void notFoundRequestsAreNotTraced() {
-        // The fallback handler runs outside the dispatcher, so no span is ever started.
-        // Ending a span that was never started must not produce a warning.
+        // The fallback handler runs outside the dispatcher, so no span is started and ending it must not produce a warning.
         for (var i = 0; i < 20; i++) {
             TestRequest.get("/this-route-does-not-exist").execute();
         }

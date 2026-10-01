@@ -20,24 +20,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**
- * Computes Argon2id hashes and limits how many of them may run at the same time
- * <p>
- * A single Argon2id computation allocates authentication.hashing.memory kibibytes of
- * heap and holds them for its entire duration. Undertow starts with eight worker
- * threads per core, so without a limit a handful of concurrent logins is enough to
- * request several gigabytes of heap at once. This class caps the number of concurrent
- * computations and rejects with a {@link MangooHashingException} once a caller waited
- * longer than authentication.hashing.timeout for a slot
- * <p>
- * The number of slots is taken from authentication.hashing.concurrency. The default 0
- * derives it from the configured memory cost and the heap available to the JVM,
- * clamped to [{@value #MIN_CONCURRENCY}, {@value #MAX_CONCURRENCY}]
- * <p>
- * Hashes are returned in the PHC string format, see {@link Argon2Hash}, so that they
- * carry the parameters they were computed with. Verification uses the parameters of the
- * stored hash, never the current configuration. Changing the configured parameters is
- * therefore safe, existing hashes keep verifying and {@link #needsRehash(String)} points
- * out which of them should be recomputed on the next successful login
+ * Limits concurrent Argon2id computations, as each holds authentication.hashing.memory KiB of heap for its whole duration.
+ * Hashes are PHC encoded and verified with their own parameters, so configuration changes do not lock out users.
  */
 @Singleton
 public class PasswordHasher {
@@ -59,14 +43,7 @@ public class PasswordHasher {
         this(concurrency(config), timeout(config), settings(config));
     }
 
-    /**
-     * Creates a PasswordHasher with explicit values, bypassing the configuration
-     * and the heuristic. Intended for tests
-     *
-     * @param concurrency The number of concurrent hash computations allowed
-     * @param timeoutMillis The time in milliseconds a caller waits for a free slot
-     * @param settings The Argon2 parameters to hash with
-     */
+    // Bypasses the configuration and the concurrency heuristic; intended for tests.
     PasswordHasher(int concurrency, long timeoutMillis, Argon2Settings settings) {
         Objects.requireNonNull(settings, Required.SETTINGS);
         Argument.check(concurrency > 0, "concurrency must be greater than zero");
@@ -80,16 +57,7 @@ public class PasswordHasher {
                 concurrency, timeoutMillis, settings.memoryKb(), settings.iterations(), settings.parallelism());
     }
 
-    /**
-     * Hashes a given clear text with a given salt using Argon2id, waiting for a free
-     * slot if all slots are currently taken
-     *
-     * @param cleartext The clear text
-     * @param salt The salt
-     * @return An Argon2id hash in the PHC string format, see {@link Argon2Hash}
-     *
-     * @throws MangooHashingException If no slot became available within the configured timeout
-     */
+    /** Throws {@link MangooHashingException} if no hashing slot becomes available within the configured timeout. */
     public String hash(String cleartext, String salt) {
         Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
         Argument.requireNonBlank(salt, Required.SALT);
@@ -101,23 +69,8 @@ public class PasswordHasher {
     }
 
     /**
-     * Verifies a given clear text against an already hashed value
-     * <p>
-     * A hash in PHC format is verified with the parameters it carries, the current
-     * configuration is deliberately ignored. The given salt must be the one the hash was
-     * created with, a mismatch is a failed verification and not silently verified against
-     * the embedded salt. A hash that is not in PHC format was created before mangoo I/O
-     * embedded the parameters and is verified with {@link Argon2Settings#LEGACY} and the
-     * given salt, so that an upgrade does not lock out existing users. Use
-     * {@link #needsRehash(String)} after a successful verification to find out whether the
-     * hash should be recomputed
-     *
-     * @param cleartext The clear text
-     * @param salt The salt the hash was created with
-     * @param stored The stored hash
-     * @return True if the clear text matches the stored hash, false otherwise
-     *
-     * @throws MangooHashingException If no slot became available within the configured timeout
+     * Verifies with the parameters of the stored hash (legacy non-PHC hashes with {@link Argon2Settings#LEGACY}); a salt mismatch fails.
+     * Throws {@link MangooHashingException} if no hashing slot becomes available within the configured timeout.
      */
     public boolean matches(String cleartext, String salt, String stored) {
         Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
@@ -146,18 +99,7 @@ public class PasswordHasher {
         return Arrays.constantTimeAreEqual(expectedHash, actual);
     }
 
-    /**
-     * Checks whether a stored hash was created with something else than the current
-     * configuration and should be replaced
-     * <p>
-     * True for a hash that is not in PHC format and for a PHC hash whose parameters
-     * differ from the configured ones. <strong>Only evaluate this after
-     * {@link #matches(String, String, String)} returned true</strong>, the clear text is
-     * needed to compute the replacement and a failed login must not trigger a rehash
-     *
-     * @param stored The stored hash
-     * @return True if the hash should be recomputed with the current parameters, false otherwise
-     */
+    /** Only call after {@link #matches(String, String, String)} returned true, as a failed login must not trigger a rehash. */
     public boolean needsRehash(String stored) {
         Argument.requireNonBlank(stored, Required.HASH);
 
@@ -208,17 +150,7 @@ public class PasswordHasher {
         return hash;
     }
 
-    /**
-     * Resolves the number of concurrent hash computations that are allowed
-     * <p>
-     * A configured value greater than zero takes precedence. Otherwise the value is
-     * derived from the memory a single hash occupies and half of the heap the JVM may
-     * use, clamped to [{@value #MIN_CONCURRENCY}, {@value #MAX_CONCURRENCY}]
-     *
-     * @param configured The configured value, 0 to derive it
-     * @param memoryKb The memory cost of a single hash in kibibytes
-     * @return The number of concurrent hash computations allowed
-     */
+    // A configured value greater than 0 wins; otherwise it is derived from the per-hash memory and half the max heap, clamped to [2, 8].
     static int resolveConcurrency(int configured, int memoryKb) {
         if (configured > 0) {
             return configured;
@@ -240,11 +172,7 @@ public class PasswordHasher {
         return config.getAuthenticationHashingTimeout();
     }
 
-    /**
-     * Reads the configured Argon2id parameters and refuses anything below the lower
-     * bounds mangoo I/O accepts. The application fails to start rather than hashing
-     * weaker than intended
-     */
+    // Fails the startup rather than hashing weaker than the accepted minimum.
     private static Argon2Settings settings(Config config) {
         Objects.requireNonNull(config, Required.CONFIG);
         return new Argon2Settings(
@@ -253,16 +181,10 @@ public class PasswordHasher {
                 config.getAuthenticationHashingParallelism()).requireNotWeakerThanMinimum();
     }
 
-    /**
-     * @return The number of concurrent hash computations this instance allows
-     */
     int getConcurrency() {
         return concurrency;
     }
 
-    /**
-     * @return The number of hashing slots that are currently free
-     */
     int availablePermits() {
         return semaphore.availablePermits();
     }

@@ -7,139 +7,49 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public interface Cache {
-    /**
-     * Adds a value to cache with a given key overwriting and existing value
-     *
-     * @param key The key for the cached value
-     * @param value The value to store
-     */
     void put(String key, Object value);
     
-    /**
-     * Adds a value to cache with a given key overwriting and existing value
-     * The value will expire after the given expiration value and the given
-     * temporal unit for the expiration
-     *
-     * @param key The key for the cached value
-     * @param value The value to store
-     * @param expires The time after which the entry expires
-     * @param temporalUnit The time unit for the expiration
-     */
     void put(String key, Object value, int expires, TemporalUnit temporalUnit);
 
-    /**
-     * Adds a value to cache with a given key overwriting and existing value
-     * The value will expire after the given expiration value and the given
-     * temporal unit for the expiration
-     *
-     * @param key The key for the cached value
-     * @param value The value to store
-     * @param expires The LocalDateTime when the entry expires
-     */
     void put(String key, Object value, LocalDateTime expires);
 
-    /**
-     * Removes a value with a given key from the cache
-     *
-     * @param key The key for the cached value
-     */
     void remove(String key);
 
-    /**
-     * Clears the complete cache by invalidating all entries
-     */
     void clear();
 
-    /**
-     * Retrieves an object from the caches and converts it to
-     * a given class
-     *
-     * @param key The key for the cached value
-     * @param <T> JavaDoc requires this (just ignore it)
-     *
-     * @return A converted cache class value
-     */
     <T> T get(String key);
 
     /**
-     * Tries to retrieve an object from the cache and if not
-     * found invokes the given fallback methods, returns that
-     * value while also populating the cache under the given key
-     *
-     * @param key The key for the cached value
-     * @param fallback The fallback method to call if value not found
-     * @param <T> JavaDoc requires this (just ignore it)
-     *
-     * @return A converted cache class value
+     * Calls the fallback if the key is not cached and caches its result under the key.
      */
     <T> T get(String key, Function<String, Object> fallback);
 
-    /**
-     * Adds a complete map of objects to the cache
-     *
-     * @param map The map to add
-     */
     void putAll(Map<String, Object> map);
     
     /**
-     * Increments a cache counter with a given key
-     * <p>
-     * If the counter did not exist, it will be
-     * created and the incremented
-     * 
-     * @param key The key for the cached value
-     * @return A counter based on AtomicInteger
+     * Creates the counter if it does not exist.
      */
     AtomicInteger getAndIncrementCounter(String key);
     
     /**
-     * Decrements a counter with a given key
-     * <p>
-     * If the counter did not exist, it will be
-     * created and the decremented
-     * 
-     * @param key The key for the cached value
-     * @return A counter based on AtomicInteger
+     * Creates the counter if it does not exist.
      */
     AtomicInteger getAndDecrementCounter(String key);
 
     /**
-     * Retrieves the counter for a given key
-     * 
-     * @param key The key for the counter
-     * @return A counter based on AtomicInteger or null if none found
+     * Returns null if no counter exists.
      */
     AtomicInteger getCounter(String key);
 
-    /**
-     * Resets the counter for a given key
-     * 
-     * @param key The key for the counter
-     * @return A counter based on AtomicInteger
-     */
     AtomicInteger resetCounter(String key);
 
     /**
-     * Tries to retrieve an object from the cache and if not
-     * found invokes the given fallback methods, returns that
-     * value while also populating the cache under the given key
-     * with an expires timestamp where the fallback value will be removed
-     *
-     * @param key The key for the cached value
-     * @param expires The time after which the entry expires
-     * @param temporalUnit The time unit for the expiration
-     * @param fallback The fallback method to call if value not found
-     * @param <T> JavaDoc requires this (just ignore it)
-     *
-     * @return A converted cache class value
+     * Calls the fallback if the key is not cached and caches its result under the key with the given expiry.
      */
     <T> T get(String key, int expires, TemporalUnit temporalUnit, Function<String, Object> fallback);
 
     /**
-     * Retrieves the values of multiple given keys or null if no value found
-     * 
-     * @param keys The keys to retrieve from cache
-     * @return A Map of key and value
+     * Keys without a cached value are mapped to null.
      */
     Map<String, Object> getAll(String... keys);
 }

@@ -7,11 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class EnumsTest {
     

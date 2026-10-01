@@ -63,22 +63,41 @@ class VaultTest {
 
     @Test
     void testStartupDoesNotRewriteVaultFile() throws Exception {
-        //given a vault without the secrets of another mode, as a vault that has only been used in dev mode
         Path path = Application.getInstance(Vault.class).getPath();
-        KeyStore keyStore = load(path);
-        keyStore.deleteEntry("prod." + Key.SESSION_COOKIE_SECRET);
-        try (var outputStream = Files.newOutputStream(path)) {
-            keyStore.store(outputStream, vaultSecret());
+        byte[] original = Files.readAllBytes(path);
+        try {
+            //given a vault without the secrets of another mode, as a vault that has only been used in dev mode
+            KeyStore keyStore = load(path);
+            keyStore.deleteEntry("prod." + Key.SESSION_COOKIE_SECRET);
+            try (var outputStream = Files.newOutputStream(path)) {
+                keyStore.store(outputStream, vaultSecret());
+            }
+
+            //when
+            new Vault();
+            byte[] afterFirstStart = Files.readAllBytes(path);
+            new Vault();
+
+            //then the missing secret is created once and the next start writes nothing
+            assertThat(load(path).containsAlias("prod." + Key.SESSION_COOKIE_SECRET), equalTo(true));
+            assertThat(Files.readAllBytes(path), equalTo(afterFirstStart));
+        } finally {
+            Files.write(path, original);
         }
+    }
+
+    @Test
+    void testPutWithSameValueDoesNotWriteVaultFile() throws IOException {
+        //given
+        Vault vault = Application.getInstance(Vault.class);
+        vault.put("vaulttest.same", "winterfell");
+        byte[] before = Files.readAllBytes(vault.getPath());
 
         //when
-        new Vault();
-        byte[] afterFirstStart = Files.readAllBytes(path);
-        new Vault();
+        vault.put("vaulttest.same", "winterfell");
 
-        //then the missing secret is created once and the next start writes nothing
-        assertThat(load(path).containsAlias("prod." + Key.SESSION_COOKIE_SECRET), equalTo(true));
-        assertThat(Files.readAllBytes(path), equalTo(afterFirstStart));
+        //then
+        assertThat(Files.readAllBytes(vault.getPath()), equalTo(before));
     }
 
     @Test

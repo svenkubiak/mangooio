@@ -35,7 +35,6 @@ class FileUtilsTest {
     @Test
     void testGetMimeTypeWithByteArrayNull() {
         //given
-        // No setup needed for null input
 
         //when & then
         assertThrows(NullPointerException.class, () -> FileUtils.getMimeType((byte[]) null));
@@ -57,7 +56,6 @@ class FileUtilsTest {
     @Test
     void testGetMimeTypeWithInputStreamNull() {
         //given
-        // No setup needed for null input
 
         //when & then
         assertThrows(NullPointerException.class, () -> FileUtils.getMimeType((InputStream) null));
@@ -90,7 +88,6 @@ class FileUtilsTest {
     @Test
     void testCloseQuietlyWithNullCloseable() {
         //given
-        // No setup needed for null input
 
         //when
         FileUtils.closeQuietly(null);
@@ -254,7 +251,6 @@ class FileUtilsTest {
     @Test
     void testReadFileToStringWithPathNull() {
         //given
-        // No setup needed for null input
 
         //when & then
         assertThrows(NullPointerException.class, () -> FileUtils.readFileToString((Path) null));
@@ -304,7 +300,6 @@ class FileUtilsTest {
     @Test
     void testReadFileToStringWithStringNull() {
         //given
-        // No setup needed for null input
 
         //when & then
         assertThrows(IllegalArgumentException.class, () -> FileUtils.readFileToString((String) null));
@@ -350,7 +345,6 @@ class FileUtilsTest {
         assertThat(result, equalTo(content.toString()));
     }
 
-    // Helper class for testing closeable behavior
     private static class TestCloseable implements Closeable {
         private boolean closed = false;
         private boolean shouldThrowException = false;

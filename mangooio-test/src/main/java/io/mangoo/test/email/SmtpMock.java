@@ -10,11 +10,6 @@ import jakarta.inject.Singleton;
 
 import java.util.Objects;
 
-/**
- *
- * @author svenkubiak
- *
- */
 @Singleton
 public class SmtpMock {
     private static final String SMTP_SERVER_NAME = "smtp";

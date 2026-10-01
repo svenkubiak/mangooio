@@ -78,15 +78,7 @@ public final class Trace {
         }
     }
 
-    /**
-     * Starts the root span for the given exchange. The span is attached to the exchange and is
-     * therefore isolated from any other request that is processed in parallel. An exchange
-     * completion listener ensures that every span of this exchange is ended, even if the
-     * handler chain is aborted before {@link #end(HttpServerExchange)} is reached.
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @param process The name of the span
-     */
+    // A completion listener ends every span of the exchange, even if the handler chain aborts before end() is reached
     public static void start(HttpServerExchange exchange, String process) {
         if (!ENABLED || openTelemetry == null) {return;}
 
@@ -111,14 +103,7 @@ public final class Trace {
         traceState.push(createSpan(process, Context.root()));
     }
 
-    /**
-     * Starts a child span of the currently innermost span of the given exchange. The parent
-     * context is propagated explicitly, so the child span is correct regardless of the thread
-     * the request is currently processed on.
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @param childProcess The name of the child span
-     */
+    // The parent context is passed explicitly, so the child span is correct regardless of the current thread
     public static void startChild(HttpServerExchange exchange, String childProcess) {
         if (!ENABLED || openTelemetry == null) {return;}
 
@@ -136,11 +121,6 @@ public final class Trace {
         traceState.push(createSpan(childProcess, Context.root().with(parent)));
     }
 
-    /**
-     * Ends the innermost span that is currently open for the given exchange
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
     public static void end(HttpServerExchange exchange) {
         if (!ENABLED) {return;}
 
@@ -156,11 +136,6 @@ public final class Trace {
         }
     }
 
-    /**
-     * Ends all spans that are still open for the given exchange and detaches the trace state
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
     private static void endAll(HttpServerExchange exchange) {
         var traceState = exchange.removeAttachment(TRACE_STATE);
         if (traceState == null) {
@@ -189,10 +164,7 @@ public final class Trace {
         }
     }
 
-    /**
-     * Holds the span stack of a single exchange. Access is synchronized because the exchange
-     * completion listener may run on a different thread than the handler chain.
-     */
+    // Synchronized because the exchange completion listener may run on a different thread than the handler chain
     private static final class TraceState {
         private final Deque<Span> spans = new ArrayDeque<>();
 

@@ -6,13 +6,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Run {
-    /**
-     * Schedules a method either at a given rate (e.g. Every 1s, Every 5m, Every 8h, Every 1d)
-     * or a given UNIX cron (e.g. 0/1 * * * *)
-     * 
-     * @see <a href="https://en.wikipedia.org/wiki/Cron">https://en.wikipedia.org/wiki/Cron</a>
-     * 
-     * @return Rate or UNIX cron for execution
-     */
+    /** A fixed rate (e.g. "Every 5m", units s, m, h, d) or a UNIX cron expression (e.g. "0/1 * * * *"). */
     String at();
 }

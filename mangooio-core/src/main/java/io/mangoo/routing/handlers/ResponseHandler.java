@@ -45,35 +45,16 @@ public class ResponseHandler implements HttpHandler {
             form.discard();
         }
 
-        // No Trace.end() here. Sending the response completes the exchange, which fires the
-        // completion listener that closes the remaining spans. Ending the span at this point
-        // would always come too late and is also unnecessary, as closing it from the listener
-        // covers an aborted request the same way it covers this one.
+        // No Trace.end() here: completing the exchange fires the completion listener, which closes
+        // the remaining spans and also covers aborted requests.
     }
 
-    /**
-     * Handles a binary response to the client by sending the binary content from the response
-     * to the undertow output stream
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @param response The response object
-     */
+    // Wrapped with the ExceptionHandler, because a dispatched handler runs as a new root handler outside the server's exception handler.
     protected void handleBinaryResponse(HttpServerExchange exchange, Response response) {
         exchange.dispatch(exchange.getDispatchExecutor(), ExceptionHandler.wrap(Application.getInstance(BinaryHandler.class).withResponse(response)));
     }
 
-    /**
-     * Handles a file response to the client by transferring the file from a FileChannel
-     * to the undertow response sender. The file is never read into the heap, the memory
-     * usage of the response is therefore independent of the size of the file.
-     *
-     * The exchange is intentionally not switched to blocking mode, so that the sender
-     * transfers the file asynchronously and the thread is not occupied for the duration
-     * of the transfer.
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @param response The response object
-     */
+    // The file is transferred from a FileChannel without blocking mode, so it is never read into the heap and no thread is occupied during the transfer.
     protected void handleFileResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(response.getStatusCode());
 
@@ -88,9 +69,7 @@ public class ResponseHandler implements HttpHandler {
         var path = response.getFileBody();
         final FileChannel fileChannel;
         try {
-            // Only an explicitly set content type ends up in the response headers, the content
-            // type of the response object itself is prefilled with a default and is therefore
-            // no indication that the developer has chosen a content type
+            // Only an explicitly set header counts, as the content type of the response object is always prefilled with a default.
             if (!response.getHeaders().containsKey(Header.CONTENT_TYPE)) {
                 try (var inputStream = Files.newInputStream(path)) {
                     String mimeType = FileUtils.getMimeType(inputStream);
@@ -124,12 +103,6 @@ public class ResponseHandler implements HttpHandler {
         });
     }
 
-    /**
-     * Handles a redirect response to the client by sending a 403 status code to the client
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @param response The response object
-     */
     protected void handleRedirectResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(StatusCodes.FOUND);
         
@@ -144,12 +117,6 @@ public class ResponseHandler implements HttpHandler {
         exchange.endExchange();
     }
 
-    /**
-     * Handles a rendered response to the client by sending the rendered body from the response object
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @param response The response object
-     */
     protected void handleRenderedResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(response.getStatusCode());
         

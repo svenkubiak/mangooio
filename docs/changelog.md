@@ -14,6 +14,7 @@ Released at 01.10.2026
 * Fixed revoked authentication cookies becoming valid again after 60 minutes (svenkubiak)
 * Fixed a password login resetting the failed attempts of the admin second factor (svenkubiak)
 * Fixed Vault#put destroying vault.p12 on failure, the vault being rewritten on every start and not starting on Windows (svenkubiak)
+* Fixed Vault#put rewriting vault.p12 when the value is unchanged (svenkubiak)
 * Fixed subscribers not being registered, not receiving nested payload types and being blocked by a failing subscriber (svenkubiak)
 * Fixed @Collection and @Indexed reading other annotations of a class or field (svenkubiak)
 * Fixed mail attachments being read from the working directory instead of the given path (svenkubiak)

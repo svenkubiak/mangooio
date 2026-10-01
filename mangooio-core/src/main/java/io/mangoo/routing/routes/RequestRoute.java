@@ -26,13 +26,6 @@ public class RequestRoute implements MangooRoute {
         this.methods = Arrays.copyOf(methods, methods.length);
     }
 
-    /**
-     * Sets the URL for this route
-     * 
-     * @param url The URL for this route
-     * 
-     * @return RequestRoute instance
-     */
     public RequestRoute to(String url) {
         Objects.requireNonNull(url, Required.URL);
         
@@ -45,25 +38,12 @@ public class RequestRoute implements MangooRoute {
         return this;
     }
     
-    /**
-     * Sets the controller method to response on request
-     * 
-     * @param method The controller method
-     * @return RequestRoute instance
-     */
     public RequestRoute respondeWith(String method) {
         Objects.requireNonNull(method, Required.CONTROLLER_METHOD);
         this.controllerMethod = method;
         return this;
     }
     
-    /**
-     * Creates a copy of this route for a single HTTP method. Used to register
-     * a route with multiple HTTP methods as separate routes, one per method.
-     *
-     * @param method The HTTP method of the copy
-     * @return A new RequestRoute instance
-     */
     RequestRoute forMethod(Http method) {
         Objects.requireNonNull(method, Required.HTTP_METHOD);
 
@@ -77,43 +57,22 @@ public class RequestRoute implements MangooRoute {
         return requestRoute;
     }
 
-    /**
-     * Sets the controller class of this request
-     * 
-     * @param clazz The controller class
-     */
     public void withControllerClass(Class<?> clazz) {
         Objects.requireNonNull(clazz, Required.CONTROLLER_CLASS);
         this.controllerClass = clazz;
     }
     
-    /**
-     * Sets the HTTP method of this request
-     * 
-     * @param method The controller method
-     */
     public void withHttpMethod(Http method) {
         Objects.requireNonNull(method, Required.METHOD);
         this.method = method;
     }
 
-    /**
-     * Sets authentication to true for this route, default is false
-     * 
-     * @return RequestRoute instance
-     */
     public RequestRoute withAuthentication() {
         this.authentication = true;
         return this;
     }
     
-    /**
-     * Configures this request as long-running request that is
-     * executed in a different thread pool to not block the
-     * non-blocking I/O request
-     * 
-     * @return RequestRoute instance
-     */
+    /** Executes the request in a worker thread pool, so that a long-running request does not block the I/O thread. */
     public RequestRoute withNonBlocking() {
         this.blocking = true;
         return this;

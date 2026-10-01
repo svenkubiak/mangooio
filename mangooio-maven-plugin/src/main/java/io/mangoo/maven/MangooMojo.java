@@ -43,13 +43,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * This is a refactored version of NinjaRunMojo.java from the Ninja Web Framework
- *
- * Original source code can be found here:
+ * Refactored version of NinjaRunMojo.java from the Ninja Web Framework:
  * https://github.com/ninjaframework/ninja/blob/develop/ninja-maven-plugin/src/main/java/ninja/maven/NinjaRunMojo.java
- *
- * @author svenkubiak
- *
  */
 @Mojo(name = "run",
 requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,

@@ -42,14 +42,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This is a refactored version of
- * WatchAndRestartMachine.java from the Ninja Web Framework
- *
- * Original source code can be found here:
+ * Refactored version of WatchAndRestartMachine.java from the Ninja Web Framework:
  * https://github.com/ninjaframework/ninja/blob/develop/ninja-maven-plugin/src/main/java/ninja/build/WatchAndRestartMachine.java
- *
- * @author svenkubiak
- *
  */
 @SuppressWarnings({"unchecked"})
 public class Watcher implements Runnable {

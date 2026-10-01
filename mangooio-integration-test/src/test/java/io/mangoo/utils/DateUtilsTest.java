@@ -29,7 +29,6 @@ class DateUtilsTest {
         assertThat(date, not(nullValue()));
         assertThat(date, instanceOf(Date.class));
 
-        // Convert back to LocalDateTime to verify the conversion
         LocalDateTime convertedBack = date.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
@@ -63,7 +62,6 @@ class DateUtilsTest {
         //then
         assertThat(date, not(nullValue()));
 
-        // Convert back to verify
         LocalDateTime convertedBack = date.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
@@ -93,7 +91,6 @@ class DateUtilsTest {
         assertThat(date, not(nullValue()));
         assertThat(date, instanceOf(Date.class));
 
-        // Convert back to LocalDate to verify the conversion
         LocalDate convertedBack = date.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
@@ -127,7 +124,6 @@ class DateUtilsTest {
         //then
         assertThat(date, not(nullValue()));
 
-        // Convert back to verify
         LocalDate convertedBack = date.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
@@ -156,7 +152,6 @@ class DateUtilsTest {
         //then
         assertThat(prettyTime, not(nullValue()));
         assertThat(prettyTime, not(emptyString()));
-        // Should contain "moments ago" or similar relative time
         assertThat(prettyTime.toLowerCase(), anyOf(
                 containsString("moments from now"),
                 containsString("moments ago"),
@@ -181,7 +176,6 @@ class DateUtilsTest {
         //then
         assertThat(prettyTime, not(nullValue()));
         assertThat(prettyTime, not(emptyString()));
-        // Should contain "ago" for past time
         assertThat(prettyTime.toLowerCase(), containsString("ago"));
     }
 
@@ -196,7 +190,6 @@ class DateUtilsTest {
         //then
         assertThat(prettyTime, not(nullValue()));
         assertThat(prettyTime, not(emptyString()));
-        // Should contain "from now" or similar for future time
         assertThat(prettyTime.toLowerCase(), anyOf(
                 containsString("from now"),
                 containsString("in ")
@@ -214,7 +207,6 @@ class DateUtilsTest {
         //then
         assertThat(prettyTime, not(nullValue()));
         assertThat(prettyTime, not(emptyString()));
-        // Should contain "ago" for past time
         assertThat(prettyTime.toLowerCase(), containsString("ago"));
     }
 
@@ -241,7 +233,6 @@ class DateUtilsTest {
         //then
         assertThat(prettyTime, not(nullValue()));
         assertThat(prettyTime, not(emptyString()));
-        // Should contain relative time text
         assertThat(prettyTime.toLowerCase(), anyOf(
                 containsString("moments from now"),
                 containsString("moments ago"),
@@ -271,8 +262,7 @@ class DateUtilsTest {
         assertThat(prettyTimeGerman, not(nullValue()));
         assertThat(prettyTimeEnglish, not(emptyString()));
         assertThat(prettyTimeGerman, not(emptyString()));
-        // The strings might be different due to localization
-        // but both should be valid relative time strings
+        // The localized strings may differ, so only their presence is asserted
     }
 
     @Test
@@ -287,7 +277,6 @@ class DateUtilsTest {
         //then
         assertThat(prettyTime, not(nullValue()));
         assertThat(prettyTime, not(emptyString()));
-        // Should contain "ago" for past time
         assertThat(prettyTime.toLowerCase(), containsString("ago"));
     }
 
@@ -303,7 +292,6 @@ class DateUtilsTest {
         //then
         assertThat(prettyTime, not(nullValue()));
         assertThat(prettyTime, not(emptyString()));
-        // Should contain "from now" or similar for future time
         assertThat(prettyTime.toLowerCase(), anyOf(
                 containsString("from now"),
                 containsString("in ")
@@ -390,8 +378,7 @@ class DateUtilsTest {
         assertThat(prettyTimeFrench, not(nullValue()));
         assertThat(prettyTimeEnglish, not(emptyString()));
         assertThat(prettyTimeFrench, not(emptyString()));
-        // The strings should be different due to localization
-        // but both should be valid relative time strings
+        // The localized strings may differ, so only their presence is asserted
     }
 
     @Test
@@ -405,7 +392,6 @@ class DateUtilsTest {
         //then
         assertThat(date, not(nullValue()));
 
-        // Verify the conversion preserves the local time
         LocalDateTime convertedBack = date.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
@@ -423,7 +409,6 @@ class DateUtilsTest {
         //then
         assertThat(date, not(nullValue()));
 
-        // Verify the conversion preserves the local date
         LocalDate convertedBack = date.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
@@ -441,7 +426,6 @@ class DateUtilsTest {
         //then
         assertThat(prettyTime, not(nullValue()));
         assertThat(prettyTime, not(emptyString()));
-        // Should contain "ago" for past time
         assertThat(prettyTime.toLowerCase(), containsString("ago"));
     }
 
@@ -456,7 +440,6 @@ class DateUtilsTest {
         //then
         assertThat(prettyTime, not(nullValue()));
         assertThat(prettyTime, not(emptyString()));
-        // Should contain "from now" or similar for future time
         assertThat(prettyTime.toLowerCase(), anyOf(
                 containsString("from now"),
                 containsString("in ")
@@ -475,7 +458,6 @@ class DateUtilsTest {
         //then
         assertThat(prettyTime, not(nullValue()));
         assertThat(prettyTime, not(emptyString()));
-        // Should contain "ago" for past time
         assertThat(prettyTime.toLowerCase(), containsString("ago"));
     }
 
@@ -491,7 +473,6 @@ class DateUtilsTest {
         //then
         assertThat(prettyTime, not(nullValue()));
         assertThat(prettyTime, not(emptyString()));
-        // Should contain "from now" or similar for future time
         assertThat(prettyTime.toLowerCase(), anyOf(
                 containsString("from now"),
                 containsString("in ")

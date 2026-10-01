@@ -39,17 +39,7 @@ public class Crypto {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    /**
-     * Decrypts a given Base64 encoded, AES-256-GCM encrypted text using the given key.
-     * <p>
-     * The random IV is expected to be prepended to the ciphertext. Decryption fails
-     * (returns null) if the authentication tag does not verify, i.e. the ciphertext
-     * has been tampered with.
-     *
-     * @param encryptedText The encrypted text
-     * @param key The encryption key
-     * @return The clear text or null if decryption fails
-     */
+    /** Expects the IV prepended to the ciphertext; returns null if decryption fails, e.g. because the ciphertext was tampered with. */
     public String decrypt(String encryptedText, String key) {
         Objects.requireNonNull(encryptedText, Required.ENCRYPTED_TEXT);
         Objects.requireNonNull(key, Required.KEY);
@@ -77,17 +67,7 @@ public class Crypto {
         return null;
     }
 
-    /**
-     * Encrypts a given plain text using the given key.
-     * <p>
-     * Encryption is done using AES-256 in GCM mode (authenticated encryption). A fresh
-     * random 96-bit IV is generated for every call and prepended to the ciphertext, so
-     * encrypting the same plain text twice yields different results.
-     *
-     * @param plainText The plain text to encrypt
-     * @param key The key to use for encryption
-     * @return The encrypted text (Base64 encoded) or null if encryption fails
-     */
+    /** Uses AES-256-GCM with a random IV prepended to the ciphertext; returns null if encryption fails. */
     public String encrypt(String plainText, String key) {
         Objects.requireNonNull(plainText, Required.PLAIN_TEXT);
         Objects.requireNonNull(key, Required.KEY);
@@ -112,16 +92,7 @@ public class Crypto {
         return null;
     }
 
-    /**
-     * Derives a 256-bit AES key from the given secret.
-     * <p>
-     * The secret must be at least {@value #MIN_KEY_LENGTH} characters long. Instead of
-     * silently truncating the secret, the full (ASCII) secret is hashed with SHA-256 so
-     * that all of its entropy contributes to the key.
-     *
-     * @param secret The secret to derive the key from
-     * @return A 256-bit AES {@link SecretKey}
-     */
+    // Hashes the full ASCII secret with SHA-256 instead of truncating it, so all of its entropy contributes to the key.
     private SecretKey deriveKey(String secret) {
         Objects.requireNonNull(secret, Required.SECRET);
 
@@ -138,11 +109,6 @@ public class Crypto {
         }
     }
     
-    /**
-     * Generate key which contains a pair of private and public key using 4096 bytes
-     * 
-     * @return key pair 
-     */
     public KeyPair generateKeyPair() {
         KeyPair keyPair = null;
         try {
@@ -156,15 +122,6 @@ public class Crypto {
         return keyPair;
     }
     
-    /**
-     * Encrypt a text using public key
-     * 
-     * @param text The plain text
-     * @param key The public key
-     * 
-     * @return Encrypted text
-     * @throws MangooEncryptionException if encryption fails
-     */
     public byte[] encrypt(byte[] text, PublicKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.PLAIN_TEXT);
         Objects.requireNonNull(text, Required.PUBLIC_KEY);
@@ -181,15 +138,7 @@ public class Crypto {
         return encrypt;
     }
     
-    /**
-     * Encrypt a text using public key. The result is encoded to Base64.
-     * 
-     * @param text The plain text
-     * @param key The public key 
-     * 
-     * @return Encrypted string as base64
-     * @throws MangooEncryptionException if encryption fails
-     */
+    /** Returns the ciphertext Base64 encoded. */
     public String encrypt(String text, PublicKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.PLAIN_TEXT);
         Objects.requireNonNull(text, Required.PUBLIC_KEY);
@@ -205,15 +154,6 @@ public class Crypto {
         return encrypt;
     }
 
-    /**
-     * Decrypt text using private key
-     * 
-     * @param text The encrypted text
-     * @param key The private key
-     * 
-     * @return The unencrypted text
-     * @throws MangooEncryptionException if decryption fails
-     */
     public byte[] decrypt(byte[] text, PrivateKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT);
         Objects.requireNonNull(text, Required.PRIVATE_KEY);
@@ -230,15 +170,7 @@ public class Crypto {
         return decrypt;
     }
     
-    /**
-     * Decrypt Base64 encoded text using private key
-     * 
-     * @param text The encrypted text, encoded as Base64
-     * @param key The private key
-     * 
-     * @return The plain text encoded as UTF8
-     * @throws MangooEncryptionException if decryption fails
-     */
+    /** Expects the ciphertext Base64 encoded. */
     public String decrypt(String text, PrivateKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT);
         Objects.requireNonNull(text, Required.PRIVATE_KEY);
@@ -254,26 +186,13 @@ public class Crypto {
         return decrypt;
     }
 
-    /**
-     * Convert a Key to string encoded as Base64
-     * 
-     * @param key The key (private or public)
-     * @return A string representation of the key
-     */
     public String getKeyAsString(Key key) {
         Objects.requireNonNull(key, Required.KEY);
         
         return new String(CommonUtils.encodeToBase64(key.getEncoded()), StandardCharsets.UTF_8);
     }
 
-    /**
-     * Generates Private Key from Base64 encoded string
-     * 
-     * @param key Base64 encoded string which represents the key
-
-     * @return The PrivateKey
-     * @throws MangooEncryptionException if getting private key from string fails
-     */
+    /** Expects a Base64 encoded PKCS#8 key. */
     public PrivateKey getPrivateKeyFromString(String key) throws MangooEncryptionException {
         Objects.requireNonNull(key, Required.KEY);
         
@@ -284,14 +203,7 @@ public class Crypto {
         }
     }
 
-    /**
-     * Generates Public Key from Base64 encoded string
-     * 
-     * @param key Base64 encoded string which represents the key
-
-     * @return The PublicKey
-     * @throws MangooEncryptionException if getting public key from string fails
-     */
+    /** Expects a Base64 encoded X.509 key. */
     public PublicKey getPublicKeyFromString(String key) throws MangooEncryptionException {
         Objects.requireNonNull(key, Required.KEY);
         

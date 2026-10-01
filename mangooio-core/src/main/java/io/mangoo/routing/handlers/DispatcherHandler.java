@@ -135,12 +135,7 @@ public final class DispatcherHandler implements HttpHandler {
         Application.getInstance(LocaleHandler.class).handleRequest(exchange);
     }
 
-    /**
-     * Ends the current request by sending an HTTP 400 status code and the default bad request template.
-     * Used when a request contains ambiguous multi-valued parameters (HTTP parameter pollution).
-     *
-     * @param exchange The HttpServerExchange
-     */
+    // Rejects requests with ambiguous multi-valued parameters (HTTP parameter pollution).
     private void endRequest(HttpServerExchange exchange) {
         exchange.setStatusCode(StatusCodes.BAD_REQUEST);
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html; charset=utf-8");

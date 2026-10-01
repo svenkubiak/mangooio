@@ -17,11 +17,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 class MinificationTest {
     private static final String CSS = "p{font:normal 14px/20px helvetica, arial, sans-serif;color:#333;}.woot{font-weight:bold;}";
     private static final String TEMP = System.getProperty("java.io.tmpdir") + File.separator + "stylesheet" + File.separator;

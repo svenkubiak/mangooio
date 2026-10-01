@@ -46,9 +46,7 @@ public class CacheProvider implements Provider<Cache> {
     }
 
     private void initAuthenticationCache(Config config) {
-        // The cache is only the cleanup mechanism for the failed attempt budget. It must
-        // never evict an entry before the lock it carries has been released, otherwise a
-        // locked identifier would be unlocked early
+        // Must never evict an entry before its lock is released, otherwise a locked identifier would be unlocked early
         long minutes = Math.max(SIXTY, config.getAuthenticationLockDuration());
 
         Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
@@ -64,23 +62,13 @@ public class CacheProvider implements Provider<Cache> {
         cache = getCache(CacheName.APPLICATION);
     }
 
-    /**
-     * Retrieves a cache by its name from the cache pool
-     * 
-     * @param name The name of the cache
-     * @return A Cache instance
-     */
     public Cache getCache(String name) {
         Argument.requireNonBlank(name, Required.NAME);
         return caches.get(name);
     }
 
     /**
-     * Adds a cache to the CacheProvider list making it available to
-     * the Admin Dashboard (if record stats is enabled)
-     *
-     * @param name The name of the cache
-     * @param cache The cache instance
+     * Makes the cache available to the admin dashboard; the built-in application and auth cache names cannot be replaced.
      */
     public void addCache(String name, Cache cache) {
         Argument.requireNonBlank(name, Required.NAME);
@@ -92,9 +80,6 @@ public class CacheProvider implements Provider<Cache> {
         }
     }
     
-    /**˝
-     * @return Map of all caches
-     */
     public Map<String, Cache> getCaches() {
         return caches;
     }

@@ -13,11 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class ConcurrentControllerTest {
 

@@ -111,8 +111,7 @@ public class Vault {
 
     private void loadKeyStore() throws IOException, GeneralSecurityException {
         if (Files.exists(path) && Files.size(path) == 0) {
-            // A vault file without content holds no secrets, e.g. left behind by an earlier
-            // version that failed while creating the vault, it is therefore created anew
+            // An empty vault file holds no secrets (e.g. left by a failed earlier version) and is created anew.
             LOG.warn("Found empty vault at {}, creating a new vault", path);
         }
 
@@ -214,11 +213,6 @@ public class Vault {
         this.prefix = Application.getMode().toString().toLowerCase() + ".";
     }
 
-    /**
-     * Creates the cookie secrets and keys for every mode if they do not exist yet
-     *
-     * @return True if the keystore has been changed and needs to be stored, false otherwise
-     */
     private boolean createSecrets() throws KeyStoreException {
         var changed = false;
         for (Mode mode : Mode.values()) {
@@ -234,12 +228,7 @@ public class Vault {
         return removeMisplacedSecrets() || changed;
     }
 
-    /**
-     * Removes the secrets that earlier versions created with a doubled mode prefix,
-     * e.g. dev.prod.session.cookie.secret. These were never read.
-     *
-     * @return True if the keystore has been changed, false otherwise
-     */
+    // Removes secrets that earlier versions created with a doubled mode prefix (e.g. dev.prod.session.cookie.secret), which were never read.
     private boolean removeMisplacedSecrets() throws KeyStoreException {
         var changed = false;
         for (Mode outer : Mode.values()) {
@@ -261,12 +250,7 @@ public class Vault {
         return new KeyStore.SecretKeyEntry(new SecretKeySpec(value.getBytes(StandardCharsets.UTF_8), "AES"));
     }
 
-    /**
-     * Stores the keystore atomically. The keystore is written to a temporary file in the
-     * same directory first, which then replaces the vault file. The existing vault file is
-     * therefore never truncated or left incomplete, even if storing fails or the process
-     * is killed.
-     */
+    // Written to a temp file in the same directory and then moved over the vault file, so the vault is never truncated or left incomplete.
     private void store() throws IOException, GeneralSecurityException {
         Path tempFile = createTempFile(path.toAbsolutePath().getParent());
         try {
@@ -313,14 +297,9 @@ public class Vault {
     }
 
     /**
-     * Stores a value in the vault. The vault file is replaced atomically, if storing fails
+     * Stores the value atomically and does not write the vault file if the same value is already stored; if storing fails,
      * the vault file and the in-memory vault keep their previous state.
-     *
-     * @param key The key of the value
-     * @param value The value, must not be blank
-     *
-     * @throws IllegalArgumentException if key or value is blank
-     * @throws IllegalStateException if the vault is not enabled or the value could not be stored
+     * Throws IllegalArgumentException for a blank key or value and IllegalStateException if the vault is disabled or storing fails.
      */
     public void put(String key, String value) {
         Argument.requireNonBlank(key, Required.KEY);
@@ -334,6 +313,11 @@ public class Vault {
         KeyStore.Entry previous = null;
         try {
             previous = keyStore.getEntry(alias, protection);
+            if (previous instanceof KeyStore.SecretKeyEntry entry
+                    && MessageDigest.isEqual(entry.getSecretKey().getEncoded(), value.getBytes(StandardCharsets.UTF_8))) {
+                return;
+            }
+
             keyStore.setEntry(alias, secretKeyEntry(value), protection);
             store();
         } catch (IOException | GeneralSecurityException e) {
@@ -356,12 +340,7 @@ public class Vault {
         }
     }
 
-    /**
-     * Creates the temporary file for storing the vault. On file systems with POSIX
-     * permissions the file is readable and writable by the owner only from the moment it
-     * is created. Other file systems, e.g. NTFS, do not support POSIX permissions, the file
-     * then inherits the access rights of its directory.
-     */
+    // Owner-only permissions from creation on POSIX file systems; elsewhere (e.g. NTFS) the directory's access rights apply.
     private static Path createTempFile(Path directory) throws IOException {
         if (Files.getFileStore(directory).supportsFileAttributeView(PosixFileAttributeView.class)) {
             return Files.createTempFile(directory, ".vault", ".tmp",
@@ -398,11 +377,6 @@ public class Vault {
           return null;
     }
 
-    /**
-     * Creates a self-signed certificate if it does not exist yet
-     *
-     * @return True if the keystore has been changed and needs to be stored, false otherwise
-     */
     private boolean createCertificate() {
         String alias = Optional
                 .ofNullable(config.get(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS))
@@ -417,7 +391,7 @@ public class Vault {
                 var dnName = new X500Name("CN=localhost");
                 var certSerialNumber = BigInteger.valueOf(System.currentTimeMillis());
                 var startDate = new Date(System.currentTimeMillis() - 1000L * 60 * 60 * 24);
-                var endDate = new Date(System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000)); // 1 year validity
+                var endDate = new Date(System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000));
 
                 var certBuilder = new JcaX509v3CertificateBuilder(
                         dnName,

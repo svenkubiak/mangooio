@@ -34,49 +34,24 @@ public class Flash {
         return this;
     }
 
-    /**
-     * Sets a specific error message available with
-     * the key 'error'
-     *
-     * @param value The message
-     */
     public void setError(String value) {
         if (validCharacters(value)) {
             values.put(ERROR, value);
         }
     }
 
-    /**
-     * Sets a specific warning message available with
-     * the key 'warning'
-     *
-     * @param value The message
-     */
     public void setWarning(String value) {
         if (validCharacters(value)) {
             values.put(WARNING, value);
         }
     }
 
-    /**
-     * Sets a specific success message available with
-     * the key 'success'
-     *
-     * @param value The message
-     */
     public void setSuccess(String value) {
         if (validCharacters(value)) {
             values.put(SUCCESS, value);
         }
     }
 
-    /**
-     * Adds a value with a specific key to the flash overwriting an
-     * existing value
-     *
-     * @param key The key
-     * @param value The value
-     */
     public void put(String key, String value) {
         if (validCharacters(key) && validCharacters(value)) {
             values.put(key, value);
@@ -84,26 +59,16 @@ public class Flash {
     }
     
     /**
-     * Invalidates the flash by sending expiring the client cookie
+     * Expires the flash cookie on the client.
      */
     public void invalidate() {
         invalid = true;
     }
 
-    /**
-     * Retrieves a specific value from the flash
-     *
-     * @param key The key
-     * @return The value or null if not found
-     */
     public String get(String key) {
         return values.get(key);
     }
 
-    /**
-     * Remove a specific value from the flash
-     * @param key The key
-     */
     public String remove(String key) {
         return values.remove(key);
     }
@@ -130,13 +95,6 @@ public class Flash {
         return !values.isEmpty();
     }
 
-    /**
-     * Checks if the given value contains characters that are not allowed
-     * in the key or value of a flash cookie
-     *
-     * @param value The value to check
-     * @return True if the given string is valid, false otherwise
-     */
     private boolean validCharacters(String value) {
         if (INVALID_CHARACTERS.contains(value)) {
             LOG.error("Flash key or value can not contain the following characters: spaces, |, & or :");

@@ -14,16 +14,10 @@ public class FileController {
     private static final Path MISSING_FILE = Path.of(System.getProperty("java.io.tmpdir"), "mangoo-bodyfile-missing.png");
     private static final int SIZE = 128;
 
-    /**
-     * @return The path of the temporary file which is served by this controller
-     */
     public static Path getFile() {
         return FILE;
     }
 
-    /**
-     * @return The path of a file which intentionally does not exist
-     */
     public static Path getMissingFile() {
         return MISSING_FILE;
     }

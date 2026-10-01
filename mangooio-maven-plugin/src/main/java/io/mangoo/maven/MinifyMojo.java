@@ -14,11 +14,6 @@ import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @Mojo(name = "minify",
 requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
 defaultPhase = LifecyclePhase.NONE,

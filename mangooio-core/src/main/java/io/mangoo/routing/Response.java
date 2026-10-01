@@ -56,116 +56,47 @@ public class Response {
         this.redirectTo = redirectTo;
     }
 
-    /**
-     * Creates a response object with HTTP status code 200
-     * with default Content-Type "text/plain; charset=UTF-8"
-     *
-     * @return The response object
-     */
     public static Response ok() {
         return new Response(StatusCodes.OK);
     }
 
-    /**
-     * Creates a response object with HTTP status code 201
-     * with default Content-Type "text/plain; charset=UTF-8"
-     *
-     * @return The response object
-     */
     public static Response created() {
         return new Response(StatusCodes.CREATED);
     }
 
-    /**
-     * Creates a response object with HTTP status code 202
-     * with default Content-Type "text/plain; charset=UTF-8"
-     *
-     * @return The response object
-     */
     public static Response accepted() {
         return new Response(StatusCodes.ACCEPTED);
     }
 
-    /**
-     * Creates a response object with HTTP status code 404
-     * with default Content-Type "text/plain; charset=UTF-8"
-     *
-     * @return The response object
-     */
     public static Response notFound() {
         return new Response(StatusCodes.NOT_FOUND);
     }
 
-    /**
-     * Creates a response object with HTTP status code 401
-     * with default Content-Type "text/plain; charset=UTF-8"
-     *
-     * @return The response object
-     */
     public static Response unauthorized() {
         return new Response(StatusCodes.UNAUTHORIZED);
     }
 
-    /**
-     * Creates a response object with HTTP status code 403
-     * with default Content-Type "text/plain; charset=UTF-8"
-     *
-     * @return The response object
-     */
     public static Response forbidden() {
         return new Response(StatusCodes.FORBIDDEN);
     }
 
-    /**
-     * Creates a response object with HTTP status code 400
-     * with default Content-Type "text/plain; charset=UTF-8"
-     *
-     * @return The response object
-     */
     public static Response badRequest() {
         return new Response(StatusCodes.BAD_REQUEST);
     }
 
-    /**
-     * Creates a response object with HTTP status code 304
-     * with default Content-Type "text/plain; charset=UTF-8"
-     *
-     * @return The response object
-     */
     public static Response notModified() {
         return new Response(StatusCodes.NOT_MODIFIED);
     }
 
-    /**
-     * Creates a response object with HTTP status code 500
-     * with default Content-Type "text/plain; charset=UTF-8"
-     *
-     * @return The response object
-     */
     public static Response internalServerError() {
         return new Response(StatusCodes.INTERNAL_SERVER_ERROR);
     }
 
-    /**
-     * Creates a response object with a given HTTP status code
-     * with default Content-Type "text/plain; charset=UTF-8"
-     *
-     * @param statusCode The status code to set
-     * @return The response object
-     */
     public static Response status(int statusCode) {
         Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP);
         return new Response(statusCode);
     }
 
-    /**
-     * Creates a response object with a given HTTP status code
-     *
-     * @param statusCode The status code to set
-     * @param contentType The status code to set
-     *
-     * @return The response object
-     */
     public static Response status(int statusCode, String contentType) {
         Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP);
         Objects.requireNonNull(contentType, Required.CONTENT_TYPE);
@@ -173,13 +104,6 @@ public class Response {
         return new Response(statusCode, contentType);
     }
 
-    /**
-     * Creates a response object with a given url to redirect to
-     * with default Content-Type "text/plain"
-     *
-     * @param redirectTo The URL to redirect to
-     * @return The response object
-     */
     public static Response redirect(String redirectTo) {
         Objects.requireNonNull(redirectTo, Required.REDIRECT_TO);
 
@@ -251,12 +175,6 @@ public class Response {
         return headers.get(header);
     }
 
-    /**
-     * Sets a specific template to use for the response
-     *
-     * @param template The path to the template (e.g. /path-to-template/template.ftl)
-     * @return The response object
-     */
     public Response template(String template) {
         Objects.requireNonNull(template, Required.TEMPLATE);
         this.template = template;
@@ -265,12 +183,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Sets a specific content type to use for the response. Default is "text/html"
-     *
-     * @param contentType The content type to use
-     * @return The response object
-     */
     public Response contentType(String contentType) {
         Objects.requireNonNull(contentType, Required.CONTENT_TYPE);
 
@@ -280,13 +192,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Adds a value to the template that can be accessed using ${name} in the template
-     *
-     * @param name The name of the value
-     * @param object The actual value
-     * @return The response object
-     */
     public Response render(String name, Object object) {
         Objects.requireNonNull(name, Required.NAME);
         content.put(name, object);
@@ -296,13 +201,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Sets the body of the response. If a body is added, no template rendering will be
-     * performed. The default content type "text/html" will be used.
-     *
-     * @param html The html for the body
-     * @return The response object
-     */
     public Response bodyHtml(String html) {
         this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
         rendered = false;
@@ -311,14 +209,7 @@ public class Response {
         return this;
     }
 
-    /**
-     * Sets the body of the response. If a body is added, it will be sent
-     * as a binary byte array. No rendering will be performed.
-     * Content-Type will be automatically detected if not set.
-     *
-     * @param data The html for the body
-     * @return The response object
-     */
+    /** Content-Type is detected automatically if not set. */
     public Response bodyBinary(byte[] data) {
         this.binaryBody = Objects.requireNonNull(data, Required.DATA);
         rendered = false;
@@ -328,16 +219,8 @@ public class Response {
     }
 
     /**
-     * Sets the body of the response to a file which is streamed to the client
-     * with a constant memory usage, independent of the size of the file.
-     * No rendering will be performed. Content-Type will be automatically
-     * detected if not set.
-     *
-     * The given path is not accessed here, existence and readability of the
-     * file are checked when the response is sent to the client.
-     *
-     * @param path The path of the file for the body
-     * @return The response object
+     * Streams the file to the client with constant memory usage; Content-Type is detected automatically if not set.
+     * Existence and readability of the path are only checked when the response is sent.
      */
     public Response bodyFile(Path path) {
         this.fileBody = Objects.requireNonNull(path, Required.PATH);
@@ -376,12 +259,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Adds a Cookie to the response which is passed to the client
-     *
-     * @param cookie The cookie to add
-     * @return The response object
-     */
     public Response cookie(Cookie cookie) {
         Objects.requireNonNull(cookie, Required.COOKIE);
         cookies.add(cookie);
@@ -389,14 +266,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Converts a given Object to JSON and passing it to the response. If an object is given, no
-     * template rendering will be performed and the content type for the response will be set to
-     * "application/json"
-     *
-     * @param object The object to convert to JSON
-     * @return The response object
-     */
     public Response bodyJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT);
 
@@ -407,11 +276,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Sets a JSON error string as body
-     * @param message The error message to return
-     * @return The response object
-     */
     public Response bodyJsonError(String message) {
         Objects.requireNonNull(message, Required.MESSAGE);
 
@@ -422,13 +286,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Sets a given JSON string as body. If a String is given, no template rendering will be
-     * performed and the content type for the response will be set to "application/json"
-     *
-     * @param json The String to set as JSON
-     * @return The response object
-     */
     public Response bodyJson(String json) {
         Objects.requireNonNull(json, Required.JSON);
 
@@ -439,14 +296,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Sets the body of the response. If a body is added, no template rendering will be
-     * performed. The content type "text/plain" will be used.
-     *
-     * @param text The text for the body
-     *
-     * @return The response object
-     */
     public Response bodyText(String text) {
         this.body = text;
         contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
@@ -455,15 +304,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Adds a header to the request response. If a header
-     * key already exists, it will be overwritten with the latest value.
-     *
-     * @param key The header key
-     * @param value The header value
-     *
-     * @return The response object
-     */
     public Response header(String key, String value) {
         Objects.requireNonNull(key, Required.KEY);
         headers.put(new HttpString(key), value);
@@ -471,13 +311,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Adds a content map to the content rendered in the template.
-     * Already existing values with the same key are overwritten.
-     *
-     * @param content The content map to add
-     * @return The response object
-     */
     public Response render(Map<String, Object> content) {
         this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
         Objects.requireNonNull(content, Required.CONTENT);
@@ -487,11 +320,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Sets that this response is rendered by a freemarker template
-     *
-     * @return The response object
-     */
     public Response render() {
         this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
         rendered = true;
@@ -499,13 +327,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Adds a header map to the response.
-     * Already existing values with the same key are overwritten.
-     *
-     * @param headers The headers map to add
-     * @return The response object
-     */
     public Response headers(Map<HttpString, String> headers) {
         Objects.requireNonNull(headers, Required.HEADERS);
         this.headers.putAll(headers);
@@ -513,13 +334,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Disposes a cookie by setting the expired date of the give cookie name
-     * to a date in the past, max age to -1 and an empty value
-     *
-     * @param cookieName The name of the cookie to dispose
-     * @return The response object
-     */
     public Response disposeCookie(String cookieName, boolean secure) {
         Objects.requireNonNull(cookieName, Required.COOKIE);
 
@@ -534,13 +348,6 @@ public class Response {
         return this;
     }
 
-    /**
-     * Disposes a cookie by setting the expired date of the give cookie name
-     * to a date in the past, max age to -1 and an empty value
-     *
-     * @param cookieName The name of the cookie to dispose
-     * @return The response object
-     */
     public Response disposeCookie(String cookieName) {
         Objects.requireNonNull(cookieName, Required.COOKIE);
         disposeCookie(cookieName, true);
@@ -548,13 +355,7 @@ public class Response {
         return this;
     }
 
-    /**
-     * Tells a filter that the response ends and that the request handler
-     * should not execute further filters by sending the current response
-     * to the client. This is only used within a filter.
-     *
-     * @return The response object
-     */
+    /** Only used within a filter: stops executing further filters and sends the current response to the client. */
     public Response end() {
         endResponse = true;
 

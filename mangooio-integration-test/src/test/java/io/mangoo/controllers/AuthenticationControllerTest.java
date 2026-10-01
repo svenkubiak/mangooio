@@ -18,11 +18,6 @@ import java.net.HttpCookie;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-/**
- *
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 class AuthenticationControllerTest {
     private static final String USERNAME = "foo";
@@ -134,11 +129,7 @@ class AuthenticationControllerTest {
         assertThat(response.getHeader(LOCATION), containsString("/login"));
     }
 
-    /**
-     * Regression test for OutboundCookiesHandler: the authentication cookie is written based on
-     * hasSubject(), not on isValid(). Switching that call site back to isValid() leaves the second
-     * factor step without a cookie and this test fails on the missing cookie.
-     */
+    // Regression test: OutboundCookiesHandler must write the authentication cookie based on hasSubject(), not isValid(), or the second factor step gets no cookie.
     @Test
     void testAuthenticationCookieIsWrittenWhileSecondFactorIsPending() {
         //given

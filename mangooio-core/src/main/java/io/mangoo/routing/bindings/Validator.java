@@ -37,13 +37,7 @@ public class Validator implements Serializable {
         this.messages = Application.getInstance(Messages.class);
     }
 
-    /**
-     * Retrieves the uploaded files of this validator. As the files are not part of the
-     * flash cookie serialization, the map can be absent after a form was restored from
-     * the flash scope and is lazily recreated here
-     *
-     * @return Map with the uploaded files
-     */
+    // Files are not serialized into the flash cookie, so the map is recreated after a restore from the flash scope.
     protected Map<String, byte[]> files() {
         if (files == null) {
             files = new HashMap<>();
@@ -52,18 +46,8 @@ public class Validator implements Serializable {
         return files;
     }
 
-    /**
-     * Retrieves the messages this validator creates its error messages with.
-     * <p></p>
-     * The messages are not serialized into the flash cookie. They carry the full set of
-     * default validation texts, which would take up the better part of the available cookie
-     * budget while being static and available again on the other side anyway. A form that
-     * was restored from the flash scope is rebound to the messages of the current request by
-     * the form handler, so the fallback below only applies to a validator used outside of a
-     * request.
-     *
-     * @return The messages to build error messages with
-     */
+    // Messages are not serialized into the flash cookie to save cookie space; the form handler rebinds them,
+    // so this fallback only applies to a validator used outside of a request.
     protected Messages messages() {
         if (messages == null) {
             messages = Application.getInstance(Messages.class);
@@ -72,25 +56,11 @@ public class Validator implements Serializable {
         return messages;
     }
 
-    /**
-     * Sets the messages this validator creates its error messages with. Used to bind a
-     * validator to the locale of the current request
-     *
-     * @param messages The messages to use
-     * @return This validator
-     */
     public Validator withMessages(Messages messages) {
         this.messages = Objects.requireNonNull(messages, Required.MESSAGES);
         return this;
     }
 
-    /**
-     * Validates a given file upload to have one of the allowed mime types
-     *
-     * @param name The name of the field
-     * @param message A custom error message instead of the default one
-     * @param allowedMimeTypes A list of allowed MimeTypes
-     */
     public void expectFileMimeType(String name, String message, List<String> allowedMimeTypes) {
         Objects.requireNonNull(name, Required.NAME);
         Objects.requireNonNull(allowedMimeTypes, Required.ALLOWED_MIME_TYPES);
@@ -117,23 +87,10 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates a given file upload to have one of the allowed mime types
-     *
-     * @param name The name of the field
-     * @param allowedMimeTypes A list of allowed MimeTypes
-     */
     public void expectFileMimeType(String name, List<String> allowedMimeTypes) {
         expectFileMimeType(name, null, allowedMimeTypes);
     }
 
-    /**
-     * Validates a given file upload to have a max file size in bytes
-     *
-     * @param name The field name
-     * @param maxFileSizeBytes The maximum file size in bytes
-     * @param message A custom error message instead of the default one
-     */
     public void expectFileMaxSize(String name, long maxFileSizeBytes, String message) {
         Objects.requireNonNull(name, Required.NAME);
 
@@ -155,54 +112,25 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates a given file upload to have a max file size in bytes
-     *
-     * @param name The field name
-     * @param maxFileSizeBytes The maximum file size in bytes
-     */
     public void expectFileMaxSize(String name, long maxFileSizeBytes) {
         expectFileMaxSize(name, maxFileSizeBytes, null);
     }
 
-    /**
-     * Checks if a give field has a validation error
-     *
-     * @param name The field to check
-     * @return True if the field has a validation error, false otherwise
-     */
     public boolean hasError(String name) {
         Objects.requireNonNull(name, Required.NAME);
         return errors.containsKey(name);
     }
 
-    /**
-     * Retrieves the error message for a given field
-     *
-     * @param name The field to check
-     * @return The error message for the field, or an empty string if no error is found
-     */
     public String getError(String name) {
         Objects.requireNonNull(name, Required.NAME);
         return hasError(name) ? errors.get(name) : Strings.EMPTY;
     }
 
-    /**
-     * Validates a given field to be present with a value
-     *
-     * @param name The field to check
-     */
     public void expectValue(String name) {
         Objects.requireNonNull(name, Required.NAME);
         expectValue(name, null);
     }
     
-    /**
-     * Validates a given field to be present with a value
-     *
-     * @param name The field to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectValue(String name, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -212,12 +140,6 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates a given field to be File
-     *
-     * @param name The field to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectFile(String name, String message) {
         Objects.requireNonNull(name, Required.NAME);
         byte[] bytes = files().get(name);
@@ -227,34 +149,16 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates a given field to be File
-     *
-     * @param name The field to check
-     */
     public void expectFile(String name) {
         Objects.requireNonNull(name, Required.NAME);
         expectFile(name, null);
     }
 
-    /**
-     * Validates a given field to have a minimum value
-     *
-     * @param name The field to check
-     * @param minValue The minimum value
-     */
     public void expectMinValue(String name, double minValue) {
         Objects.requireNonNull(name, Required.NAME);
         expectMinValue(name, minValue, null);
     }
     
-    /**
-     * Validates a given field to have a minimum value
-     *
-     * @param name The field to check
-     * @param minValue The minimum value
-     * @param message A custom error message instead of the default one
-     */
     public void expectMinValue(String name, double minValue, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -268,24 +172,11 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates a given field to have a minimum length
-     *
-     * @param name The field to check
-     * @param minLength The minimum length
-     */
     public void expectMinLength(String name, double minLength) {
         Objects.requireNonNull(name, Required.NAME);
         expectMinLength(name, minLength, null);
     }
     
-    /**
-     * Validates a given field to have a minimum length
-     *
-     * @param name The field to check
-     * @param minLength The minimum length
-     * @param message A custom error message instead of the default one
-     */
     public void expectMinLength(String name, double minLength, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -295,45 +186,21 @@ public class Validator implements Serializable {
         }
     }
     
-    /**
-     * Validates a given field to have a maximum value
-     *
-     * @param maxValue The maximum value
-     * @param name The field to check
-     */
     public void expectMaxValue(String name, double maxValue) {
         Objects.requireNonNull(name, Required.NAME);
         expectMaxValue(name, maxValue, null);
     }
     
-    /**
-     * Validates a given field to have a maximum length
-     *
-     * @param maxLength The maximum length
-     * @param name The field to check
-     */
     public void expectMaxLength(String name, double maxLength) {
         Objects.requireNonNull(name, Required.NAME);
         expectMaxLength(name, maxLength, null);
     }
     
-    /**
-     * Validates that a given field has a numeric value
-     *
-     * @param name The field to check
-     *
-     */
     public void expectNumeric(String name) {
         Objects.requireNonNull(name, Required.NAME);
         expectNumeric(name, null);
     }
 
-    /**
-     * Validates that a given field has a numeric value
-     *
-     * @param name The field to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectNumeric(String name, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -343,13 +210,6 @@ public class Validator implements Serializable {
         }
     }
     
-    /**
-     * Validates a given field to have a maximum length
-     *
-     * @param name The field to check
-     * @param maxLength The maximum length
-     * @param message A custom error message instead of the default one
-     */
     public void expectMaxLength(String name, double maxLength, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -359,13 +219,6 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates a given field to have a maximum value
-     *
-     * @param name The field to check
-     * @param maxValue The maximum value
-     * @param message A custom error message instead of the default one
-     */
     public void expectMaxValue(String name, double maxValue, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -380,10 +233,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates two fields to exactly (case-sensitive) match
-     *
-     * @param name The field to check
-     * @param anotherName The other field to check against
+     * Case-sensitive; also fails if both fields are blank.
      */
     public void expectExactMatch(String name, String anotherName) {
         Objects.requireNonNull(name, Required.NAME);
@@ -391,11 +241,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates two fields to exactly (case-sensitive) match
-     *
-     * @param name The field to check
-     * @param anotherName The other field to check against
-     * @param message A custom error message instead of the default one
+     * Case-sensitive; also fails if both fields are blank.
      */
     public void expectExactMatch(String name, String anotherName, String message) {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -407,21 +253,14 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates two fields to (case-insensitive) match
-     *
-     * @param name The field to check
-     * @param anotherName The field to check against
+     * Case-insensitive; also fails if both fields are blank.
      */
     public void expectMatch(String name, String anotherName) {
         expectMatch(name, anotherName, messages().get(Validation.MATCH_KEY, name, anotherName));
     }
     
     /**
-     * Validates two fields to (case-insensitive) match
-     *
-     * @param name The field to check
-     * @param anotherName The field to check against
-     * @param message A custom error message instead of the default one
+     * Case-insensitive; also fails if both fields are blank.
      */
     public void expectMatch(String name, String anotherName, String message) {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -433,23 +272,13 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates a list of given values to (case-sensitive) match
-     *
-     * @param name The field to check
-     * @param values A list of given values to check against
+     * Case-sensitive, unlike {@link #expectMatch(String, String)}.
      */
     public void expectMatch(String name, List<String> values) {
         Objects.requireNonNull(name, Required.NAME);
         expectMatch(name, messages().get(Validation.MATCH_VALUES_KEY, name), values);
     }
 
-    /**
-     * Validates a list of value to (case-sensitive) match
-     *
-     * @param name The field to check
-     * @param message A custom error message instead of the default one
-     * @param values A list of given values to check against
-     */
     public void expectMatch(String name, String message, List<String> values) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -459,22 +288,11 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates a field to be a valid email address
-     *
-     * @param name The field to check
-     */
     public void expectEmail(String name) {
         Objects.requireNonNull(name, Required.NAME);
         expectEmail(name, null);
     }
 
-    /**
-     * Validates a field to be a valid email address
-     *
-     * @param name The field to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectEmail(String name, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -484,22 +302,11 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates a field to be a valid IPv4 address
-     *
-     * @param name The field to check
-     */
     public void expectIpv4(String name) {
         Objects.requireNonNull(name, Required.NAME);
         expectIpv4(name, null);
     }
 
-    /**
-     * Validates a field to be a valid IPv4 address
-     *
-     * @param name The field to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectIpv4(String name, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -509,22 +316,11 @@ public class Validator implements Serializable {
         }
     }
     
-    /**
-     * Validates a field to be a valid Domain name
-     *
-     * @param name The field to check
-     */
     public void expectDomainName(String name) {
         Objects.requireNonNull(name, Required.NAME);
         expectDomainName(name, null);
     }
 
-    /**
-     * Validates a field to be a valid Domain name
-     *
-     * @param name The field to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectDomainName(String name, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -534,22 +330,11 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates a field to be a valid IPv6 address
-     *
-     * @param name The field to check
-     */
     public void expectIpv6(String name) {
         Objects.requireNonNull(name, Required.NAME);
         expectIpv6(name, null);
     }
 
-    /**
-     * Validates a field to be a valid IPv6 address
-     *
-     * @param name The field to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectIpv6(String name, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -559,38 +344,16 @@ public class Validator implements Serializable {
         }
     }
     
-    /**
-     * Validates a field to be in a certain range length
-     *
-     * @param name The field to check
-     * @param minLength The minimum length
-     * @param maxLength The maximum length
-     */
     public void expectRangeLength(String name, int minLength, int maxLength) {
         Objects.requireNonNull(name, Required.NAME);
         expectRangeLength(name, minLength, maxLength, null);
     }
     
-    /**
-     * Validates a field to be in a certain range value
-     *
-     * @param name The field to check
-     * @param minValue The minimum value
-     * @param maxValue The maximum value
-     */
     public void expectRangeValue(String name, int minValue, int maxValue) {
         Objects.requireNonNull(name, Required.NAME);
         expectRangeValue(name, minValue, maxValue, null);
     } 
     
-    /**
-     * Validates a field to be in a certain range value
-     * 
-     * @param name The field to check
-     * @param minValue The minimum value
-     * @param maxValue The maximum value
-     * @param message A custom error message instead of the default one
-     */
     public void expectRangeValue(String name, int minValue, int maxValue, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -605,14 +368,6 @@ public class Validator implements Serializable {
         }
     }
     
-    /**
-     * Validates a field to be in a certain range length
-     * 
-     * @param name The field to check
-     * @param minLength The minimum length
-     * @param maxLength The maximum length
-     * @param message A custom error message instead of the default one
-     */
     public void expectRangeLength(String name, int minLength, int maxLength, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -622,30 +377,11 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates a field by a given regular expression pattern
-     * <p>
-     * It is required to pass a pre-compiled pattern, e.g.
-     * Pattern pattern = Pattern.compile("[a-Z,0-9]")
-     *
-     * @param name The field to check
-     * @param pattern The pre-compiled pattern
-     */
     public void expectRegex(String name, Pattern pattern) {
         Objects.requireNonNull(name, Required.NAME);
         expectRegex(name, pattern, null);
     }
 
-    /**
-     * Validates a field by a given regular expression pattern
-     * <p>
-     * It is required to pass a pre-compiled pattern, e.g.
-     * Pattern pattern = Pattern.compile("[a-Z,0-9]")
-     *
-     * @param pattern The pre-compiled pattern
-     * @param name The field to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectRegex(String name, Pattern pattern, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -655,22 +391,11 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates field to be a valid URL
-     *
-     * @param name The field to check
-     */
     public void expectUrl(String name) {
         Objects.requireNonNull(name, Required.NAME);
         expectUrl(name, null);
     }
 
-    /**
-     * Validates field to be a valid URL
-     *
-     * @param name The field to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectUrl(String name, String message) {
         Objects.requireNonNull(name, Required.NAME);
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
@@ -680,13 +405,6 @@ public class Validator implements Serializable {
         }
     }
 
-    /**
-     * Validates a given value to be true
-     *
-     * @param name The name of the field to display the error message
-     * @param value The value to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectTrue(String name, boolean value, String message) {
         Objects.requireNonNull(name, Required.NAME);
         if (!value) {
@@ -694,24 +412,11 @@ public class Validator implements Serializable {
         }
     }
     
-    /**
-     * Validates a given value to be true
-     *
-     * @param name The name of the field to display the error message
-     * @param value The value to check
-     */
     public void expectTrue(String name, boolean value) {
         Objects.requireNonNull(name, Required.NAME);
         expectTrue(name, value, null);
     }
     
-    /**
-     * Validates a given value to be false
-     *
-     * @param name The name of the field to display the error message
-     * @param value The value to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectFalse(String name, boolean value, String message) {
         Objects.requireNonNull(name, Required.NAME);
         if (value) {
@@ -719,24 +424,11 @@ public class Validator implements Serializable {
         }
     }
     
-    /**
-     * Validates a given value to be false
-     *
-     * @param name The name of the field to display the error message
-     * @param value The value to check
-     */
     public void expectFalse(String name, boolean value) {
         Objects.requireNonNull(name, Required.NAME);
         expectFalse(name, value, null);
     }
     
-    /**
-     * Validates a given object to be not null
-     *
-     * @param name The name of the field to display the error message
-     * @param object The object to check
-     * @param message A custom error message instead of the default one
-     */
     public void expectNotNull(String name, Object object, String message) {
         Objects.requireNonNull(name, Required.NAME);
         if (object == null) {
@@ -744,24 +436,11 @@ public class Validator implements Serializable {
         }
     }
     
-    /**
-     * Validates a given object to be not null
-     *
-     * @param name The name of the field to display the error message
-     * @param object The object to check
-     */
     public void expectNotNull(String name, Object object) {
         Objects.requireNonNull(name, Required.NAME);
         expectNotNull(name, object, null);
     }
     
-    /**
-     * Validates a given object to be null
-     *
-     * @param name The name of the field to display the error message
-     * @param object The object to check
-     * @param message A custom error message instead of the default one 
-     */
     public void expectNull(String name, Object object, String message) {
         Objects.requireNonNull(name, Required.NAME);
         if (object != null) {
@@ -769,32 +448,15 @@ public class Validator implements Serializable {
         }
     }
     
-    /**
-     * Validates a given object to be null
-     *
-     * @param name The name of the field to display the error message
-     * @param object The object to check
-     */
     public void expectNull(String name, Object object) {
         Objects.requireNonNull(name, Required.NAME);
         expectNull(name, object, messages().get(Validation.NULL_KEY, name));
     }
     
-    /**
-     * Checks if any field in the validation has an error
-     *
-     * @return True if at least one field has an error, false otherwise
-     */
     public boolean hasErrors() {
         return !errors.isEmpty();
     }
 
-    /**
-     * Retrieves a form value corresponding to the name of the form element
-     *
-     * @param name The name of the form element
-     * @return The value of the form or null if not present
-     */
     public String get(String name) {
         Objects.requireNonNull(name, Required.NAME);
 

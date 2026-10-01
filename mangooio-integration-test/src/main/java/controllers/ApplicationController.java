@@ -109,7 +109,7 @@ public class ApplicationController {
         try {
             body = Resources.toString(Resources.getResource("templates/ApplicationController/unrenderedText.html"), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            // Intentionally left blank
+            // The body stays null if the template cannot be read
         }
 
         return Response.ok().bodyHtml(body);

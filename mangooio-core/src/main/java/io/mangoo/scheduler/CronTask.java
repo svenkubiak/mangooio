@@ -48,10 +48,7 @@ public class CronTask implements Runnable {
         this.executionTime = ExecutionTime.forCron(new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX)).parse(cron));
     }
 
-    /**
-     * Hands the execution of the task over to the executor and schedules the
-     * next execution once the task has finished. Never calls itself recursively.
-     */
+    // Runs the task on the executor and reschedules itself once the task has finished, instead of calling itself recursively.
     @Override
     public void run() {
         try {
@@ -69,11 +66,8 @@ public class CronTask implements Runnable {
         }
     }
 
-    /**
-     * Schedules the next execution of the task
-     *
-     * @return The ScheduledFuture of the next execution or null if there is no further execution
-     */
+    // Uses the last slot as base while it lies in the future, so that a task finishing early does not run twice in the same slot.
+    // The delay is scheduled in milliseconds, as truncating to seconds would fire before the slot; returns null if there is no further execution.
     @SuppressWarnings("java:S1452")
     public ScheduledFuture<?> schedule() {
         var now = ZonedDateTime.now(clock);

@@ -82,12 +82,6 @@ public class CorsHandler implements HttpHandler {
         exchange.getResponseHeaders().add(HttpString.tryFromString(name), value);
     }
 
-    /**
-     * Handles the next request in the handler chain
-     *
-     * @param exchange The HttpServerExchange
-     * @throws Exception Thrown when an exception occurs
-     */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(ResponseHandler.class).handleRequest(exchange);
     }

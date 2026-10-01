@@ -3,11 +3,6 @@ package io.mangoo.test.hamcrest;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @SuppressWarnings("rawtypes")
 public class RegexMatcher extends BaseMatcher {
     private final String regex;

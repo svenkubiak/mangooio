@@ -33,12 +33,11 @@ public class Bootstrap implements MangooBootstrap {
     
     @Override
     public void applicationInitialized() {
-        // TODO Auto-generated method stub
+        // Intentionally empty
     }
 
     @Override
     public void applicationStarted() {
-        // Load initial data
         datastore.save(new Person("Richard M.", "Whittaker", 33));
         datastore.save(new Person("Kitty D.", "Glenn", 45));
         datastore.save(new Person("Raul E.", "Kuhn", 46));
@@ -46,6 +45,6 @@ public class Bootstrap implements MangooBootstrap {
 
     @Override
     public void applicationStopped() {
-        // TODO Auto-generated method stub
+        // Intentionally empty
     }
 }

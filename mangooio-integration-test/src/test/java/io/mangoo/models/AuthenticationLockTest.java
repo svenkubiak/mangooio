@@ -11,11 +11,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 class AuthenticationLockTest {
     private static final Duration ONE_HOUR = Duration.ofHours(1);
 

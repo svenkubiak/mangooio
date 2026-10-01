@@ -287,10 +287,10 @@ class JwtUtilsTest {
     @Test
     void testParseJwtWithExpiredToken() throws MangooJwtException {
         //given
-        JwtUtils.JwtData expiredJwtData = validJwtData.withTtlSeconds(1L); // 1 second TTL
+        JwtUtils.JwtData expiredJwtData = validJwtData.withTtlSeconds(1L);
         String jwt = JwtUtils.createJwt(expiredJwtData);
 
-        // Wait for token to expire
+        // Wait beyond the TTL plus the 30 second clock skew tolerance
         try {
             Thread.sleep(32000);
         } catch (InterruptedException e) {

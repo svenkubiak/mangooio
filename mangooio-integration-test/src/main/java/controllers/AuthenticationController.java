@@ -54,11 +54,7 @@ public class AuthenticationController {
         return Response.redirect("/");
     }
 
-    /**
-     * Reports the authentication state on a route that is not bound with
-     * withAuthentication(), which is the path an application takes when it builds
-     * its own filter on top of the Authentication object
-     */
+    /** Reports the authentication state on a route not bound with withAuthentication(), as an application with its own filter would. */
     public Response state(Authentication authentication) {
         return Response.ok().bodyText(authentication.hasSubject()
                 + ":" + authentication.isValid()

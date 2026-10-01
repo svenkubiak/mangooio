@@ -17,13 +17,6 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-/**
- * Convenient class for minification of CSS and JS files
- *
- *
- * @author svenkubiak
- *
- */
 @SuppressWarnings("all")
 public final class Minification {
     private static final Logger LOG = LogManager.getLogger(Minification.class);
@@ -51,11 +44,6 @@ public final class Minification {
         }
     }
 
-    /**
-     * Minifies a JS or CSS file to a corresponding JS or CSS file
-     *
-     * @param absolutePath The absolute path to the file
-     */
     public static void minify(String absolutePath) {
         if (absolutePath == null || absolutePath.contains(MIN)) {
             return;

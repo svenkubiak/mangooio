@@ -15,11 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-/**
- *
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 public class CsrfControllerTest {
 	private static final int AUTHENTICITY_LENGTH = 32;

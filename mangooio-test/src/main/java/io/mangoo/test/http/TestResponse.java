@@ -25,11 +25,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class TestResponse {
     private static final Logger LOG = LogManager.getLogger(TestResponse.class);
     private static final String CONTENT_TYPE = "Content-Type";
@@ -58,13 +53,6 @@ public class TestResponse {
         this.method = method;
     }
     
-    /**
-     * Adds an additional header to the request
-     *
-     * @param name The name of the header
-     * @param value The value of the header
-     * @return TestResponse instance
-     */
     public TestResponse withHeader(String name, String value) {
         Objects.requireNonNull(name, Required.NAME);
         Objects.requireNonNull(value, Required.VALUE);
@@ -74,13 +62,6 @@ public class TestResponse {
         return this;
     }
     
-    /**
-     * Sets the HTTP method to execute the request with
-     *
-     * @param method The HTTP Method
-     * 
-     * @return TestResponse instance
-     */
     public TestResponse withHTTPMethod(String method) {
         Objects.requireNonNull(method, Required.HTTP_METHOD);
         
@@ -89,16 +70,7 @@ public class TestResponse {
         return this;
     }
     
-    /**
-     * Sets the timeout of the HTTP request
-     * 
-     * Default is 2 seconds
-     *
-     * @param amount The amount of time
-     * @param unit The unit of time
-     * 
-     * @return TestResponse instance
-     */
+    /** Defaults to five seconds. */
     public TestResponse withTimeout(long amount, TemporalUnit unit) {
         Objects.requireNonNull(method, Required.HTTP_METHOD);
         Objects.requireNonNull(method, Required.UNIT);
@@ -108,14 +80,6 @@ public class TestResponse {
         return this;
     }
     
-    /**
-     * Sets Basic HTTP Authentication the request
-     *
-     * @param username The username
-     * @param password The password
-     * 
-     * @return TestResponse instance
-     */
     public TestResponse withBasicAuthentication(String username, String password) {
         Objects.requireNonNull(username, Required.USERNAME);
         Objects.requireNonNull(password, Required.PASSWORD);
@@ -132,13 +96,6 @@ public class TestResponse {
         return this;
     }
     
-    /**
-     * Sets the URI to be executed by the request
-     *
-     * @param uri The URI to call
-     * 
-     * @return TestResponse instance
-     */
     public TestResponse to(String uri) {
         Objects.requireNonNull(uri, Required.URI);
 
@@ -146,13 +103,6 @@ public class TestResponse {
         return this;
     }
     
-    /**
-     * Adds an additional cookie to the request
-     *
-     * @param cookie The cookie to add
-     * 
-     * @return TestResponse instance
-     */
     public TestResponse withCookie(HttpCookie cookie) {
         Objects.requireNonNull(cookie, Required.COOKIE);
         Config config = Application.getInstance(Config.class);
@@ -169,13 +119,6 @@ public class TestResponse {
         return this;
     }
     
-    /**
-     * Sets a String body to the request
-     *
-     * @param body The request body to use
-     * 
-     * @return TestResponse instance
-     */
     public TestResponse withStringBody(String body) {
         if (StringUtils.isNotBlank(body)) {
             this.body = BodyPublishers.ofString(body);   
@@ -184,13 +127,6 @@ public class TestResponse {
         return this;
     }
     
-    /**
-     * Sets the ContentType of the request
-     *
-     * @param contentType The content type to use
-     * 
-     * @return TestResponse instance
-     */
     public TestResponse withContentType(String contentType) {
         Objects.requireNonNull(contentType, Required.CONTENT_TYPE);
 
@@ -199,30 +135,14 @@ public class TestResponse {
         return this;
     }
     
-    /**
-     * Disables redirects when the request is executed by setting
-     * followRedirects to HttpClient.Redirect.NEVER
-     *
-     * Default is HttpClient.Redirect.ALWAYS
-     *
-     * @return TestResponse instance
-     */
+    /** Redirects are followed by default. */
     public TestResponse withDisabledRedirects() {
         this.httpClient.followRedirects(HttpClient.Redirect.NEVER);
 
         return this;
     }
 
-    /**
-     * Simulates a FORM post by setting:
-     * 
-     * Content-Type to application/x-www-form-urlencoded
-     * HTTP method to POST
-     * URLEncoding of the given parameters
-     * 
-     * @param parameters The parameters to use
-     * @return TestResponse instance
-     */
+    /** Sends the parameters URL-encoded as a form POST, overriding method and Content-Type. */
     public TestResponse withForm(Multimap<String, String> parameters) {
         String form = parameters.entries()
                 .stream()
@@ -236,11 +156,6 @@ public class TestResponse {
         return this;
     }
     
-    /**
-     * Executes the HTTP request
-     * 
-     * @return TestResponse instance with response parameters
-     */
     public TestResponse execute() {
         final Config config = Application.getInstance(Config.class);
         final String host = config.getConnectorHttpHost();
@@ -265,54 +180,31 @@ public class TestResponse {
         return this;
     }
     
-    /**
-     * @return The response content
-     */
     public String getContent() {
         return this.httpResponse.body();
     }
 
-    /**
-     * @return The HTTP response object
-     */
     public HttpResponse<String> getHttpResponse() {
         return this.httpResponse;
     }
 
-    /**
-     * @return The status code of the response
-     */
     public int getStatusCode() {
         return this.httpResponse.statusCode();
     }
 
-    /**
-     * @return The content type of the response
-     */
     public String getContentType() {
         return this.httpResponse.headers().firstValue(CONTENT_TYPE).orElse(Strings.EMPTY);
     }
 
-    /**
-     * @return The URL of the response
-     */
     public String getResponseUrl() {
         return this.url;
     }
     
-    /**
-     * @return The response cookie or an empty list
-     */
     public List<HttpCookie> getCookies() {
         return this.cookieManager.getCookieStore().getCookies();
     }
 
-    /**
-     * Retrieves a cookie from the cookie store with a given name
-     *
-     * @param name The name of the cookie
-     * @return A Cookie or null if non found by name
-     */
+    /** Returns null if no cookie with the given name exists. */
     public HttpCookie getCookie(String name) {
         return this.cookieManager.getCookieStore()
             .getCookies()
@@ -322,12 +214,7 @@ public class TestResponse {
             .orElse(null);
     }
 
-    /**
-     * Retrieves a specific header with the given name
-     *
-     * @param name The name of the header
-     * @return The value of the header or an empty string if not found
-     */
+    /** Returns an empty string if the header is not present. */
     public String getHeader(String name) {
         return this.httpResponse.headers().firstValue(name).orElse("");
     }

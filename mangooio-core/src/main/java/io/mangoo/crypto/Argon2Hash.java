@@ -11,23 +11,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * An Argon2id hash together with the salt and the parameters it was computed with,
- * encoded in the PHC string format
- * <p>
- * {@snippet :
- * $argon2id$v=19$m=32768,t=3,p=1$<salt-b64>$<hash-b64>
- * }
- * <p>
- * Salt and hash are Base64 encoded without padding as the format requires. Because the
- * parameters travel with the hash, the configured parameters can be changed without
- * locking out users whose password was hashed with the previous ones
- * <p>
- * Salt and hash are copied on the way in and on the way out, so that a caller can not
- * change a hash it has already handed over or read back
- *
- * @param settings The Argon2id parameters the hash was computed with
- * @param salt The raw salt bytes
- * @param hash The raw hash bytes
+ * An Argon2id hash with its salt and parameters, encoded in PHC string format: $argon2id$v=19$m=...,t=...,p=...$salt$hash.
+ * Salt and hash are copied on the way in and out, so a caller can not change a hash after handing it over.
  */
 public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
     private static final Base64.Encoder BASE64_ENCODER = Base64.getEncoder().withoutPadding();
@@ -50,40 +35,22 @@ public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
         hash = hash.clone();
     }
 
-    /**
-     * @return A copy of the raw salt bytes
-     */
     @Override
     public byte[] salt() {
         return salt.clone();
     }
 
-    /**
-     * @return A copy of the raw hash bytes
-     */
     @Override
     public byte[] hash() {
         return hash.clone();
     }
 
-    /**
-     * Checks whether a stored value is an Argon2id hash in PHC format. Everything else
-     * is a legacy hash, a bare Base64 encoding of the raw hash bytes
-     *
-     * @param value The stored value, may be null
-     * @return True if the value is in PHC format, false otherwise
-     */
+    /** Anything not in PHC format is a legacy hash, i.e. a bare Base64 encoding of the raw hash bytes. */
     public static boolean isPhcFormat(String value) {
         return value != null && value.startsWith(PREFIX);
     }
 
-    /**
-     * Parses an Argon2id hash in PHC format
-     *
-     * @param value The stored value
-     * @return The parsed hash
-     * @throws IllegalArgumentException If the value is not a well-formed Argon2id PHC string
-     */
+    /** Throws IllegalArgumentException if the value is not a well-formed Argon2id PHC string. */
     public static Argon2Hash parse(String value) {
         String phc = Argument.requireNonBlank(value, Required.HASH);
         Argument.check(isPhcFormat(phc), "Not an " + ALGORITHM + " hash in PHC format");
@@ -98,9 +65,7 @@ public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
                 parameters.get(ITERATIONS),
                 parameters.get(PARALLELISM));
 
-        //the lower bounds of the Argon2 specification, not the ones mangoo I/O hashes with.
-        //A stored hash below them was never produced by Argon2 and would only make the
-        //generator throw
+        // Lower bounds of the Argon2 specification, not mangoo I/O's minimums; a stored hash below them would only make the generator throw.
         Argument.check(settings.parallelism() >= 1, "Invalid Argon2 parallelism " + settings.parallelism());
         Argument.check(settings.iterations() >= 1, "Invalid Argon2 iterations " + settings.iterations());
         Argument.check(settings.memoryKb() >= 8 * settings.parallelism(), "Invalid Argon2 memory cost " + settings.memoryKb());
@@ -131,9 +96,6 @@ public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
         return parameters;
     }
 
-    /**
-     * @return This hash encoded in the PHC string format
-     */
     public String encode() {
         return PREFIX + "v=" + VERSION + "$"
                 + MEMORY + "=" + settings.memoryKb() + ","
@@ -143,16 +105,7 @@ public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
                 + BASE64_ENCODER.encodeToString(hash);
     }
 
-    /**
-     * Compares salt and hash by their content, the generated implementation of a record
-     * would compare the arrays by identity and never report two equal hashes as equal
-     * <p>
-     * The byte arrays are compared in constant time, so that the comparison does not
-     * reveal how many leading bytes of a hash a caller guessed correctly
-     *
-     * @param object The object to compare with
-     * @return True if both hashes carry the same parameters, salt and hash bytes
-     */
+    // Compares the arrays by content in constant time; the generated record equals would compare them by identity.
     @Override
     public boolean equals(Object object) {
         return object instanceof Argon2Hash other
@@ -161,21 +114,12 @@ public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
                 && Arrays.constantTimeAreEqual(hash, other.hash);
     }
 
-    /**
-     * @return A hash code over the content of salt and hash, consistent with {@link #equals(Object)}
-     */
     @Override
     public int hashCode() {
         return Objects.hash(settings, Arrays.hashCode(salt), Arrays.hashCode(hash));
     }
 
-    /**
-     * Deliberately reports only the length of salt and hash. This type carries credential
-     * material and its string representation ends up in log statements and debuggers, use
-     * {@link #encode()} to obtain the actual value
-     *
-     * @return A representation of this hash without the salt and hash bytes
-     */
+    // Omits salt and hash bytes as this may end up in logs; use encode() for the actual value.
     @Override
     public String toString() {
         return "Argon2Hash[settings=" + settings

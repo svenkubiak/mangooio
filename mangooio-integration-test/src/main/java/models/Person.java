@@ -7,11 +7,6 @@ import io.mangoo.annotations.Indexed;
 import io.mangoo.enums.Sort;
 import io.mangoo.persistence.Entity;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @Collection(name = "people")
 public class Person extends Entity {
     @Indexed(sort = Sort.ASCENDING)

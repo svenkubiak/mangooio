@@ -1,11 +1,5 @@
 package io.mangoo.enums;
 
-/**
- * Application modes
- *
- * @author svenkubiak
- *
- */
 public enum Suffix {
     CSS(".css"),
     CSS_MIN(".min.css"),

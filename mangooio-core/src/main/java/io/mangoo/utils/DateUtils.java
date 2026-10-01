@@ -17,10 +17,7 @@ public final class DateUtils {
     }
 
     /**
-     * Converts a LocalDateTime to Date
-     * 
-     * @param localDateTime The LocalDateTime to convert
-     * @return The converted Date
+     * Uses the configured application time zone.
      */
     public static Date localDateTimeToDate(LocalDateTime localDateTime) {
         Objects.requireNonNull(localDateTime, Required.LOCAL_DATE_TIME);
@@ -30,10 +27,7 @@ public final class DateUtils {
     }
     
     /**
-     * Converts a localDate to Date
-     * 
-     * @param localDate The LocalDate to convert
-     * @return The converted Date
+     * Uses the configured application time zone.
      */
     public static Date localDateToDate(LocalDate localDate) {
         Objects.requireNonNull(localDate, Required.LOCAL_DATE);
@@ -44,25 +38,12 @@ public final class DateUtils {
                 .toInstant());
     }
 
-    /**
-     * Returns a human-readable, relative timestamps like "moments ago", default to en-EN
-     *
-     * @param localDateTime The LocalDateTime to base the parsing on
-     * @return timestamps like "moments ago"
-     */
     public static String getPrettyTime(LocalDateTime localDateTime) {
         Objects.requireNonNull(localDateTime, Required.LOCAL_DATE_TIME);
 
         return PRETTY_TIME.format(localDateTime);
     }
 
-    /**
-     * Returns a human-readable, relative timestamps like "moments ago" localized based on the given locale
-     *
-     * @param locale The local to use
-     * @param localDateTime like "moments ago"
-     * @return timestamps like "moments ago"
-     */
     public static String getPrettyTime(Locale locale, LocalDateTime localDateTime) {
         Objects.requireNonNull(locale, Required.LOCALE);
         Objects.requireNonNull(localDateTime, Required.LOCAL_DATE_TIME);

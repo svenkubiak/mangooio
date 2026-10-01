@@ -34,13 +34,6 @@ class ConfigTest {
     @TempDir
     Path tempDir;
 
-    /**
-     * Adds a dot-separated key into a nested map structure.
-     *
-     * @param map  The map to which the key-value pair is added.
-     * @param key  The dot-separated key (e.g., "application.name").
-     * @param value The value to associate with the key.
-     */
     @SuppressWarnings("unchecked")
     private static void addDotSeparatedKey(Map<String, Object> map, String key, Object value) {
         String[] parts = key.split("\\.");
@@ -50,10 +43,8 @@ class ConfigTest {
             String part = parts[i];
 
             if (i == parts.length - 1) {
-                // Final part of the key: set the value
                 currentMap.put(part, value);
             } else {
-                // Intermediate part: ensure the map exists
                 currentMap = (Map<String, Object>) currentMap.computeIfAbsent(part, k -> new HashMap<>());
             }
         }
@@ -1851,41 +1842,32 @@ class ConfigTest {
         Path configTempFile = tempDir.resolve(CommonUtils.uuidV6());
 
         try {
-            // Create the main configuration map
             Map<String, Object> config = new HashMap<>();
 
-            // Add the default section
             Map<String, Object> defaultConfig = new HashMap<>();
             config.put("default", defaultConfig);
 
-            // Add a key like "application.name" under the default entry
             values.forEach((key, value) -> {
                 addDotSeparatedKey(defaultConfig, key, value);
             });
 
-            // Add environments section
             Map<String, Object> environments = new HashMap<>();
             config.put("environments", environments);
 
-            // Add development environment
             Map<String, Object> developmentConfig = new HashMap<>();
             environments.put("test", developmentConfig);
             addDotSeparatedKey(developmentConfig, "application.debug", "true");
 
-            // Add production environment
             Map<String, Object> productionConfig = new HashMap<>();
             environments.put("prod", productionConfig);
             addDotSeparatedKey(productionConfig, "application.debug", "false");
 
-            // Configure YAML DumperOptions
             DumperOptions options = new DumperOptions();
-            options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); // Use block style
+            options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
             options.setPrettyFlow(true);
 
-            // Create Yaml instance
             Yaml yaml = new Yaml(options);
 
-            // Write YAML to a file
             try (Writer writer = new FileWriter(configTempFile.toAbsolutePath().toString())) {
                 yaml.dump(config, writer);
             }

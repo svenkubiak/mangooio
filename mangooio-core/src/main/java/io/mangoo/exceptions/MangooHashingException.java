@@ -3,13 +3,8 @@ package io.mangoo.exceptions;
 import java.io.Serial;
 
 /**
- * Thrown when an Argon2 hash could not be computed because no slot became
- * available within authentication.hashing.timeout
- * <p>
- * This exception is unchecked on purpose. Hashing is performed by
- * {@link io.mangoo.utils.CommonUtils#hashArgon2(String, String)} and
- * {@link io.mangoo.utils.CommonUtils#matchArgon2(String, String, String)},
- * whose signatures must stay source compatible for existing callers
+ * Thrown when no Argon2 hashing slot became available within authentication.hashing.timeout.
+ * Unchecked so that the signatures of CommonUtils#hashArgon2 and #matchArgon2 stay source compatible.
  */
 public class MangooHashingException extends RuntimeException {
     @Serial

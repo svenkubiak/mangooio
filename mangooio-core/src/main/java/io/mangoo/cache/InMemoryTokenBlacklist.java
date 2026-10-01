@@ -22,10 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 /**
- * Default TokenBlacklist that keeps all revocations in memory. Every entry lives exactly
- * as long as the token it revokes could still be valid, so no revocation expires early
- * and the memory usage is bounded by the number of revoked, not yet expired tokens.
- *
+ * Default TokenBlacklist; every entry lives as long as the revoked token could still be valid, so no revocation expires early.
  * Revocations are local to the running instance and do not survive a restart.
  */
 @Singleton
@@ -89,8 +86,7 @@ public class InMemoryTokenBlacklist implements TokenBlacklist {
         if (StringUtils.isNotBlank(subject) && issuedAt != null) {
             Instant since = subjects.getIfPresent(subject);
 
-            // iat has only second precision, a token issued within the second of the
-            // revocation (e.g. a new login right after a password change) stays valid
+            // iat has second precision, so a token issued within the second of the revocation (e.g. a new login) stays valid
             return since != null && issuedAt.isBefore(since.truncatedTo(ChronoUnit.SECONDS));
         }
 

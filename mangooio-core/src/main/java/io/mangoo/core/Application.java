@@ -147,10 +147,7 @@ public final class Application {
         }
     }
 
-    /**
-     * Instantiates the PasswordHasher singleton at startup so the effective Argon2
-     * hashing concurrency is logged before the first login rather than on the first hash
-     */
+    // Instantiated eagerly so the effective Argon2 concurrency is logged at startup, not on the first hash.
     private static void preparePasswordHasher() {
         getInstance(PasswordHasher.class);
     }
@@ -177,9 +174,6 @@ public final class Application {
         }
     }
 
-    /**
-     * Schedules all tasks annotated with @Run
-     */
     private static void prepareScheduler(ScanResult scanResult) {
         var config = getInstance(Config.class);
 
@@ -220,15 +214,6 @@ public final class Application {
         }
     }
 
-    /**
-     * Parses a given time span and duration and returns the number of
-     * matching seconds to schedule a task
-     *
-     * @param timespan The timespan to use
-     * @param duration The duration to use for calculation
-     *
-     * @return The duration in seconds
-     */
     private static long getSeconds(String timespan, String duration) {
         Objects.requireNonNull(timespan, "timespan can not be null");
         Objects.requireNonNull(duration, "duration can not be null");
@@ -242,15 +227,6 @@ public final class Application {
         };
     }
 
-    /**
-     * Schedules a task within the scheduler
-     *
-     * @param classInfo The classInfo containing the class which holds the method to execute
-     * @param methodInfo The methodInfo containing the method to execute
-     * @param isCron True if Task is a cron or false if it has a fixed rate
-     * @param time The fixed rate for the scheduled task to be executed
-     * @param at The cron expression to be used when scheduling a cron
-     */
     private static void schedule(ClassInfo classInfo, MethodInfo methodInfo, boolean isCron, long time, String at) {
         Objects.requireNonNull(classInfo, "classInfo can not be null");
         Objects.requireNonNull(methodInfo, "methodInfo can not be null");
@@ -298,13 +274,7 @@ public final class Application {
     record IndexDefinition(String field, Bson keys, IndexOptions options) {
     }
 
-    /**
-     * Creates the index definitions for all fields of the given class that are annotated with @Indexed.
-     * Other annotations on the same field are irrelevant, as is the order of the annotations.
-     *
-     * @param clazz The class to create the index definitions for
-     * @return The index definitions, one per field annotated with @Indexed
-     */
+    // One index per @Indexed field; other annotations on the field and their order are irrelevant.
     static List<IndexDefinition> getIndexDefinitions(Class<?> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS);
 
@@ -377,11 +347,6 @@ public final class Application {
         });
     }
 
-    /**
-     * Checks if application is run as root
-     * <p>
-     * (Hint: There is no need to run as root)
-     */
     private static void userCheck() {
         String osName = System.getProperty("os.name");
         if (StringUtils.isNotBlank(osName) && !osName.startsWith("Windows")) {
@@ -404,80 +369,38 @@ public final class Application {
         }
     }
 
-    /**
-     * Checks if the application is running in dev mode
-     *
-     * @return True if the application is running in dev mode, false otherwise
-     */
     public static boolean inDevMode() {
         return Mode.DEV == mode;
     }
 
-    /**
-     * Checks if the application is running in prod mode
-     *
-     * @return True if the application is running in prod mode, false otherwise
-     */
     public static boolean inProdMode() {
         return Mode.PROD == mode;
     }
 
-    /**
-     * Checks if the application is running in test mode
-     *
-     * @return True if the application is running in test mode, false otherwise
-     */
     public static boolean inTestMode() {
         return Mode.TEST == mode;
     }
 
-    /**
-     * Returns the current mode the application is running in
-     *
-     * @return Enum Mode
-     */
     public static Mode getMode() {
         return mode;
     }
 
-    /**
-     * Returns the ScheduledExecutorService where all tasks are scheduled
-     *
-     * @return ScheduledExecutorService
-     */
     public static ScheduledExecutorService getScheduledExecutorService() {
         return scheduledExecutorService;
     }
 
-    /**
-     * Returns the ExecutorService the execution of the scheduled tasks
-     * are performed
-     *
-     * @return ExecutorService
-     */
     public static ExecutorService getExecutorService() {
         return executorService;
     }
 
-    /**
-     * Returns the Google Guice Injector
-     *
-     * @return Google Guice injector instance
-     */
     public static Injector getInjector() {
         return injector;
     }
 
-    /**
-     * @return True if the application started successfully, false otherwise
-     */
     public static boolean isStarted() {
         return started;
     }
 
-    /**
-     * @return The LocalDateTime of the application start
-     */
     public static LocalDateTime getStart() {
         var config = getInstance(Config.class);
 
@@ -487,40 +410,20 @@ public final class Application {
         );
     }
 
-    /**
-     * @return The duration of the application uptime
-     */
     public static Duration getUptime() {
         return Duration.between(getStart(), LocalDateTime.now());
     }
 
-    /**
-     * Short form for getting a Google Guice injected class by
-     * calling getInstance(...)
-     *
-     * @param clazz The class to retrieve from the injector
-     * @param <T> JavaDoc requires this (just ignore it)
-     *
-     * @return An instance of the requested class
-     */
     public static <T> T getInstance(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS);
 
         return injector.getInstance(clazz);
     }
 
-    /**
-     * Stops the underlying undertow server
-     */
     public static void stopUndertow() {
         undertow.stop();
     }
 
-    /**
-     * Sets the mode the application is running in
-     *
-     * @param providedMode A given mode or null
-     */
     private static void prepareMode(Mode providedMode) {
         final String applicationMode = System.getProperty(Key.APPLICATION_MODE);
         if (StringUtils.isNotBlank(applicationMode)) {
@@ -534,23 +437,14 @@ public final class Application {
         }
     }
 
-    /**
-     * Sets the injector wrapped through guice modules
-     */
     private static void prepareInjector() {
         injector = Guice.createInjector(Stage.PRODUCTION, getModules());
     }
 
-    /**
-     * Callback to MangooLifecycle applicationInitialized
-     */
     private static void applicationInitialized() {
         getInstance(MangooBootstrap.class).applicationInitialized();
     }
 
-    /**
-     * Checks for config failures that prevent the application from starting
-     */
     private static void prepareConfig() {
         var config = getInstance(Config.class);
 
@@ -593,9 +487,6 @@ public final class Application {
         }
     }
 
-    /**
-     * Do sanity check on the configuration and warn about it in the log
-     */
     private static void sanityChecks() {
         var config = getInstance(Config.class);
         List<String> warnings = new ArrayList<>();
@@ -671,9 +562,6 @@ public final class Application {
                 .put(Key.MANGOOIO_WARNINGS, warnings);
     }
 
-    /**
-     * Validate if the routes that are defined in the router are valid
-     */
     private static void prepareRoutes() {
         getInstance(MangooBootstrap.class).initializeRoutes();
 
@@ -685,13 +573,6 @@ public final class Application {
         });
     }
 
-    /**
-     * Checks if a given method exists in a given class
-     * @param controllerMethod The method to check
-     * @param controllerClass The class to check 
-     *
-     * @return True if the method exists, false otherwise
-     */
     private static boolean methodExists(String controllerMethod, Class<?> controllerClass) {
         Objects.requireNonNull(controllerMethod, Required.CONTROLLER_METHOD);
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS);
@@ -699,9 +580,6 @@ public final class Application {
         return Arrays.stream(controllerClass.getMethods()).anyMatch(method -> method.getName().equals(controllerMethod));
     }
 
-    /**
-     * Create routes for WebSockets ServerSentEvent and Resource files
-     */
     private static void createRoutes() {
         pathHandler = new PathHandler(getRoutingHandler());
 
@@ -731,9 +609,7 @@ public final class Application {
     }
 
     private static RoutingHandler getRoutingHandler() {
-        // Route template values must not be rewritten into the query parameters, as that would
-        // make a client sent query parameter indistinguishable from - and able to override - a
-        // route parameter. They stay available through the PathTemplateMatch attachment.
+        // Do not rewrite route template values into query parameters, otherwise a client query parameter could override a route parameter.
         var routingHandler = Handlers.routing(false);
         routingHandler.setFallbackHandler(getInstance(FallbackHandler.class));
 
@@ -840,14 +716,7 @@ public final class Application {
         LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", System.currentTimeMillis() - START, mode);
     }
 
-    /**
-     * Fails the application startup if the given secret is not exactly 512 bit (64 bytes) long.
-     * Secrets are used as encryption key with dir and A256CBC_HS512, which requires a key of
-     * exactly 512 bit; any other length fails on every encryption and decryption at runtime.
-     *
-     * @param property The name of the config property
-     * @param secret The secret bytes as used for encryption
-     */
+    // Secrets are used as dir/A256CBC_HS512 key, which requires exactly 512 bit; any other length fails at runtime.
     private static void checkSecret(String property, byte[] secret) {
         if (!isValidSecret(secret)) {
             LOG.error("{} must be exactly 512 bit (64 bytes) as it is used as AES-256/HMAC-512 encryption key, but has {} bits.", property, CommonUtils.bitLength(secret));
@@ -855,12 +724,6 @@ public final class Application {
         }
     }
 
-    /**
-     * Fails the application startup if the given key is shorter than 512 bit (64 bytes)
-     *
-     * @param property The name of the config property
-     * @param key The key bytes as used for signing
-     */
     private static void checkKey(String property, byte[] key) {
         if (!isValidKey(key)) {
             LOG.error("{} must be at least 512 bit (64 bytes) as it is used as HMAC-512 signing key, but has only {} bits.", property, CommonUtils.bitLength(key));
@@ -895,9 +758,6 @@ public final class Application {
         getInstance(MangooBootstrap.class).applicationStarted();
     }
 
-    /**
-     * Failsafe exit of application startup
-     */
     private static void failsafe() {
         System.out.print("Failed to start mangoo I/O application"); //NOSONAR Intentionally as we want to exit the application at this point
         System.exit(1); //NOSONAR Intentionally as we want to exit the application at this point

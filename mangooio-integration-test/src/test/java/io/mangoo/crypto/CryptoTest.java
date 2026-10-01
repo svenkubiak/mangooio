@@ -17,11 +17,6 @@ import static io.mangoo.test.hamcrest.RegexMatcher.matches;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @ExtendWith({TestExtension.class})
 @SuppressWarnings("unchecked")
 @Execution(ExecutionMode.SAME_THREAD)

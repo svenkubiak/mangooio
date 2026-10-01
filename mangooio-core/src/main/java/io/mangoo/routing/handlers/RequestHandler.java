@@ -63,11 +63,6 @@ public class RequestHandler implements HttpHandler {
         nextHandler(exchange);
     }
 
-    /**
-     * Creates a new request object containing the current request data
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
     protected Request getRequest(HttpServerExchange exchange) {
         final String csrf = Optional
                 .ofNullable(exchange.getRequestHeaders().getFirst(Const.CSRF_TOKEN))
@@ -83,20 +78,7 @@ public class RequestHandler implements HttpHandler {
                 .withBody(attachment.getBody());
     }
 
-    /**
-     * Execute filters if exists in the following order:
-     * RequestFilter, ControllerFilter, MethodFilter
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return A Response object that will be merged to the final response
-     *
-     * @throws NoSuchMethodException when no method is found
-     * @throws IllegalAccessException when an illegal access occurs
-     * @throws InvocationTargetException when an invocation fails
-     * @throws MangooTemplateEngineException when the template rendering fails
-     */
     protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, MangooTemplateEngineException {
-        //execute global request filter
         var response = Response.ok();
         if (attachment.hasRequestFilter()) {
             final OncePerRequestFilter mangooRequestFilter = Application.getInstance(OncePerRequestFilter.class);
@@ -107,13 +89,11 @@ public class RequestHandler implements HttpHandler {
             return response;
         }
 
-        //execute controller filters
         response = executeFilter(attachment.getClassAnnotations(), response);
         if (response.isEndResponse()) {
             return response;
         }
 
-        //execute method filters
         response = executeFilter(attachment.getMethodAnnotations(), response);
         if (response.isEndResponse()) {
             return response;
@@ -126,17 +106,6 @@ public class RequestHandler implements HttpHandler {
         return invokeController(exchange, response);
     }
 
-    /**
-     * Invokes the controller methods and retrieves the response which
-     * is later send to the client
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return A response object
-     *
-     * @throws IllegalAccessException when an illegal access occurs
-     * @throws InvocationTargetException when an invocation fails
-     * @throws MangooTemplateEngineException when the template rendering fails
-     */
     protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, MangooTemplateEngineException {
         Response invokedResponse;
 
@@ -209,24 +178,10 @@ public class RequestHandler implements HttpHandler {
         return invokedResponse;
     }
 
-    /**
-     * Returns the complete path to the template based on the
-     * controller and method name
-     *
-     * @param response The current response
-     *
-     * @return A case-sensitive template path, e.g. /ApplicationController/index.ftl
-     */
     protected String getTemplatePath(Response response) {
         return StringUtils.isBlank(response.getTemplate()) ? (attachment.getControllerClassName() + "/" + attachment.getTemplateEngine().getTemplateName(attachment.getControllerMethodName())) : response.getTemplate();
     }
 
-    /**
-     * Creates an array with the request controller method parameter and sets the appropriate values
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return an array with the request controller method parameter and sets the appropriate values
-     */
     @SuppressFBWarnings(justification = "Intentionally adding unrelated types", value = "UCC_UNRELATED_COLLECTION_CONTENTS")
     protected Object[] getConvertedParameters(HttpServerExchange exchange) {
         final var convertedParameters = new Object[attachment.getMethodParametersCount()];
@@ -412,17 +367,6 @@ public class RequestHandler implements HttpHandler {
         return convertedParameters;
     }
 
-    /**
-     * Executes all filters on controller and method level
-     *
-     * @param annotations An array of @FilterWith annotated classes and methods
-     * @param response The response to use
-     * @return The updated response
-     *
-     * @throws NoSuchMethodException when the method is not found
-     * @throws IllegalAccessException when an illegal access occurs
-     * @throws InvocationTargetException when the target is not found
-     */
     protected Response executeFilter(List<Annotation> annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         for (final Annotation annotation : annotations) { //NOSONAR
             final var filterWith = (FilterWith) annotation;
@@ -439,14 +383,6 @@ public class RequestHandler implements HttpHandler {
         return response;
     }
 
-    /**
-     * Retrieves the complete request body from the request
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return A body object containing the request body
-     *
-     * @throws IOException when setting the body fails
-     */
     protected String getRequestBody(HttpServerExchange exchange) throws IOException {
         if (!RequestUtils.isPostPutPatch(exchange)) {
             return Strings.EMPTY;
@@ -468,12 +404,6 @@ public class RequestHandler implements HttpHandler {
         return new String(exchange.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
     }
 
-    /**
-     * Handles the next request in the handler chain
-     *
-     * @param exchange The HttpServerExchange
-     * @throws Exception Thrown when an exception occurs
-     */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(OutboundCookiesHandler.class).handleRequest(exchange);
     }

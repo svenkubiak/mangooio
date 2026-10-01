@@ -18,20 +18,17 @@ public class Bootstrap implements MangooBootstrap {
         Server.header(Header.FEATURE_POLICY, "myFeaturePolicy");
         Server.header(Header.PERMISSIONS_POLICY, "myPermissionsPolicy");
 
-        // SessionController
         Bind.controller(SessionController.class).withRoutes(
                 On.get().to("/session").respondeWith("session"),
                 On.get().to("/session/valued/{uuid}").respondeWith("valued")
         );
         
-        // FilterController
         Bind.controller(FilterController.class).withRoutes(
                 On.get().to("/filter").respondeWith("filter"),
                 On.get().to("/headerfilter").respondeWith("headerfilter"),
                 On.get().to("/filters").respondeWith("filters")
         );
 
-        // CsrfController
         Bind.controller(CsrfController.class).withRoutes(
                 On.get().to("/csrf/form").respondeWith("form"),
                 On.get().to("/csrf/token").respondeWith("token"),
@@ -39,7 +36,6 @@ public class Bootstrap implements MangooBootstrap {
                 On.post().to("/csrf/validate").respondeWith("validate")
         );
         
-        // I18nController
         Bind.controller(I18nController.class).withRoutes(
                 On.get().to("/translation").respondeWith("translation"),
                 On.get().to("/messages").respondeWith("messages"),
@@ -49,13 +45,11 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/localize").respondeWith("localize")
         );
         
-        // FlashController
         Bind.controller(FlashController.class).withRoutes(
                 On.get().to("/flash").respondeWith("flash"),
                 On.get().to("/flashed").respondeWith("flashed")
         );
         
-        // JsonController
         Bind.controller(JsonController.class).withRoutes(
                 On.get().to("/json-body").respondeWith("jsonBody"),
                 On.get().to("/render").respondeWith("render"),
@@ -67,7 +61,6 @@ public class Bootstrap implements MangooBootstrap {
                 On.post().to("/requestAndJson").respondeWith("requestAndJson")
         );
         
-        // FormController
         Bind.controller(FormController.class).withRoutes(
                 On.post().to("/form").respondeWith("form"),
                 On.post().to("/submit").respondeWith("submit"),
@@ -77,7 +70,6 @@ public class Bootstrap implements MangooBootstrap {
                 On.post().to("/validateform").respondeWith("validateform")
         );
         
-        // AuthenticationController
         Bind.controller(AuthenticationController.class)
         .withRoutes(
                 On.post().to("/dologin").respondeWith("doLogin"),
@@ -93,7 +85,6 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/logout").respondeWith("logout")
         );
         
-        // ParameterController
         Bind.controller(ParameterController.class)
         .withRoutes(
                 On.get().to("/boolean").respondeWith("booleanParam"),
@@ -115,7 +106,6 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/localdatetime/{localDateTime}").respondeWith("localdatetime")
          );
         
-         // ApplicationController
          Bind.controller(ApplicationController.class).withRoutes(
                 On.get().to("/origin").respondeWith("origin"),
                 On.get().to("/person").respondeWith("person"),
@@ -162,14 +152,12 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/default-xxx").respondeWith("defaultXXX")
          );
          
-         // FileController
          Bind.controller(FileController.class).withRoutes(
                 On.get().to("/file").respondeWith("file"),
                 On.get().to("/file/contenttype").respondeWith("fileWithContentType"),
                 On.get().to("/file/missing").respondeWith("missingFile")
          );
 
-         // SubController
          Bind.controller(SubController.class).withRoutes(
                  On.get().to("/subcontroller").respondeWith("check")
          );

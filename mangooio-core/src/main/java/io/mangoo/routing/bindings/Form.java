@@ -22,12 +22,6 @@ public class Form extends Validator {
         //Empty constructor for Google guice
     }
     
-    /**
-     * Retrieves an optional string value corresponding to the name of the form element
-     *
-     * @param key The name of the form element
-     * @return Optional of String
-     */
     public Optional<String> getString(String key) {
         Objects.requireNonNull(key, Required.KEY);
 
@@ -39,12 +33,6 @@ public class Form extends Validator {
         return Optional.empty();
     }
     
-    /**
-     * Retrieves a string value corresponding to the name of the form element
-     *
-     * @param key The name of the form element
-     * @return String with the value of the form element or an empty value if blank
-     */
     public String getValue(String key) {
         Objects.requireNonNull(key, Required.KEY);
 
@@ -56,17 +44,6 @@ public class Form extends Validator {
         return "";
     }
 
-    /**
-     * Retrieves an optional boolean value corresponding to the name of the form element
-     * <p></p>
-     * 0 maps to false
-     * 1 maps to true
-     * "true" maps to true
-     * "false" maps to false
-     *
-     * @param key The name of the form element
-     * @return Optional of Boolean
-     */
     @SuppressWarnings("fb-contrib:BL_BURYING_LOGIC")
     public Optional<Boolean> getBoolean(String key) {
         Objects.requireNonNull(key, Required.KEY);
@@ -83,12 +60,6 @@ public class Form extends Validator {
         return Optional.empty();
     }
 
-    /**
-     * Retrieves an optional integer value corresponding to the name of the form element
-     *
-     * @param key The name of the form element
-     * @return Optional of Integer
-     */
     public Optional<Integer> getInteger(String key) {
         Objects.requireNonNull(key, Required.KEY);
 
@@ -100,12 +71,6 @@ public class Form extends Validator {
         return Optional.empty();
     }
 
-    /**
-     * Retrieves an optional double value corresponding to the name of the form element
-     *
-     * @param key The name of the form element
-     * @return Optional of Double
-     */
     public Optional<Double> getDouble(String key) {
         Objects.requireNonNull(key, Required.KEY);
 
@@ -117,12 +82,6 @@ public class Form extends Validator {
         return Optional.empty();
     }
 
-    /**
-     * Retrieves an optional float value corresponding to the name of the form element
-     *
-     * @param key The name of the form element
-     * @return Optional of Float
-     */
     public Optional<Float> getFloat(String key) {
         Objects.requireNonNull(key, Required.KEY);
 
@@ -134,12 +93,6 @@ public class Form extends Validator {
         return Optional.empty();
     }
 
-    /**
-     * Retrieves an optional long value corresponding to the name of the form element
-     *
-     * @param key The name of the form element
-     * @return Optional of Long
-     */
     public Optional<Long> getLong(String key) {
         Objects.requireNonNull(key, Required.KEY);
 
@@ -151,34 +104,16 @@ public class Form extends Validator {
         return Optional.empty();
     }
 
-    /**
-     * Retrieves a single file of the form. If the form
-     * has multiple files, the first will be returned
-     *
-     * @return File or null if no file is present
-     */
     public Optional<byte[]> getFile(String key) {
         Objects.requireNonNull(key, Required.KEY);
 
         return Optional.ofNullable(files().get(key));
     }
 
-    /**
-     * Retrieves all form submitted values where the key of the map
-     * corresponds to the name of the form element and the value is
-     * the value of the form element
-     *
-     * @return Map with Key-Value elements or empty map
-     */
     public Map<String, String> getValues() {
         return values;
     }
     
-    /**
-     * Adds a file as an InputStream to the form
-     *  
-     * @param inputStream The InputStream to add
-     */
     public void addFile(String key, InputStream inputStream) throws IOException {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(inputStream, Required.INPUT_STREAM);
@@ -189,27 +124,16 @@ public class Form extends Validator {
     }
  
     /**
-     * Adds the form values to the flash scope
-     * <p></p>
-     * Uploaded files are never part of the flash scope, only the submitted
-     * values and the validation errors are kept across the redirect
+     * Keeps the submitted values and validation errors in the flash scope for the next request; uploaded files are never kept.
      */
     public void keep() {
         keep = true;
     }
 
-    /**
-     * Checks if the form values are to put in the flash scope
-     * 
-     * @return True if form values should be put into flash scope, false otherwise
-     */
     public boolean isKept() {
         return keep;
     }
     
-    /**
-     * Discards the complete form
-     */
     public void discard() {
         if (files != null) {
             files.clear();

@@ -208,8 +208,7 @@ public final class MangooUtils {
             claims.put(ClaimKey.TWO_FACTOR, "true");
         }
 
-        // A cookie that only passed the first factor is short-lived, as it is solely
-        // used to get the second factor verified
+        // A cookie that only passed the first factor is short-lived, as it is solely used to verify the second factor
         int ttl = preAuthentication ? ADMIN_PRE_AUTH_COOKIE_TTL : ADMIN_COOKIE_TTL;
         String subject = CommonUtils.uuidV6();
 
@@ -242,12 +241,6 @@ public final class MangooUtils {
         }
     }
 
-    /**
-     * Parses and validates the admin cookie of the given request
-     *
-     * @param request The current request
-     * @return The claims of the admin cookie or an empty Optional if the request carries no valid admin cookie
-     */
     public static Optional<JWTClaimsSet> parseAdminCookie(Request request) {
         Objects.requireNonNull(request, Required.REQUEST);
 
@@ -272,25 +265,12 @@ public final class MangooUtils {
         }
     }
 
-    /**
-     * Checks if the given admin cookie claims only passed the first factor and
-     * still require the second factor to be verified
-     *
-     * @param claims The claims of an admin cookie
-     * @return True if the second factor is still pending, false otherwise
-     */
     public static boolean isTwoFactorPending(JWTClaimsSet claims) {
         Objects.requireNonNull(claims, Required.CLAIMS);
         return ("true").equals(claims.getClaim(ClaimKey.TWO_FACTOR));
     }
 
-    /**
-     * Invalidates the one-time pre-authentication that is bound to the subject of the given
-     * claims, so that a captured pre-authentication cookie can not be replayed
-     *
-     * @param claims The claims of an admin cookie
-     * @return True if the pre-authentication was valid and has been consumed, false otherwise
-     */
+    // One-time use, so a captured pre-authentication cookie cannot be replayed
     public static boolean consumePreAuthentication(JWTClaimsSet claims) {
         Objects.requireNonNull(claims, Required.CLAIMS);
 
@@ -313,45 +293,27 @@ public final class MangooUtils {
         return Application.inProdMode() ? "__Host-" + Default.APPLICATION_ADMIN_COOKIE_NAME : Default.APPLICATION_ADMIN_COOKIE_NAME;
     }
 
-    /**
-     * Records a failed attempt of the admin password step
-     */
     public static void invalidAuthentication() {
         invalidAttempt(MANGOOIO_ADMIN_LOCK_COUNT, MANGOOIO_ADMIN_LOCKED_UNTIL);
     }
 
-    /**
-     * @return True if the admin password step is not locked, false otherwise
-     */
     public static boolean isNotLocked() {
         return isNotLocked(MANGOOIO_ADMIN_LOCKED_UNTIL);
     }
 
-    /**
-     * Resets the failed attempts of the admin password step
-     */
     public static void resetLockCounter() {
         resetLock(MANGOOIO_ADMIN_LOCK_COUNT, MANGOOIO_ADMIN_LOCKED_UNTIL);
     }
 
-    /**
-     * Records a failed attempt of the admin second factor step. The budget is kept separately
-     * from the password step, so a successful password login does not reset it
-     */
+    // Separate budget from the password step, so a successful password login does not reset it
     public static void invalidSecondFactor() {
         invalidAttempt(MANGOOIO_ADMIN_TWO_FACTOR_LOCK_COUNT, MANGOOIO_ADMIN_TWO_FACTOR_LOCKED_UNTIL);
     }
 
-    /**
-     * @return True if the admin second factor step is not locked, false otherwise
-     */
     public static boolean isSecondFactorNotLocked() {
         return isNotLocked(MANGOOIO_ADMIN_TWO_FACTOR_LOCKED_UNTIL);
     }
 
-    /**
-     * Resets the failed attempts of the admin second factor step
-     */
     public static void resetSecondFactorLockCounter() {
         resetLock(MANGOOIO_ADMIN_TWO_FACTOR_LOCK_COUNT, MANGOOIO_ADMIN_TWO_FACTOR_LOCKED_UNTIL);
     }
@@ -417,12 +379,6 @@ public final class MangooUtils {
         return StringUtils.isNotBlank(timezone) && VALID_TIMEZONES.contains(timezone);
     }
 
-    /**
-     * Serializes a flash form for storage in a flash cookie claim.
-     *
-     * @param form The form to serialize
-     * @return A Base64 encoded serialization of the form
-     */
     public static String serializeFlashFormToBase64(Form form) {
         Objects.requireNonNull(form, Required.OBJECT);
 
@@ -430,12 +386,6 @@ public final class MangooUtils {
         return BASE64_ENCODER.encodeToString(serialized);
     }
 
-    /**
-     * Deserializes a flash form from a flash cookie claim.
-     *
-     * @param data The Base64 encoded form data
-     * @return The deserialized form
-     */
     public static Form deserializeFlashFormFromBase64(String data) {
         Objects.requireNonNull(data, Required.DATA);
 
@@ -458,13 +408,11 @@ public final class MangooUtils {
 
         @Override
         public String interpolate(String messageTemplate, Context context) {
-            // Ignore default locale, force English
             return delegate.interpolate(messageTemplate, context, Locale.ENGLISH);
         }
 
         @Override
         public String interpolate(String messageTemplate, Context context, Locale locale) {
-            // Ignore requested locale, force English
             return delegate.interpolate(messageTemplate, context, Locale.ENGLISH);
         }
     }
