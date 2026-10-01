@@ -28,7 +28,7 @@
 							<td>${schedule.clazz}</td>
 							<td>${schedule.method}</td>
 							<td>${schedule.runAt}</td>
-							<td>${schedule.next().format('dd.MM.yyyy HH:mm:ss')}</td>
+							<td><#assign next = schedule.next()!><#if next?has_content>${next.format('dd.MM.yyyy HH:mm:ss')}<#else>-</#if></td>
 							<td><#if schedule.scheduledFuture.state().name() == "SUCCESS">RUNNING<#else>${schedule.scheduledFuture.state().name()}</#if></td>
 						</tr>
 					</#list>

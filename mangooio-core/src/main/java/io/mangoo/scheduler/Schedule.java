@@ -5,7 +5,6 @@ import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -39,12 +38,10 @@ public class Schedule {
     public LocalDateTime next() {
         if (cron) {
             var executionTime = ExecutionTime.forCron(new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX)).parse(runAt));
-            long seconds = executionTime
-                    .timeToNextExecution(ZonedDateTime.now())
-                    .orElse(Duration.ofSeconds(-1))
-                    .getSeconds();
-
-            return LocalDateTime.now().plusSeconds(seconds);
+            return executionTime
+                    .nextExecution(ZonedDateTime.now())
+                    .map(ZonedDateTime::toLocalDateTime)
+                    .orElse(null);
         } else {
             return LocalDateTime.now().plusSeconds(scheduledFuture.getDelay(TimeUnit.SECONDS));
         }
