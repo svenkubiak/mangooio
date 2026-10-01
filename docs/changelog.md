@@ -1,26 +1,24 @@
 ## Version 10.14.0
 
-Released at 01.10.2027
+Released at 01.10.2026
 
-* Fixed an issue in the Scheduler that could break a scheduled task (svenkubiak)
-* Fixed an issue that did not call the ExceptionHandler on all HTTP methods (svenkubia)
-* Added io.mangoo.interfaces.TokenBlacklist as extension point for revoking authentication cookies, the default in-memory implementation can be replaced by binding an own implementation, e.g. backed by Redis or MongoDB (svenkubiak)
-* Added TokenBlacklist#revokeSubject which revokes all authentication cookies of a subject issued before a given point in time, e.g. after a password change (svenkubiak)
-* Fixed an issue where a revoked authentication cookie became valid again after 60 minutes or after 5000 revocations, a revocation now lasts until the token expires (svenkubiak)
-* **Deprecation** CommonUtils#blacklist and CommonUtils#isBlacklisted are deprecated for removal, use TokenBlacklist instead (svenkubiak)
-* Fixed an issue where a failing Vault#put, e.g. with an empty value, left an empty vault.p12 behind and thereby destroyed all stored secrets, the vault file is now replaced atomically via a temporary file (svenkubiak)
-* Fixed an issue where the vault was rewritten on every start, the secrets of all modes are now created once and stored in a single write, secrets with a doubled mode prefix from earlier versions are removed (svenkubiak)
-* Fixed an issue where the vault could not be created on Windows, as setting POSIX file permissions is not supported there, which prevented the application from starting, an empty vault.p12 left behind by such a failed start is now created anew (svenkubiak)
-* Fixed an issue where a Subscriber was not registered if receive was not its first declared method, the payload type is now taken from the type argument of Subscriber<T> (svenkubiak)
-* Fixed an issue where payloads of a nested class or record were never delivered, as subscribers were registered under the binary name and looked up under the canonical name, both now use the binary name (svenkubiak)
-* Fixed an issue where an exception in one Subscriber prevented all following subscribers from receiving the payload (svenkubiak)
-* Fixed an issue where the collection name was read from the first annotation of a class instead of @Collection, which stored data silently in a wrong collection or failed the startup (svenkubiak)
-* **Behaviour change** Fixed an issue where a field annotated with @Indexed and a further annotation got no index, and a field with a single foreign annotation got an unwanted index. Missing indexes are now created on startup, a unique index fails if the collection already contains duplicates, which then need to be cleaned up first. Unwanted indexes created by earlier versions are not removed automatically (svenkubiak)
-* Fixed an issue where mail attachments were read from a file with the same name in the working directory instead of the given path, which failed the mail or sent a foreign file (svenkubiak)
-* Fixed an issue where arg{default} and env{default} always used the default and ignored a set system property or environment variable, the default is now only used if the source has no value (svenkubiak)
-* **Behaviour change** vault{fallback} now reads the vault first and uses the fallback only if the vault has no entry for the key, consistent with arg{default} and env{default} (svenkubiak)
-* Fixed an issue where the maven archetype generated projects with the fixed mangoo I/O version 10.11.0, the archetype now always uses its own version (svenkubiak)
-* **Behaviour change** Vault#put now throws an IllegalArgumentException for a blank key or value and an IllegalStateException if the value could not be stored, instead of only logging the error (svenkubiak)
+* **Behaviour change** Secrets (application.secret, *.cookie.secret) must be exactly 64 bytes and keys (*.cookie.key) at least 64 bytes, otherwise the startup fails (svenkubiak)
+* **Behaviour change** vault{fallback} reads the vault first and uses the fallback only without a vault entry (svenkubiak)
+* **Behaviour change** Vault#put throws on a blank value or a failed write instead of only logging (svenkubiak)
+* **Behaviour change** Missing @Indexed indexes are created on startup, a unique index fails if duplicates exist (svenkubiak)
+* **Deprecation** CommonUtils#blacklist and CommonUtils#isBlacklisted, use TokenBlacklist instead (svenkubiak)
+* Added TokenBlacklist as extension point for revoking authentication cookies, incl. revokeSubject for all cookies of a subject (svenkubiak)
+* Fixed cron tasks stopping after ~24,000 runs and running up to one second early (svenkubiak)
+* Fixed the ExceptionHandler not being called for POST, PUT, PATCH and non-blocking routes (svenkubiak)
+* Fixed On.anyOf registering only the last HTTP method (svenkubiak)
+* Fixed revoked authentication cookies becoming valid again after 60 minutes (svenkubiak)
+* Fixed a password login resetting the failed attempts of the admin second factor (svenkubiak)
+* Fixed Vault#put destroying vault.p12 on failure, the vault being rewritten on every start and not starting on Windows (svenkubiak)
+* Fixed subscribers not being registered, not receiving nested payload types and being blocked by a failing subscriber (svenkubiak)
+* Fixed @Collection and @Indexed reading other annotations of a class or field (svenkubiak)
+* Fixed mail attachments being read from the working directory instead of the given path (svenkubiak)
+* Fixed arg{default} and env{default} ignoring a set system property or environment variable (svenkubiak)
+* Fixed the maven archetype generating projects with mangoo I/O 10.11.0 (svenkubiak)
 
 ## Version 10.13.1
 
