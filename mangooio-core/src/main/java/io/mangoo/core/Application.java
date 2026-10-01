@@ -3,6 +3,7 @@ package io.mangoo.core;
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.*;
 import com.google.inject.Module;
 import com.mongodb.MongoCommandException;
@@ -294,79 +295,84 @@ public final class Application {
         }
     }
 
+    record IndexDefinition(String field, Bson keys, IndexOptions options) {
+    }
+
+    /**
+     * Creates the index definitions for all fields of the given class that are annotated with @Indexed.
+     * Other annotations on the same field are irrelevant, as is the order of the annotations.
+     *
+     * @param clazz The class to create the index definitions for
+     * @return The index definitions, one per field annotated with @Indexed
+     */
+    static List<IndexDefinition> getIndexDefinitions(Class<?> clazz) {
+        Objects.requireNonNull(clazz, Required.CLASS);
+
+        List<IndexDefinition> indexes = new ArrayList<>();
+        for (var field : clazz.getDeclaredFields()) {
+            var indexed = field.getAnnotation(io.mangoo.annotations.Indexed.class);
+            if (indexed == null) {
+                continue;
+            }
+
+            var options = new IndexOptions().unique(indexed.unique());
+            if (!indexed.caseSensitive()) {
+                options.collation(Collation.builder()
+                        .locale("en")
+                        .collationStrength(CollationStrength.SECONDARY)
+                        .build());
+            }
+
+            Bson keys = indexed.sort() == Sort.ASCENDING
+                    ? Indexes.ascending(field.getName())
+                    : Indexes.descending(field.getName());
+
+            indexes.add(new IndexDefinition(field.getName(), keys, options));
+        }
+
+        return indexes;
+    }
+
     private static void prepareDatastore(ScanResult scanResult) {
         var config = getInstance(Config.class);
         if (config.isPersistenceEnabled()) {
             scanResult.getClassesWithAnnotation(COLLECTION).forEach(classInfo -> {
-                String key = classInfo.getName();
-
-                AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
-                String value = (String) annotationInfo.getFirst().getParameterValues().getFirst().getValue();
-
-                PersistenceUtils.addCollection(key, value);
+                var collection = classInfo.loadClass().getAnnotation(io.mangoo.annotations.Collection.class);
+                PersistenceUtils.addCollection(classInfo.getName(), collection.name());
             });
 
             Datastore datastore = getInstance(Datastore.class);
             scanResult.getClassesWithFieldAnnotation(INDEXED).forEach(classInfo -> {
-                var fieldInfoList = classInfo.getFieldInfo();
-                fieldInfoList.stream()
-                        .filter(info -> info.getAnnotationInfo().size() == 1)
-                        .filter(info -> StringUtils.isNotBlank(info.getName()))
-                        .forEach(info -> {
-                            List<AnnotationParameterValue> annotationParams = info.getAnnotationInfo().getFirst().getParameterValues();
-
-                            var unique = false;
-                            var caseSensitive = false;
-                            var sort = "";
-
-                            for (AnnotationParameterValue annotationParam : annotationParams) {
-                                String name = annotationParam.getName();
-                                if ("unique".equals(name)) {
-                                    unique = (boolean) annotationParam.getValue();
-                                } else if ("caseSensitive".equals(name)) {
-                                    caseSensitive = (boolean) annotationParam.getValue();
-                                } else if ("sort".equals(name)) {
-                                    sort = annotationParam.getValue().toString();
-                                }
-                            }
-
-                            var collation = Collation.builder()
-                                    .locale("en")
-                                    .collationStrength(CollationStrength.SECONDARY) // case-insensitive
-                                    .build();
-
-                            var indexOptions = new IndexOptions().unique(unique);
-                            if (!caseSensitive) {
-                                indexOptions.collation(collation);
-                            }
-
-                            Bson indexType = Sort.ASCENDING.value().equals(sort)
-                                    ? Indexes.ascending(info.getName())
-                                    : Indexes.descending(info.getName());
-
-                            try {
-                                datastore.addIndex(classInfo.loadClass(), indexType, indexOptions);
-                            } catch (MongoCommandException e) {
-                                LOG.error(
-                                        "Failed to add mongodb index for class {} and index name {}",
-                                        classInfo.loadClass(), info.getName(), e);
-                                throw e;
-                            }
-                        });
+                var clazz = classInfo.loadClass();
+                for (IndexDefinition index : getIndexDefinitions(clazz)) {
+                    try {
+                        datastore.addIndex(clazz, index.keys(), index.options());
+                    } catch (MongoCommandException e) {
+                        LOG.error("Failed to add mongodb index for class {} and index name {}", clazz, index.field(), e);
+                        throw e;
+                    }
+                }
             });
 
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static void prepareSubscriber(ScanResult scanResult) {
         scanResult.getClassesImplementing(Subscriber.class).forEach(classInfo -> {
-            var methodInfo = classInfo.getMethodInfo().getFirst();
-            if (("receive").equals(methodInfo.getName())) {
-                var methodParameterInfo = Arrays.asList(methodInfo.getParameterInfo()).getFirst();
-                var descriptor = methodParameterInfo.getTypeDescriptor().toString();
-                getInstance(EventBus.class).register(descriptor, classInfo.loadClass());
-                LOG.info("Registered subscriber '{}'", classInfo.loadClass());
+            if (classInfo.isAbstract() || classInfo.isInterface()) {
+                return;
+            }
+
+            var subscriberClass = classInfo.loadClass();
+            Class<?> eventType = TypeToken.of(subscriberClass)
+                    .resolveType(Subscriber.class.getTypeParameters()[0])
+                    .getRawType();
+
+            if (eventType == Object.class) {
+                LOG.warn("Could not determine the event type of subscriber '{}', declare it as Subscriber<EventType>", subscriberClass);
+            } else {
+                getInstance(EventBus.class).register(eventType.getName(), subscriberClass);
+                LOG.info("Registered subscriber '{}' for '{}'", subscriberClass, eventType.getName());
             }
         });
     }

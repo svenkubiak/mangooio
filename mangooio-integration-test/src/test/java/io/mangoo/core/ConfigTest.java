@@ -96,6 +96,85 @@ class ConfigTest {
     }
 
     @Test
+    void testArgDefaultValueIsOverriddenBySystemProperty() {
+        // given
+        String key = "application.argdefault";
+        String value = UUID.randomUUID().toString();
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+        System.setProperty(key, value);
+
+        try {
+            // when
+            createTempConfig(ImmutableMap.of(key, "arg{default}"));
+            Config config = new Config(new Vault());
+
+            // then
+            assertThat(config.getString(key), equalTo(value));
+        } finally {
+            System.clearProperty(key);
+        }
+    }
+
+    @Test
+    void testArgDefaultValueWithoutSystemProperty() {
+        // given
+        String key = "application.argdefault";
+        System.clearProperty(key);
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        createTempConfig(ImmutableMap.of(key, "arg{default}"));
+        Config config = new Config(new Vault());
+
+        // then
+        assertThat(config.getString(key), equalTo("default"));
+    }
+
+    @Test
+    void testEnvDefaultValueIsOverriddenByEnvironmentVariable() {
+        // given
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        createTempConfig(ImmutableMap.of("path", "env{default}"));
+        Config config = new Config(new Vault());
+
+        // then
+        assertThat(System.getenv("PATH"), not(emptyOrNullString()));
+        assertThat(config.getString("path"), equalTo(System.getenv("PATH")));
+    }
+
+    @Test
+    void testEnvDefaultValueWithoutEnvironmentVariable() {
+        // given
+        String key = "application.env" + UUID.randomUUID().toString().replace("-", "");
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        createTempConfig(ImmutableMap.of(key, "env{default}"));
+        Config config = new Config(new Vault());
+
+        // then
+        assertThat(config.getString(key), equalTo("default"));
+    }
+
+    @Test
+    void testVaultFallbackIsOverriddenByVaultValue() {
+        // given
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        createTempConfig(ImmutableMap.of(
+                "application.foo", "vault{fallback}",
+                "application.notinvault", "vault{fallback}"));
+        Config config = new Config(new Vault());
+
+        // then
+        assertThat(config.getString("application.foo"), equalTo("admin"));
+        assertThat(config.getString("application.notinvault"), equalTo("fallback"));
+    }
+
+    @Test
     void testFlashCookieName() {
         // given
         System.clearProperty(Key.APPLICATION_CONFIG);

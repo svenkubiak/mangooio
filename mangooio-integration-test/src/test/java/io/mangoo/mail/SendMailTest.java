@@ -12,6 +12,7 @@ import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.test.email.SmtpMock;
 import io.mangoo.utils.CommonUtils;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -101,6 +103,40 @@ class SendMailTest {
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(file.delete(), equalTo(true)));
     }
     
+    @Test
+    void testAttachmentIsReadFromGivenPath() throws Exception {
+        //given
+        greenMail.purgeEmailFromAllMailboxes();
+        String fileName = "invoice-" + UUID.randomUUID() + ".txt";
+        Path directory = java.nio.file.Files.createTempDirectory("mangooio-attachment");
+        Path attachment = directory.resolve(fileName);
+        Path decoy = Path.of(fileName);
+        java.nio.file.Files.writeString(attachment, "correct attachment");
+        java.nio.file.Files.writeString(decoy, "foreign file from the working directory");
+
+        try {
+            //when
+            Mail.newMail()
+                .from("Jon Snow", "jon.snow@winterfell.com")
+                .to("arya.stark@westeros.com")
+                .subject("Invoice")
+                .attachment(attachment)
+                .textMessage("See attachment")
+                .send();
+
+            //then
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
+            var multipart = (Multipart) greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent();
+            var attachmentPart = multipart.getBodyPart(1);
+            assertThat(attachmentPart.getFileName(), equalTo(fileName));
+            assertThat(new String(attachmentPart.getInputStream().readAllBytes(), StandardCharsets.UTF_8), equalTo("correct attachment"));
+        } finally {
+            java.nio.file.Files.deleteIfExists(decoy);
+            java.nio.file.Files.deleteIfExists(attachment);
+            java.nio.file.Files.deleteIfExists(directory);
+        }
+    }
+
     @Test
     void testBody() throws MangooMailerException, IOException, FolderException, InterruptedException {
         //given

@@ -58,7 +58,7 @@ In **prod**, the directory is resolved in this order:
 3. `application.vault.path` in `config.yaml`
 4. The current working directory
 
-The file name is always `vault.p12`. Restrict its file permissions; the framework already sets owner read/write only when it creates the file, but it is worth double-checking after a deploy, especially if your deployment tooling copies files around and resets permissions in the process.
+The file name is always `vault.p12`. Restrict its file permissions; on Linux and macOS the framework already writes the file with owner read/write only, but it is worth double-checking after a deploy, especially if your deployment tooling copies files around and resets permissions in the process.
 
 ### Using vault values in config.yaml
 
@@ -71,7 +71,7 @@ session:
     key: vault{}
 ```
 
-`vault{fallback}` stores the literal fallback string instead of reading the keystore. Use that only for non-secret defaults; if you write an actual secret as a fallback, you have just put a secret in `config.yaml` again, which defeats the point of using the vault in the first place.
+`vault{fallback}` reads the keystore first and uses the literal fallback string only if the vault has no entry for the key. Use that only for non-secret defaults; if you write an actual secret as a fallback, you have just put a secret in `config.yaml` again, which defeats the point of using the vault in the first place.
 
 ### HTTPS certificates
 
@@ -89,7 +89,7 @@ application:
     username: env{}
 ```
 
-This reads `APPLICATION_DB_USERNAME`. `env{defaultuser}` uses the literal default when you do not want to require an environment variable, which is handy in dev where you would rather not export half a dozen variables just to start the app.
+This reads `APPLICATION_DB_USERNAME`. `env{defaultuser}` reads the same environment variable and uses the literal default only if the variable is not set or empty, which is handy in dev where you would rather not export half a dozen variables just to start the app.
 
 ## JVM arguments
 
@@ -105,7 +105,7 @@ application:
 java -Dapplication.db.username=myuser -jar myapp.jar
 ```
 
-`arg{defaultuser}` uses the literal default when the property is absent, same idea as `env{defaultuser}` above.
+`arg{defaultuser}` reads the same system property and uses the literal default only if the property is not set or empty, same idea as `env{defaultuser}` above. A value set at deployment therefore always wins over the default written in `config.yaml`.
 
 You can also point the whole configuration file elsewhere, which is useful when your deployment mounts config outside the JAR entirely (a Kubernetes ConfigMap, for instance) instead of baking it into the artifact:
 

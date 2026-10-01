@@ -11,6 +11,15 @@ Released at 01.10.2027
 * Fixed an issue where a failing Vault#put, e.g. with an empty value, left an empty vault.p12 behind and thereby destroyed all stored secrets, the vault file is now replaced atomically via a temporary file (svenkubiak)
 * Fixed an issue where the vault was rewritten on every start, the secrets of all modes are now created once and stored in a single write, secrets with a doubled mode prefix from earlier versions are removed (svenkubiak)
 * Fixed an issue where the vault could not be created on Windows, as setting POSIX file permissions is not supported there, which prevented the application from starting, an empty vault.p12 left behind by such a failed start is now created anew (svenkubiak)
+* Fixed an issue where a Subscriber was not registered if receive was not its first declared method, the payload type is now taken from the type argument of Subscriber<T> (svenkubiak)
+* Fixed an issue where payloads of a nested class or record were never delivered, as subscribers were registered under the binary name and looked up under the canonical name, both now use the binary name (svenkubiak)
+* Fixed an issue where an exception in one Subscriber prevented all following subscribers from receiving the payload (svenkubiak)
+* Fixed an issue where the collection name was read from the first annotation of a class instead of @Collection, which stored data silently in a wrong collection or failed the startup (svenkubiak)
+* **Behaviour change** Fixed an issue where a field annotated with @Indexed and a further annotation got no index, and a field with a single foreign annotation got an unwanted index. Missing indexes are now created on startup, a unique index fails if the collection already contains duplicates, which then need to be cleaned up first. Unwanted indexes created by earlier versions are not removed automatically (svenkubiak)
+* Fixed an issue where mail attachments were read from a file with the same name in the working directory instead of the given path, which failed the mail or sent a foreign file (svenkubiak)
+* Fixed an issue where arg{default} and env{default} always used the default and ignored a set system property or environment variable, the default is now only used if the source has no value (svenkubiak)
+* **Behaviour change** vault{fallback} now reads the vault first and uses the fallback only if the vault has no entry for the key, consistent with arg{default} and env{default} (svenkubiak)
+* Fixed an issue where the maven archetype generated projects with the fixed mangoo I/O version 10.11.0, the archetype now always uses its own version (svenkubiak)
 * **Behaviour change** Vault#put now throws an IllegalArgumentException for a blank key or value and an IllegalStateException if the value could not be stored, instead of only logging the error (svenkubiak)
 
 ## Version 10.13.1

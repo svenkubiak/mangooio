@@ -31,7 +31,6 @@ public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
     private static final String VAULT_TAG = "vault{}";
     private static final String ARG_TAG = "arg{}";
-    private static final String ENV_TAG = "env{}";
     private final Map<String, String> values = new ConcurrentHashMap<>();
     private final Vault vault;
     private Pattern corsUrl;
@@ -91,56 +90,41 @@ public class Config {
     }
 
     /**
-     * Parses a given property key and value and checks if the value comes from
-     * a system property and maybe decrypts the value
+     * Parses a given property key and value and resolves the placeholders env{}, arg{} and vault{}.
+     * A placeholder is resolved from its source first, i.e. the environment variable, the system
+     * property or the vault. A value given in the braces, e.g. arg{default}, is only used as
+     * fallback if the source has no value.
      *
      * @param key The property key
      * @param value The property value
      */
     private void parse(String key, String value) {
-        if (ENV_TAG.equals(value)) {
-            String envKey = key.toUpperCase(Locale.ENGLISH)
-                    .replace(".", "_") // NOSONAR
-                    .trim();
-
-            String propertyValue = System.getenv(envKey);
-
-            if (StringUtils.isNotBlank(propertyValue)) {
-                values.put(key, propertyValue);
-            }
-        } else if (value.startsWith("env{")) {
-            value = StringUtils.substringBetween(value, "env{", "}");
-
-            if (StringUtils.isNotBlank(value)) {
-                values.put(key, value);
-            }
-        } else if (ARG_TAG.equals(value)) {
-            String propertyValue = System.getProperty(key);
-
-            if (StringUtils.isNotBlank(propertyValue)) {
-                values.put(key, propertyValue);
-            }
+        if (value.startsWith("env{")) {
+            resolve(key, value, "env{", System.getenv(toEnvKey(key)));
         } else if (value.startsWith("arg{")) {
-            value = StringUtils.substringBetween(value, "arg{", "}");
-
-            if (StringUtils.isNotBlank(value)) {
-                values.put(key, value);
-            }
-        } else if (VAULT_TAG.equals(value)) {
-            String propertyValue = vault.get(key);
-
-            if (StringUtils.isNotBlank(propertyValue)) {
-                values.put(key, propertyValue);
-            }
+            resolve(key, value, "arg{", System.getProperty(key));
         } else if (value.startsWith("vault{")) {
-            value = StringUtils.substringBetween(value, "vault{", "}");
-
-            if (StringUtils.isNotBlank(value)) {
-                values.put(key, value);
-            }
+            resolve(key, value, "vault{", vault.get(key));
         } else {
             values.put(key, value);
         }
+    }
+
+    private void resolve(String key, String value, String tag, String resolved) {
+        if (StringUtils.isNotBlank(resolved)) {
+            values.put(key, resolved);
+        } else {
+            String fallback = StringUtils.substringBetween(value, tag, "}");
+            if (StringUtils.isNotBlank(fallback)) {
+                values.put(key, fallback);
+            }
+        }
+    }
+
+    private static String toEnvKey(String key) {
+        return key.toUpperCase(Locale.ENGLISH)
+                .replace(".", "_") // NOSONAR
+                .trim();
     }
 
     /**

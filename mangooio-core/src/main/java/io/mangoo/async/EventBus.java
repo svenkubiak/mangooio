@@ -21,7 +21,8 @@ public class EventBus<T> {
     /**
      * Register a subscriber class on a provided queue
      *
-     * @param queue The name of the queue (case-sensitive)
+     * @param queue The name of the queue (case-sensitive), which is the binary name of the
+     *              event class as returned by {@link Class#getName()}, e.g. com.example.Events$OrderCreated
      * @param subscriber The subscriber of the queue
      */
     public void register(String queue, Class<?> subscriber) {
@@ -43,14 +44,14 @@ public class EventBus<T> {
         Objects.requireNonNull(payload, Required.PAYLOAD);
 
         Thread.ofVirtual().start(() -> {
-            String queue = payload.getClass().getCanonicalName();
-            try {
-                for (Class<?> subscriber : subscribers.get(queue)) {
+            String queue = payload.getClass().getName();
+            for (Class<?> subscriber : subscribers.get(queue)) {
+                try {
                     ((Subscriber) Application.getInstance(subscriber)).receive(payload);
                     handledEvents.addAndGet(1);
+                } catch (Exception e) { //NOSONAR
+                    LOG.error("Failed to send payload of queue '{}' to subscriber '{}'", queue, subscriber.getName(), e);
                 }
-            } catch (Exception e) { //NOSONAR
-                LOG.error("Failed to send payload to queue", e);
             }
         });
     }

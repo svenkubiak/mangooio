@@ -3,7 +3,6 @@ package io.mangoo.email;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
 import jakarta.activation.DataHandler;
-import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -12,7 +11,6 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -102,19 +100,16 @@ public class PostOffice {
             multipart.addBodyPart(messageBodyPart);
 
             for (Path path : mail.getMailAttachments()) {
-                messageBodyPart = new MimeBodyPart();
-                var fileNamePath = path.getFileName();
-                if (fileNamePath != null) {
-                    String filename = FilenameUtils.getName(fileNamePath.toString());
-                    if (StringUtils.isNotBlank(filename)) {
-                        DataSource source = new FileDataSource(filename); //NOSONAR
-                        messageBodyPart.setDataHandler(new DataHandler(source));
-                        messageBodyPart.setFileName(filename);
-                        multipart.addBodyPart(messageBodyPart);
-                    } else {
-                        throw new MessagingException("Attachment not found");
-                    }
+                var fileName = path.getFileName();
+                if (fileName == null || StringUtils.isBlank(fileName.toString())) {
+                    throw new MessagingException("Attachment has no file name: " + path);
                 }
+
+                // The file is read from the given path, its name is only used as display name
+                var attachmentPart = new MimeBodyPart();
+                attachmentPart.setDataHandler(new DataHandler(new FileDataSource(path.toFile())));
+                attachmentPart.setFileName(fileName.toString());
+                multipart.addBodyPart(attachmentPart);
             }
 
             part.setContent(multipart);
