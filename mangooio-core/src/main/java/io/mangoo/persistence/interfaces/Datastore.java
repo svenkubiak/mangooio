@@ -45,7 +45,8 @@ public interface Datastore {
     <T> long countAll(Class<T> clazz);
 
     /**
-     * Returns the objectId of the stored entity or an empty string if the save failed.
+     * Inserts the object or replaces the document with its id, also if that id was set by the application
+     * and no document exists yet. Returns the objectId of the stored entity or an empty string if the save failed.
      */
     String save(Object object);
 

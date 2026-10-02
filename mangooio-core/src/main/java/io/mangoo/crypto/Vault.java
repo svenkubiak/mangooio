@@ -297,8 +297,7 @@ public class Vault {
     }
 
     /**
-     * Stores the value atomically and does not write the vault file if the same value is already stored; if storing fails,
-     * the vault file and the in-memory vault keep their previous state.
+     * Stores the value atomically; if storing fails, file and in-memory vault keep their previous state.
      * Throws IllegalArgumentException for a blank key or value and IllegalStateException if the vault is disabled or storing fails.
      */
     public void put(String key, String value) {

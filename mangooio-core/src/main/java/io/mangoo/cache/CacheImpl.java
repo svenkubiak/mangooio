@@ -23,7 +23,13 @@ public class CacheImpl implements Cache {
     @Override
     public void put(String key, Object value) {
         Objects.requireNonNull(key, Required.KEY);
-        caffeineCache.put(key, value);
+
+        // Caffeine does not allow null values, a null value removes the cached one instead
+        if (value == null) {
+            remove(key);
+        } else {
+            caffeineCache.put(key, value);
+        }
     }
 
 	@Override
@@ -39,8 +45,13 @@ public class CacheImpl implements Cache {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(expires, Required.EXPIRES);
 
-        caffeineCache.put(key, value);
-        caffeineCache.put(key + EXPIRES_SUFFIX, expires);
+        if (value == null) {
+            remove(key);
+            remove(key + EXPIRES_SUFFIX);
+        } else {
+            caffeineCache.put(key, value);
+            caffeineCache.put(key + EXPIRES_SUFFIX, expires);
+        }
     }
 
     @Override
@@ -77,11 +88,10 @@ public class CacheImpl implements Cache {
 
         var object = caffeineCache.getIfPresent(key);
         if (object == null) {
-            Map<String, Object> temp = new HashMap<>();
-            temp.computeIfAbsent(key, fallback);
-            object = temp.get(key);
-
-            caffeineCache.put(key, object);
+            object = fallback.apply(key);
+            if (object != null) {
+                caffeineCache.put(key, object);
+            }
         }
 
         return (T) object;
@@ -102,11 +112,10 @@ public class CacheImpl implements Cache {
 
         var object = caffeineCache.getIfPresent(key);
         if (object == null) {
-            Map<String, Object> temp = new HashMap<>();
-            temp.computeIfAbsent(key, fallback);
-            object = temp.get(key);
-
-            put(key, object, LocalDateTime.now().plus(expires, temporalUnit));
+            object = fallback.apply(key);
+            if (object != null) {
+                put(key, object, LocalDateTime.now().plus(expires, temporalUnit));
+            }
         }
 
         return (T) object;

@@ -77,4 +77,22 @@ The connection is now held under the user rather than under `/sse/client`, so `s
 
 `connected()` runs on an I/O thread, so keep it short and move anything blocking - a database lookup for the token, for example - onto a virtual thread, the way the default handler does.
 
+## Proxies and load balancers
+
+Every SSE route, including one with a custom handler, is prepared for running behind a reverse proxy such as nginx:
+
+* The response carries `X-Accel-Buffering: no`, so nginx passes each event on immediately instead of buffering it, and `Cache-Control: no-cache`.
+* A comment line is sent every 30 seconds while a connection is otherwise idle. Clients ignore comments, but the traffic keeps proxies and load balancers from closing the connection after their idle timeout.
+* The response headers are sent as soon as the connection is established, so the client's `onopen` fires right away. A handler does not need to send anything on connect.
+
+What the application cannot set is the proxy's own connection handling. For nginx, use HTTP/1.1 towards the upstream and keep `proxy_read_timeout` above the 30 second heartbeat (the default of 60 seconds is fine):
+
+```nginx
+location /sse {
+    proxy_pass http://app;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+}
+```
+
 Client setup: [MDN Server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).

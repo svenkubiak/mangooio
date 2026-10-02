@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public final class RequestUtils {
@@ -83,10 +85,7 @@ public final class RequestUtils {
         return pathParameter.keySet().stream().anyMatch(exchange.getQueryParameters()::containsKey);
     }
 
-    /**
-     * Returns true if a query parameter key appears more than once in the raw query string.
-     * getQueryParameters keeps only one value per key, so such requests should be rejected to avoid HTTP parameter pollution.
-     */
+    /** True if a query parameter key appears more than once after URL decoding or cannot be decoded (HTTP parameter pollution). */
     public static boolean hasMultipleParameterValues(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
@@ -103,6 +102,12 @@ public final class RequestUtils {
 
             int index = pair.indexOf('=');
             String key = index >= 0 ? pair.substring(0, index) : pair;
+            try {
+                key = URLDecoder.decode(key, StandardCharsets.UTF_8);
+            } catch (IllegalArgumentException e) {
+                return true;
+            }
+
             if (!seenKeys.add(key)) {
                 return true;
             }

@@ -40,6 +40,7 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/translation").respondeWith("translation"),
                 On.get().to("/messages").respondeWith("messages"),
                 On.get().to("/fallback").respondeWith("fallback"),
+                On.get().to("/missingkey").respondeWith("missing"),
                 On.get().to("/special").respondeWith("special"),
                 On.get().to("/umlaute").respondeWith("umlaute"),
                 On.get().to("/localize").respondeWith("localize")

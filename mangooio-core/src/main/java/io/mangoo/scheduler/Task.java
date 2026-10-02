@@ -5,6 +5,7 @@ import io.mangoo.core.Application;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 public class Task implements Runnable {
@@ -22,8 +23,11 @@ public class Task implements Runnable {
         try {
             Object instance = Application.getInstance(clazz);
             instance.getClass().getMethod(methodName).invoke(instance);
+        } catch (InvocationTargetException e) {
+            LOG.error("Failed to execute scheduled task on class '{}' with annotated method '{}'", clazz.getName(), methodName, e.getCause());
         } catch (Exception e) {
-            LOG.error("Failed to execute scheduled task on class '{}' with annotated method '{}' - Error: {}", clazz.getName(), methodName, e.getCause().getMessage());
+            // The method could not be invoked at all, e.g. it is not public or has parameters
+            LOG.error("Failed to invoke scheduled task on class '{}' with annotated method '{}'", clazz.getName(), methodName, e);
         }
     }
 }

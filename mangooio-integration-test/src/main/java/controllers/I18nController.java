@@ -20,6 +20,10 @@ public class I18nController {
     public Response fallback() {
         return Response.ok().render();
     }
+
+    public Response missing() {
+        return Response.ok().render();
+    }
     
     public Response special() {
         return Response.ok().render();

@@ -673,4 +673,52 @@ class FormTest {
         assertEquals("foo@bar.com", deserialized.getValue("email"));
         assertTrue(deserialized.getFile("upload").isEmpty());
     }
+
+    @Test
+    void testGetIntegerWithValuesIntegerCannotParse() {
+        for (String value : new String[] {"1.5", "1e3", "99999999999", "0x1F", "1L"}) {
+            // Given
+            form.addValue("number", value);
+
+            // When
+            Optional<Integer> result = form.getInteger("number");
+
+            // Then
+            assertTrue(result.isEmpty(), "Expected empty result for " + value);
+        }
+    }
+
+    @Test
+    void testGetLongWithValuesLongCannotParse() {
+        // Given
+        form.addValue("big", "99999999999");
+        form.addValue("decimal", "1.5");
+        form.addValue("hex", "0x1F");
+
+        // Then
+        assertEquals(Optional.of(99999999999L), form.getLong("big"));
+        assertTrue(form.getLong("decimal").isEmpty());
+        assertTrue(form.getLong("hex").isEmpty());
+    }
+
+    @Test
+    void testGetDoubleAndFloatWithValuesTheyCannotParse() {
+        // Given
+        form.addValue("decimal", "1.5");
+        form.addValue("exponent", "1e3");
+
+        // Then
+        assertEquals(Optional.of(1.5), form.getDouble("decimal"));
+        assertEquals(Optional.of(1000.0), form.getDouble("exponent"));
+        assertEquals(Optional.of(1.5f), form.getFloat("decimal"));
+
+        for (String value : new String[] {"0x1F", "1L", "NaN", "Infinity", "-Infinity"}) {
+            // Given
+            form.addValue("number", value);
+
+            // Then
+            assertTrue(form.getDouble("number").isEmpty(), "Expected empty double for " + value);
+            assertTrue(form.getFloat("number").isEmpty(), "Expected empty float for " + value);
+        }
+    }
 }

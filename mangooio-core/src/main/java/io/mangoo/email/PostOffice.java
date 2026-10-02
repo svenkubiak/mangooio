@@ -27,10 +27,12 @@ import java.util.Properties;
 public class PostOffice {
     private static final Logger LOG = LogManager.getLogger(PostOffice.class);
     private final Session session;
+    private final String defaultFrom;
 
     @Inject
     public PostOffice(Config config) {
         Objects.requireNonNull(config, Required.CONFIG);
+        this.defaultFrom = config.getSmtpFrom();
 
         var properties = new Properties();
         properties.put("mail.smtp.host", config.getSmtpHost());
@@ -79,7 +81,8 @@ public class PostOffice {
             setAttachments(mail, mimeMessage);
 
             Transport.send(mimeMessage);
-        } catch (IOException | MessagingException e) {
+        } catch (IOException | MessagingException | RuntimeException e) {
+            // Sending runs on a virtual thread nobody waits for, so every failure has to end up in the log
             LOG.error("Failed to send mail", e);
         }
     }
@@ -89,8 +92,8 @@ public class PostOffice {
         Objects.requireNonNull(part, Required.PART);
 
         if (mail.hasAttachments()) {
-            BodyPart messageBodyPart = new MimeBodyPart();
-            messageBodyPart.setText(mail.getMailText());
+            var messageBodyPart = new MimeBodyPart();
+            setContent(mail, messageBodyPart);
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart);
@@ -130,10 +133,14 @@ public class PostOffice {
         String messageFromName = mail.getMailFromName();
         String messageFromAddress = mail.getMailFromAddress();
 
-        if (StringUtils.isNotBlank(messageFromName) && StringUtils.isNotBlank(messageFromAddress)) {
-            mimeMessage.setFrom(new InternetAddress(messageFromAddress, messageFromName));
+        if (StringUtils.isNotBlank(messageFromAddress)) {
+            mimeMessage.setFrom(StringUtils.isNotBlank(messageFromName)
+                    ? new InternetAddress(messageFromAddress, messageFromName)
+                    : new InternetAddress(messageFromAddress));
+        } else if (StringUtils.isNotBlank(defaultFrom)) {
+            mimeMessage.setFrom(new InternetAddress(defaultFrom));
         } else {
-            mimeMessage.setFrom(new InternetAddress(messageFromAddress));
+            throw new MessagingException("Mail has no sender, set from() or smtp.from");
         }
     }
 

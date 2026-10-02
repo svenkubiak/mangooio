@@ -22,7 +22,6 @@ import io.mangoo.build.Runner;
 import io.mangoo.build.Trigger;
 import io.mangoo.build.Watcher;
 import io.mangoo.core.Application;
-import io.mangoo.utils.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -114,8 +113,8 @@ public class MangooMojo extends AbstractMojo {
         }
 
         getArtifacts(includesSet, excludesSet, watchDirectories);
+        // The default file system belongs to the JVM and can not be closed
         startRunner(classpathItems, includesSet, excludesSet, watchDirectories);
-        FileUtils.closeQuietly(fileSystem);
     }
 
     @SuppressFBWarnings(value = "fb-contrib:OCP_OVERLY_CONCRETE_PARAMETER", justification = "sour")

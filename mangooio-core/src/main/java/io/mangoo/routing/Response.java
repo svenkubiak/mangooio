@@ -35,7 +35,7 @@ public class Response {
     private int statusCode = StatusCodes.OK;
 
     public Response() {
-        //Empty constructor for Google Guice
+        // Empty constructor for Google Guice
     }
 
     private Response(int statusCode) {

@@ -33,8 +33,10 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +55,8 @@ public class Watcher implements Runnable {
     private final Set<String> excludes;
     private final WatchService watchService;
     private final Map<WatchKey, Path> watchKeys;
+    private final Set<Path> roots;
+    private final Set<Path> missingRoots = new LinkedHashSet<>();
     private final AtomicInteger takeCount;
     private boolean shutdown;
 
@@ -64,6 +68,7 @@ public class Watcher implements Runnable {
         this.excludes = excludes; //NOSONAR
         this.trigger = trigger;
         this.takeCount = new AtomicInteger(0);
+        this.roots = new LinkedHashSet<>(watchDirectory);
         for (Path path: watchDirectory) {
             registerAll(path);
         }
@@ -103,14 +108,20 @@ public class Watcher implements Runnable {
         for (;;) {
             WatchKey watchKey;
             try {
-                watchKey = watchService.take();
-                takeCount.incrementAndGet();
+                // Polls instead of take(), so that a deleted root directory can be registered again once it is recreated
+                watchKey = watchService.poll(500, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 if (!shutdown) {
                     LOG.error("Unexpectedly interrupted while waiting for take()", e);
                 }
                 return;
             }
+
+            restoreMissingRoots();
+            if (watchKey == null) {
+                continue;
+            }
+            takeCount.incrementAndGet();
 
             Path path = watchKeys.get(watchKey);
             if (path == null) {
@@ -122,8 +133,32 @@ public class Watcher implements Runnable {
 
             if (!watchKey.reset()) {
                 watchKeys.remove(watchKey);
-                if (watchKeys.isEmpty()) {
-                    break;
+                rememberMissingRoots();
+            }
+        }
+    }
+
+    // A clean build deletes target/classes, its watch keys become invalid and it has to be registered again once it exists
+    private void rememberMissingRoots() {
+        for (Path root : roots) {
+            if (!Files.isDirectory(root)) {
+                missingRoots.add(root);
+            }
+        }
+    }
+
+    private void restoreMissingRoots() {
+        var iterator = missingRoots.iterator();
+        while (iterator.hasNext()) {
+            Path root = iterator.next();
+            if (Files.isDirectory(root)) {
+                try {
+                    registerAll(root);
+                    iterator.remove();
+                    LOG.info("Watching recreated directory {} again", root);
+                    trigger.trigger();
+                } catch (IOException e) {
+                    LOG.error("Failed to watch recreated directory {}", root, e);
                 }
             }
         }

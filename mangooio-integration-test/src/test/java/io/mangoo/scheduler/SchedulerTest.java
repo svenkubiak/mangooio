@@ -25,13 +25,25 @@ public class SchedulerTest {
         }, 0, 1, TimeUnit.MILLISECONDS);
 
         assertThat(scheduler, not(nullValue()));
-        assertThat(scheduler.getSchedules().size(), equalTo(6));
+        assertThat(scheduler.getSchedules().size(), equalTo(7));
 
         //when
         scheduler.addSchedule(Schedule.of("TestModel.class", "foo", "null", scheduledFuture, false));
 
         //then
         assertThat(scheduler, not(nullValue()));
-        assertThat(scheduler.getSchedules().size(), equalTo(7));
+        assertThat(scheduler.getSchedules().size(), equalTo(8));
+    }
+
+    @Test
+    void testRunMethodWithFurtherAnnotationsIsScheduled() {
+        //given
+        Scheduler scheduler = Application.getInstance(Scheduler.class);
+
+        //then
+        assertThat(scheduler.getSchedules().stream()
+                .filter(schedule -> schedule.getClazz().equals("jobs.AnnotatedJob"))
+                .map(schedule -> schedule.getMethod() + " " + schedule.getRunAt())
+                .toList(), contains("execute every 1h"));
     }
 }

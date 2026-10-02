@@ -3,12 +3,14 @@ package io.mangoo.persistence;
 import com.google.common.base.Preconditions;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoCredential;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import io.mangoo.constants.Default;
@@ -77,8 +79,13 @@ public class DatastoreImpl implements Datastore {
                     pojoRegistry
             );
 
-            MongoClientSettings settings = MongoClientSettings.builder()
-                    .applyConnectionString(new ConnectionString(getConnectionString()))
+            MongoClientSettings settings = settings(
+                    config.getMongoHost(prefix),
+                    config.getMongoPort(prefix),
+                    Boolean.TRUE.equals(config.isMongoAuth(prefix)),
+                    config.getMongoUsername(prefix),
+                    config.getMongoPassword(prefix),
+                    config.getMongoAuthDB(prefix))
                     .codecRegistry(combinedRegistry)
                     .build();
 
@@ -113,30 +120,19 @@ public class DatastoreImpl implements Datastore {
         return mongoClient;
     }
 
-    private String getConnectionString() {
-        var buffer = new StringBuilder();
-        buffer.append("mongodb://");
-        
-        if (Boolean.TRUE.equals(config.isMongoAuth(prefix))) {
-            buffer
-                .append(config.getMongoUsername(prefix))
-                .append(':')
-                .append(config.getMongoPassword(prefix))
-                .append('@');
+    // Credentials are passed separately instead of in the connection string, so special characters need no URL encoding
+    static MongoClientSettings.Builder settings(String host, int port, boolean auth, String username, String password, String authDb) {
+        var builder = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString("mongodb://" + host + ":" + port));
+
+        if (auth) {
+            builder.credential(MongoCredential.createCredential(
+                    username,
+                    StringUtils.defaultIfBlank(authDb, "admin"),
+                    Objects.requireNonNull(password, "mongo password can not be null").toCharArray()));
         }
-        
-        buffer
-            .append(config.getMongoHost(prefix))
-            .append(':')
-            .append(config.getMongoPort(prefix));
-        
-        if (Boolean.TRUE.equals(config.isMongoAuth(prefix))) {
-            buffer
-                .append("/?authSource=")
-                .append(config.getMongoAuthDB(prefix));
-        }
-        
-        return buffer.toString();
+
+        return builder;
     }
 
     @Override
@@ -267,7 +263,8 @@ public class DatastoreImpl implements Datastore {
                     return insertResult.getInsertedId().asObjectId().getValue().toString(); //NOSONAR
                 }
             } else {
-                collection.replaceOne(eq("_id", id), object);
+                // Replaces the document or inserts it, if no document with this id exists yet
+                collection.replaceOne(eq("_id", id), object, new ReplaceOptions().upsert(true));
                 return id.toString();
             }
         }

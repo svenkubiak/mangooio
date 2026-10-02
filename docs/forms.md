@@ -84,6 +84,8 @@ Field checks include:
 - `expectEmail`, `expectUrl`, `expectIpv4`, `expectIpv6`, `expectDomainName`, `expectRegex`
 - `expectFile`, `expectFileMaxSize`, `expectFileMimeType`
 
+The value checks (`expectMinValue`, `expectMaxValue`, `expectRangeValue`, `expectNumeric`) accept decimal numbers with ASCII digits, an optional sign and a dot as decimal separator, e.g. `-5`, `19.99` or `.5`. Anything else, including Unicode digits, exponents, `NaN` or surrounding whitespace, is reported as a field error. To require digits only, for example for a postal code, use `expectRegex`.
+
 Use these to bind a check to a field name even when the value being checked did not actually come from form input, for example a lookup result you still want reported as a field-level error:
 
 ```java

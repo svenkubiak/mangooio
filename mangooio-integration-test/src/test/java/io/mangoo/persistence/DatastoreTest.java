@@ -9,6 +9,7 @@ import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.utils.CommonUtils;
 import models.Person;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -287,5 +288,40 @@ class DatastoreTest {
         
         //then
         assertThat(datastore, not(nullValue()));
+    }
+
+    @Test
+    void testSaveWithIdSetByApplicationInsertsDocument() {
+        //given
+        TestModel model = new TestModel(CommonUtils.uuidV6());
+        ObjectId id = new ObjectId();
+        model.setId(id);
+
+        //when
+        String result = datastore.save(model);
+
+        //then
+        assertThat(result, equalTo(id.toString()));
+        TestModel found = datastore.query(TestModel.class).find(eq("_id", id)).first();
+        assertThat(found, not(nullValue()));
+        assertThat(found.getName(), equalTo(model.getName()));
+    }
+
+    @Test
+    void testSaveExistingDocumentReplacesIt() {
+        //given
+        String initial = CommonUtils.uuidV6();
+        datastore.save(new TestModel(initial));
+        TestModel model = datastore.query(TestModel.class).find(eq("name", initial)).first();
+        String name = CommonUtils.uuidV6();
+        model.setName(name);
+
+        //when
+        datastore.save(model);
+
+        //then
+        assertThat(datastore.query(TestModel.class).countDocuments(eq("_id", model.getId())), equalTo(1L));
+        TestModel found = datastore.query(TestModel.class).find(eq("_id", model.getId())).first();
+        assertThat(found.getName(), equalTo(name));
     }
 }

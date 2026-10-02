@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith({TestExtension.class})
 class MailTest {
@@ -164,6 +165,29 @@ class MailTest {
         assertThat(mail.getMailHeaders().get(myHeader), equalTo(myHeaderValue));
     }
     
+    @Test
+    void testHeaderValueWithLineBreakIsRejected() {
+        for (String value : new String[] {"a\r\nBcc: evil@x.com", "a\rBcc: evil@x.com", "a\nBcc: evil@x.com"}) {
+            assertThrows(IllegalArgumentException.class, () -> Mail.newMail().header("X-Ref", value));
+        }
+    }
+
+    @Test
+    void testInvalidHeaderNameIsRejected() {
+        for (String name : new String[] {"X-A: b", "X A", "X-A\r\nBcc", ""}) {
+            assertThrows(IllegalArgumentException.class, () -> Mail.newMail().header(name, "value"));
+        }
+    }
+
+    @Test
+    void testValidHeaderIsAccepted() {
+        //when
+        Mail mail = Mail.newMail().header("X-Campaign", "welcome");
+
+        //then
+        assertThat(mail.getMailHeaders().get("X-Campaign"), equalTo("welcome"));
+    }
+
     @Test
     void testReplyTo() {
         //given

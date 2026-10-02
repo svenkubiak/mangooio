@@ -13,7 +13,7 @@ public class MetricsListener implements ExchangeCompletionListener {
     private long start;
     
     public MetricsListener() {
-      //Empty constructor required for Google Guice
+      // Empty constructor for Google Guice
     }
 
     public MetricsListener(long start) {

@@ -597,6 +597,34 @@ class RequestUtilsTest {
     }
 
     @Test
+    void testHasMultipleParameterValuesWithPercentEncodedDuplicate() {
+        for (String queryString : new String[] {"id=1&%69d=2", "id=1&i%64=2", "id=1&%69%64=2", "lang=1&%6cang=2", "lang=1&%6Cang=2", "a+b=1&a%20b=2"}) {
+            //given
+            HttpServerExchange exchange = new HttpServerExchange(null);
+            exchange.setQueryString(queryString);
+
+            //when
+            boolean hasMultiple = RequestUtils.hasMultipleParameterValues(exchange);
+
+            //then
+            assertThat(queryString, hasMultiple, is(true));
+        }
+    }
+
+    @Test
+    void testHasMultipleParameterValuesWithMalformedEscape() {
+        //given
+        HttpServerExchange exchange = new HttpServerExchange(null);
+        exchange.setQueryString("%zz=1");
+
+        //when
+        boolean hasMultiple = RequestUtils.hasMultipleParameterValues(exchange);
+
+        //then
+        assertThat(hasMultiple, is(true));
+    }
+
+    @Test
     void testHasMultipleParameterValuesIgnoresPathTemplateValues() {
         //given a route like /foo/{id} appends the path template value to the parsed query
         //parameter deque, but the raw query string only contains the actual query parameter

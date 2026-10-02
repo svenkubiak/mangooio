@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 public class Validator implements Serializable {
     @Serial
     private static final long serialVersionUID = -714400230978999709L;
+    // ASCII digits only, optional sign and decimal point; rejects Unicode digits, exponents, hex, NaN and Infinity
+    private static final Pattern NUMBER = Pattern.compile("[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)");
     private final Map<String, String> errors = new HashMap<>();
     private transient Messages messages; // NOSONAR Transient by design, see messages()
     protected Map<String, String> values = new HashMap<>(); // NOSONAR Intentionally not transient
@@ -54,6 +56,12 @@ public class Validator implements Serializable {
         }
 
         return messages;
+    }
+
+    private static OptionalDouble toNumber(String value) {
+        return value != null && NUMBER.matcher(value).matches()
+                ? OptionalDouble.of(Double.parseDouble(value))
+                : OptionalDouble.empty();
     }
 
     public Validator withMessages(Messages messages) {
@@ -161,13 +169,9 @@ public class Validator implements Serializable {
     
     public void expectMinValue(String name, double minValue, String message) {
         Objects.requireNonNull(name, Required.NAME);
-        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
+        var number = toNumber(get(name));
 
-        if (StringUtils.isNumeric(value)) {
-            if (Double.parseDouble(value) < minValue) {
-                addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MIN_VALUE_KEY, name, minValue)));
-            }
-        } else {
+        if (number.isEmpty() || number.orElseThrow() < minValue) {
             addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MIN_VALUE_KEY, name, minValue)));
         }
     }
@@ -203,9 +207,7 @@ public class Validator implements Serializable {
 
     public void expectNumeric(String name, String message) {
         Objects.requireNonNull(name, Required.NAME);
-        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
-
-        if (!StringUtils.isNumeric(value)) {
+        if (toNumber(get(name)).isEmpty()) {
             addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.NUMERIC_KEY, name)));
         }
     }
@@ -221,13 +223,9 @@ public class Validator implements Serializable {
 
     public void expectMaxValue(String name, double maxValue, String message) {
         Objects.requireNonNull(name, Required.NAME);
-        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
+        var number = toNumber(get(name));
 
-        if (StringUtils.isNumeric(value)) {
-            if (Double.parseDouble(value) > maxValue) {
-                addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MAX_VALUE_KEY, name, maxValue)));
-            }
-        } else {
+        if (number.isEmpty() || number.orElseThrow() > maxValue) {
             addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MAX_VALUE_KEY, name, maxValue)));
         }
     }
@@ -247,7 +245,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse(Strings.EMPTY);
 
-        if (( StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue) ) || ( StringUtils.isNotBlank(value) && !value.equals(anotherValue) )) {
+        if (StringUtils.isBlank(value) || !value.equals(anotherValue)) {
             addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.EXACT_MATCH_KEY, name, anotherName)));
         }
     }
@@ -266,7 +264,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse(Strings.EMPTY);
 
-        if (( StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue) ) || ( StringUtils.isNotBlank(value) && !value.equalsIgnoreCase(anotherValue.toLowerCase()))) {
+        if (StringUtils.isBlank(value) || !value.equalsIgnoreCase(anotherValue)) {
             addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.MATCH_KEY, name, anotherName)));
         }
     }
@@ -356,14 +354,9 @@ public class Validator implements Serializable {
     
     public void expectRangeValue(String name, int minValue, int maxValue, String message) {
         Objects.requireNonNull(name, Required.NAME);
-        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
+        var number = toNumber(get(name));
 
-        if (StringUtils.isNumeric(value)) {
-            var doubleValue = Double.parseDouble(value);
-            if (doubleValue < minValue || doubleValue > maxValue) {
-                addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.RANGE_VALUE_KEY, name, minValue, maxValue)));
-            }
-        } else {
+        if (number.isEmpty() || number.orElseThrow() < minValue || number.orElseThrow() > maxValue) {
             addError(name, Optional.ofNullable(message).orElse(messages().get(Validation.RANGE_VALUE_KEY, name, minValue, maxValue)));
         }
     }

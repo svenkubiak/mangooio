@@ -11,9 +11,11 @@ import java.util.Map;
 /** Rejects connections without a client query parameter and holds accepted ones under that parameter instead of the request URI, so an event can be sent to a single client. */
 public class ClientServerSentEventHandler implements ServerSentEventConnectionCallback {
     public static final String PARAMETER = "client";
+    public static volatile long keepAliveTime; //NOSONAR
 
     @Override
     public void connected(ServerSentEventConnection connection, String lastEventId) {
+        keepAliveTime = connection.getKeepAliveTime();
         String client = firstValue(connection.getQueryParameters(), PARAMETER);
 
         if (client == null) {
@@ -26,7 +28,6 @@ public class ClientServerSentEventHandler implements ServerSentEventConnectionCa
 
         // Not held under its request URI, so ServerSentEventCloseListener cannot find it and the close task has to remove it under the client key.
         connection.addCloseTask(closed -> manager.removeConnection(client, closed));
-        connection.send(": ok\n\n");
     }
 
     private String firstValue(Map<String, Deque<String>> parameters, String name) {

@@ -121,7 +121,7 @@ public class FormHandler implements HttpHandler {
         return form;
     }
 
-    // Logged here because the exception is raised before any controller runs, so nothing else would explain the rejection on the server side.
+    // Logged here, as the rejection happens before any controller runs.
     private IOException rejected(HttpServerExchange exchange, String reason) {
         LOG.warn("Rejected form of request {} {}: {}",
                 exchange.getRequestMethod(), exchange.getRequestURI(), reason);

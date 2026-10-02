@@ -191,4 +191,49 @@ class CacheTest {
     private String fallback() {
         return FALLBACK;
     }
+
+    @Test
+    void testFallbackReturningNullIsNotCached() {
+        //given
+        Cache cache = Application.getInstance(Cache.class);
+        String key = UUID.randomUUID().toString();
+        AtomicInteger calls = new AtomicInteger();
+
+        //when
+        Object first = cache.get(key, k -> { calls.incrementAndGet(); return null; });
+        Object second = cache.get(key, k -> { calls.incrementAndGet(); return null; });
+
+        //then
+        assertThat(first, nullValue());
+        assertThat(second, nullValue());
+        assertThat(calls.get(), equalTo(2));
+    }
+
+    @Test
+    void testFallbackWithExpiryReturningNullIsNotCached() {
+        //given
+        Cache cache = Application.getInstance(Cache.class);
+        String key = UUID.randomUUID().toString();
+
+        //when
+        Object value = cache.get(key, 1, ChronoUnit.HOURS, k -> null);
+
+        //then
+        assertThat(value, nullValue());
+        assertThat(cache.get(key), nullValue());
+    }
+
+    @Test
+    void testPutNullRemovesValue() {
+        //given
+        Cache cache = Application.getInstance(Cache.class);
+        String key = UUID.randomUUID().toString();
+        cache.put(key, "value");
+
+        //when
+        cache.put(key, null);
+
+        //then
+        assertThat(cache.get(key), nullValue());
+    }
 }

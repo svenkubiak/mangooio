@@ -10,15 +10,17 @@ import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public class Schedule {
     private final String clazz;
     private final String method;
     private final String runAt;
-    private final ScheduledFuture<?> scheduledFuture;
+    // A rescheduling task gets a new future for every run, so the current one is looked up on access
+    private final Supplier<ScheduledFuture<?>> scheduledFuture;
     private final boolean cron;
 
-    private Schedule(String clazz, String method, String runAt, ScheduledFuture<?> scheduledFuture, boolean cron) {
+    private Schedule(String clazz, String method, String runAt, Supplier<ScheduledFuture<?>> scheduledFuture, boolean cron) {
         this.clazz = Objects.requireNonNull(clazz, "clazz cannot be null");
         this.method = Objects.requireNonNull(method, "method cannot be null");
         this.runAt = Objects.requireNonNull(runAt, "runAt cannot be null");
@@ -27,12 +29,17 @@ public class Schedule {
     }
 
     public static Schedule of(String clazz, String method, String runAt, ScheduledFuture<?> scheduledFuture, boolean cron) {
+        Objects.requireNonNull(scheduledFuture, "scheduledFuture cannot be null");
+        return new Schedule(clazz, method, runAt, () -> scheduledFuture, cron);
+    }
+
+    public static Schedule of(String clazz, String method, String runAt, Supplier<ScheduledFuture<?>> scheduledFuture, boolean cron) {
         return new Schedule(clazz, method, runAt, scheduledFuture, cron);
     }
 
     @SuppressWarnings("java:S1452")
     public ScheduledFuture<?> getScheduledFuture() {
-        return scheduledFuture;
+        return scheduledFuture.get();
     }
 
     public LocalDateTime next() {
@@ -43,7 +50,7 @@ public class Schedule {
                     .map(ZonedDateTime::toLocalDateTime)
                     .orElse(null);
         } else {
-            return LocalDateTime.now().plusSeconds(scheduledFuture.getDelay(TimeUnit.SECONDS));
+            return LocalDateTime.now().plusSeconds(getScheduledFuture().getDelay(TimeUnit.SECONDS));
         }
     }
 

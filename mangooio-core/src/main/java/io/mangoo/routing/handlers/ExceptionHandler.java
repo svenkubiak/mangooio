@@ -22,7 +22,7 @@ import java.io.IOException;
 public class ExceptionHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(ExceptionHandler.class);
 
-    // Must be used whenever a handler is dispatched to a worker thread, because the dispatched handler runs as a new root handler outside the server's exception handler.
+    // A handler dispatched to a worker thread runs outside the server's exception handler and must be wrapped with this.
     public static HttpHandler wrap(HttpHandler next) {
         return Handlers.exceptionHandler(next)
                 .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class));

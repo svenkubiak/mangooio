@@ -26,7 +26,7 @@ Mail.newMail()
     .send();
 ```
 
-The one-argument `from(String)` sets the address only; it does not parse a `Name <email>` string for you.
+The one-argument `from(String)` sets the address only; it does not parse a `Name <email>` string for you. Without `from()` the mail is sent with the default sender from `smtp.from` (`mangoo <noreply@mangoo.local>` unless configured), which may use the `Name <email>` format. Any failure while sending is logged, as sending runs on a virtual thread nobody waits for.
 
 ## Templates
 

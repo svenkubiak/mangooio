@@ -65,6 +65,20 @@ class TokenBlacklistTest {
         assertThat(requestWith(cookie).getStatusCode(), equalTo(StatusCodes.OK));
     }
 
+    @Test
+    void testLogoutWithoutValidCookieDoesNotFail() {
+        //given
+        HttpCookie invalid = new HttpCookie(AUTHENTICATION_COOKIE, "invalid");
+
+        //when
+        TestResponse withoutCookie = TestRequest.get("/logout").execute();
+        TestResponse withInvalidCookie = TestRequest.get("/logout").withCookie(invalid).execute();
+
+        //then
+        assertThat(withoutCookie.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(withInvalidCookie.getStatusCode(), equalTo(StatusCodes.OK));
+    }
+
     private static HttpCookie login(TestBrowser browser, String url) {
         TestResponse response = browser.to(url)
                 .withHTTPMethod(Methods.POST.toString())

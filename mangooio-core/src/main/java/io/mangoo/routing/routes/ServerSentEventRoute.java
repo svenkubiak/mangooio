@@ -25,8 +25,8 @@ public class ServerSentEventRoute implements MangooRoute {
     }
 
     /**
-     * Replaces the default handler, which registers the connection in the ServerSentEventManager under the request URI of the route.
-     * A custom handler must register the connection itself and attach a close task that removes it again; ServerSentEventCloseListener only works for request URI keys.
+     * Replaces the default handler, which registers the connection under the request URI of the route.
+     * A custom handler must register the connection itself and remove it again in a close task.
      */
     public ServerSentEventRoute withHandler(Class<? extends ServerSentEventConnectionCallback> handler) {
         this.handler = handler;

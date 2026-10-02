@@ -88,4 +88,4 @@ ${i18n("welcome")}
 ${i18n("hello", "Ada")}
 ```
 
-The varargs `Messages.get(key, args)` returns an empty string when the key is absent, rather than throwing, so a missing translation degrades quietly instead of breaking the page. See [Templating](templating.md).
+`Messages.get(key)` and `Messages.get(key, args)` fall back to the framework defaults and return an empty string when the key is absent, rather than throwing, so a missing translation degrades quietly instead of breaking the page. Each missing key is logged once as a warning per locale, so gaps in a language file still show up in the log. Text without arguments is returned as is, apostrophes are not treated as `MessageFormat` quotes. See [Templating](templating.md).

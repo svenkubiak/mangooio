@@ -110,7 +110,7 @@ public class OutboundCookiesHandler implements HttpHandler {
         }
     }
 
-    // Must decide on hasSubject() and not isValid(): isValid() is false while a second factor is outstanding, which would leave that step without a cookie.
+    // hasSubject() and not isValid(), otherwise a pending second factor step gets no cookie.
     protected void setAuthenticationCookie(HttpServerExchange exchange) {
         var authentication = attachment.getAuthentication();
         if (authentication.isInvalid() || authentication.isLogout()) {

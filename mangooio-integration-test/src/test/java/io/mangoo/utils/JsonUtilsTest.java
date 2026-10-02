@@ -698,7 +698,7 @@ class JsonUtilsTest {
             String uuid = UUID.randomUUID().toString();
             String json = "{\"brand\":null,\"doors\":0,\"foo\":\"" + uuid + "\"}";
 
-            ///when
+            //when
             Car car = JsonUtils.toObject(json, Car.class);
 
             // then

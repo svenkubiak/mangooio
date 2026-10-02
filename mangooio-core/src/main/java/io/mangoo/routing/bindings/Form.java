@@ -2,7 +2,6 @@ package io.mangoo.routing.bindings;
 
 import io.mangoo.constants.Required;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class Form extends Validator {
     @Serial
@@ -19,7 +19,7 @@ public class Form extends Validator {
     private boolean keep;
     
     public Form() {
-        //Empty constructor for Google guice
+        // Empty constructor for Google Guice
     }
     
     public Optional<String> getString(String key) {
@@ -61,47 +61,35 @@ public class Form extends Validator {
     }
 
     public Optional<Integer> getInteger(String key) {
-        Objects.requireNonNull(key, Required.KEY);
-
-        String value = values.get(key);
-        if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
-            return Optional.of(Integer.valueOf(value));
-        }
-
-        return Optional.empty();
+        return parse(key, Integer::valueOf);
     }
 
     public Optional<Double> getDouble(String key) {
-        Objects.requireNonNull(key, Required.KEY);
-
-        String value = values.get(key);
-        if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
-            return Optional.of(Double.valueOf(value));
-        }
-
-        return Optional.empty();
+        return parse(key, Double::valueOf).filter(Double::isFinite);
     }
 
     public Optional<Float> getFloat(String key) {
-        Objects.requireNonNull(key, Required.KEY);
-
-        String value = values.get(key);
-        if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
-            return Optional.of(Float.valueOf(value));
-        }
-
-        return Optional.empty();
+        return parse(key, Float::valueOf).filter(Float::isFinite);
     }
 
     public Optional<Long> getLong(String key) {
+        return parse(key, Long::valueOf);
+    }
+
+    // Parsing decides whether the value fits the target type, a value it rejects is treated as absent
+    private <T> Optional<T> parse(String key, Function<String, T> parser) {
         Objects.requireNonNull(key, Required.KEY);
 
         String value = values.get(key);
-        if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
-            return Optional.of(Long.valueOf(value));
+        if (StringUtils.isBlank(value)) {
+            return Optional.empty();
         }
 
-        return Optional.empty();
+        try {
+            return Optional.of(parser.apply(value));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
     }
 
     public Optional<byte[]> getFile(String key) {

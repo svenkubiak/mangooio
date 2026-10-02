@@ -8,6 +8,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooHashingException;
 import io.mangoo.models.AuthenticationLock;
+import io.mangoo.utils.Argument;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.TotpUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +21,8 @@ import java.util.Objects;
 
 public class Authentication {
     private static final Logger LOG = LogManager.getLogger(Authentication.class);
+    // Guards creating, reserving and resetting attempt budgets; the slow verification runs outside of it
+    private static final Object ATTEMPTS = new Object();
     private LocalDateTime expires;
     private String subject;
     private String id;
@@ -84,35 +87,32 @@ public class Authentication {
     }
     
     /**
-     * Throttled per identifier: after authentication.lock failed attempts every call returns false for authentication.lock.duration minutes, with a budget separate from the second factor.
-     * Fails closed with false, without counting an attempt, if no Argon2 hashing slot is available within authentication.hashing.timeout.
+     * Throttled per identifier with a budget separate from the second factor.
+     * Returns false without counting an attempt if no hashing slot is available in time.
      */
     public boolean isValidLogin(String identifier, String password, String salt, String hash) {
         Objects.requireNonNull(identifier, Required.USERNAME);
         Objects.requireNonNull(password, Required.PASSWORD);
-        Objects.requireNonNull(password, Required.SALT);
+        Argument.requireNonBlank(salt, Required.SALT);
         Objects.requireNonNull(hash, Required.HASH);
 
         var key = CacheName.AUTH_PASSWORD_PREFIX + identifier;
-        if (hasLock(key)) {
+        var lock = acquire(key);
+        if (lock == null) {
             return false;
         }
 
-        var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
-        var authenticated = false;
-
         try {
             if (CommonUtils.matchArgon2(password, salt, hash)) {
-                authenticated = true;
-                cache.remove(key);
-            } else {
-                increaseFailedAttempts(cache, key);
+                reset(key);
+                return true;
             }
         } catch (MangooHashingException e) {
+            release(key, lock);
             LOG.error("Failed to check login credentials", e);
         }
 
-        return authenticated;
+        return false;
     }
     
     /**
@@ -164,30 +164,23 @@ public class Authentication {
         return TotpUtils.verifyTotp(secret, totp);
     }
 
-    /**
-     * Throttled per identifier: after authentication.lock failed attempts every call returns false for authentication.lock.duration minutes, with a budget separate from the password step.
-     */
+    /** Throttled per identifier with a budget separate from the password step. */
     public boolean isValidSecondFactor(String identifier, String secret, String totp) {
         Objects.requireNonNull(identifier, Required.USERNAME);
         Objects.requireNonNull(secret, Required.SECRET);
         Objects.requireNonNull(totp, Required.TOTP);
 
         var key = CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier;
-        if (hasLock(key)) {
+        if (acquire(key) == null) {
             return false;
         }
 
-        var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
-        var authenticated = false;
-
         if (TotpUtils.verifyTotp(secret, totp)) {
-            authenticated = true;
-            cache.remove(key);
-        } else {
-            increaseFailedAttempts(cache, key);
+            reset(key);
+            return true;
         }
 
-        return authenticated;
+        return false;
     }
 
     private boolean hasLock(String key) {
@@ -197,16 +190,37 @@ public class Authentication {
         return lock != null && lock.isLocked();
     }
 
-    private void increaseFailedAttempts(Cache cache, String key) {
+    // Reserves an attempt before verification and returns null if the budget is used up; the put renews the cache expiry
+    private static AuthenticationLock acquire(String key) {
         var config = Application.getInstance(Config.class);
+        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
 
-        AuthenticationLock lock = cache.get(key);
-        if (lock == null) {
-            lock = new AuthenticationLock();
+        synchronized (ATTEMPTS) {
+            AuthenticationLock lock = cache.get(key);
+            if (lock == null) {
+                lock = new AuthenticationLock();
+            }
+
+            boolean acquired = lock.tryAcquire(config.getAuthenticationLock(), Duration.ofMinutes(config.getAuthenticationLockDuration()));
+            cache.put(key, lock);
+
+            return acquired ? lock : null;
         }
+    }
 
-        lock.increment(config.getAuthenticationLock(), Duration.ofMinutes(config.getAuthenticationLockDuration()));
-        cache.put(key, lock);
+    private static void release(String key, AuthenticationLock lock) {
+        synchronized (ATTEMPTS) {
+            lock.release(Application.getInstance(Config.class).getAuthenticationLock());
+            if (lock.getAttempts() == 0) {
+                Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH).remove(key);
+            }
+        }
+    }
+
+    private static void reset(String key) {
+        synchronized (ATTEMPTS) {
+            Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH).remove(key);
+        }
     }
 
     public void logout() {
@@ -220,16 +234,12 @@ public class Authentication {
         update = true;
     }
 
-    /**
-     * True as soon as the password step succeeded, even if a second factor is still pending; never use it for authorization decisions, use isValid instead.
-     */
+    /** Also true while a second factor is pending, use isValid for authorization decisions. */
     public boolean hasSubject() {
         return StringUtils.isNotBlank(subject);
     }
 
-    /**
-     * Use this for authorization decisions, as it is false while a required second factor is pending even though getSubject already returns the subject.
-     */
+    /** False while a second factor is pending, use this for authorization decisions. */
     public boolean isValid() {
         return hasSubject() && !isTwoFactor();
     }

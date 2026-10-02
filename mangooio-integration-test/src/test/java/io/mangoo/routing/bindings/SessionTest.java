@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith({TestExtension.class})
 class SessionTest {
@@ -66,21 +67,30 @@ class SessionTest {
     }
 
     @Test
-    void testInvalidCharacters() {
+    void testFormerSeparatorCharactersAreStored() {
         //given
         final Session session = Session.create();
 
         //when
         session.put("|", FOO);
-        session.put(":", FOO);
-        session.put("&", FOO);
-        session.put(" ", FOO);
-        session.put(FOO, "|");
-        session.put(FOO, ":");
-        session.put(FOO, "&");
         session.put(FOO, " ");
+        session.put("text", "a|b: c&d");
 
         //then
+        assertThat(session.get("|"), equalTo(FOO));
+        assertThat(session.get(FOO), equalTo(" "));
+        assertThat(session.get("text"), equalTo("a|b: c&d"));
+    }
+
+    @Test
+    void testReservedKeysAreRejected() {
+        //given
+        final Session session = Session.create();
+
+        //then
+        for (String key : new String[] {"sub", "exp", "jti", "x-csrf-token"}) {
+            assertThrows(IllegalArgumentException.class, () -> session.put(key, FOO));
+        }
         assertThat(session.hasContent(), equalTo(false));
     }
 }

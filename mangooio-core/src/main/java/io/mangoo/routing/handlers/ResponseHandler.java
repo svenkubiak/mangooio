@@ -49,12 +49,11 @@ public class ResponseHandler implements HttpHandler {
         // the remaining spans and also covers aborted requests.
     }
 
-    // Wrapped with the ExceptionHandler, because a dispatched handler runs as a new root handler outside the server's exception handler.
-    protected void handleBinaryResponse(HttpServerExchange exchange, Response response) {
+        protected void handleBinaryResponse(HttpServerExchange exchange, Response response) {
         exchange.dispatch(exchange.getDispatchExecutor(), ExceptionHandler.wrap(Application.getInstance(BinaryHandler.class).withResponse(response)));
     }
 
-    // The file is transferred from a FileChannel without blocking mode, so it is never read into the heap and no thread is occupied during the transfer.
+    // Transferred from a FileChannel without blocking, so the file is never read into the heap.
     protected void handleFileResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(response.getStatusCode());
 

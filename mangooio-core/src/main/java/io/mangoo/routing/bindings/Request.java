@@ -31,7 +31,7 @@ public class Request {
     private Map<String, String> queryParameter = Map.of();
 
     public Request(){
-        //Empty constructor for Google guice
+        // Empty constructor for Google Guice
     }
 
     public Request(HttpServerExchange httpServerExchange) {

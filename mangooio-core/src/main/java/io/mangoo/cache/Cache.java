@@ -20,7 +20,7 @@ public interface Cache {
     <T> T get(String key);
 
     /**
-     * Calls the fallback if the key is not cached and caches its result under the key.
+     * Calls the fallback if the key is not cached and caches its result under the key; a null result is returned but not cached.
      */
     <T> T get(String key, Function<String, Object> fallback);
 
@@ -44,7 +44,7 @@ public interface Cache {
     AtomicInteger resetCounter(String key);
 
     /**
-     * Calls the fallback if the key is not cached and caches its result under the key with the given expiry.
+     * Calls the fallback if the key is not cached and caches its result under the key with the given expiry; a null result is returned but not cached.
      */
     <T> T get(String key, int expires, TemporalUnit temporalUnit, Function<String, Object> fallback);
 

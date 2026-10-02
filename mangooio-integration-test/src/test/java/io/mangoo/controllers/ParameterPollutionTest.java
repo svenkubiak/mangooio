@@ -36,6 +36,16 @@ class ParameterPollutionTest {
     }
 
     @Test
+    void testPercentEncodedDuplicateQueryParameterIsRejectedWithBadRequest() {
+        //given
+        final TestResponse response = TestRequest.get("/?lang=de&%6Cang=en").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
+    }
+
+    @Test
     void testQueryParameterCanNotOverrideRouteParameter() {
         //given
         final TestResponse response = TestRequest.get("/string/routevalue?foo=spoofed").execute();

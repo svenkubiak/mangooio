@@ -20,6 +20,12 @@ java -Dapplication.mode=prod -jar /opt/myapp/myapp.jar
 
 Set `application.mode=prod`, which is also the default if you leave it unset. Configure HTTP and/or HTTPS connectors as needed, and do not enable embedded MongoDB.
 
+In prod mode the application refuses to start when it runs as root (UID 0). Run it as an unprivileged user, which limits the damage of any code execution vulnerability. Make sure that user can read and write the vault directory.
+
+## Startup and classpath scanning
+
+On startup the classpath is scanned for `@Run` jobs, `@Collection` models and `Subscriber` implementations, so these classes can live in any package of your application. Known library packages such as `org.apache`, `com.google`, `io.undertow` or `com.mongodb` are excluded from the scan to keep the startup fast, therefore do not place application classes in these packages. The excluded packages are logged on debug level.
+
 ## Supervisord
 
 ```ini
@@ -40,12 +46,26 @@ Note that `JAVA_OPTS` set in `environment=` is not read by `java` unless you als
 
 ```dockerfile
 FROM eclipse-temurin:25-jre
+RUN groupadd --system app && useradd --system --gid app app
 WORKDIR /app
 COPY target/myapp.jar myapp.jar
+USER app
 ENTRYPOINT ["java", "-Dapplication.mode=prod", "-jar", "/app/myapp.jar"]
 ```
 
-Pass heap settings through `JAVA_TOOL_OPTIONS`, and mount `vault.p12` while setting `APPLICATION_VAULT_PATH` / `APPLICATION_VAULT_SECRET` accordingly.
+Containers run as root unless the image or the compose file sets a user, so keep the `USER` line, otherwise the application does not start in prod mode. Pass heap settings through `JAVA_TOOL_OPTIONS`. Mount the directory that contains `vault.p12`, not the file itself, and set `APPLICATION_VAULT_PATH` to the path **inside** the container:
+
+```yaml
+services:
+  myapp:
+    environment:
+      APPLICATION_VAULT_PATH: /app/config
+      APPLICATION_VAULT_SECRET: change-me
+    volumes:
+      - /opt/myapp/config:/app/config
+```
+
+The mounted directory must be writable for the container user, as the vault is replaced atomically through a temporary file in the same directory.
 
 ## Global response headers
 

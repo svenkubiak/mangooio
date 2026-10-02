@@ -1,17 +1,14 @@
 package io.mangoo.routing.bindings;
 
+import com.google.common.base.Preconditions;
+import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.Required;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 public class Flash {
-    private static final Logger LOG = LogManager.getLogger(Flash.class);
-    private static final Set<String> INVALID_CHARACTERS = Set.of("|", ":", "&", " ");
     private static final String ERROR = "error";
     private static final String WARNING = "warning";
     private static final String SUCCESS = "success";
@@ -20,7 +17,7 @@ public class Flash {
     private boolean invalid;
 
     public Flash() {
-      //Empty constructor required for Google Guice
+      // Empty constructor for Google Guice
     }
     
     public static Flash create() {
@@ -35,27 +32,26 @@ public class Flash {
     }
 
     public void setError(String value) {
-        if (validCharacters(value)) {
-            values.put(ERROR, value);
-        }
+        Objects.requireNonNull(value, Required.VALUE);
+        values.put(ERROR, value);
     }
 
     public void setWarning(String value) {
-        if (validCharacters(value)) {
-            values.put(WARNING, value);
-        }
+        Objects.requireNonNull(value, Required.VALUE);
+        values.put(WARNING, value);
     }
 
     public void setSuccess(String value) {
-        if (validCharacters(value)) {
-            values.put(SUCCESS, value);
-        }
+        Objects.requireNonNull(value, Required.VALUE);
+        values.put(SUCCESS, value);
     }
 
     public void put(String key, String value) {
-        if (validCharacters(key) && validCharacters(value)) {
-            values.put(key, value);
-        }
+        Objects.requireNonNull(key, Required.KEY);
+        Objects.requireNonNull(value, Required.VALUE);
+        // Flash values are stored as claims of a JWT, a reserved or internal claim name would break the whole cookie
+        Preconditions.checkArgument(!ClaimKey.RESERVED.contains(key) && !ClaimKey.FORM.equals(key), "Flash key '" + key + "' is reserved");
+        values.put(key, value);
     }
     
     /**
@@ -93,14 +89,5 @@ public class Flash {
 
     public boolean hasContent() {
         return !values.isEmpty();
-    }
-
-    private boolean validCharacters(String value) {
-        if (INVALID_CHARACTERS.contains(value)) {
-            LOG.error("Flash key or value can not contain the following characters: spaces, |, & or :");
-            return false;
-        }
-
-        return true;
     }
 }

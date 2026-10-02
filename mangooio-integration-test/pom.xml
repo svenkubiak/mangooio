@@ -182,12 +182,7 @@
 					<threadCount>8</threadCount>
 				</configuration>
 				<executions>
-					<!--
-						The tracing code is guarded by a static ENABLED flag that is read from the
-						configuration when the class is loaded, so it can not be switched on from
-						within a running JVM. The default run therefore skips these tests and a
-						second execution runs them in its own fork with otlp enabled.
-					-->
+					<!-- Tracing is enabled once on class loading, so its tests run in a separate fork with otlp enabled -->
 					<execution>
 						<id>default-test</id>
 						<goals>
@@ -212,8 +207,7 @@
 							<parallel>none</parallel>
 							<systemPropertyVariables>
 								<otlp.enable>true</otlp.enable>
-								<!-- Nothing listens here, the BatchSpanProcessor exports asynchronously
-								     and a failing export does not affect what these tests assert. -->
+								<!-- Nothing listens here, failing exports do not affect the tests -->
 								<otlp.endpoint>http://localhost:4317</otlp.endpoint>
 							</systemPropertyVariables>
 						</configuration>

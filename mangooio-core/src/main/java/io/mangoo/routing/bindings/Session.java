@@ -1,18 +1,16 @@
 package io.mangoo.routing.bindings;
 
+import com.google.common.base.Preconditions;
+import io.mangoo.constants.ClaimKey;
+import io.mangoo.constants.Const;
 import io.mangoo.constants.Required;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 public class Session {
-    private static final Logger LOG = LogManager.getLogger(Session.class);
-    private static final Set<String> INVALID_CHARACTERS = Set.of("|", ":", "&", " ");
     private Map<String, String> values = new HashMap<>();
     private String csrf;
     private LocalDateTime expires;
@@ -77,12 +75,12 @@ public class Session {
     }
 
     public void put(String key, String value) {
-        if (INVALID_CHARACTERS.contains(key) || INVALID_CHARACTERS.contains(value)) {
-            LOG.error("Session key or value can not contain the following characters: spaces, |, & or :");
-        }  else {
-            values.put(key, value);
-            changed = true;
-        }
+        Objects.requireNonNull(key, Required.KEY);
+        Objects.requireNonNull(value, Required.VALUE);
+        // Session values are stored as claims of a JWT, a reserved or internal claim name would break the whole cookie
+        Preconditions.checkArgument(!ClaimKey.RESERVED.contains(key) && !Const.CSRF_TOKEN.equals(key), "Session key '" + key + "' is reserved");
+        values.put(key, value);
+        changed = true;
     }
 
     public void remove(String key) {

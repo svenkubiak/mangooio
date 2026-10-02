@@ -189,11 +189,11 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `otlp.endpoint` | OTLP gRPC endpoint | *(none)* |
 | `persistence.enable` | Enable MongoDB persistence | `true` |
 | `persistence.mongo.auth` | Use MongoDB authentication | `false` |
-| `persistence.mongo.authdb` | MongoDB authentication database | *(none)* |
+| `persistence.mongo.authdb` | MongoDB authentication database | `admin` |
 | `persistence.mongo.dbname` | MongoDB database name | `mangoo-io-mongodb` |
 | `persistence.mongo.embedded` | Start embedded MongoDB | `false` |
 | `persistence.mongo.host` | MongoDB host | `localhost` |
-| `persistence.mongo.password` | MongoDB password | *(none)* |
+| `persistence.mongo.password` | MongoDB password, passed to the driver as is, so special characters need no encoding | *(none)* |
 | `persistence.mongo.port` | MongoDB port | `27017` |
 | `persistence.mongo.username` | MongoDB username | *(none)* |
 | `scheduler.enable` | Enable `@Run` scheduling | `true` |

@@ -33,9 +33,9 @@ import io.mangoo.routing.Router;
 import io.mangoo.routing.handlers.*;
 import io.mangoo.routing.routes.*;
 import io.mangoo.scheduler.CronTask;
+import io.mangoo.scheduler.FixedDelayTask;
 import io.mangoo.scheduler.Schedule;
 import io.mangoo.scheduler.Scheduler;
-import io.mangoo.scheduler.Task;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.PersistenceUtils;
 import io.mangoo.utils.internal.Log4jListener;
@@ -83,6 +83,20 @@ public final class Application {
     private static final String SCHEDULER = "io.mangoo.annotations.Run";
     private static final String MODULE_CLASS = "app.Module";
     private static final String ALL_PACKAGES = "*";
+    // Only unambiguous third-party prefixes, as application classes must still be found in any other package
+    static final String[] SCAN_REJECTED_PACKAGES = {
+            "com.bastiaanjansen", "com.cronutils", "com.fasterxml", "com.github.benmanes", "com.google", "com.icegreen",
+            "com.launchdarkly", "com.mongodb", "com.nimbusds", "com.sun", "de.flapdoodle",
+            "de.svenkubiak.embeddedmongodb", "edu.umd", "freemarker", "io.github.classgraph", "io.micrometer",
+            "io.netty", "io.opentelemetry", "io.smallrye", "io.undertow", "jakarta", "javassist", "javax",
+            "jersey.repackaged", "kotlin", "net.bytebuddy", "net.glxn", "net.jawr", "net.jcip",
+            "nonapi.io.github.classgraph", "okhttp3", "okio", "org.aopalliance", "org.apache", "org.apiguardian",
+            "org.awaitility", "org.bouncycastle", "org.bson", "org.cactoos", "org.codehaus", "org.commonmark",
+            "org.eclipse", "org.exparity", "org.glassfish", "org.hamcrest", "org.hibernate", "org.jboss", "org.jgrapht",
+            "org.jheaps", "org.jspecify", "org.junit", "org.jvnet", "org.llorllale", "org.mockito", "org.objenesis",
+            "org.ocpsoft", "org.opentest4j", "org.reactivestreams", "org.reflections", "org.slf4j", "org.wildfly",
+            "org.xnio", "org.yaml"
+    };
     private static final String LOGO = """
                                                         ___     __  ___ \s
          _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \\\s
@@ -110,14 +124,13 @@ public final class Application {
         start(Mode.PROD);
     }
 
-    @SuppressWarnings({"StatementWithEmptyBody", "LoopConditionNotUpdatedInsideLoop"})
     public static void start(Mode mode) {
         Objects.requireNonNull(mode, Required.MODE);
 
         if (!started) {
             logCheck();
-            userCheck();
             prepareMode(mode);
+            userCheck();
             prepareInjector();
             applicationInitialized();
             prepareConfig();
@@ -135,10 +148,10 @@ public final class Application {
             prepareRoutes();
             createRoutes();
             validateUrls();
+            awaitScan(scan);
             prepareUndertow();
             prepareShutdown();
             sanityChecks();
-            do {} while (scan.isAlive()); //NOSONAR
             checkDatastore();
             applicationStarted();
             showTimezone();
@@ -157,6 +170,17 @@ public final class Application {
         if (!LOG4J_LISTENER.getEvents().isEmpty()) {
             System.out.println("Log4j configuration failed with errors:");
             System.out.println("\t" + LOG4J_LISTENER.getEvents().toString());
+            failsafe();
+        }
+    }
+
+    // Collections, indexes, jobs and subscribers must be registered before the server accepts the first request
+    private static void awaitScan(Thread scan) {
+        try {
+            scan.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOG.error("Interrupted while waiting for the classpath scan", e);
             failsafe();
         }
     }
@@ -181,35 +205,25 @@ public final class Application {
             scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
             executorService = Executors.newThreadPerTaskExecutor(Thread.ofPlatform().factory());
 
+            // Only @Run is evaluated, other methods and annotations of a job class are irrelevant
             scanResult.getClassesWithMethodAnnotation(SCHEDULER).forEach(classInfo ->
-                classInfo.getMethodInfo().forEach(methodInfo -> {
-                    if (!methodInfo.getAnnotationInfo().isEmpty()) {
-                        var isCron = false;
-                        long seconds = 0;
-                        String at = null;
+                classInfo.getMethodInfo().stream()
+                    .filter(methodInfo -> methodInfo.hasAnnotation(SCHEDULER))
+                    .forEach(methodInfo -> {
+                        String at = ((String) methodInfo.getAnnotationInfo(SCHEDULER)
+                                .getParameterValues(true).getValue("at"))
+                                .toLowerCase(Locale.ENGLISH)
+                                .trim();
 
-                        for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
-                            var annotationInfo = methodInfo.getAnnotationInfo().get(i);
-                            at = ((String) annotationInfo
-                                    .getParameterValues(true).get("at").getValue())
-                                    .toLowerCase(Locale.ENGLISH)
-                                    .trim();
-
-                            if (at.contains("every")) {
-                                at = at.replace("every", Strings.EMPTY).trim();
-                                var timespan = at.substring(0, at.length() - 1);
-                                var duration = at.substring(at.length() - 1);
-                                seconds = getSeconds(timespan, duration);
-                            } else {
-                                isCron = true;
-                            }
+                        if (at.contains("every")) {
+                            at = at.replace("every", Strings.EMPTY).trim();
+                            var timespan = at.substring(0, at.length() - 1);
+                            var duration = at.substring(at.length() - 1);
+                            schedule(classInfo, methodInfo, false, getSeconds(timespan, duration), at);
+                        } else if (StringUtils.isNotBlank(at)) {
+                            schedule(classInfo, methodInfo, true, 0, at);
                         }
-
-                        if (StringUtils.isNotBlank(at)) {
-                            schedule(classInfo, methodInfo, isCron, seconds, at);
-                        }
-                    }
-                })
+                    })
             );
         }
     }
@@ -239,6 +253,11 @@ public final class Application {
             failsafe();
         }
 
+        if (!isSchedulable(classInfo.loadClass(), methodInfo.getName())) {
+            LOG.error("@Run method '{}' in class '{}' must be public and without parameters", methodInfo.getName(), classInfo.getName());
+            failsafe();
+        }
+
         if (isCron) {
             try {
                 var parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
@@ -250,7 +269,7 @@ public final class Application {
                 if (scheduledFuture == null) {
                     throw new IllegalArgumentException("Cron '" + at + "' has no further execution");
                 }
-                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), at, scheduledFuture, true));
+                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), at, cronTask::getScheduledFuture, true));
 
                 LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);
             } catch (IllegalArgumentException e) {
@@ -259,9 +278,9 @@ public final class Application {
             }
         } else {
             if (time > 0) {
-                var task = new Task(classInfo.loadClass(), methodInfo.getName());
-                ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleWithFixedDelay(() -> executorService.submit(task), time, time, TimeUnit.SECONDS);
-                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), "every " + at, scheduledFuture, false));
+                var fixedDelayTask = new FixedDelayTask(classInfo.loadClass(), methodInfo.getName(), time);
+                fixedDelayTask.schedule();
+                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), "every " + at, fixedDelayTask::getScheduledFuture, false));
 
                 LOG.info("Successfully scheduled task from class '{}' with method '{}' at rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
             } else {
@@ -359,8 +378,8 @@ public final class Application {
 
                 input.close();
 
-                if (("0").equals(output) && inProdMode()) {
-                    LOG.error("Can not run application as root");
+                if (isRootForbidden(output, mode)) {
+                    LOG.error("Can not run application as root in PROD mode, run it as an unprivileged user (e.g. USER in the Docker image)");
                     failsafe();
                 }
             } catch (IOException e) {
@@ -371,6 +390,20 @@ public final class Application {
 
     public static boolean inDevMode() {
         return Mode.DEV == mode;
+    }
+
+    // Task invokes the method via getMethod, which only finds public methods without parameters
+    static boolean isSchedulable(Class<?> clazz, String methodName) {
+        try {
+            clazz.getMethod(methodName);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+
+    static boolean isRootForbidden(String uid, Mode mode) {
+        return "0".equals(StringUtils.trim(uid)) && mode == Mode.PROD;
     }
 
     public static boolean inProdMode() {
@@ -589,7 +622,7 @@ public final class Application {
                             ? getInstance(ServerSentEventHandler.class)
                             : getInstance(clazz);
 
-                    pathHandler.addExactPath(serverSentEventRoute.getUrl(), Handlers.serverSentEvents(callback));
+                    pathHandler.addExactPath(serverSentEventRoute.getUrl(), ServerSentEventHandler.wrap(callback));
                 }
         );
 
@@ -769,12 +802,19 @@ public final class Application {
                 .addShutdownHook(getInstance(Shutdown.class));
     }
 
-    private static ScanResult scanClasspath() {
-        return new ClassGraph()
+    static ScanResult scanClasspath() {
+        long start = System.currentTimeMillis();
+        var scanResult = new ClassGraph()
                 .enableAllInfo()
                 .acceptPackages(ALL_PACKAGES)
+                .rejectPackages(SCAN_REJECTED_PACKAGES)
                 .removeTemporaryFilesAfterScan()
                 .scan();
+
+        LOG.info("Scanned {} classes in {} ms, known library packages are excluded", scanResult.getAllClasses().size(), System.currentTimeMillis() - start);
+        LOG.debug("Excluded packages from classpath scan: {}", String.join(", ", SCAN_REJECTED_PACKAGES));
+
+        return scanResult;
     }
 
     public static void stopEmbeddedMongoDB() {

@@ -1372,4 +1372,98 @@ class ValidatorTest {
         // When & Then
         assertThrows(NullPointerException.class, () -> validator.expectFileMimeType(key, allowedMimeTypes));
     }
+
+    @Test
+    void testValueChecksWithUnicodeDigitsReportErrorInsteadOfThrowing() {
+        for (String digits : new String[] {"\u0661\u0668", "\uFF11\uFF18"}) {
+            // Given
+            Validator unicode = new Validator();
+            unicode.addValue("min", digits);
+            unicode.addValue("max", digits);
+            unicode.addValue("range", digits);
+
+            // When
+            assertDoesNotThrow(() -> {
+                unicode.expectMinValue("min", 5.0);
+                unicode.expectMaxValue("max", 50.0);
+                unicode.expectRangeValue("range", 5, 50);
+            });
+
+            // Then
+            assertTrue(unicode.hasError("min"), "Expected error for " + digits);
+            assertTrue(unicode.hasError("max"), "Expected error for " + digits);
+            assertTrue(unicode.hasError("range"), "Expected error for " + digits);
+        }
+    }
+
+    @Test
+    void testValueChecksAcceptNegativeAndDecimalNumbers() {
+        // Given
+        validator.addValue("temperature", "-5");
+        validator.addValue("price", "19.99");
+        validator.addValue("cheap", "19.99");
+
+        // When
+        validator.expectRangeValue("temperature", -20, 40);
+        validator.expectMaxValue("price", 100.0);
+        validator.expectMinValue("cheap", 20.0);
+
+        // Then
+        assertFalse(validator.hasError("temperature"));
+        assertFalse(validator.hasError("price"));
+        assertTrue(validator.hasError("cheap"));
+    }
+
+    @Test
+    void testExpectNumericFormat() {
+        for (String value : new String[] {"-1", "0.5", "42", "+3", ".5"}) {
+            // Given
+            Validator numeric = new Validator();
+            numeric.addValue("number", value);
+
+            // When
+            numeric.expectNumeric("number");
+
+            // Then
+            assertFalse(numeric.hasError("number"), "Expected no error for " + value);
+        }
+
+        for (String value : new String[] {"abc", "\u0661\u0668", "1e3", "NaN", "Infinity", " 5", ""}) {
+            // Given
+            Validator numeric = new Validator();
+            numeric.addValue("number", value);
+
+            // When
+            numeric.expectNumeric("number");
+
+            // Then
+            assertTrue(numeric.hasError("number"), "Expected error for " + value);
+        }
+    }
+
+    @Test
+    void testExpectExactMatchWithEmptyValueAndFilledOtherField() {
+        // Given
+        validator.addValue("password", "");
+        validator.addValue("passwordConfirm", "secret");
+
+        // When
+        validator.expectExactMatch("password", "passwordConfirm");
+
+        // Then
+        assertTrue(validator.hasError("password"));
+    }
+
+    @Test
+    void testExpectMatchWithEmptyValueAndFilledOtherField() {
+        // Given
+        validator.addValue("email", "");
+        validator.addValue("emailConfirm", "foo@bar.com");
+
+        // When
+        validator.expectMatch("email", "emailConfirm");
+
+        // Then
+        assertTrue(validator.hasError("email"));
+    }
 }

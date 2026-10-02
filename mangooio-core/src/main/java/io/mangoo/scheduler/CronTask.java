@@ -28,6 +28,7 @@ public class CronTask implements Runnable {
     private final Executor executor;
     private final Clock clock;
     private ZonedDateTime lastSlot;
+    private volatile ScheduledFuture<?> scheduledFuture;
 
     public CronTask(Class<?> clazz, String methodName, String cron) {
         this(new Task(Objects.requireNonNull(clazz, Required.CLASS), Objects.requireNonNull(methodName, Required.METHOD)),
@@ -81,10 +82,17 @@ public class CronTask implements Runnable {
 
         lastSlot = next.orElseThrow();
         try {
-            return scheduler.schedule(this, Duration.between(now, lastSlot).toMillis(), TimeUnit.MILLISECONDS);
+            var future = scheduler.schedule(this, Duration.between(now, lastSlot).toMillis(), TimeUnit.MILLISECONDS);
+            scheduledFuture = future;
+            return future;
         } catch (RejectedExecutionException e) {
             LOG.debug("Scheduler rejected cron task '{}', stopping", name);
             return null;
         }
+    }
+
+    @SuppressWarnings("java:S1452")
+    public ScheduledFuture<?> getScheduledFuture() {
+        return scheduledFuture;
     }
 }

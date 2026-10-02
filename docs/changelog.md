@@ -1,3 +1,34 @@
+## Version 10.15.0
+
+Unreleased
+
+* **Behaviour change** Session#put and Flash#put reject reserved JWT claim names and internal keys with an IllegalArgumentException instead of losing the whole cookie, the ineffective check for "|", ":", "&" and spaces was removed (svenkubiak)
+* **Behaviour change** Mail#header rejects a value with line breaks and an invalid header name with an IllegalArgumentException to prevent header injection (svenkubiak)
+* **Behaviour change** The application refuses to start if a @Run method is not public or has parameters, such a job was scheduled but never ran (svenkubiak)
+* **Behaviour change** The application refuses to start in prod mode when running as root, the check never applied before as it ran before the mode was set (svenkubiak)
+* **Behaviour change** Validator#expectNumeric accepts signed decimal numbers with ASCII digits instead of digits only, use expectRegex to require digits only (svenkubiak)
+* **Behaviour change** The classpath scan on startup skips known library packages, which reduces the startup time, application classes must not be placed in these packages (svenkubiak)
+* Added proxy support for SSE routes: X-Accel-Buffering and Cache-Control headers and a comment heartbeat every 30 seconds (svenkubiak)
+* Fixed Form#getInteger, #getLong, #getDouble and #getFloat throwing a NumberFormatException instead of returning an empty Optional for values the target type cannot parse (svenkubiak)
+* Fixed Validator#expectMinValue, #expectMaxValue and #expectRangeValue throwing on Unicode digits and rejecting negative and decimal numbers (svenkubiak)
+* Fixed Validator#expectExactMatch and #expectMatch accepting an empty value when the other field is filled (svenkubiak)
+* Fixed the HTTP parameter pollution check being bypassable with a percent-encoded parameter name (svenkubiak)
+* Fixed every SSE client receiving a bogus ": ok" data event on connect (svenkubiak)
+* Fixed concurrent login and second factor attempts exceeding the failed attempt budget (svenkubiak)
+* Fixed the startup failing when a class with a @Run method has further annotated methods or the @Run method has further annotations (svenkubiak)
+* Fixed errors of scheduled tasks being swallowed by a NullPointerException instead of being logged (svenkubiak)
+* Fixed runs of an "Every X" job overlapping when a run takes longer than the interval, the next run is now scheduled after the previous one finished (svenkubiak)
+* Fixed the server accepting requests before collections, indexes, jobs and subscribers were registered, which silently dropped saves during startup (svenkubiak)
+* Fixed a mail without from() not being sent, smtp.from is now used as default sender and every send failure is logged (svenkubiak)
+* Fixed an HTML mail with attachments being sent as plain text (svenkubiak)
+* Fixed a NullPointerException when a cache fallback returns null or null is put into the cache, null is now returned and not cached, putting null removes the value (svenkubiak)
+* Fixed Datastore#save not storing an object with an id set by the application but reporting success, save now inserts or replaces (svenkubiak)
+* Fixed MongoDB usernames and passwords with special characters breaking the connection and a missing authdb resulting in authSource=null, credentials are now passed separately and authdb defaults to admin (svenkubiak)
+* Fixed a missing translation key in ${i18n("key")} failing the whole page, it now renders an empty string and is logged once as warning (svenkubiak)
+* Fixed the dev mode failing on a clean build that deletes target/classes, the directory is now watched again once it is recreated (svenkubiak)
+* Fixed the maven archetype failing with -DoutputDirectory or in IDE wizards and leaving the application secret placeholder behind (svenkubiak)
+* Fixed Authentication#isValidLogin not checking the salt, a missing salt consumed a failed login attempt (svenkubiak)
+
 ## Version 10.14.1
 
 Released at 01.10.2026

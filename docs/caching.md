@@ -30,7 +30,7 @@ String value = cache.get("foo", key -> loadFromDatabase(key));
 String timed = cache.get("foo", 5, ChronoUnit.MINUTES, key -> loadFromDatabase(key));
 ```
 
-The fallback is a `Function<String, Object>`, and its result is stored under the same key so the next `get` hits the cache instead of the fallback.
+The fallback is a `Function<String, Object>`, and its result is stored under the same key so the next `get` hits the cache instead of the fallback. If the fallback returns `null`, for example because the record does not exist, `get` returns `null` and nothing is cached, so the next call asks the fallback again. Putting `null` removes a cached value.
 
 ```java
 cache.putAll(Map.of("a", 1, "b", 2));

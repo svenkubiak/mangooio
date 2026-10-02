@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 
 @ExtendWith({TestExtension.class})
 class MessagesTest {
@@ -64,5 +65,33 @@ class MessagesTest {
         //then
         assertThat(messages.get("welcome"), equalTo("willkommen"));
         assertThat(messages.getLocale(), equalTo(Locale.forLanguageTag("zz")));
+    }
+
+    @Test
+    void testGetMissingKeyReturnsEmptyString() {
+        //given
+        Messages messages = new Messages(Locale.ENGLISH);
+
+        //then
+        assertThat(messages.get("does.not.exist"), equalTo(""));
+    }
+
+    @Test
+    void testGetFallsBackToDefaults() {
+        //given
+        Messages messages = new Messages(Locale.ENGLISH);
+
+        //then
+        assertThat(messages.get(Validation.EMAIL_KEY), equalTo(messages.get(Validation.EMAIL_KEY, new Object[0])));
+        assertThat(messages.get(Validation.EMAIL_KEY), not(equalTo("")));
+    }
+
+    @Test
+    void testGetReturnsTextWithoutMessageFormat() {
+        //given
+        Messages messages = new Messages(Locale.ENGLISH);
+
+        //then
+        assertThat(messages.get("apostrophe"), equalTo("Don't panic"));
     }
 }

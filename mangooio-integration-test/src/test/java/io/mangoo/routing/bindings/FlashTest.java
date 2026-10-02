@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith({TestExtension.class})
 class FlashTest {
@@ -74,21 +75,30 @@ class FlashTest {
     }
 
     @Test
-    void testInvalidCharacters() {
+    void testFormerSeparatorCharactersAreStored() {
         //given
         final Flash flash = new Flash();
 
         //when
         flash.put("|", "foo");
-        flash.put(":", "foo");
-        flash.put("&", "foo");
-        flash.put(" ", "foo");
-        flash.put("foo", "|");
-        flash.put("foo", ":");
-        flash.put("foo", "&");
         flash.put("foo", " ");
+        flash.setSuccess("Gespeichert, vielen Dank");
 
         //then
+        assertThat(flash.get("|"), equalTo("foo"));
+        assertThat(flash.get("foo"), equalTo(" "));
+        assertThat(flash.get("success"), equalTo("Gespeichert, vielen Dank"));
+    }
+
+    @Test
+    void testReservedKeysAreRejected() {
+        //given
+        final Flash flash = new Flash();
+
+        //then
+        for (String key : new String[] {"exp", "sub", "form"}) {
+            assertThrows(IllegalArgumentException.class, () -> flash.put(key, "foo"));
+        }
         assertThat(flash.hasContent(), equalTo(false));
     }
 

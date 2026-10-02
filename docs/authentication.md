@@ -163,7 +163,7 @@ public Response doLogin(Form form, Authentication authentication, Flash flash) {
     User user = userService.findByUsername(username);
 
     if (user == null || !authentication.isValidLogin(username, form.get("password"), user.getSalt(), user.getPassword())) {
-        flash.putError("message", "Login failed");
+        flash.setError("Login failed");
         return Response.redirect("/login");
     }
 
@@ -213,7 +213,7 @@ public Response doTwofactor(Form form, Authentication authentication, Flash flas
     User user = userService.findByUsername(subject);
 
     if (!authentication.isValidSecondFactor(subject, user.getTotpSecret(), form.get("totp"))) {
-        flash.putError("message", "Invalid code");
+        flash.setError("Invalid code");
         return Response.redirect("/twofactor");
     }
 
@@ -243,7 +243,7 @@ Add a lock query only if you want a different message for that case:
 
 ```java
     if (authentication.userHasLock(username)) {
-        flash.putError("message", "Account is temporarily locked, try again later");
+        flash.setError("Account is temporarily locked, try again later");
         return Response.redirect("/login");
     }
 ```

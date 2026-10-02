@@ -4,7 +4,7 @@ mangoo I/O includes a thin integration layer over the [MongoDB Java Sync Driver]
 
 At startup, the framework scans for classes annotated with `@Collection`, registers their collection names, and optionally creates indexes from `@Indexed` fields. Inject `Datastore` (or `DatastoreProvider` when you need multiple databases) and use familiar driver patterns: `save`, `find`, `findAll`, and `query()` for fluent, driver-level access.
 
-For local development, the archetype can start **embedded MongoDB 7.0** when `persistence.mongo.embedded` is `true`, so you get a working database with zero setup. Turn that off in production and point `host` / `port` at your actual cluster instead. Passwords belong in the [vault](secrets.md) or the environment, never in source control.
+For local development, the archetype can start **embedded MongoDB 7.0** when `persistence.mongo.embedded` is `true`, so you get a working database with zero setup. Turn that off in production and point `host` / `port` at your actual MongoDB server instead. Only a single host is supported, a replica set or an SRV address can not be configured yet. Passwords belong in the [vault](secrets.md) or the environment, never in source control.
 
 ## Configuration
 
@@ -76,6 +76,8 @@ datastore.delete(person);
 datastore.dropCollection(Person.class);
 datastore.isHealthy();
 ```
+
+`save` inserts an object without an id and replaces the document of an object with an id. An object whose id was set by the application, e.g. to reference it before it is stored, is inserted under that id if no document exists yet. The generated id of an inserted object is returned, but not written back to the object, so load it again before changing and saving it a second time.
 
 Query helpers:
 

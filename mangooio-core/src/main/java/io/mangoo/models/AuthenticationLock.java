@@ -32,16 +32,30 @@ public class AuthenticationLock implements Serializable {
         return false;
     }
 
-    public synchronized void increment(int maxAttempts, Duration lockDuration) {
+    // Counts the attempt before it is verified, so concurrent attempts can not exceed the budget
+    public synchronized boolean tryAcquire(int maxAttempts, Duration lockDuration) {
         Objects.requireNonNull(lockDuration, Required.DURATION);
 
         if (isLocked()) {
-            return;
+            return false;
         }
 
         attempts++;
         if (attempts >= maxAttempts) {
             lockedUntil = LocalDateTime.now().plus(lockDuration);
+        }
+
+        return true;
+    }
+
+    // Gives back an attempt that could not be verified, e.g. on a hashing timeout
+    public synchronized void release(int maxAttempts) {
+        if (attempts > 0) {
+            attempts--;
+        }
+
+        if (attempts < maxAttempts) {
+            lockedUntil = null;
         }
     }
 

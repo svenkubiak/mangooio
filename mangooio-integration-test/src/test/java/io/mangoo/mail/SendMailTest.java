@@ -13,6 +13,7 @@ import io.mangoo.test.email.SmtpMock;
 import io.mangoo.utils.CommonUtils;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
+import jakarta.mail.internet.InternetAddress;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -130,6 +131,81 @@ class SendMailTest {
             java.nio.file.Files.deleteIfExists(attachment);
             java.nio.file.Files.deleteIfExists(directory);
         }
+    }
+
+    @Test
+    void testHtmlMailWithAttachmentKeepsHtmlBody() throws Exception {
+        //given
+        greenMail.purgeEmailFromAllMailboxes();
+        Path attachment = java.nio.file.Files.createTempFile("mangooio-attachment", ".txt");
+        java.nio.file.Files.writeString(attachment, "attachment");
+        Map<String, Object> content = new HashMap<>();
+        content.put("name", "raven");
+        content.put("king", "none");
+
+        try {
+            //when
+            Mail.newMail()
+                .from("Jon Snow", "jon.snow@winterfell.com")
+                .to("arya.stark@westeros.com")
+                .subject("Html with attachment")
+                .attachment(attachment)
+                .htmlMessage("emails/multipart.ftl", content)
+                .send();
+
+            //then
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
+            var multipart = (Multipart) greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent();
+            assertThat(multipart.getBodyPart(0).isMimeType("text/html"), equalTo(true));
+            assertThat(multipart.getBodyPart(1).getFileName(), equalTo(attachment.getFileName().toString()));
+        } finally {
+            java.nio.file.Files.deleteIfExists(attachment);
+        }
+    }
+
+    @Test
+    void testTextMailWithAttachmentKeepsTextBody() throws Exception {
+        //given
+        greenMail.purgeEmailFromAllMailboxes();
+        Path attachment = java.nio.file.Files.createTempFile("mangooio-attachment", ".txt");
+        java.nio.file.Files.writeString(attachment, "attachment");
+
+        try {
+            //when
+            Mail.newMail()
+                .from("Jon Snow", "jon.snow@winterfell.com")
+                .to("arya.stark@westeros.com")
+                .subject("Text with attachment")
+                .attachment(attachment)
+                .textMessage("plain text")
+                .send();
+
+            //then
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
+            var multipart = (Multipart) greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent();
+            assertThat(multipart.getBodyPart(0).isMimeType("text/plain"), equalTo(true));
+        } finally {
+            java.nio.file.Files.deleteIfExists(attachment);
+        }
+    }
+
+    @Test
+    void testMailWithoutFromUsesSmtpFrom() throws Exception {
+        //given
+        greenMail.purgeEmailFromAllMailboxes();
+
+        //when
+        Mail.newMail()
+            .to("sansa.stark@westeros.com")
+            .subject("Default sender")
+            .textMessage("Sent without from()")
+            .send();
+
+        //then
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
+        var from = (InternetAddress) greenMail.getReceivedMessagesForDomain("westeros.com")[0].getFrom()[0];
+        assertThat(from.getAddress(), equalTo("noreply@mangoo.local"));
+        assertThat(from.getPersonal(), equalTo("mangoo"));
     }
 
     @Test

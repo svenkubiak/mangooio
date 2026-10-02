@@ -10,10 +10,13 @@ import io.mangoo.utils.Argument;
 
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Mail {
     private static final int LOWEST_PRIORITY = 5;
     private static final int HIGHEST_PRIORITY = 1;
+    // RFC 5322 field name: printable ASCII except colon
+    private static final Pattern HEADER_NAME = Pattern.compile("[\\x21-\\x39\\x3B-\\x7E]+");
     private final Map<String, String> mailHeaders = new HashMap<>();
     private final List<String> mailTos = new ArrayList<>();
     private final List<String> mailCcs = new ArrayList<>();
@@ -52,7 +55,7 @@ public class Mail {
         return this;
     }
     
-    /** The application must ensure that the subject contains no line breaks. */
+    /** Line breaks in the subject are folded by Jakarta Mail and can not inject headers, but are not removed. */
     public Mail subject(String subject) {
         Objects.requireNonNull(subject, Required.SUBJECT);
         mailSubject = subject;
@@ -76,9 +79,14 @@ public class Mail {
         return this;
     }
     
+    /**
+     * Rejects a name that is not a valid header field name and a value with line breaks, as both would allow header injection.
+     */
     public Mail header(String name, String value) {
         Objects.requireNonNull(name, Required.NAME);
         Objects.requireNonNull(value, Required.VALUE);
+        Preconditions.checkArgument(HEADER_NAME.matcher(name).matches(), "Invalid mail header name");
+        Preconditions.checkArgument(value.indexOf('\r') < 0 && value.indexOf('\n') < 0, "Mail header value must not contain line breaks");
         mailHeaders.put(name, value);
         
         return this;

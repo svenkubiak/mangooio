@@ -7,13 +7,19 @@ import com.launchdarkly.eventsource.background.BackgroundEventHandler;
 import com.launchdarkly.eventsource.background.BackgroundEventSource;
 import handlers.ClientServerSentEventHandler;
 import io.mangoo.TestExtension;
+import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.manager.ServerSentEventManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -21,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
@@ -173,6 +181,69 @@ class ServerSentEventRouteHandlerTest {
             //then the targeted send does not reach the default route
             await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(clientEventHandler.events, hasItem(targeted)));
             assertThat(defaultEventHandler.events, not(hasItem(targeted)));
+        }
+    }
+
+    @Test
+    void testConnectSendsNoDataEvent() throws InterruptedException {
+        //given
+        var eventHandler = new RecordingEventHandler();
+
+        //when
+        try (BackgroundEventSource eventSource = connect(DEFAULT_URL, eventHandler)) {
+            TimeUnit.MILLISECONDS.sleep(500);
+
+            //then
+            assertThat(eventHandler.events, empty());
+        }
+    }
+
+    @Test
+    void testResponseHeadersDisableProxyBufferingAndCaching() throws IOException {
+        //given
+        Config config = Application.getInstance(Config.class);
+
+        //when
+        String response = readRaw(config.getConnectorHttpHost(), config.getConnectorHttpPort(), DEFAULT_URL);
+
+        //then
+        assertThat(response, containsString("X-Accel-Buffering: no"));
+        assertThat(response, containsString("Cache-Control: no-cache"));
+        assertThat(response, not(containsString("data:")));
+    }
+
+    @Test
+    void testCustomHandlerGetsKeepAlive() {
+        //given
+        var eventHandler = new RecordingEventHandler();
+        ClientServerSentEventHandler.keepAliveTime = 0;
+
+        //when
+        try (BackgroundEventSource eventSource = connect(clientUrl(UUID.randomUUID().toString()), eventHandler)) {
+
+            //then
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(ClientServerSentEventHandler.keepAliveTime, equalTo(Default.SERVER_SENT_EVENT_KEEP_ALIVE)));
+        }
+    }
+
+    // Reads what arrives on the wire within one second after connecting
+    private static String readRaw(String host, int port, String path) throws IOException {
+        try (var socket = new Socket(host, port)) {
+            socket.setSoTimeout(1000);
+            socket.getOutputStream().write(("GET " + path + " HTTP/1.1\r\nHost: " + host + "\r\nAccept: text/event-stream\r\n\r\n").getBytes(StandardCharsets.US_ASCII));
+
+            var buffer = new ByteArrayOutputStream();
+            var bytes = new byte[1024];
+            try {
+                int read;
+                while ((read = socket.getInputStream().read(bytes)) > 0) {
+                    buffer.write(bytes, 0, read);
+                }
+            } catch (SocketTimeoutException e) {
+                // Expected, the stream stays open
+            }
+
+            return buffer.toString(StandardCharsets.US_ASCII);
         }
     }
 }

@@ -86,6 +86,17 @@ class I18nControllerTest {
     }
     
     @Test
+    void testMissingKeyRendersEmptyText() {
+        //given
+        TestResponse response = TestRequest.get("/missingkey?lang=en").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("beforeafter"));
+    }
+
+    @Test
     void testUmlaute() {
         //given
         TestResponse response = TestRequest.get("/umlaute")

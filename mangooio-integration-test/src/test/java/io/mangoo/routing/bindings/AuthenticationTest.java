@@ -19,11 +19,14 @@ import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith({TestExtension.class})
 @Execution(ExecutionMode.SAME_THREAD)
@@ -357,5 +360,68 @@ class AuthenticationTest {
         //then
         assertThat(authentication.hasSubject(), equalTo(false));
         assertThat(authentication.isValid(), equalTo(false));
+    }
+
+    @Test
+    void testConcurrentSecondFactorAttemptsDoNotExceedBudget() throws InterruptedException {
+        //given
+        Authentication authentication = Application.getInstance(Authentication.class);
+        String identifier = identifier();
+        String secret = TotpUtils.createSecret();
+
+        //when
+        concurrently(50, () -> authentication.isValidSecondFactor(identifier, secret, invalidTotp(secret)));
+
+        //then
+        AuthenticationLock lock = authCache().get(CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier);
+        assertThat(lock.getAttempts(), equalTo(lockAfter()));
+        assertThat(authentication.userHasSecondFactorLock(identifier), equalTo(true));
+    }
+
+    @Test
+    void testConcurrentFailedAttemptsAreAllCounted() throws InterruptedException {
+        //given
+        Authentication authentication = Application.getInstance(Authentication.class);
+        String identifier = identifier();
+        String secret = TotpUtils.createSecret();
+        int attempts = lockAfter() - 2;
+
+        //when
+        concurrently(attempts, () -> authentication.isValidSecondFactor(identifier, secret, invalidTotp(secret)));
+
+        //then
+        AuthenticationLock lock = authCache().get(CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier);
+        assertThat(lock.getAttempts(), equalTo(attempts));
+        assertThat(authentication.userHasSecondFactorLock(identifier), equalTo(false));
+    }
+
+    private static void concurrently(int times, Runnable task) throws InterruptedException {
+        var start = new CountDownLatch(1);
+        try (var executor = Executors.newFixedThreadPool(times)) {
+            for (var i = 0; i < times; i++) {
+                executor.submit(() -> {
+                    start.await();
+                    task.run();
+                    return null;
+                });
+            }
+            start.countDown();
+        }
+    }
+
+    @Test
+    void testMissingSaltIsRejectedWithoutConsumingAnAttempt() {
+        //given
+        Authentication authentication = Application.getInstance(Authentication.class);
+        String identifier = identifier();
+
+        //when
+        for (String salt : new String[] {null, ""}) {
+            assertThrows(RuntimeException.class, () -> authentication.isValidLogin(identifier, "bla", salt, VALID_HASH));
+        }
+
+        //then
+        AuthenticationLock lock = authCache().get(CacheName.AUTH_PASSWORD_PREFIX + identifier);
+        assertThat(lock, nullValue());
     }
 }
