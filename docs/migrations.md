@@ -1,3 +1,15 @@
+## From 10.14.1 to 10.15.0
+
+This is a drop-in replacement.
+
+## From 10.13.1 to 10.14.0/1
+
+This is a drop-in replacement.
+
+## From 10.13.0 to 10.13.1
+
+This is a drop-in replacement.
+
 ## From 10.12.2 to 10.13.0
 
 API-compatible, with a changed meaning of `Authentication#isValid`, three behaviour changes around the failed attempt budget, and a new limit on concurrent Argon2 hashing.
