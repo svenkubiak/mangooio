@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 BOLD="\033[1m"
 DIM="\033[2m"
 RESET="\033[0m"
@@ -14,6 +16,9 @@ export PATH="$HOME/Library/Python/3.13/bin:$PATH"
 
 TOTAL_STEPS=6
 CURRENT_STEP=0
+RELEASE_BRANCH="main"
+DEPLOYED=false
+VERSION=""
 
 divider() {
   echo -e "${DIM}────────────────────────────────────────────────────────────────────────────────${RESET}"
@@ -69,7 +74,7 @@ run_maven() {
     echo -e "${DIM}────────────────────── Maven Error Output ──────────────────────${RESET}"
     grep -E "\[ERROR\]|\[FATAL\]" "$tmp_log" | while IFS= read -r line; do
       echo -e "  ${RED}${line}${RESET}"
-    done
+    done || true
     echo -e "${DIM}────────────────────────────────────────────────────────────────${RESET}"
     echo
     rm -f "$tmp_log"
@@ -110,19 +115,47 @@ run_zensical() {
   run_silent "$description" uvx zensical "$@"
 }
 
-bump_patch() {
-  local ver="$1"
-  IFS=. read -r major minor patch <<<"$ver"
-  patch=$((patch + 1))
-  echo "${major}.${minor}.${patch}"
-}
-
 is_prerelease_version() {
   local ver
   ver=$(echo "$1" | tr '[:upper:]' '[:lower:]')
 
   [[ "$ver" =~ beta || "$ver" =~ alpha || "$ver" =~ rc ]]
 }
+
+# A pre-release (e.g. 10.15.0-Beta1) keeps its base version as next snapshot,
+# a final release bumps the patch version.
+next_snapshot_default() {
+  local ver="$1"
+  local base="${ver%%-*}"
+  local major minor patch
+
+  if is_prerelease_version "$ver"; then
+    echo "${base}-SNAPSHOT"
+  else
+    IFS=. read -r major minor patch <<<"$base"
+    echo "${major}.${minor}.$((patch + 1))-SNAPSHOT"
+  fi
+}
+
+is_valid_release_version() {
+  [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.]+)?$ && ! "$1" =~ SNAPSHOT ]]
+}
+
+is_valid_snapshot_version() {
+  [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$ ]]
+}
+
+on_exit() {
+  local status=$?
+
+  if [[ $status -ne 0 && "$DEPLOYED" == true ]]; then
+    echo
+    warn "Version ${BOLD}${VERSION}${RESET}${YELLOW} is already deployed to Maven Central — do NOT re-run this script."
+    warn "Finish the remaining steps (commit, push, tag, docs) manually."
+  fi
+}
+
+trap on_exit EXIT
 
 docs_config_file() {
   if [[ -f mkdocs.yml ]]; then
@@ -187,15 +220,6 @@ check_docs_toolchain() {
   success "Documentation toolchain is ready."
 }
 
-cleanup_backup_files() {
-  rm -f pom.xml.versionsBackup
-  rm -f mangooio-core/pom.xml.versionsBackup
-  rm -f mangooio-integration-test/pom.xml.versionsBackup
-  rm -f mangooio-maven-archetype/pom.xml.versionsBackup
-  rm -f mangooio-maven-plugin/pom.xml.versionsBackup
-  rm -f mangooio-test/pom.xml.versionsBackup
-}
-
 banner
 
 step "Checking Git state"
@@ -206,6 +230,19 @@ if [[ -n $(git status --porcelain) ]]; then
   exit 1
 fi
 success "Git working directory is clean."
+
+CURRENT_BRANCH=$(git symbolic-ref --short -q HEAD || true)
+if [[ "$CURRENT_BRANCH" != "$RELEASE_BRANCH" ]]; then
+  error "Releases must be created from '${RELEASE_BRANCH}' (current: '${CURRENT_BRANCH:-detached HEAD}')."
+  exit 1
+fi
+
+run_silent "Fetching origin/${RELEASE_BRANCH}" git fetch origin "$RELEASE_BRANCH"
+if [[ $(git rev-parse HEAD) != $(git rev-parse "origin/${RELEASE_BRANCH}") ]]; then
+  error "Local '${RELEASE_BRANCH}' is not in sync with origin/${RELEASE_BRANCH}. Please pull or push first."
+  exit 1
+fi
+success "Branch '${RELEASE_BRANCH}' is in sync with origin."
 
 step "Cleaning previous release data"
 
@@ -221,13 +258,37 @@ success "Maven build succeeded."
 
 step "Setting version and deploying"
 
-CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout || true)
+if ! is_valid_snapshot_version "$CURRENT_VERSION"; then
+  error "Could not determine a valid SNAPSHOT project version (got: '${CURRENT_VERSION}')."
+  exit 1
+fi
 DEFAULT_RELEASE_VERSION="${CURRENT_VERSION%-SNAPSHOT}"
 
 info "Current version  :  ${BOLD}${CURRENT_VERSION}${RESET}"
 echo
 read -rp "  ✏️   Enter new release version [${DEFAULT_RELEASE_VERSION}]: " NEW_VERSION
 NEW_VERSION="${NEW_VERSION:-$DEFAULT_RELEASE_VERSION}"
+
+if ! is_valid_release_version "$NEW_VERSION"; then
+  error "Invalid release version '${NEW_VERSION}' (expected e.g. 1.2.3 or 1.2.3-Beta1)."
+  exit 1
+fi
+
+if git rev-parse -q --verify "refs/tags/${NEW_VERSION}" > /dev/null \
+  || git ls-remote --exit-code --tags origin "refs/tags/${NEW_VERSION}" > /dev/null 2>&1; then
+  error "Git tag ${NEW_VERSION} already exists locally or on origin."
+  exit 1
+fi
+
+NEXT_SNAPSHOT_DEFAULT="$(next_snapshot_default "$NEW_VERSION")"
+read -rp "  ✏️   Enter next development version [${NEXT_SNAPSHOT_DEFAULT}]: " NEXT_SNAPSHOT_VERSION
+NEXT_SNAPSHOT_VERSION="${NEXT_SNAPSHOT_VERSION:-$NEXT_SNAPSHOT_DEFAULT}"
+
+if ! is_valid_snapshot_version "$NEXT_SNAPSHOT_VERSION"; then
+  error "Invalid development version '${NEXT_SNAPSHOT_VERSION}' (expected e.g. 1.2.4-SNAPSHOT)."
+  exit 1
+fi
 echo
 
 if ! is_prerelease_version "$NEW_VERSION"; then
@@ -236,32 +297,39 @@ else
   warn "Skipping documentation preflight — version ${BOLD}${NEW_VERSION}${RESET} contains 'beta', 'alpha', or 'rc'."
 fi
 
-run_maven "Setting project version to ${NEW_VERSION}" versions:set -DnewVersion="$NEW_VERSION"
+echo
+info "Release version  :  ${BOLD}${NEW_VERSION}${RESET}"
+info "Next dev version :  ${BOLD}${NEXT_SNAPSHOT_VERSION}${RESET}"
+echo
+read -rp "  ❓  Deploy ${NEW_VERSION} to Maven Central? This cannot be undone [y/N]: " CONFIRM
+if [[ ! "$CONFIRM" =~ ^[yY]$ ]]; then
+  warn "Release aborted."
+  exit 1
+fi
+echo
+
+run_maven "Setting project version to ${NEW_VERSION}" versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false
 
 VERSION="$NEW_VERSION"
 info "Deploying version  :  ${BOLD}${VERSION}${RESET}"
 echo
 
 run_maven "Running mvn deploy" deploy -Prelease -DskipTests
+DEPLOYED=true
 echo
 success "Version ${BOLD}${VERSION}${RESET} deployed successfully."
 
 step "Tagging Git and updating versions"
 
-NEXT_DEV_BASE="$(bump_patch "$VERSION")"
-NEXT_SNAPSHOT_DEFAULT="${NEXT_DEV_BASE}-SNAPSHOT"
-
-read -rp "  ✏️   Enter next development version [${NEXT_SNAPSHOT_DEFAULT}]: " NEXT_SNAPSHOT_VERSION
-NEXT_SNAPSHOT_VERSION="${NEXT_SNAPSHOT_VERSION:-$NEXT_SNAPSHOT_DEFAULT}"
-echo
-
 run_silent "Creating Git tag ${VERSION}" git tag "$VERSION"
-run_maven "Setting next snapshot version ${NEXT_SNAPSHOT_VERSION}" versions:set -DnewVersion="${NEXT_SNAPSHOT_VERSION}"
+run_maven "Setting next snapshot version ${NEXT_SNAPSHOT_VERSION}" versions:set -DnewVersion="${NEXT_SNAPSHOT_VERSION}" -DgenerateBackupPoms=false
 
-cleanup_backup_files
-
-run_silent "Committing release ${VERSION}" git commit -am "Release ${VERSION}, next dev version ${NEXT_SNAPSHOT_VERSION}"
-run_silent "Pushing to origin main" git push origin main
+if git diff --quiet; then
+  warn "Project version is already ${BOLD}${NEXT_SNAPSHOT_VERSION}${RESET}${YELLOW} — nothing to commit."
+else
+  run_silent "Committing release ${VERSION}" git commit -am "Release ${VERSION}, next dev version ${NEXT_SNAPSHOT_VERSION}"
+  run_silent "Pushing to origin ${RELEASE_BRANCH}" git push origin "$RELEASE_BRANCH"
+fi
 run_silent "Pushing Git tag ${VERSION}" git push origin "$VERSION"
 
 echo
@@ -274,6 +342,7 @@ if ! is_prerelease_version "$VERSION"; then
 
   run_zensical "Building docs with Zensical for ${BOLD}${VERSION}${RESET}" build --strict
 
+  run_silent "Updating local gh-pages from origin" git fetch origin gh-pages:gh-pages
   run_silent "Deploying docs for ${BOLD}${VERSION}${RESET}" mike deploy --update-aliases "$VERSION" latest
   run_silent "Setting default docs version to ${BOLD}${VERSION}${RESET}" mike set-default "$VERSION"
   run_silent "Pushing gh-pages" git push origin gh-pages
@@ -283,9 +352,6 @@ if ! is_prerelease_version "$VERSION"; then
 else
   warn "Skipping documentation — version ${BOLD}${VERSION}${RESET} contains 'beta', 'alpha', or 'rc'."
 fi
-
-info "Cleaning up backup files ..."
-cleanup_backup_files
 
 echo
 divider
