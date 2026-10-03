@@ -5,6 +5,9 @@ import com.google.common.collect.Multimap;
 import io.mangoo.Csrf;
 import io.mangoo.TestExtension;
 import io.mangoo.TestUtils;
+import io.mangoo.cache.Cache;
+import io.mangoo.cache.CacheProvider;
+import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Const;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -14,6 +17,8 @@ import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.lang.reflect.Proxy;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -86,6 +91,29 @@ class AdminControllerTest {
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString(CACHE));
         assertThat(response.getContent(), containsString(EVICTIONS));
+    }
+
+    @Test
+    void testCacheWithForeignCacheImplementation() {
+        //given
+        String name = "foreign-cache";
+        Cache foreign = (Cache) Proxy.newProxyInstance(Cache.class.getClassLoader(), new Class<?>[]{Cache.class}, (proxy, method, args) -> null);
+        Application.getInstance(CacheProvider.class).addCache(name, foreign);
+
+        try {
+            //when
+            TestResponse response = login().to("/@admin/cache")
+                    .withHTTPMethod(Methods.GET.toString())
+                    .execute();
+
+            //then
+            assertThat(response, not(nullValue()));
+            assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+            assertThat(response.getContent(), containsString(CacheName.APPLICATION));
+            assertThat(response.getContent(), containsString(CacheName.AUTH));
+        } finally {
+            Application.getInstance(CacheProvider.class).getCaches().remove(name);
+        }
     }
 
     @Test

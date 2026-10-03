@@ -1,3 +1,9 @@
+## Version 10.15.1
+
+Unreleased
+
+* Fixed /@admin/cache failing with a ClassCastException when a cache other than the built-in implementation was registered via CacheProvider#addCache (svenkubiak)
+
 ## Version 10.15.0
 
 Released at 03.10.2026

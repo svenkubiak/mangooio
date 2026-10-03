@@ -102,8 +102,11 @@ public class AdminController {
 
     public Response cache() {
         Map<String, CacheStats> statistics = new HashMap<>();
+        // Only the built-in implementation records statistics, caches added via CacheProvider#addCache may not
         for (Entry<String, Cache> entry : cacheProvider.getCaches().entrySet()) {
-            statistics.put(entry.getKey(), ((CacheImpl) entry.getValue()).getStats()); //NOSONAR
+            if (entry.getValue() instanceof CacheImpl cacheImpl) {
+                statistics.put(entry.getKey(), cacheImpl.getStats());
+            }
         }
         
         return Response.ok()
