@@ -1,0 +1,2367 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="Sven Kubiak">
+      
+      
+        <link rel="canonical" href="https://svenkubiak.github.io/mangooio/10.15.0/authentication/">
+      
+      
+        <link rel="prev" href="../flash/">
+      
+      
+        <link rel="next" href="../csrf/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Authentication - mangoo I/O</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/timeago.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#authentication" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+You're not viewing the latest version.
+<a href="../..">
+    <strong>Click here to go to latest.</strong>
+</a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL(".."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="mangoo I/O" class="md-header__button md-logo" aria-label="mangoo I/O" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            mangoo I/O
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Authentication
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/svenkubiak/mangooio" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="mangoo I/O" class="md-nav__button md-logo" aria-label="mangoo I/O" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    mangoo I/O
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/svenkubiak/mangooio" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secrets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependency-injection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dependency injection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    HTTP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../routing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controllers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Controllers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../templating/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Templating
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../working-with-json/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Working with JSON
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Filters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../forms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Forms
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../flash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Flash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#password-hashing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Password hashing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Password hashing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rehashing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rehashing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#login" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Login
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#protecting-routes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protecting routes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#two-factor-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two-factor authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-login-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete login flow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Complete login flow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#without-two-factor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Without two-factor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-two-factor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With two-factor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#telling-a-lock-apart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Telling a lock apart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-controller-does-not-see" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the controller does not see
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API keys
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blacklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blacklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../csrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CSRF
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CORS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data and services
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data and services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../emails/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Emails
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scheduler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server-Sent Events
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../async/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Async
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../internationalization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Internationalization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utils
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../administration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operating/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operating
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archived
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archived
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog-archived/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrations-archived/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#password-hashing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Password hashing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Password hashing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rehashing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rehashing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#login" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Login
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#protecting-routes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protecting routes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#two-factor-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two-factor authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-login-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete login flow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Complete login flow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#without-two-factor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Without two-factor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-two-factor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With two-factor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#telling-a-lock-apart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Telling a lock apart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-controller-does-not-see" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the controller does not see
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API keys
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blacklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blacklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="authentication">Authentication 🔑</h1>
+<p>mangoo I/O provides <strong>cookie-based authentication</strong>, not a full user-management system. You remain responsible for storing users, validating passwords, and deciding who may log in; the framework's job starts once you have already decided "yes, this person may in." After a successful check, you call <code>authentication.login(subject)</code> and the framework sets a signed, encrypted JWT cookie on the response.</p>
+<p>That design fits applications that already have a user table (or an external identity source) and want session-like behavior without server-side session storage for auth state. Because the cookie itself carries everything needed to verify it, it works in a share-nothing setup: any node behind a load balancer can validate it using the same configured keys, with no shared session store, no sticky sessions, and no "which server did this user log in on" problem to solve.</p>
+<p>Optional pieces build on the same model:</p>
+<ul>
+<li><strong>Remember me.</strong> Longer cookie lifetime via <code>rememberMe()</code>, for the "keep me logged in" checkbox users expect.</li>
+<li><strong>Two-factor.</strong> Flag the cookie until TOTP is verified, using <code>TotpUtils</code> and <code>isValidSecondFactor</code>, so a stolen password alone is not enough to authenticate.</li>
+<li><strong>Route protection.</strong> <code>withAuthentication()</code> on routes or controllers, so protecting a page is a one-line addition in <code>Bootstrap.java</code> rather than a check repeated in every method.</li>
+<li><strong>API keys.</strong> <code>ApiKeyFilter</code> for machine clients using the <code>Authorization</code> header, since a script calling your API has no browser to hold a cookie for it.</li>
+</ul>
+<p>Inject <code>Authentication</code> into a controller method:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span><span class="n">Authentication</span><span class="w"> </span><span class="n">authentication</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">ok</span><span class="p">().</span><span class="na">render</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="password-hashing">Password hashing</h2>
+<p>Hash passwords with Argon2id via <code>CommonUtils</code>. Argon2id was chosen because it is memory-hard: unlike older algorithms such as bcrypt or SHA-based hashes, it is deliberately expensive to parallelize on GPUs, which is exactly the kind of attack password hashes need to resist once a database leaks.</p>
+<div class="highlight"><pre><span></span><code><span class="n">String</span><span class="w"> </span><span class="n">hash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CommonUtils</span><span class="p">.</span><span class="na">hashArgon2</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;salt&quot;</span><span class="p">);</span>
+</code></pre></div>
+<p>Store the hash (and the salt) with your user record; never store the plain password anywhere, not even temporarily in a log line.</p>
+<p>The returned value is a PHC string that carries the parameters and the salt it was created with:</p>
+<div class="highlight"><pre><span></span><code>$argon2id$v=19$m=32768,t=3,p=1$&lt;salt-b64&gt;$&lt;hash-b64&gt;
+</code></pre></div>
+<p>Because the parameters travel with the hash, <code>matchArgon2</code> verifies with the parameters of the <em>stored</em> hash and never with the current configuration. Changing <code>authentication.hashing.memory</code>, <code>authentication.hashing.iterations</code> or <code>authentication.hashing.parallelism</code> therefore does not lock anybody out.</p>
+<p>The salt you pass to <code>matchArgon2</code> still has to be the one the hash was created with. The embedded salt is not used as a fallback: if the two differ, the verification fails. A hash whose embedded salt someone swapped out is rejected rather than verified against the attacker's salt.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The salt ends up in the stored string, as the PHC format prescribes. If you pass a secret as the salt — <code>hashArgon2(cleartext)</code> uses <code>application.secret</code> — it is no longer secret once the hash is stored. Use a per-user random salt and keep a pepper out of the hash.</p>
+</div>
+<p>Because Argon2id is memory-hard, every call holds <code>authentication.hashing.memory</code> KiB of heap (32 MB by default) for as long as it runs. The framework limits how many of these computations may run at the same time, so that a burst of concurrent logins cannot exhaust the heap. A call that finds every slot taken waits up to <code>authentication.hashing.timeout</code> milliseconds and is then rejected with a <code>MangooHashingException</code>. See <a href="../configuration/#argon2-hashing">Argon2 hashing</a> for the configuration and for what happens on the individual call sites.</p>
+<h3 id="rehashing">Rehashing</h3>
+<p>A stored value that is not in PHC format was created by a mangoo I/O version before 10.13.0. It is verified with the parameters that version used (<code>m=80000,t=6,p=2</code>) and the salt you pass in, so an upgrade does not lock out existing users.</p>
+<p><code>CommonUtils.needsRehash</code> tells you whether a stored hash should be replaced — true for a legacy hash and for a PHC hash whose parameters differ from the current configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">authentication</span><span class="p">.</span><span class="na">isValidLogin</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">,</span><span class="w"> </span><span class="n">salt</span><span class="p">,</span><span class="w"> </span><span class="n">hash</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CommonUtils</span><span class="p">.</span><span class="na">needsRehash</span><span class="p">(</span><span class="n">hash</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">user</span><span class="p">.</span><span class="na">setPassword</span><span class="p">(</span><span class="n">CommonUtils</span><span class="p">.</span><span class="na">hashArgon2</span><span class="p">(</span><span class="n">password</span><span class="p">,</span><span class="w"> </span><span class="n">salt</span><span class="p">));</span>
+<span class="w">        </span><span class="n">datastore</span><span class="p">.</span><span class="na">save</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">authentication</span><span class="p">.</span><span class="na">login</span><span class="p">(</span><span class="n">identifier</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Only evaluate <code>needsRehash</code> <strong>after</strong> a successful verification. Recomputing a hash needs the clear text, and only a successful login proves that the clear text is the right one.</p>
+</div>
+<h2 id="login">Login</h2>
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">authentication</span><span class="p">.</span><span class="na">isValidLogin</span><span class="p">(</span><span class="s">&quot;subject&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;password&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;salt&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hash&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">authentication</span><span class="p">.</span><span class="na">login</span><span class="p">(</span><span class="s">&quot;subject&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>isValidLogin</code> also applies lockout: after <code>authentication.lock</code> failed attempts (default 10), the identifier is locked for <code>authentication.lock.duration</code> minutes (default 60). This happens automatically so that a brute-force attempt against one account gets throttled without you having to implement rate limiting by hand. A successful login clears the budget.</p>
+<p>If no hashing slot becomes available within <code>authentication.hashing.timeout</code>, <code>isValidLogin</code> fails closed and returns <code>false</code>. The failed attempt budget stays untouched in that case, an overload situation must not lock a user out.</p>
+<p>The lockout is an <strong>absolute</strong> point in time, set once when the budget is used up. Further failed attempts during the lockout are rejected without extending it, so an attacker cannot keep the rightful owner of an account locked out indefinitely by simply continuing to guess.</p>
+<p>The same budget applies to the second factor, see <a href="#two-factor-authentication">Two-factor authentication</a>. Both steps are counted separately per identifier, so a failed password attempt never consumes the budget of the second factor and vice versa.</p>
+<p>The counter lives in the auth cache and is therefore per process. An application running several instances behind a load balancer gets one budget per instance; if you need a shared or restart-safe budget, keep it in your own data store instead.</p>
+<p>Then, once logged in, you can adjust the cookie further:</p>
+<div class="highlight"><pre><span></span><code><span class="n">authentication</span><span class="p">.</span><span class="na">rememberMe</span><span class="p">();</span><span class="w">                 </span><span class="c1">// longer cookie lifetime</span>
+<span class="n">authentication</span><span class="p">.</span><span class="na">twoFactorAuthentication</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w"> </span><span class="c1">// require TOTP next</span>
+</code></pre></div>
+<h2 id="methods">Methods</h2>
+<div class="highlight"><pre><span></span><code><span class="n">authentication</span><span class="p">.</span><span class="na">getSubject</span><span class="p">();</span><span class="w">   </span><span class="c1">// logged-in subject, or null</span>
+<span class="n">authentication</span><span class="p">.</span><span class="na">isValid</span><span class="p">();</span><span class="w">      </span><span class="c1">// authentication is complete, use this for authorization</span>
+<span class="n">authentication</span><span class="p">.</span><span class="na">hasSubject</span><span class="p">();</span><span class="w">   </span><span class="c1">// a subject is present, second factor may still be pending</span>
+<span class="n">authentication</span><span class="p">.</span><span class="na">logout</span><span class="p">();</span><span class="w">       </span><span class="c1">// expire the cookie</span>
+<span class="n">authentication</span><span class="p">.</span><span class="na">invalidate</span><span class="p">();</span><span class="w">   </span><span class="c1">// drop the cookie immediately</span>
+<span class="n">authentication</span><span class="p">.</span><span class="na">update</span><span class="p">();</span><span class="w">       </span><span class="c1">// refresh the cookie on this response</span>
+<span class="n">authentication</span><span class="p">.</span><span class="na">rememberMe</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="n">authentication</span><span class="p">.</span><span class="na">twoFactorAuthentication</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="n">authentication</span><span class="p">.</span><span class="na">userHasLock</span><span class="p">(</span><span class="s">&quot;subject&quot;</span><span class="p">);</span><span class="w">              </span><span class="c1">// password step</span>
+<span class="n">authentication</span><span class="p">.</span><span class="na">userHasSecondFactorLock</span><span class="p">(</span><span class="s">&quot;subject&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// second factor step</span>
+<span class="n">authentication</span><span class="p">.</span><span class="na">isValidSecondFactor</span><span class="p">(</span><span class="s">&quot;subject&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">secret</span><span class="p">,</span><span class="w"> </span><span class="n">totp</span><span class="p">);</span>
+</code></pre></div>
+<p><code>isValid()</code> and <code>hasSubject()</code> are not interchangeable. <code>hasSubject()</code> is the raw check whether a subject is set, which is already the case right after the password step, because that is when the authentication cookie is issued. <code>isValid()</code> additionally requires that no second factor is outstanding, and it is the one to base an authorization decision on. Use <code>hasSubject()</code> only where the incomplete state is exactly the state you are working on, which in practice is the page that asks for the TOTP.</p>
+<p>This matters because an <code>Authentication</code> object is bound on every request, not only on routes bound with <code>withAuthentication()</code>. A filter or controller method on an unprotected route that derives access from <code>getSubject()</code> alone lets a visitor in who knows the password but not the second factor.</p>
+<p><code>userHasLock()</code> and <code>userHasSecondFactorLock()</code> are queries, not a step you have to perform. <code>isValidLogin()</code> and <code>isValidSecondFactor()</code> check the lock before doing any work and count the failed attempt afterwards, both on their own. Query the lock only where you want to show "this account is locked" instead of the same "login failed" that a wrong password produces.</p>
+<p><code>logout()</code> and <code>invalidate()</code> sound similar but differ in timing: <code>logout()</code> marks the cookie to expire through the normal response cycle, while <code>invalidate()</code> drops it immediately, which matters if you need the effect to be visible before the method returns, for example before redirecting.</p>
+<h2 id="protecting-routes">Protecting routes</h2>
+<div class="highlight"><pre><span></span><code><span class="n">Bind</span><span class="p">.</span><span class="na">controller</span><span class="p">(</span><span class="n">AccountController</span><span class="p">.</span><span class="na">class</span><span class="p">).</span><span class="na">withRoutes</span><span class="p">(</span>
+<span class="w">    </span><span class="n">On</span><span class="p">.</span><span class="na">get</span><span class="p">().</span><span class="na">to</span><span class="p">(</span><span class="s">&quot;/account&quot;</span><span class="p">).</span><span class="na">respondeWith</span><span class="p">(</span><span class="s">&quot;index&quot;</span><span class="p">).</span><span class="na">withAuthentication</span><span class="p">()</span>
+<span class="p">);</span>
+</code></pre></div>
+<p>You can also call <code>withAuthentication()</code> on the controller binder so every route on it requires a cookie, see <a href="../routing/">Routing</a>. Missing authentication redirects to <code>authentication.redirect.login</code>, or returns HTTP 403 if that key is unset, so an API-only application without a login page still fails safely instead of redirecting somewhere that does not exist. When two-factor is enabled on the cookie, the user is sent to <code>authentication.redirect.mfa</code> instead (or the login redirect if <code>mfa</code> is not configured). Set <code>authentication.origin</code> to append <code>?origin=&lt;request-uri&gt;</code> on those redirects, which is what lets a login page send the user back to whatever page they originally asked for. The value contains the request URI including its query string, is URL encoded, and always begins with exactly one slash, so it can neither inject extra parameters into the redirect nor arrive as a protocol-relative URL such as <code>//evil.com</code> pointing at a foreign host.</p>
+<p>That last point still leaves the final decision to you: <code>origin</code> is a value a visitor chose, and it is only guaranteed to be a path on your own host, not a path that visitor is allowed to reach. Before redirecting to it after a successful login, check it against the routes your application actually serves rather than passing it straight to a redirect.</p>
+<p>Route protection covers controller routes only. SSE and WebSocket routes are registered straight on Undertow's path handler and never reach the authentication check, so <code>withAuthentication()</code> does not exist on them and no cookie is verified when a client connects. See <a href="../routing/">Routing</a> for what that means in practice.</p>
+<p>Cookie names, SameSite, Secure, signing keys, and lifetimes are described in <a href="../configuration/">Configuration</a>. Prefer <code>vault{}</code> for <code>authentication.cookie.key</code> and <code>authentication.cookie.secret</code> rather than writing them out in <code>config.yaml</code>. See <a href="../secrets/">Secrets</a>.</p>
+<h2 id="two-factor-authentication">Two-factor authentication</h2>
+<p>Generate a secret and verify TOTP codes with <code>TotpUtils</code> (SHA-512, 6 digits, 30-second period, the same parameters most authenticator apps expect out of the box):</p>
+<div class="highlight"><pre><span></span><code><span class="n">String</span><span class="w"> </span><span class="n">secret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TotpUtils</span><span class="p">.</span><span class="na">createSecret</span><span class="p">();</span>
+<span class="n">String</span><span class="w"> </span><span class="n">qr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TotpUtils</span><span class="p">.</span><span class="na">getQRCode</span><span class="p">(</span><span class="s">&quot;user@example.com&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;My App&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">secret</span><span class="p">);</span>
+<span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TotpUtils</span><span class="p">.</span><span class="na">getOtpAuthURL</span><span class="p">(</span><span class="s">&quot;user@example.com&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;My App&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">secret</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">authentication</span><span class="p">.</span><span class="na">isValidSecondFactor</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span><span class="w"> </span><span class="n">secret</span><span class="p">,</span><span class="w"> </span><span class="n">totpFromUser</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">authentication</span><span class="p">.</span><span class="na">twoFactorAuthentication</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<span class="w">    </span><span class="n">authentication</span><span class="p">.</span><span class="na">update</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>A typical flow: after the password check succeeds, call <code>login(subject)</code> with <code>twoFactorAuthentication(true)</code> set, redirect to your TOTP entry page, and only clear the flag once <code>isValidSecondFactor</code> confirms the code the user typed in actually matches their secret. Call <code>update()</code> afterwards so the cleared flag reaches the cookie on that same response. See <a href="#complete-login-flow">Complete login flow</a> for both steps written out.</p>
+<p>While the flag is set, <code>isValid()</code> returns false, so the TOTP entry page itself has to use <code>hasSubject()</code> to find the subject the code is being checked for.</p>
+<p>Pass the identifier as the first argument. A TOTP has six digits and is verified without a tolerance window, so exactly one of a million codes is valid per 30-second window — that is only a second factor as long as something limits how often it may be guessed. With the identifier, the same <code>authentication.lock</code> budget as for the password step applies, counted under its own key, and a successful check clears it.</p>
+<p>The two-argument <code>isValidSecondFactor(secret, totp)</code> is <strong>deprecated</strong>: it verifies the code unthrottled, which makes guessing it feasible. An upstream reverse proxy only counts requests per source address and does not bound the total number of guesses; a budget per identity does.</p>
+<h2 id="complete-login-flow">Complete login flow</h2>
+<p>The flows below show every call to <code>Authentication</code> a controller needs — and nothing else. In particular there is no lock handling in them: <code>isValidLogin</code> and <code>isValidSecondFactor</code> check the lock before they do any work and count the failed attempt afterwards, both on their own. Querying the lock is a separate, optional step, see <a href="#telling-a-lock-apart">Telling a lock apart</a>.</p>
+<h3 id="without-two-factor">Without two-factor</h3>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="nf">doLogin</span><span class="p">(</span><span class="n">Form</span><span class="w"> </span><span class="n">form</span><span class="p">,</span><span class="w"> </span><span class="n">Authentication</span><span class="w"> </span><span class="n">authentication</span><span class="p">,</span><span class="w"> </span><span class="n">Flash</span><span class="w"> </span><span class="n">flash</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">form</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">User</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">findByUsername</span><span class="p">(</span><span class="n">username</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">user</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">authentication</span><span class="p">.</span><span class="na">isValidLogin</span><span class="p">(</span><span class="n">username</span><span class="p">,</span><span class="w"> </span><span class="n">form</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">user</span><span class="p">.</span><span class="na">getSalt</span><span class="p">(),</span><span class="w"> </span><span class="n">user</span><span class="p">.</span><span class="na">getPassword</span><span class="p">()))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">flash</span><span class="p">.</span><span class="na">setError</span><span class="p">(</span><span class="s">&quot;Login failed&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">redirect</span><span class="p">(</span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">authentication</span><span class="p">.</span><span class="na">login</span><span class="p">(</span><span class="n">username</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">form</span><span class="p">.</span><span class="na">getBoolean</span><span class="p">(</span><span class="s">&quot;remember&quot;</span><span class="p">).</span><span class="na">orElse</span><span class="p">(</span><span class="kc">false</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">authentication</span><span class="p">.</span><span class="na">rememberMe</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">redirect</span><span class="p">(</span><span class="s">&quot;/dashboard&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>No <code>update()</code> here: no authentication cookie exists yet, so the response writes a fresh one on its own.</p>
+<h3 id="with-two-factor">With two-factor</h3>
+<p>The password step is the same up to the last two calls:</p>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="n">authentication</span><span class="p">.</span><span class="na">login</span><span class="p">(</span><span class="n">username</span><span class="p">);</span>
+<span class="w">    </span><span class="n">authentication</span><span class="p">.</span><span class="na">twoFactorAuthentication</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">redirect</span><span class="p">(</span><span class="s">&quot;/twofactor&quot;</span><span class="p">);</span>
+</code></pre></div>
+<p>From here on <code>isValid()</code> is false and <code>hasSubject()</code> is true. The cookie is written regardless and carries the flag, which is what keeps the second step stateless.</p>
+<p>The page that asks for the code must <strong>not</strong> be bound with <code>withAuthentication()</code>. That route protection redirects to <code>authentication.redirect.mfa</code> exactly while the flag is set, so the TOTP page would redirect to itself:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="nf">twofactor</span><span class="p">(</span><span class="n">Authentication</span><span class="w"> </span><span class="n">authentication</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">authentication</span><span class="p">.</span><span class="na">hasSubject</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">redirect</span><span class="p">(</span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">ok</span><span class="p">().</span><span class="na">render</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="nf">doTwofactor</span><span class="p">(</span><span class="n">Form</span><span class="w"> </span><span class="n">form</span><span class="p">,</span><span class="w"> </span><span class="n">Authentication</span><span class="w"> </span><span class="n">authentication</span><span class="p">,</span><span class="w"> </span><span class="n">Flash</span><span class="w"> </span><span class="n">flash</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">authentication</span><span class="p">.</span><span class="na">hasSubject</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">redirect</span><span class="p">(</span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">subject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">authentication</span><span class="p">.</span><span class="na">getSubject</span><span class="p">();</span>
+<span class="w">    </span><span class="n">User</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">findByUsername</span><span class="p">(</span><span class="n">subject</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">authentication</span><span class="p">.</span><span class="na">isValidSecondFactor</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p">.</span><span class="na">getTotpSecret</span><span class="p">(),</span><span class="w"> </span><span class="n">form</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;totp&quot;</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">flash</span><span class="p">.</span><span class="na">setError</span><span class="p">(</span><span class="s">&quot;Invalid code&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">redirect</span><span class="p">(</span><span class="s">&quot;/twofactor&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">authentication</span><span class="p">.</span><span class="na">twoFactorAuthentication</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<span class="w">    </span><span class="n">authentication</span><span class="p">.</span><span class="na">update</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">redirect</span><span class="p">(</span><span class="s">&quot;/dashboard&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>update()</code> is mandatory in this step. The authentication cookie already exists at this point and is only rewritten when it is missing or when <code>update()</code> asked for it — without it the cookie keeps <code>twoFactor=true</code> and the next request sends the user back to <code>/twofactor</code>.</p>
+<h3 id="logout">Logout</h3>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="nf">doLogout</span><span class="p">(</span><span class="n">Authentication</span><span class="w"> </span><span class="n">authentication</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">authentication</span><span class="p">.</span><span class="na">logout</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">redirect</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="telling-a-lock-apart">Telling a lock apart</h3>
+<p>Nothing above has to change for the lockout to work. A locked identifier makes <code>isValidLogin</code> return <code>false</code> without checking the password, which is the same <code>false</code> a wrong password produces — so the user is told "login failed" while the account is in fact locked.</p>
+<p>Add a lock query only if you want a different message for that case:</p>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">authentication</span><span class="p">.</span><span class="na">userHasLock</span><span class="p">(</span><span class="n">username</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">flash</span><span class="p">.</span><span class="na">setError</span><span class="p">(</span><span class="s">&quot;Account is temporarily locked, try again later&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">redirect</span><span class="p">(</span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+</code></pre></div>
+<p><code>userHasSecondFactorLock(subject)</code> does the same for the TOTP step. Both are read-only: they neither consume an attempt nor set a lock, so an extra query costs nothing but also protects nothing on its own.</p>
+<p>Be aware that this is a trade-off, not a free improvement. A message that distinguishes "locked" from "wrong password" confirms to whoever triggered the lock that the identifier exists. On a login form that already reveals existing accounts elsewhere, for example on registration or password reset, that changes nothing; on one that deliberately does not, keep the single generic message.</p>
+<h3 id="what-the-controller-does-not-see">What the controller does not see</h3>
+<p>A hashing overload is reported to <code>isValidLogin</code> as <code>false</code>, indistinguishable from a wrong password. That is deliberate, see <a href="../configuration/#argon2-hashing">Argon2 hashing</a>; the failed attempt budget stays untouched, so the situation cannot lock anyone out. If you need to tell the two apart, call <code>CommonUtils.matchArgon2</code> yourself and catch <code>MangooHashingException</code> — at the price of losing the built-in lock handling.</p>
+<p>Your own hashing outside the login path, on registration or a password change, needs no <code>try</code>/<code>catch</code>. The unchecked <code>MangooHashingException</code> travels to the <code>ExceptionHandler</code> and becomes a <code>503</code>. Catching it and returning <code>false</code> would turn an overload into a silent "wrong password".</p>
+<h2 id="api-keys">API keys</h2>
+<p>For machine clients that have no browser and therefore nowhere to keep a cookie, use <code>ApiKeyFilter</code> instead:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">super-secret</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nd">@FilterWith</span><span class="p">(</span><span class="n">ApiKeyFilter</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="nf">export</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">ok</span><span class="p">().</span><span class="na">bodyJson</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The filter accepts <code>Authorization: Bearer super-secret</code>. This is a single shared key rather than per-client credentials, so treat it the way you would any other shared secret: rotate it if it leaks, and avoid handing the same key to more clients than you can comfortably revoke access from later.</p>
+<h2 id="blacklist">Blacklist</h2>
+<p>Set <code>authentication.blacklist</code> to <code>true</code> to revoke authentication cookies before their natural expiry. Revocations are handled by an <code>io.mangoo.interfaces.TokenBlacklist</code>, which you can inject like any other component.</p>
+<ul>
+<li><strong>Logout.</strong> <code>authentication.logout()</code> and <code>authentication.invalidate()</code> revoke the token of the current cookie automatically. A copy of that cookie, for example a stolen one, is rejected from then on until the token would have expired anyway.</li>
+<li><strong>All tokens of an account.</strong> <code>revokeSubject(subject)</code> revokes every token of a subject that was issued before now, for example right after a user changed their password or an account was compromised. Tokens issued afterwards, such as a new login in the same request, stay valid, so the user is not locked out.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nd">@Inject</span>
+<span class="kd">private</span><span class="w"> </span><span class="n">TokenBlacklist</span><span class="w"> </span><span class="n">tokenBlacklist</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="nf">changePassword</span><span class="p">(</span><span class="n">Authentication</span><span class="w"> </span><span class="n">authentication</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ... update the password</span>
+<span class="w">    </span><span class="n">tokenBlacklist</span><span class="p">.</span><span class="na">revokeSubject</span><span class="p">(</span><span class="n">authentication</span><span class="p">.</span><span class="na">getSubject</span><span class="p">());</span>
+<span class="w">    </span><span class="n">authentication</span><span class="p">.</span><span class="na">login</span><span class="p">(</span><span class="n">authentication</span><span class="p">.</span><span class="na">getSubject</span><span class="p">());</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">redirect</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Every revocation is kept exactly as long as the revoked token could still be valid, that is until its expiry or, for a subject, for the longest token lifetime (<code>authentication.cookie.remember.expires</code> or <code>authentication.cookie.token.expires</code>).</p>
+<p>The default implementation keeps revocations <strong>in memory</strong>. That has two consequences you should be aware of:</p>
+<ul>
+<li>Revocations do not survive a restart or a deployment.</li>
+<li>With more than one instance behind a load balancer, a revocation only applies to the instance that received it.</li>
+</ul>
+<p>If either matters for you, bind your own implementation backed by a shared store such as Redis or MongoDB in your <code>Module</code>. The framework picks it up instead of the default one:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Module</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">AbstractModule</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">configure</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">bind</span><span class="p">(</span><span class="n">TokenBlacklist</span><span class="p">.</span><span class="na">class</span><span class="p">).</span><span class="na">to</span><span class="p">(</span><span class="n">RedisTokenBlacklist</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>To invalidate every issued authentication cookie at once, independent of the blacklist, rotate <code>authentication.cookie.secret</code>.</p>
+<p><code>CommonUtils.blacklist(id)</code> and <code>CommonUtils.isBlacklisted(id)</code> are deprecated and delegate to the <code>TokenBlacklist</code>. Note that they only ever worked on a token ID; to revoke all tokens of an account use <code>revokeSubject</code>.</p>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="October 2, 2026 08:51:07 UTC"><span class="timeago" datetime="2026-10-02T08:51:07+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 2, 2026 08:51:07 UTC">2026-10-02</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Created">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="February 20, 2025 10:45:00 UTC"><span class="timeago" datetime="2025-02-20T10:45:00+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="February 20, 2025 10:45:00 UTC">2025-02-20</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../flash/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Flash">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Flash
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../csrf/" class="md-footer__link md-footer__link--next" aria-label="Next: CSRF">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                CSRF
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; Sven Kubiak
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+      
+    
+    
+    
+      
+      
+    
+    <a href="https://social.kubiak.me/@sven" target="_blank" rel="noopener me" title="social.kubiak.me" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M433 179.1c0-97.2-63.7-125.7-63.7-125.7-62.5-28.7-228.6-28.4-290.5 0 0 0-63.7 28.5-63.7 125.7 0 115.7-6.6 259.4 105.6 289.1 40.5 10.7 75.3 13 103.3 11.4 50.8-2.8 79.3-18.1 79.3-18.1l-1.7-36.9s-36.3 11.4-77.1 10.1c-40.4-1.4-83-4.4-89.6-54-.6-4.6-.9-9.3-.9-13.9 85.6 20.9 158.7 9.1 178.7 6.7 56.1-6.7 105-41.3 111.2-72.9 9.8-49.8 9-121.5 9-121.5zm-75.1 125.2h-46.6V190.1c0-49.7-64-51.6-64 6.9v62.5H201V197c0-58.5-64-56.6-64-6.9v114.2H90.3c0-122.1-5.2-147.9 18.4-175 25.9-28.9 79.8-30.8 103.8 6.1l11.6 19.5 11.6-19.5c24.1-37.1 78.1-34.8 103.8-6.1 23.7 27.3 18.4 53 18.4 175"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.top", "navigation.footer", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.footer", "search.highlight", "search.share", "search.suggest"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../js/timeago.min.js"></script>
+      
+        <script src="../js/timeago_mkdocs_material.js"></script>
+      
+    
+  </body>
+</html>
