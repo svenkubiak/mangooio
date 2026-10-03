@@ -1,6 +1,6 @@
 ## Version 10.15.0
 
-Unreleased
+Released at 03.10.2026
 
 * **Behaviour change** Session#put and Flash#put reject reserved JWT claim names and internal keys with an IllegalArgumentException instead of losing the whole cookie, the ineffective check for "|", ":", "&" and spaces was removed (svenkubiak)
 * **Behaviour change** Mail#header rejects a value with line breaks and an invalid header name with an IllegalArgumentException to prevent header injection (svenkubiak)
@@ -28,7 +28,9 @@ Unreleased
 * Fixed the dev mode failing on a clean build that deletes target/classes, the directory is now watched again once it is recreated (svenkubiak)
 * Fixed the maven archetype failing with -DoutputDirectory or in IDE wizards and leaving the application secret placeholder behind (svenkubiak)
 * Fixed Authentication#isValidLogin not checking the salt, a missing salt consumed a failed login attempt (svenkubiak)
-
+* Version bumps (svenkubiak)
+  * undertow-core 2.4.3.Final -&gt; 2.4.4.Final
+  
 ## Version 10.14.1
 
 Released at 01.10.2026
