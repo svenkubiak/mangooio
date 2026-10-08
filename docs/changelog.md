@@ -1,3 +1,10 @@
+## Version 10.15.2
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * classgraph 4.8.196 -&gt; 4.8.197
+
 ## Version 10.15.1
 
 Unreleased
