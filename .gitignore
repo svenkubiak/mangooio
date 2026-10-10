@@ -8,3 +8,4 @@ site/
 *.jar
 !dependencies.jar
 *.class
+settings.local.json
