@@ -33,7 +33,7 @@
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<javadoc.version>3.12.0</javadoc.version>
 		<modernizer.version>3.5.0</modernizer.version>
-		<opentelemetry.version>1.66.0</opentelemetry.version>
+		<opentelemetry.version>1.67.0</opentelemetry.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>

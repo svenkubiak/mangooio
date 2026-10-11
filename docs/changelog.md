@@ -4,6 +4,7 @@ Unreleased
 
 * Version bumps (svenkubiak)
   * classgraph 4.8.196 -&gt; 4.8.197
+  * open-telemetry 1.66.0 -&gt; 1.67.0
 
 ## Version 10.15.1
 
