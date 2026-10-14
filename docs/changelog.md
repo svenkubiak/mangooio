@@ -3,10 +3,11 @@
 Unreleased
 
 * Version bumps (svenkubiak)
-  * classgraph 4.8.196 -&gt; 4.8.198
+  * classgraph 4.8.196 -&gt; 6.0.0
   * open-telemetry 1.66.0 -&gt; 1.67.0
   * commons-codec 1.22.1 -&gt; 1.23.0
   * fory-core 1.7.6 -&gt; 1.7.7
+  * caffeine 3.3.0 -&gt; 3.3.1
 
 ## Version 10.15.1
 

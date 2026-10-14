@@ -90,7 +90,7 @@ public final class Application {
             "de.svenkubiak.embeddedmongodb", "edu.umd", "freemarker", "io.github.classgraph", "io.micrometer",
             "io.netty", "io.opentelemetry", "io.smallrye", "io.undertow", "jakarta", "javassist", "javax",
             "jersey.repackaged", "kotlin", "net.bytebuddy", "net.glxn", "net.jawr", "net.jcip",
-            "nonapi.io.github.classgraph", "okhttp3", "okio", "org.aopalliance", "org.apache", "org.apiguardian",
+            "okhttp3", "okio", "org.aopalliance", "org.apache", "org.apiguardian",
             "org.awaitility", "org.bouncycastle", "org.bson", "org.cactoos", "org.codehaus", "org.commonmark",
             "org.eclipse", "org.exparity", "org.glassfish", "org.hamcrest", "org.hibernate", "org.jboss", "org.jgrapht",
             "org.jheaps", "org.jspecify", "org.junit", "org.jvnet", "org.llorllale", "org.mockito", "org.objenesis",
@@ -210,8 +210,8 @@ public final class Application {
                 classInfo.getMethodInfo().stream()
                     .filter(methodInfo -> methodInfo.hasAnnotation(SCHEDULER))
                     .forEach(methodInfo -> {
-                        String at = ((String) methodInfo.getAnnotationInfo(SCHEDULER)
-                                .getParameterValues(true).getValue("at"))
+                        String at = ((String) methodInfo.getAllAnnotationInfo(SCHEDULER)
+                                .getParameterValues().getValue("at"))
                                 .toLowerCase(Locale.ENGLISH)
                                 .trim();
 
@@ -246,14 +246,16 @@ public final class Application {
         Objects.requireNonNull(methodInfo, "methodInfo can not be null");
         Objects.requireNonNull(at, "at can not be null");
 
+        Class<?> clazz = null;
         try {
-            getInstance(classInfo.loadClass());
+            clazz = loadClass(classInfo);
+            getInstance(clazz);
         } catch (Exception e) {
             LOG.error("Failed to scheduled a task as class creation ran into an error. Check class '{}' with method '{}'", classInfo.getName(), methodInfo.getName(), e);
             failsafe();
         }
 
-        if (!isSchedulable(classInfo.loadClass(), methodInfo.getName())) {
+        if (!isSchedulable(clazz, methodInfo.getName())) {
             LOG.error("@Run method '{}' in class '{}' must be public and without parameters", methodInfo.getName(), classInfo.getName());
             failsafe();
         }
@@ -264,12 +266,12 @@ public final class Application {
                 var quartzCron = parser.parse(at);
                 quartzCron.validate();
 
-                var cronTask = new CronTask(classInfo.loadClass(), methodInfo.getName(), at);
+                var cronTask = new CronTask(clazz, methodInfo.getName(), at);
                 ScheduledFuture<?> scheduledFuture = cronTask.schedule();
                 if (scheduledFuture == null) {
                     throw new IllegalArgumentException("Cron '" + at + "' has no further execution");
                 }
-                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), at, cronTask::getScheduledFuture, true));
+                getInstance(Scheduler.class).addSchedule(Schedule.of(clazz.toString(), methodInfo.getName(), at, cronTask::getScheduledFuture, true));
 
                 LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);
             } catch (IllegalArgumentException e) {
@@ -278,9 +280,9 @@ public final class Application {
             }
         } else {
             if (time > 0) {
-                var fixedDelayTask = new FixedDelayTask(classInfo.loadClass(), methodInfo.getName(), time);
+                var fixedDelayTask = new FixedDelayTask(clazz, methodInfo.getName(), time);
                 fixedDelayTask.schedule();
-                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), "every " + at, fixedDelayTask::getScheduledFuture, false));
+                getInstance(Scheduler.class).addSchedule(Schedule.of(clazz.toString(), methodInfo.getName(), "every " + at, fixedDelayTask::getScheduledFuture, false));
 
                 LOG.info("Successfully scheduled task from class '{}' with method '{}' at rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
             } else {
@@ -326,13 +328,13 @@ public final class Application {
         var config = getInstance(Config.class);
         if (config.isPersistenceEnabled()) {
             scanResult.getClassesWithAnnotation(COLLECTION).forEach(classInfo -> {
-                var collection = classInfo.loadClass().getAnnotation(io.mangoo.annotations.Collection.class);
+                var collection = loadClass(classInfo).getAnnotation(io.mangoo.annotations.Collection.class);
                 PersistenceUtils.addCollection(classInfo.getName(), collection.name());
             });
 
             Datastore datastore = getInstance(Datastore.class);
             scanResult.getClassesWithFieldAnnotation(INDEXED).forEach(classInfo -> {
-                var clazz = classInfo.loadClass();
+                var clazz = loadClass(classInfo);
                 for (IndexDefinition index : getIndexDefinitions(clazz)) {
                     try {
                         datastore.addIndex(clazz, index.keys(), index.options());
@@ -347,12 +349,12 @@ public final class Application {
     }
 
     private static void prepareSubscriber(ScanResult scanResult) {
-        scanResult.getClassesImplementing(Subscriber.class).forEach(classInfo -> {
+        scanResult.getAllClassesImplementing(Subscriber.class).forEach(classInfo -> {
             if (classInfo.isAbstract() || classInfo.isInterface()) {
                 return;
             }
 
-            var subscriberClass = classInfo.loadClass();
+            var subscriberClass = loadClass(classInfo);
             Class<?> eventType = TypeToken.of(subscriberClass)
                     .resolveType(Subscriber.class.getTypeParameters()[0])
                     .getRawType();
@@ -805,16 +807,37 @@ public final class Application {
     static ScanResult scanClasspath() {
         long start = System.currentTimeMillis();
         var scanResult = new ClassGraph()
-                .enableAllInfo()
+                .enableClasspath()
+                .enableNonSystemModules()
+                .enableClassInfo()
+                .enableMethodInfo()
+                .enableFieldInfo()
+                .enableAnnotationInfo()
+                .ignoreClassVisibility()
+                .ignoreMethodVisibility()
+                .ignoreFieldVisibility()
                 .acceptPackages(ALL_PACKAGES)
                 .rejectPackages(SCAN_REJECTED_PACKAGES)
-                .removeTemporaryFilesAfterScan()
                 .scan();
 
         LOG.info("Scanned {} classes in {} ms, known library packages are excluded", scanResult.getAllClasses().size(), System.currentTimeMillis() - start);
         LOG.debug("Excluded packages from classpath scan: {}", String.join(", ", SCAN_REJECTED_PACKAGES));
 
         return scanResult;
+    }
+
+    // ClassGraph no longer loads classes, loading without initialization matches the former ClassInfo#loadClass
+    private static Class<?> loadClass(ClassInfo classInfo) {
+        var classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = Application.class.getClassLoader();
+        }
+
+        try {
+            return Class.forName(classInfo.getName(), false, classLoader);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Failed to load class '" + classInfo.getName() + "'", e);
+        }
     }
 
     public static void stopEmbeddedMongoDB() {

@@ -86,7 +86,7 @@ public class ApplicationTest {
             assertThat(scanResult.getClassInfo("io.mangoo.core.Application"), not(nullValue()));
             assertThat(scanResult.getClassesWithMethodAnnotation("io.mangoo.annotations.Run").getNames(), hasItem("jobs.InfoJob"));
             assertThat(scanResult.getClassesWithAnnotation("io.mangoo.annotations.Collection").getNames(), hasItem("models.Person"));
-            assertThat(scanResult.getClassesImplementing("io.mangoo.async.Subscriber").getNames(), hasItem("subscribers.MySubscriber"));
+            assertThat(scanResult.getAllClassesImplementing("io.mangoo.async.Subscriber").getNames(), hasItem("subscribers.MySubscriber"));
         }
     }
 
