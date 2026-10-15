@@ -8,6 +8,7 @@ Unreleased
   * commons-codec 1.22.1 -&gt; 1.23.0
   * fory-core 1.7.6 -&gt; 1.7.7
   * caffeine 3.3.0 -&gt; 3.3.1
+  * hibernate-validator 9.1.4.Final -&gt; 9.1.5.Final
 
 ## Version 10.15.1
 
