@@ -1,7 +1,8 @@
-## Version 10.15.2
+## Version 10.15.1
 
 Unreleased
 
+* Fixed /@admin/cache failing with a ClassCastException when a cache other than the built-in implementation was registered via CacheProvider#addCache (svenkubiak)
 * Version bumps (svenkubiak)
   * classgraph 4.8.196 -&gt; 6.0.0
   * open-telemetry 1.66.0 -&gt; 1.67.0
@@ -9,12 +10,7 @@ Unreleased
   * fory-core 1.7.6 -&gt; 1.7.7
   * caffeine 3.3.0 -&gt; 3.3.1
   * hibernate-validator 9.1.4.Final -&gt; 9.1.5.Final
-
-## Version 10.15.1
-
-Unreleased
-
-* Fixed /@admin/cache failing with a ClassCastException when a cache other than the built-in implementation was registered via CacheProvider#addCache (svenkubiak)
+  * jackson-core 2.22.3 -&gt; 2.22.4
 
 ## Version 10.15.0
 
