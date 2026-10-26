@@ -1,3 +1,10 @@
+## Version 10.15.2
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * greenmail 2.1.14 -&gt; 2.1.15
+
 ## Version 10.15.1
 
 Released at 24.10.2026
