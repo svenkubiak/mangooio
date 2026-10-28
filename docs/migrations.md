@@ -1,3 +1,7 @@
+## From 10.16.0 to 11.0.0
+
+Jackson is 3.2.4. `JsonUtils.getMapper()` returns `tools.jackson.databind.ObjectMapper`. Annotations such as `@JsonIgnore`, `@JsonInclude`, `@JsonProperty` and `@JsonCreator` stay in `com.fasterxml.jackson.annotation`. `java.util.Date` is written and read in `application.timezone`.
+
 ## From 10.15.1 to 10.16.0
 
 Methods that were deprecated in earlier releases are removed:

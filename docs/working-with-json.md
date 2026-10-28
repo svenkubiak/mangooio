@@ -65,12 +65,16 @@ public Response parse(Request request) {
 `JsonUtils` offers the same conversions outside of request handling, for example inside a service class or a scheduled job:
 
 ```java
+import tools.jackson.databind.ObjectMapper;
+
 String json = JsonUtils.toJson(person);
 String pretty = JsonUtils.toPrettyJson(person);
 Person object = JsonUtils.toObject(json, Person.class);
 Map<String, String> flat = JsonUtils.toFlatMap(json);
 ObjectMapper mapper = JsonUtils.getMapper();
 ```
+
+`getMapper()` returns Jackson 3's `tools.jackson.databind.ObjectMapper`. `@JsonIgnore`, `@JsonInclude`, `@JsonProperty` and `@JsonCreator` stay in `com.fasterxml.jackson.annotation`. `java.util.Date` is formatted in `application.timezone`. `LocalDate` and `LocalDateTime` carry no zone.
 
 `toJson()`, `toPrettyJson()`, and `toObject()` return `null` if conversion fails rather than throwing, and do not log the underlying exception. That is a deliberate trade-off: it keeps a single malformed object from crashing an otherwise unrelated code path, but it also means you should check the return value yourself if a `null` here would be a real problem for you, rather than assuming a non-null object always comes back.
 

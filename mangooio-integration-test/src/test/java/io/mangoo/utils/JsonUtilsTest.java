@@ -1,6 +1,6 @@
 package io.mangoo.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.mangoo.TestExtension;
 import io.mangoo.models.Car;
 import io.mangoo.routing.bindings.UnprocessableContent;

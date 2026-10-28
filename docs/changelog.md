@@ -3,6 +3,7 @@
 Unreleased
 
 * Removed all deprecated methods (svenkubiak)
+* Migrated from Jackson 2 to Jackson 3 (svenkubiak)
 
 ## Version 10.16.0
 

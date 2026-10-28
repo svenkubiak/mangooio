@@ -1,46 +1,38 @@
 package io.mangoo.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import io.mangoo.constants.Required;
+import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.routing.bindings.UnprocessableContent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ValueNode;
+import tools.jackson.module.blackbird.BlackbirdModule;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TimeZone;
 
 public final class JsonUtils {
     private static final Logger LOG = LogManager.getLogger(JsonUtils.class);
-    private static final ObjectMapper MAPPER = JsonMapper.builder()
-            .findAndAddModules()
-            .build()
-            .registerModule(new JavaTimeModule())
-            .registerModule(new BlackbirdModule())
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .setDefaultPropertyInclusion(JsonInclude.Value.construct(
-                    JsonInclude.Include.NON_NULL,
-                    JsonInclude.Include.ALWAYS))
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    private static volatile ObjectMapper mapper;
 
     private JsonUtils(){
     }
-    
+
     /**
      * Returns an empty string if the conversion fails.
      */
@@ -49,8 +41,8 @@ public final class JsonUtils {
         
         String json = Strings.EMPTY;
         try {
-            json = MAPPER.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+            json = mapper().writeValueAsString(object);
+        } catch (JacksonException e) {
             // A failed conversion returns an empty string
         }
         
@@ -65,8 +57,8 @@ public final class JsonUtils {
         
         var json = Strings.EMPTY;
         try {
-            json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+            json = mapper().writerWithDefaultPrettyPrinter().writeValueAsString(object);
+        } catch (JacksonException e) {
             // A failed conversion returns an empty string
         }
         
@@ -82,8 +74,8 @@ public final class JsonUtils {
 
         T object = null;
         try {
-            object = MAPPER.readValue(json, clazz);
-        } catch (IOException e) {
+            object = mapper().readValue(json, clazz);
+        } catch (JacksonException e) {
             // A failed conversion returns null
         }
 
@@ -100,8 +92,8 @@ public final class JsonUtils {
 
         T object = null;
         try {
-            object = MAPPER.readValue(json, clazz);
-        } catch (IOException e) {
+            object = mapper().readValue(json, clazz);
+        } catch (JacksonException e) {
             // Fall back to a new instance below
         }
 
@@ -122,7 +114,7 @@ public final class JsonUtils {
 
         Map<String, String> map = new HashMap<>();
         try {
-            addKeys(Strings.EMPTY, new ObjectMapper().readTree(json), map);
+            addKeys(Strings.EMPTY, mapper().readTree(json), map);
         } catch (Exception e) {
             // Invalid JSON returns an empty map
         }
@@ -131,7 +123,46 @@ public final class JsonUtils {
     }
 
     public static ObjectMapper getMapper() {
-        return MAPPER;
+        return mapper();
+    }
+
+    private static ObjectMapper mapper() {
+        var current = mapper;
+        if (current == null) {
+            synchronized (JsonUtils.class) {
+                current = mapper;
+                if (current == null) {
+                    mapper = current = buildMapper();
+                }
+            }
+        }
+        return current;
+    }
+
+    /**
+     * Built on first use, after Module has applied application.timezone.
+     * configureForJackson2() keeps the previous defaults. Unknown properties stay
+     * ignored and dates stay ISO-8601 strings, as before.
+     */
+    private static ObjectMapper buildMapper() {
+        return JsonMapper.builder()
+                .addModule(new BlackbirdModule())
+                .defaultTimeZone(applicationTimeZone())
+                .changeDefaultPropertyInclusion(inclusion -> inclusion
+                        .withValueInclusion(JsonInclude.Include.NON_NULL)
+                        .withContentInclusion(JsonInclude.Include.ALWAYS))
+                .configureForJackson2()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
+    }
+
+    private static TimeZone applicationTimeZone() {
+        var injector = Application.getInjector();
+        if (injector != null) {
+            return TimeZone.getTimeZone(injector.getInstance(Config.class).getApplicationTimeZone());
+        }
+        return TimeZone.getDefault();
     }
 
     private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map) {
@@ -151,7 +182,7 @@ public final class JsonUtils {
             }
         } else if (jsonNode.isValueNode()) {
             var valueNode = (ValueNode) jsonNode;
-            map.put(currentPath, valueNode.asText());
+            map.put(currentPath, valueNode.isNull() ? "null" : valueNode.asString());
         }
     }
 }
