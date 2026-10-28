@@ -40,8 +40,6 @@ default:
       secret: vault{}
       key: vault{}
       secure: true
-  token:
-    secret: token.secret
   flash:
     cookie:
       name: ${application-name}-flash
@@ -79,8 +77,7 @@ environments:
         embedded: true
         host: localhost
         port: 29019
-        package: models
-    
+
   dev:
     connector:
       http:
@@ -105,7 +102,6 @@ environments:
         embedded: true
         host: localhost
         port: 29019
-        package: models
 
   prod:
     connector:
@@ -125,4 +121,3 @@ environments:
         embedded: true
         host: localhost
         port: 29019
-        package: models

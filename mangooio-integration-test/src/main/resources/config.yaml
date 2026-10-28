@@ -101,13 +101,11 @@ environments:
         embedded: true
         host: localhost
         port: 29019
-        package: models
         dbname: test
       myprefix:
         embedded: true
         host: localhost
         port: 29019
-        package: models
         dbname: test
 
   dev:
@@ -133,11 +131,9 @@ environments:
         embedded: true
         host: localhost
         port: 29019
-        package: models
         dbname: test
       myprefix:
         embedded: true
         host: localhost
         port: 29019
-        package: models
         dbname: test
