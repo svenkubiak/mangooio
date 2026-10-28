@@ -10,6 +10,7 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.crypto.Argon2Hash;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.exceptions.MangooTranslationException;
 import io.mangoo.i18n.Messages;
@@ -181,21 +182,40 @@ public final class MangooUtils {
 
     public static boolean isValidAuthentication(Form form) {
         String username = getInstance(Config.class).getApplicationAdminUsername();
-        String password = getInstance(Config.class).getApplicationAdminPassword();
+        String stored = getInstance(Config.class).getApplicationAdminPassword();
 
-        if (!StringUtils.isNoneBlank(username, password)) {
+        if (!StringUtils.isNoneBlank(username, stored)) {
             return false;
         }
 
         boolean usernameMatch = MessageDigest.isEqual(
                 username.getBytes(StandardCharsets.UTF_8),
                 StringUtils.defaultString(form.get("username")).getBytes(StandardCharsets.UTF_8));
-        boolean passwordMatch = MessageDigest.isEqual(
-                password.getBytes(StandardCharsets.UTF_8),
-                StringUtils.defaultString(form.get("password")).getBytes(StandardCharsets.UTF_8));
+        boolean passwordMatch = adminPasswordMatches(StringUtils.defaultString(form.get("password")), stored);
 
-        // Non-short-circuiting '&' to avoid leaking which field matched via timing
+        // Non-short-circuiting '&' so a wrong username still pays the Argon2 cost
         return usernameMatch & passwordMatch;
+    }
+
+    /**
+     * {@code stored} is the Argon2id PHC string from {@code application.admin.password}. The salt lives in that string.
+     * A blank submission is rejected without hashing. {@code MangooHashingException} propagates so an overloaded hasher is not counted as a failed login.
+     */
+    private static boolean adminPasswordMatches(String submitted, String stored) {
+        if (StringUtils.isBlank(submitted) || !Argon2Hash.isPhcFormat(stored)) {
+            if (!Argon2Hash.isPhcFormat(stored)) {
+                LOG.warn("application.admin.password is not an Argon2id hash, admin login is rejected");
+            }
+            return false;
+        }
+
+        try {
+            String salt = new String(Argon2Hash.parse(stored).salt(), StandardCharsets.UTF_8);
+            return CommonUtils.matchArgon2(submitted, salt, stored);
+        } catch (IllegalArgumentException e) {
+            LOG.warn("application.admin.password is not a valid Argon2id hash, admin login is rejected");
+            return false;
+        }
     }
 
     public static Cookie getAdminCookie(boolean requireTwoFactor) throws MangooJwtException {

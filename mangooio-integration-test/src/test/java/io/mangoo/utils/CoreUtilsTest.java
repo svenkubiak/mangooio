@@ -28,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith({TestExtension.class})
 @TestMethodOrder(MethodOrderer.MethodName.class)
 class CoreUtilsTest {
+    /** Cleartext of the Argon2id hash stored as application.admin.password. */
+    private static final String ADMIN_PASSWORD = "admin";
     private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
     private Config config;
@@ -79,7 +81,7 @@ class CoreUtilsTest {
         //given
         Form form = new Form();
         form.addValue("username", config.getApplicationAdminUsername());
-        form.addValue("password", config.getApplicationAdminPassword());
+        form.addValue("password", ADMIN_PASSWORD);
 
         //when
         boolean isValid = MangooUtils.isValidAuthentication(form);
@@ -93,7 +95,7 @@ class CoreUtilsTest {
         //given
         Form form = new Form();
         form.addValue("username", "invalid");
-        form.addValue("password", config.getApplicationAdminPassword());
+        form.addValue("password", ADMIN_PASSWORD);
 
         //when
         boolean isValid = MangooUtils.isValidAuthentication(form);

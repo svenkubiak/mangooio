@@ -15,6 +15,14 @@ application:
     locale: en_EN
 ```
 
+`application.admin.password` stores the Argon2id hash, not the cleartext:
+
+```java
+String hash = CommonUtils.hashArgon2("the-password", CommonUtils.uuidV4());
+```
+
+Store `hash` in the vault under `application.admin.password`. The salt is part of the hash, so there is no separate salt setting. Use a random salt. Passing `application.secret` embeds that secret in the stored hash.
+
 Open:
 
 ```

@@ -30,12 +30,14 @@ class AdminControllerTest {
     private static final String SECURITY = "security";
     private static final String CACHE = "cache";
     private static final String CONTROL_PANEL = "Dashboard";
+    /** Cleartext of the Argon2id hash stored as application.admin.password. */
+    private static final String ADMIN_PASSWORD = "admin";
 
     @Test
     void testLoginWithoutCsrf() {
         Multimap<String, String> parameters = ArrayListMultimap.create();
         parameters.put("username", Application.getInstance(Config.class).getApplicationAdminUsername());
-        parameters.put("password", Application.getInstance(Config.class).getApplicationAdminPassword());
+        parameters.put("password", ADMIN_PASSWORD);
 
         TestResponse response = TestRequest.post("/@admin/authenticate")
                 .withForm(parameters)
@@ -51,7 +53,7 @@ class AdminControllerTest {
         Csrf csrf = TestUtils.getCsrf();
         Multimap<String, String> parameters = ArrayListMultimap.create();
         parameters.put("username", Application.getInstance(Config.class).getApplicationAdminUsername());
-        parameters.put("password", Application.getInstance(Config.class).getApplicationAdminPassword());
+        parameters.put("password", ADMIN_PASSWORD);
         parameters.put(Const.CSRF_TOKEN, csrf.token());
 
         TestResponse response = TestRequest.post("/@admin/authenticate")
@@ -236,7 +238,7 @@ class AdminControllerTest {
         Csrf csrf = TestUtils.getCsrf();
         Multimap<String, String> parameters = ArrayListMultimap.create();
         parameters.put("username", Application.getInstance(Config.class).getApplicationAdminUsername());
-        parameters.put("password", Application.getInstance(Config.class).getApplicationAdminPassword());
+        parameters.put("password", ADMIN_PASSWORD);
         parameters.put(Const.CSRF_TOKEN, csrf.token());
 
         TestResponse execute = TestRequest.post("/@admin/authenticate")

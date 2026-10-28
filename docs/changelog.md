@@ -6,6 +6,7 @@ Unreleased
 * Migrated from Jackson 2 to Jackson 3 (svenkubiak)
 * Added support for MongoDB connection strings - replica sets, sharded clusters, SRV (svenkubiak)
 * Removed asset minification (svenkubiak)
+* Changed Admin-Password handling (svenkubiak)
 
 ## Version 10.16.0
 

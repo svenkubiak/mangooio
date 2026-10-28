@@ -112,7 +112,7 @@ environments:
         enable: true
         health: true
         username: admin
-        password: admin
+        password: "$argon2id$v=19$m=32768,t=3,p=1$OWE0Y2VjMTAtYzMzMi00NjdhLTkzZjEtMzY1NTk2ZTZkNTU0$iXrYbrubsyGZukmWOmR6Luu+rcRD/QxFWJzGio04XhU"
         locale: de_DE
     connector:
       http:

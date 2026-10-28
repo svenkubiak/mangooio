@@ -2,6 +2,8 @@
 
 Jackson is 3.2.4. `JsonUtils.getMapper()` returns `tools.jackson.databind.ObjectMapper`. Annotations such as `@JsonIgnore`, `@JsonInclude`, `@JsonProperty` and `@JsonCreator` stay in `com.fasterxml.jackson.annotation`. `java.util.Date` is written and read in `application.timezone`.
 
+`application.admin.password` is an Argon2id PHC string, not the cleartext. Generate it with `CommonUtils.hashArgon2(password, CommonUtils.uuidV4())` and store that value, preferably in the vault. A plaintext password no longer signs in. Use a random salt. Passing `application.secret` embeds that secret in the stored hash.
+
 ## From 10.15.1 to 10.16.0
 
 Methods that were deprecated in earlier releases are removed:

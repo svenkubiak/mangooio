@@ -132,7 +132,7 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 |---|---|---|
 | `application.admin.enable` | Enables the admin dashboard | `false` |
 | `application.admin.locale` | Locale for the admin dashboard | `en_EN` |
-| `application.admin.password` | Admin dashboard password | *(none)* |
+| `application.admin.password` | Argon2id PHC hash of the admin dashboard password | *(none)* |
 | `application.admin.secret` | Admin TOTP secret; if set, MFA is required | *(none)* |
 | `application.admin.username` | Admin dashboard username | *(none)* |
 | `application.allowedOrigins` | Comma-separated origins for `OriginFilter` | *(none)* |
