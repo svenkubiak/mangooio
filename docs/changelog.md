@@ -1,3 +1,9 @@
+## Version 11.0.0
+
+Unreleased
+
+* Removed all deprecated methods (svenkubiak)
+
 ## Version 10.16.0
 
 Unreleased

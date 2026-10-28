@@ -1,3 +1,11 @@
+## From 10.15.1 to 10.16.0
+
+Methods that were deprecated in earlier releases are removed:
+
+* `CommonUtils.blacklist(id)` and `CommonUtils.isBlacklisted(id)`. Revoke a token with `TokenBlacklist.revoke`, check it with `isRevoked`, and revoke every token of an account with `revokeSubject`.
+* `Authentication.isValidSecondFactor(secret, totp)`. Pass the subject as well: `isValidSecondFactor(subject, secret, totp)`.
+* `JwtUtils.extractSubject(jwt, secret)`. Parse the token with `JwtUtils.parseJwt` and read the subject from the claims.
+
 ## From 10.14.1 to 10.15.0
 
 This is a drop-in replacement.
@@ -26,7 +34,7 @@ if (authentication.isValid() && authentication.isValidSecondFactor(secret, totp)
 if (authentication.hasSubject() && authentication.isValidSecondFactor(subject, secret, totp)) {
 ```
 
-`isValid()` is false while a second factor is outstanding, so it no longer guards that page, and the two-argument `isValidSecondFactor` is deprecated because it verifies unthrottled.
+`isValid()` is false while a second factor is outstanding, so it no longer guards that page. The two-argument `isValidSecondFactor` verified the code unthrottled and has since been removed.
 
 Unchanged: lock handling stays inside the framework — `isValidLogin` and `isValidSecondFactor` check the lock and count the failed attempt on their own, `userHasLock` and `userHasSecondFactorLock` are read-only queries for the error message. `update()` is needed in the same place as before, and authorization checks stay as they are; they become stricter on their own.
 
@@ -47,7 +55,7 @@ Routes bound with `withAuthentication()` are unaffected and keep redirecting to 
 
 `isValidSecondFactor(secret, totp)` verified a TOTP without any attempt limit — six digits, no tolerance window, so one of a million codes is valid per 30-second window. A reverse proxy counting per source address does not bound the total, which an attacker sidesteps with more addresses.
 
-The method is deprecated. Pass the identifier the code is checked for and the same `authentication.lock` budget as for the password step applies:
+Pass the identifier the code is checked for and the same `authentication.lock` budget as for the password step applies:
 
 ```java
 // before

@@ -142,36 +142,6 @@ public final class JwtUtils {
         }
     }
 
-    @Deprecated(forRemoval = true, since = "10.12.0")
-    public static String extractSubject(String jwt, byte[] secret) throws MangooJwtException {
-        Argument.requireNonBlank(jwt, Required.JWT);
-        Objects.requireNonNull(secret, Required.SECRET);
-        Preconditions.checkArgument(secret.length > 0, Required.SECRET);
-
-        try {
-            var jweObject = JWEObject.parse(jwt);
-
-            if (!JWEAlgorithm.DIR.equals(jweObject.getHeader().getAlgorithm())) {
-                throw new JOSEException("Unexpected JWE algorithm: " + jweObject.getHeader().getAlgorithm());
-            }
-            if (!EncryptionMethod.A256CBC_HS512.equals(jweObject.getHeader().getEncryptionMethod())) {
-                throw new JOSEException("Unexpected JWE encryption method: " + jweObject.getHeader().getEncryptionMethod());
-            }
-
-            var decrypter = new DirectDecrypter(secret);
-            jweObject.decrypt(decrypter);
-
-            var signedJWT = SignedJWT.parse(jweObject.getPayload().toString());
-
-            // The signature is NOT verified here
-            var claims = signedJWT.getJWTClaimsSet();
-
-            return claims.getSubject();
-        } catch (Exception e) {
-            throw new MangooJwtException(e);
-        }
-    }
-
     public static JWTClaimsSet extractCustomClaims(JWTClaimsSet claims) {
         var builder = new JWTClaimsSet.Builder();
         claims.getClaims().forEach((key, value) -> {

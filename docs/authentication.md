@@ -147,9 +147,7 @@ A typical flow: after the password check succeeds, call `login(subject)` with `t
 
 While the flag is set, `isValid()` returns false, so the TOTP entry page itself has to use `hasSubject()` to find the subject the code is being checked for.
 
-Pass the identifier as the first argument. A TOTP has six digits and is verified without a tolerance window, so exactly one of a million codes is valid per 30-second window — that is only a second factor as long as something limits how often it may be guessed. With the identifier, the same `authentication.lock` budget as for the password step applies, counted under its own key, and a successful check clears it.
-
-The two-argument `isValidSecondFactor(secret, totp)` is **deprecated**: it verifies the code unthrottled, which makes guessing it feasible. An upstream reverse proxy only counts requests per source address and does not bound the total number of guesses; a budget per identity does.
+Pass the identifier as the first argument. A TOTP has six digits and is verified without a tolerance window, so exactly one of a million codes is valid per 30-second window — that is only a second factor as long as something limits how often it may be guessed. With the identifier, the same `authentication.lock` budget as for the password step applies, counted under its own key, and a successful check clears it. An upstream reverse proxy only counts requests per source address and does not bound the total number of guesses; a budget per identity does.
 
 ## Complete login flow
 
@@ -315,5 +313,3 @@ public class Module extends AbstractModule {
 ```
 
 To invalidate every issued authentication cookie at once, independent of the blacklist, rotate `authentication.cookie.secret`.
-
-`CommonUtils.blacklist(id)` and `CommonUtils.isBlacklisted(id)` are deprecated and delegate to the `TokenBlacklist`. Note that they only ever worked on a token ID; to revoke all tokens of an account use `revokeSubject`.

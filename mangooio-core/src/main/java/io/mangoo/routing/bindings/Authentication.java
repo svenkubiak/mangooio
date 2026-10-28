@@ -21,7 +21,6 @@ import java.util.Objects;
 
 public class Authentication {
     private static final Logger LOG = LogManager.getLogger(Authentication.class);
-    // Guards creating, reserving and resetting attempt budgets; the slow verification runs outside of it
     private static final Object ATTEMPTS = new Object();
     private LocalDateTime expires;
     private String subject;
@@ -151,20 +150,6 @@ public class Authentication {
         return hasLock(CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier);
     }
 
-    /**
-     * Unthrottled, so the six-digit TOTP can be brute-forced.
-     *
-     * @deprecated Use {@link #isValidSecondFactor(String, String, String)} instead
-     */
-    @Deprecated(since = "10.13.0", forRemoval = false)
-    public boolean isValidSecondFactor(String secret, String totp) {
-        Objects.requireNonNull(secret, Required.SECRET);
-        Objects.requireNonNull(totp, Required.TOTP);
-
-        return TotpUtils.verifyTotp(secret, totp);
-    }
-
-    /** Throttled per identifier with a budget separate from the password step. */
     public boolean isValidSecondFactor(String identifier, String secret, String totp) {
         Objects.requireNonNull(identifier, Required.USERNAME);
         Objects.requireNonNull(secret, Required.SECRET);

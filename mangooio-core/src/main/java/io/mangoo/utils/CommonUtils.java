@@ -9,7 +9,6 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.crypto.PasswordHasher;
 import io.mangoo.exceptions.MangooHashingException;
-import io.mangoo.interfaces.TokenBlacklist;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.fory.Fory;
 import org.apache.fory.ThreadSafeFory;
@@ -25,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.time.Instant;
 import java.util.*;
 
 public final class CommonUtils {
@@ -287,28 +285,5 @@ public final class CommonUtils {
         }
 
         return content;
-    }
-
-    /**
-     * @deprecated Use {@link TokenBlacklist#isRevoked(String, String, Instant)} instead
-     */
-    @Deprecated(since = "10.14.0", forRemoval = true)
-    public static boolean isBlacklisted(String id) {
-        Argument.requireNonBlank(id, Required.ID);
-
-        return Application.getInstance(TokenBlacklist.class).isRevoked(id, null, null);
-    }
-
-    /**
-     * @deprecated Use {@link TokenBlacklist#revoke(String, Instant)} or {@link TokenBlacklist#revokeSubject(String)} instead
-     */
-    @Deprecated(since = "10.14.0", forRemoval = true)
-    public static void blacklist(String id) {
-        Argument.requireNonBlank(id, Required.ID);
-
-        var config = Application.getInstance(Config.class);
-        long maxTokenLifetime = Math.max(config.getAuthenticationCookieRememberExpires(), config.getAuthenticationCookieTokenExpires());
-
-        Application.getInstance(TokenBlacklist.class).revoke(id, Instant.now().plusSeconds(maxTokenLifetime));
     }
 }
