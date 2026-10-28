@@ -4,6 +4,7 @@ Unreleased
 
 * Version bumps (svenkubiak)
   * greenmail 2.1.14 -&gt; 2.1.15
+  * mongo-driver-sync 5.13.0 -&gt; 5.14.0
 
 ## Version 10.15.1
 
