@@ -86,10 +86,4 @@ Development:
 mvn mangooio:run
 ```
 
-Minify `.js` and `.css` under `src/main/resources/files`, skipping any filename that already contains `min`:
-
-```shell
-mvn mangooio:minify
-```
-
 See [Observability](observability.md) for metrics and tracing, and [Logging](logging.md) for Log4j.

@@ -17,7 +17,6 @@
 package io.mangoo.maven;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.build.Minification;
 import io.mangoo.build.Runner;
 import io.mangoo.build.Trigger;
 import io.mangoo.build.Watcher;
@@ -89,8 +88,6 @@ public class MangooMojo extends AbstractMojo {
         }
 
         initMojo();
-
-        Minification.setBasePath(project.getBasedir().getAbsolutePath());
 
         List<String> classpathItems = new ArrayList<>();
         classpathItems.add(buildOutputDirectory);

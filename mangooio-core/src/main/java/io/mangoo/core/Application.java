@@ -95,7 +95,7 @@ public final class Application {
             "com.launchdarkly", "com.mongodb", "com.nimbusds", "com.sun", "de.flapdoodle",
             "de.svenkubiak.embeddedmongodb", "edu.umd", "freemarker", "io.github.classgraph", "io.micrometer",
             "io.netty", "io.opentelemetry", "io.smallrye", "io.undertow", "jakarta", "javassist", "javax",
-            "jersey.repackaged", "kotlin", "net.bytebuddy", "net.glxn", "net.jawr", "net.jcip",
+            "jersey.repackaged", "kotlin", "net.bytebuddy", "net.glxn", "net.jcip",
             "okhttp3", "okio", "org.aopalliance", "org.apache", "org.apiguardian",
             "org.awaitility", "org.bouncycastle", "org.bson", "org.cactoos", "org.codehaus", "org.commonmark",
             "org.eclipse", "org.exparity", "org.glassfish", "org.hamcrest", "org.hibernate", "org.jboss", "org.jgrapht",

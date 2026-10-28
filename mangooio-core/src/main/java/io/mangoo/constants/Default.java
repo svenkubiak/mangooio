@@ -45,7 +45,6 @@ public final class Default {
     public static final int FORM_MAX_PARAMETERS = 1000;
     public static final int FORM_MAX_VALUE_LENGTH = 10_000;
     public static final String I18N_COOKIE_NAME = "mangooio-i18n";
-    public static final String JAVASCRIPT_FOLDER = "javascript";
     public static final String LANGUAGE = "en";
     public static final Boolean METRICS_ENABLE = Boolean.FALSE;
     public static final Boolean OTLP_ENABLE = Boolean.FALSE;
@@ -70,7 +69,6 @@ public final class Default {
     public static final String SMTP_HOST = "localhost";
     public static final int SMTP_PORT = 25;
     public static final String SMTP_PROTOCOL = "smtps";
-    public static final String STYLESHEET_FOLDER = "stylesheet";
     public static final long UNDERTOW_MAX_ENTITY_SIZE = 4194304L;
     public static final int UNDERTOW_MAX_HEADER_SIZE = 8192;
     public static final int UNDERTOW_MAX_PARAMETERS = 1000;
