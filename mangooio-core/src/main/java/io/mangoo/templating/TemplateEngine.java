@@ -12,7 +12,6 @@ import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.records.Source;
 import io.undertow.server.HttpServerExchange;
-import no.api.freemarker.java8.Java8ObjectWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -37,7 +36,7 @@ public class TemplateEngine {
     private static final int MAX_CHARS = 65_536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
-    private static final Version VERSION = new Version(2, 3, 34);
+    private static final Version VERSION = new Version(2, 3, 35);
     private final Configuration configuration = new Configuration(VERSION);
     
     public TemplateEngine() {
@@ -47,7 +46,7 @@ public class TemplateEngine {
         configuration.setLocalizedLookup(false);
         configuration.setNumberFormat(NUMBER_FORMAT);
         configuration.setAPIBuiltinEnabled(true);
-        configuration.setObjectWrapper(new Java8ObjectWrapper(VERSION));
+        configuration.setObjectWrapper(new JavaTimeObjectWrapper(VERSION));
         configuration.setOutputFormat(HTMLOutputFormat.INSTANCE);
         configuration.setRecognizeStandardFileExtensions(false);
 

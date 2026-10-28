@@ -2,9 +2,11 @@
 
 Unreleased
 
+* **Behaviour change** Removed freemarker-java8. .format() without a pattern prints toString(), format styles, ISO_* names, a zone argument, toZonedDateTime, zoneId.format and clock.format are no longer accepted, and ${zoneId} prints the zone id (svenkubiak)
 * Version bumps (svenkubiak)
   * greenmail 2.1.14 -&gt; 2.1.15
   * mongo-driver-sync 5.13.0 -&gt; 5.14.0
+  * classgraph 6.0.0 -&gt; 6.0.1
 
 ## Version 10.15.1
 

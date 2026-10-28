@@ -1,13 +1,11 @@
 package io.mangoo.templating.methods;
 
-import freemarker.template.SimpleDate;
+import freemarker.template.AdapterTemplateModel;
+import freemarker.template.TemplateDateModel;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
 import io.mangoo.constants.Required;
 import io.mangoo.utils.DateUtils;
-import no.api.freemarker.java8.time.LocalDateAdapter;
-import no.api.freemarker.java8.time.LocalDateTimeAdapter;
-import no.api.freemarker.java8.time.TemporalDialerAdapter;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.time.LocalDate;
@@ -31,26 +29,14 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
     public String exec(List arguments) throws TemplateModelException {
         String result = null;
         if (arguments != null && arguments.size() == NUM_ARGUMENTS) {
-            Object temporal = null;
             Object object = arguments.getFirst();
-            
-            if (object instanceof TemporalDialerAdapter temporalDialerAdapter) {
-                temporal = temporalDialerAdapter.getObject();   
-            }
-
-            if (temporal != null) {
-                object = temporal;
+            if (object instanceof AdapterTemplateModel adapter) {
+                object = adapter.getAdaptedObject(Object.class);
+            } else if (object instanceof TemplateDateModel dateModel) {
+                object = dateModel.getAsDate();
             }
 
             switch (object) {
-                case LocalDateTimeAdapter localDateTimeAdapter -> {
-                    Date date = DateUtils.localDateTimeToDate(localDateTimeAdapter.getObject());
-                    result = prettyTime.format(date);
-                }
-                case LocalDateAdapter localDateAdapter -> {
-                    Date date = DateUtils.localDateToDate(localDateAdapter.getObject());
-                    result = prettyTime.format(date);
-                }
                 case LocalDateTime localDateTime -> {
                     Date date = DateUtils.localDateTimeToDate(localDateTime);
                     result = prettyTime.format(date);
@@ -59,13 +45,9 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
                     Date date = DateUtils.localDateToDate(localDate);
                     result = prettyTime.format(date);
                 }
-                case SimpleDate simpleDate -> {
-                    Date date = simpleDate.getAsDate();
-                    result = prettyTime.format(date);
-                }
                 case Date date -> result = prettyTime.format(date);
                 case null, default ->
-                        throw new TemplateModelException("Invalid object found for prettytime function. Must be of type: SimpleDate, Date, LocalDateTime or LocalDate - Is: " + object.getClass());
+                        throw new TemplateModelException("Invalid object found for prettytime function. Must be of type: Date, LocalDateTime or LocalDate - Is: " + (object == null ? "null" : object.getClass().getName()));
             }
             
         } else if (arguments != null && arguments.size() > NUM_ARGUMENTS) {
