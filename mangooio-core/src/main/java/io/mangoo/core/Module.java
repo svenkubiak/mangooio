@@ -7,9 +7,11 @@ import de.svenkubiak.embeddedmongodb.EmbeddedMongoDB;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.Default;
+import io.mangoo.constants.Key;
 import io.mangoo.crypto.Vault;
 import io.mangoo.persistence.DatastoreProvider;
 import io.mangoo.persistence.interfaces.Datastore;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.TimeZone;
 
@@ -24,6 +26,10 @@ public class Module extends AbstractModule {
 
         var prefix = Default.PERSISTENCE_PREFIX;
         if (config.isPersistenceEnabled() && Boolean.TRUE.equals(config.isMongoEmbedded(prefix))) {
+            if (StringUtils.isNotBlank(config.getMongoUrl(prefix))) {
+                throw new IllegalArgumentException(prefix + Key.PERSISTENCE_MONGO_URL
+                        + " cannot be combined with " + prefix + Key.PERSISTENCE_MONGO_EMBEDDED);
+            }
             this.embeddedMongoDB = EmbeddedMongoDB.create()
                     .withVersion(Version.Main.V7_0)
                     .withHost(config.getMongoHost(prefix))

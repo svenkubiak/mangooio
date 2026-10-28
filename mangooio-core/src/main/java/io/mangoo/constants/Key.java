@@ -67,6 +67,7 @@ public final class Key {
     public static final String PERSISTENCE_MONGO_HOST = "mongo.host";
     public static final String PERSISTENCE_MONGO_PASSWORD = "mongo.password";
     public static final String PERSISTENCE_MONGO_PORT = "mongo.port";
+    public static final String PERSISTENCE_MONGO_URL = "mongo.url";
     public static final String PERSISTENCE_MONGO_USERNAME = "mongo.username";
     public static final String SCHEDULER_ENABLE = "scheduler.enable";
     public static final String SESSION_COOKIE_EXPIRES = "session.cookie.expires";

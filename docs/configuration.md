@@ -126,7 +126,7 @@ HTTPS uses an SSL context built from the [vault](secrets.md). The certificate al
 
 ## Default values
 
-Keys that you omit fall back to the defaults below. Cells marked *(none)* have no built-in default, meaning the feature stays off or the value stays empty until you set it yourself. MongoDB keys are nested under `persistence` in YAML (`persistence.mongo.host`, and `persistence.<prefix>.mongo.host` for additional named datastores, see [Persistence](persistence.md)).
+Keys that you omit fall back to the defaults below. Cells marked *(none)* have no built-in default, meaning the feature stays off or the value stays empty until you set it yourself. MongoDB keys are nested under `persistence` in YAML (`persistence.mongo.host` or `persistence.mongo.url`, and `persistence.<prefix>.mongo.host` for additional named datastores, see [Persistence](persistence.md)).
 
 | Key | Description | Default |
 |---|---|---|
@@ -196,6 +196,7 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `persistence.mongo.password` | MongoDB password, passed to the driver as is, so special characters need no encoding | *(none)* |
 | `persistence.mongo.port` | MongoDB port | `27017` |
 | `persistence.mongo.username` | MongoDB username | *(none)* |
+| `persistence.mongo.url` | `mongodb://` or `mongodb+srv://` connection string that replaces host and port. Credentials in the URL are rejected | *(none)* |
 | `scheduler.enable` | Enable `@Run` scheduling | `true` |
 | `session.cookie.expires` | Persist the session cookie beyond the browser session | `false` |
 | `session.cookie.name` | Session cookie name | `mangooio-session` |

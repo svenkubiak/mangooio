@@ -4,7 +4,7 @@ mangoo I/O includes a thin integration layer over the [MongoDB Java Sync Driver]
 
 At startup, the framework scans for classes annotated with `@Collection`, registers their collection names, and optionally creates indexes from `@Indexed` fields. Inject `Datastore` (or `DatastoreProvider` when you need multiple databases) and use familiar driver patterns: `save`, `find`, `findAll`, and `query()` for fluent, driver-level access.
 
-For local development, the archetype can start **embedded MongoDB 7.0** when `persistence.mongo.embedded` is `true`, so you get a working database with zero setup. Turn that off in production and point `host` / `port` at your actual MongoDB server instead. Only a single host is supported, a replica set or an SRV address can not be configured yet. Passwords belong in the [vault](secrets.md) or the environment, never in source control.
+For local development, the archetype can start **embedded MongoDB 7.0** when `persistence.mongo.embedded` is `true`, so you get a working database with zero setup. Turn that off in production and point `host` / `port`, or a `url`, at your actual MongoDB server. Passwords belong in the [vault](secrets.md) or the environment, never in source control.
 
 ## Configuration
 
@@ -23,6 +23,21 @@ default:
 ```
 
 Set `persistence.enable` to `false` if you want to skip MongoDB entirely.
+
+`host` and `port` address one server. A replica set, several mongos instances, or an SRV address such as MongoDB Atlas goes into `url`, which then replaces `host` and `port`:
+
+```yaml
+persistence:
+  mongo:
+    url: mongodb://mongo-1:27017,mongo-2:27017/?replicaSet=rs0
+    username: myUsername
+    password: vault{}
+    dbname: myDBname
+    authdb: admin
+    auth: true
+```
+
+`url` accepts any connection string the driver supports, including `mongodb+srv://cluster.example.mongodb.net`. Options in the query string, such as `replicaSet`, `tls`, `retryWrites` and `w`, are passed through. The database mangoo I/O uses is still `dbname`. If the URL contains a database or `authSource`, that value has to match `dbname` or `authdb`, and startup fails when it does not. An omitted `authdb` means `admin`. Credentials in the URL are rejected, so username, password and authdb stay in the keys above and special characters need no URL encoding. `url` cannot be combined with `embedded: true`, because the embedded server is started from `host` and `port` only.
 
 !!! note
     `persistence.mongo.embedded: true` starts MongoDB 7.0 in-process. Use it only for local development and tests, never in production.

@@ -426,6 +426,10 @@ public class Config {
         return getInt(prefix + Key.PERSISTENCE_MONGO_PORT, Default.PERSISTENCE_MONGO_PORT);
     }
 
+    public String getMongoUrl(String prefix) {
+        return getString(prefix + Key.PERSISTENCE_MONGO_URL);
+    }
+
     public String getMongoUsername(String prefix) {
         return getString(prefix + Key.PERSISTENCE_MONGO_USERNAME, null);
     }
