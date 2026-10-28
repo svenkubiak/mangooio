@@ -20,6 +20,8 @@ import io.mangoo.core.Config;
 import io.mangoo.persistence.interfaces.BaseEntity;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.utils.PersistenceUtils;
+import io.mangoo.utils.internal.Trace;
+import io.opentelemetry.instrumentation.mongo.v3_1.MongoTelemetry;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -79,17 +81,23 @@ public class DatastoreImpl implements Datastore {
                     pojoRegistry
             );
 
-            MongoClientSettings settings = settings(
+            var settings = settings(
                     config.getMongoHost(prefix),
                     config.getMongoPort(prefix),
                     Boolean.TRUE.equals(config.isMongoAuth(prefix)),
                     config.getMongoUsername(prefix),
                     config.getMongoPassword(prefix),
                     config.getMongoAuthDB(prefix))
-                    .codecRegistry(combinedRegistry)
-                    .build();
+                    .codecRegistry(combinedRegistry);
 
-            mongoClient = MongoClients.create(settings);
+            // Command spans are only useful when the OTLP exporter is running
+            if (config.isOtlpEnable()) {
+                settings.addCommandListener(MongoTelemetry.create(
+                        Objects.requireNonNull(Trace.getOpenTelemetry(config), Required.OPEN_TELEMETRY))
+                        .createCommandListener());
+            }
+
+            mongoClient = MongoClients.create(settings.build());
             mongoDatabase = mongoClient.getDatabase(config.getMongoDbName(prefix));
 
             LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",

@@ -241,7 +241,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.tngtech.archunit</groupId>
-			<artifactId>archunit-junit5</artifactId>
+			<artifactId>archunit</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -297,20 +297,6 @@
 		<dependency>
 			<groupId>com.google.errorprone</groupId>
 			<artifactId>error_prone_annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpmime</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-codec</groupId>
-					<artifactId>commons-codec</artifactId>
-				</exclusion>
-					<exclusion>
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging</artifactId>
-					</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.glxn</groupId>
@@ -432,16 +418,6 @@
 				</exclusion>
             </exclusions>
         </dependency>
-		<dependency>
-			<groupId>net.jawr</groupId>
-			<artifactId>jawr-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 	</dependencies>
 	<build>
 		<resources>

@@ -12,7 +12,10 @@ import com.mongodb.client.model.CollationStrength;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.github.classgraph.*;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.MethodInfo;
+import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
 import io.mangoo.async.EventBus;
 import io.mangoo.async.Subscriber;
@@ -67,7 +70,10 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
 
 public final class Application {

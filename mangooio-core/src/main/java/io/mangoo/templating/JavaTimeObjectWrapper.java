@@ -3,14 +3,7 @@ package io.mangoo.templating;
 import freemarker.core.Environment;
 import freemarker.ext.beans.BeanModel;
 import freemarker.ext.beans.BeansWrapper;
-import freemarker.template.AdapterTemplateModel;
-import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.TemplateHashModel;
-import freemarker.template.TemplateMethodModelEx;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
-import freemarker.template.TemplateScalarModel;
-import freemarker.template.Version;
+import freemarker.template.*;
 
 import java.time.Clock;
 import java.time.DateTimeException;

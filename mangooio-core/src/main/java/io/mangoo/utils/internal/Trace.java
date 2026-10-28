@@ -29,45 +29,73 @@ import java.util.concurrent.TimeUnit;
 public final class Trace {
     private static final Logger LOG = LogManager.getLogger(Trace.class);
     private static final AttachmentKey<TraceState> TRACE_STATE = AttachmentKey.create(TraceState.class);
-    private static final boolean ENABLED;
+    private static volatile boolean initialized;
+    private static boolean enabled;
     private static SdkTracerProvider tracerProvider;
     private static OpenTelemetry openTelemetry;
 
-    static {
-        Config config = Application.getInstance(Config.class);
-        ENABLED = config.isOtlpEnable();
-        if (ENABLED) {
-            var resource = Resource.getDefault().merge(
-                    Resource.create(
-                            Attributes.of(
-                                    AttributeKey.stringKey("service.name"), Const.FRAMEWORK,
-                                    AttributeKey.stringKey("framework.name"), Const.FRAMEWORK,
-                                    AttributeKey.stringKey("framework.version"), MangooUtils.getVersion(),
-                                    AttributeKey.stringKey("framework.environment"), Application.getMode().name()
-                            )));
+    private Trace() {}
 
-            var otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder()
-                    .setEndpoint(config.getOtlpEndpoint())
-                    .build();
+    // DatastoreImpl is constructed while Guice is still creating the injector, so Config has to be passed in
+    public static OpenTelemetry getOpenTelemetry(Config config) {
+        init(config);
+        return openTelemetry;
+    }
 
-            tracerProvider = SdkTracerProvider.builder()
-                    .setResource(resource)
-                    .addSpanProcessor(BatchSpanProcessor.builder(otlpGrpcSpanExporter).build())
-                    .build();
-
-            openTelemetry = OpenTelemetrySdk.builder()
-                    .setTracerProvider(tracerProvider)
-                    .build();
-
-            LOG.info("OpenTelemetry tracing enabled with endpoint {}", config.getOtlpEndpoint());
-        } else {
-            LOG.info("OpenTelemetry tracing disabled");
+    private static void ensureReady() {
+        if (!initialized) {
+            init(Application.getInstance(Config.class));
         }
     }
 
-    private Trace() {}
+    private static boolean ready() {
+        ensureReady();
+        return enabled && openTelemetry != null;
+    }
+
+    private static void init(Config config) {
+        if (initialized) {
+            return;
+        }
+        synchronized (Trace.class) {
+            if (initialized) {
+                return;
+            }
+            Objects.requireNonNull(config, Required.CONFIG);
+            enabled = config.isOtlpEnable();
+            if (enabled) {
+                var resource = Resource.getDefault().merge(
+                        Resource.create(
+                                Attributes.of(
+                                        AttributeKey.stringKey("service.name"), Const.FRAMEWORK,
+                                        AttributeKey.stringKey("framework.name"), Const.FRAMEWORK,
+                                        AttributeKey.stringKey("framework.version"), MangooUtils.getVersion(),
+                                        AttributeKey.stringKey("framework.environment"), Application.getMode().name()
+                                )));
+
+                var otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder()
+                        .setEndpoint(config.getOtlpEndpoint())
+                        .build();
+
+                tracerProvider = SdkTracerProvider.builder()
+                        .setResource(resource)
+                        .addSpanProcessor(BatchSpanProcessor.builder(otlpGrpcSpanExporter).build())
+                        .build();
+
+                openTelemetry = OpenTelemetrySdk.builder()
+                        .setTracerProvider(tracerProvider)
+                        .build();
+
+                LOG.info("OpenTelemetry tracing enabled with endpoint {}", config.getOtlpEndpoint());
+            } else {
+                LOG.info("OpenTelemetry tracing disabled");
+            }
+            initialized = true;
+        }
+    }
 
     public static void shutdown() {
+        ensureReady();
         if (tracerProvider != null) {
             try {
                 tracerProvider.forceFlush().join(5, TimeUnit.SECONDS);
@@ -80,7 +108,7 @@ public final class Trace {
 
     // A completion listener ends every span of the exchange, even if the handler chain aborts before end() is reached
     public static void start(HttpServerExchange exchange, String process) {
-        if (!ENABLED || openTelemetry == null) {return;}
+        if (!ready()) {return;}
 
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
         Argument.requireNonBlank(process, Required.PROCESS);
@@ -105,7 +133,7 @@ public final class Trace {
 
     // The parent context is passed explicitly, so the child span is correct regardless of the current thread
     public static void startChild(HttpServerExchange exchange, String childProcess) {
-        if (!ENABLED || openTelemetry == null) {return;}
+        if (!ready()) {return;}
 
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
         Argument.requireNonBlank(childProcess, Required.PROCESS);
@@ -122,7 +150,7 @@ public final class Trace {
     }
 
     public static void end(HttpServerExchange exchange) {
-        if (!ENABLED) {return;}
+        if (!ready()) {return;}
 
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 

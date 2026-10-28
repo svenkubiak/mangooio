@@ -15,7 +15,6 @@ import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 public class LocaleHandler implements HttpHandler {

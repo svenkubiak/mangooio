@@ -1,10 +1,7 @@
 package io.mangoo.cache;
 
+import com.github.benmanes.caffeine.cache.*;
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.Expiry;
-import com.github.benmanes.caffeine.cache.RemovalCause;
-import com.github.benmanes.caffeine.cache.Ticker;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
 import io.mangoo.interfaces.TokenBlacklist;

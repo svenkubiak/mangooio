@@ -4,11 +4,7 @@ import io.mangoo.constants.Required;
 import io.mangoo.utils.Argument;
 import org.bouncycastle.util.Arrays;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * An Argon2id hash with its salt and parameters, encoded in PHC string format: $argon2id$v=19$m=...,t=...,p=...$salt$hash.
