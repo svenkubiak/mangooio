@@ -302,4 +302,11 @@ public class ApplicationTest {
         assertThat(Application.isSupportedMongoVersion(List.of(3, 6)), equalTo(false));
         assertThat(Application.isSupportedMongoVersion(null), equalTo(false));
     }
+
+    @Test
+    void testLog4jDoesNotStopInItsOwnShutdownHook() {
+        //then the shutdown can still log its steps, Shutdown stops Log4j as its last step
+        var factory = (org.apache.logging.log4j.core.impl.Log4jContextFactory) org.apache.logging.log4j.LogManager.getFactory();
+        assertThat(factory.isShutdownHookEnabled(), equalTo(false));
+    }
 }

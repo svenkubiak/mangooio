@@ -101,6 +101,10 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
 
 public final class Application {
+    // Log4j would stop logging in its own shutdown hook, in parallel to Shutdown, which stops Log4j as its last step
+    static {
+        System.setProperty("log4j2.shutdownHookEnabled", "false");
+    }
     private static final Log4jListener LOG4J_LISTENER = new Log4jListener();
     static {
         StatusLogger.getLogger().registerListener(LOG4J_LISTENER);

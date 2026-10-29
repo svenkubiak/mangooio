@@ -1,5 +1,6 @@
 package io.mangoo.core;
 
+import io.mangoo.constants.Default;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.manager.ServerSentEventManager;
 import io.mangoo.persistence.DatastoreProvider;
@@ -119,7 +120,8 @@ public class Shutdown extends Thread {
 
     private void stopEmbeddedMongoDB() {
         try {
-            if (Application.getInstance(Config.class).isPersistenceEnabled()) {
+            var config = Application.getInstance(Config.class);
+            if (config.isPersistenceEnabled() && Boolean.TRUE.equals(config.isMongoEmbedded(Default.PERSISTENCE_PREFIX))) {
                 LOG.info("Stopping EmbeddedMongoDB");
                 Application.stopEmbeddedMongoDB();
             }

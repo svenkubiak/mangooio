@@ -53,20 +53,34 @@ USER app
 ENTRYPOINT ["java", "-Dapplication.mode=prod", "-jar", "/app/myapp.jar"]
 ```
 
-Containers run as root unless the image or the compose file sets a user, so keep the `USER` line, otherwise the application does not start in prod mode. Pass heap settings through `JAVA_TOOL_OPTIONS`. Docker secrets end up in `/run/secrets`, where `file{}` reads them; name each secret like its config key:
+Containers run as root unless the image or the compose file sets a user, so keep the `USER` line, otherwise the application does not start in prod mode. Pass heap settings through `JAVA_TOOL_OPTIONS`. Docker secrets end up in `/run/secrets`, where `file{}` reads them. Use the long syntax and set `target` to the config key, so the file name inside the container does not depend on which characters Compose allows in secret names:
 
 ```yaml
 services:
   myapp:
     secrets:
-      - application.secret
-      - session.cookie.secret
+      - source: app_secret
+        target: application.secret
+      - source: session_secret
+        target: session.cookie.secret
 secrets:
-  application.secret:
+  app_secret:
     file: ./secrets/application.secret
-  session.cookie.secret:
+  session_secret:
     file: ./secrets/session.cookie.secret
 ```
+
+```yaml
+application:
+  secret: file{}
+session:
+  cookie:
+    secret: file{}
+```
+
+Without Swarm, a Compose secret is a bind mount of the file: it keeps owner and permissions of the host, and the `uid`, `gid` and `mode` options of the long syntax only apply in Swarm. The file must therefore be readable by the container user (`app` above) and by nobody else, for example with `chmod 0440` and a group the container user belongs to, matched by numeric id. Docker Swarm stores secrets encrypted and mounts them on tmpfs; Podman does the same with `podman secret create` and `--secret <name>,target=<config key>`.
+
+Without Compose, mount a directory with one file per key read-only, `-v /etc/myapp/secrets:/run/secrets:ro`, or point `APPLICATION_SECRETS_PATH` to another directory. Environment variables with `env{}` work as well, preferably with `--env-file` rather than `-e`, but stay visible in `docker inspect` and to every child process; see [Secrets](secrets.md).
 
 ## Health checks
 

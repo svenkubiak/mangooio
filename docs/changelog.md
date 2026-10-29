@@ -28,6 +28,7 @@ Unreleased
 * Fixed MongoDB clients not being closed and embedded MongoDB being stopped before Undertow on shutdown (svenkubiak)
 * Fixed the admin login with a second factor failing when the two steps reached different instances (svenkubiak)
 * Fixed a hashing overload failing the admin login with an error instead of refusing it without counting the attempt (svenkubiak)
+* Fixed the shutdown losing its log output, as Log4j stopped in its own shutdown hook (svenkubiak)
 
 ## Version 10.16.0
 
