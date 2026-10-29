@@ -35,7 +35,7 @@ The vault (`vault.p12`, `vault{}`, `io.mangoo.crypto.Vault`) is removed. Secrets
 
 ### Placeholders and secrets
 
-* An `env{}`, `arg{}` or `file{}` without a value and without a fallback fails the startup instead of leaving the key unset. Give optional values a fallback, e.g. `arg{false}`.
+* An `env{}`, `arg{}` or `file{}` without a value and without a fallback fails the startup instead of leaving the key unset. Write optional values as `env{?}`, which leaves the key unset and keeps the default, or give them a fallback, e.g. `arg{false}`.
 * In prod mode `application.secret`, `application.admin.secret`, `application.api.key`, the cookie secrets and keys, `persistence.*mongo.password`, `smtp.password` and `connector.https.password` must not be literal in the `config.yaml` of the classpath, see [Secrets](secrets.md#secrets-in-prod).
 
 ### Authentication state

@@ -28,12 +28,14 @@ Unreleased
 * Added MessageBroker, server sent events reach the clients of every instance when persistence is enabled (svenkubiak)
 * Added the OpenTelemetry metric http.server.request.duration when otlp.enable is true (svenkubiak)
 * Added the instance id as system property mangooio.instance.id for log patterns (svenkubiak)
+* Added env{?}, arg{?} and file{?} for optional values, which leave the key unset if the source is empty (svenkubiak)
 * Fixed a revoked authentication cookie being accepted again within the JWT clock skew after its expiry (svenkubiak)
 * Fixed MongoDB clients not being closed and embedded MongoDB being stopped before Undertow on shutdown (svenkubiak)
 * Fixed the admin login with a second factor failing when the two steps reached different instances (svenkubiak)
 * Fixed a hashing overload failing the admin login with an error instead of refusing it without counting the attempt (svenkubiak)
 * Fixed the shutdown losing its log output, as Log4j stopped in its own shutdown hook (svenkubiak)
 * Fixed concurrent first calls of DatastoreProvider.getDatastore for a prefix creating a second MongoClient that was never closed (svenkubiak)
+* Fixed an empty secret such as smtp.password: "" failing the startup in prod as a literal secret (svenkubiak)
 
 ## Version 10.16.0
 

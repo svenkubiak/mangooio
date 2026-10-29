@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
+    private static final String OPTIONAL = "?";
     private static final long MAX_SECRET_FILE_SIZE = 64 * 1024L;
     private static final Pattern SECRET_FILE_NAME = Pattern.compile("[A-Za-z0-9_-][A-Za-z0-9._-]*");
     private static final Set<String> SECRETS = Set.of(
@@ -127,12 +128,16 @@ public class Config {
         }
     }
 
+    // An optional placeholder without value leaves the key unset, as if it were not in config.yaml, so the default applies
     private void resolve(String key, String value, String tag, String resolved) {
         if (StringUtils.isNotBlank(resolved)) {
             values.put(key, resolved);
             external.add(key);
         } else {
             String fallback = StringUtils.substringBetween(value, tag, "}");
+            if (OPTIONAL.equals(fallback)) {
+                return;
+            }
             if (StringUtils.isNotBlank(fallback)) {
                 values.put(key, fallback);
             } else {
@@ -200,11 +205,13 @@ public class Config {
         }
     }
 
-    // A fallback in the braces counts as literal, as it is written into the config.yaml as well
+    // A fallback in the braces counts as literal, as it is written into the config.yaml as well; an empty value holds no secret
     Set<String> getLiteralSecrets() {
-        return values.keySet().stream()
-                .filter(Config::isSecret)
-                .filter(key -> !external.contains(key))
+        return values.entrySet().stream()
+                .filter(entry -> isSecret(entry.getKey()))
+                .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
+                .filter(entry -> !external.contains(entry.getKey()))
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 

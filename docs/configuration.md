@@ -101,7 +101,7 @@ The active environment block is required, even if it only overrides a single key
 
 ## Secrets, environment variables, and JVM arguments
 
-Configuration values can also come from environment variables, JVM arguments or secret files instead of being written out in plain text. See [Secrets](secrets.md) for how `env{}`, `arg{}` and `file{}` placeholders are resolved. A placeholder without a value and without a fallback fails the startup, and in prod mode the framework secrets must not be literal.
+Configuration values can also come from environment variables, JVM arguments or secret files instead of being written out in plain text. See [Secrets](secrets.md) for how `env{}`, `arg{}` and `file{}` placeholders are resolved. A placeholder without a value and without a fallback fails the startup, unless it is optional (`env{?}`), and in prod mode the framework secrets must not be literal.
 
 As a rule of thumb: cookie secrets and keys, database and SMTP credentials should never sit in source control as clear text, since `config.yaml` is versioned right alongside your application code and gets the same read access as everything else in the repository.
 

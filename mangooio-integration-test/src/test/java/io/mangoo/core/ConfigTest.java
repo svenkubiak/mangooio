@@ -581,6 +581,127 @@ class ConfigTest {
         }
     }
 
+    private static String unsetKey() {
+        return "application.optional." + CommonUtils.uuidV6().replace("-", "");
+    }
+
+    @Test
+    void testOptionalEnvWithoutVariableLeavesTheKeyUnset() {
+        //given
+        String key = unsetKey();
+
+        //when
+        createTempConfig(ImmutableMap.of(key, "env{?}"));
+        Config config = new Config();
+        config.validate();
+
+        //then
+        assertThat(config.getAllConfigurations().containsKey(key), equalTo(false));
+        assertThat(config.getErrors(), empty());
+    }
+
+    @Test
+    void testOptionalArgWithEmptyValueLeavesTheKeyUnset() {
+        //given
+        String key = unsetKey();
+        System.setProperty(key, "");
+        try {
+            //when
+            createTempConfig(ImmutableMap.of(key, "arg{?}"));
+            Config config = new Config();
+
+            //then
+            assertThat(config.getAllConfigurations().containsKey(key), equalTo(false));
+            assertThat(config.getErrors(), empty());
+        } finally {
+            System.clearProperty(key);
+        }
+    }
+
+    @Test
+    void testOptionalArgWithValueIsExternal() {
+        //given
+        System.setProperty(Key.SMTP_PASSWORD, "from-arg");
+        try {
+            //when
+            createTempConfig(ImmutableMap.of("smtp.password", "arg{?}"));
+            Config config = new Config();
+
+            //then
+            assertThat(config.getSmtpPassword(), equalTo("from-arg"));
+            assertThat(config.getLiteralSecrets(), empty());
+        } finally {
+            System.clearProperty(Key.SMTP_PASSWORD);
+        }
+    }
+
+    @Test
+    void testOptionalFileWithoutFileLeavesTheKeyUnset() throws IOException {
+        //given
+        Path secrets = secrets(Map.of());
+
+        //when
+        createTempConfig(ImmutableMap.of("smtp.password", "file{?}"));
+        Config config = new Config(secrets);
+
+        //then
+        assertThat(config.getSmtpPassword(), nullValue());
+        assertThat(config.getErrors(), empty());
+    }
+
+    @Test
+    void testOptionalPlaceholderKeepsTheDefault() {
+        //when
+        createTempConfig(ImmutableMap.of(
+                "smtp.protocol", "arg{?}",
+                "smtp.from", "arg{?}",
+                "smtp.port", "arg{?}",
+                "persistence.mongo.host", "arg{?}",
+                "persistence.mongo.url", "arg{?}"));
+        Config config = new Config();
+
+        //then an unset optional value never replaces the default with an empty string
+        assertThat(config.getSmtpProtocol(), equalTo(Default.SMTP_PROTOCOL));
+        assertThat(config.getSmtpFrom(), equalTo(Default.SMTP_FROM));
+        assertThat(config.getSmtpPort(), equalTo(Default.SMTP_PORT));
+        assertThat(config.getMongoHost(Default.PERSISTENCE_PREFIX), equalTo(Default.PERSISTENCE_MONGO_HOST));
+        assertThat(config.getMongoUrl(Default.PERSISTENCE_PREFIX), nullValue());
+    }
+
+    @Test
+    void testRequiredPlaceholderStillFails() {
+        //given
+        String key = unsetKey();
+
+        //when
+        createTempConfig(ImmutableMap.of(key, "env{}"));
+        Config config = new Config();
+        config.validate();
+
+        //then
+        assertThat(config.isValid(), equalTo(false));
+    }
+
+    @Test
+    void testEmptySecretIsNotLiteral() {
+        //when
+        createTempConfig(ImmutableMap.of("smtp.password", "", "persistence.mongo.password", "  "));
+        Config config = new Config();
+
+        //then
+        assertThat(config.getLiteralSecrets(), empty());
+    }
+
+    @Test
+    void testLiteralSecretIsStillDetected() {
+        //when
+        createTempConfig(ImmutableMap.of("smtp.password", "geheim"));
+        Config config = new Config();
+
+        //then
+        assertThat(config.getLiteralSecrets(), contains("smtp.password"));
+    }
+
     @Test
     void testIsSecret() {
         // then

@@ -10,6 +10,20 @@ Production applications need secrets that must never end up in the artifact or i
 
 Every placeholder accepts a fallback in the braces, `env{fallback}`, which is used only if the source has no value. A placeholder without a value and without a fallback fails the startup and names the key, so a missing secret is noticed at deploy time and not on the first request. Use fallbacks only for values that are not secret; a secret written as fallback sits in `config.yaml` again.
 
+For a value that may be missing, write `env{?}`, `arg{?}` or `file{?}`. If the source is not set or empty, the key stays unset, as if it were not in `config.yaml`, and the default of the framework applies. An empty source never replaces a default with an empty string, so an empty `SMTP_PROTOCOL` keeps `smtps` and an empty `PERSISTENCE_MONGO_URL` falls back to `host` and `port`:
+
+```yaml
+smtp:
+  host: env{?}
+  username: env{?}
+  password: env{?}
+persistence:
+  mongo:
+    url: env{?}
+```
+
+To find out whether an optional value was given, read it without a default, for example `config.getString(Key.SMTP_HOST)`, which returns `null` while `getSmtpHost()` returns the default `localhost`.
+
 Mounted secret files are the safest of the three sources: environment variables are visible in `/proc/<pid>/environ`, `docker inspect` and the pod spec and are inherited by child processes, a file on a tmpfs mount is not.
 
 ## Secrets in prod
@@ -21,7 +35,7 @@ In prod mode the framework secrets must come from one of the placeholders. A lit
 - `persistence.mongo.password` and `persistence.<prefix>.mongo.password`, `smtp.password`
 - `connector.https.password`
 
-A fallback in the braces counts as literal. A `config.yaml` passed with `-Dapplication.config` lives outside the JAR and may contain literal values. `application.admin.password` is an Argon2id hash and may stay literal. In dev and test literal values are allowed, a project created with the archetype ships generated secrets for both.
+A fallback in the braces counts as literal, an empty value does not, as it holds no secret. A `config.yaml` passed with `-Dapplication.config` lives outside the JAR and may contain literal values. `application.admin.password` is an Argon2id hash and may stay literal. In dev and test literal values are allowed, a project created with the archetype ships generated secrets for both.
 
 The cookie secrets and keys fall back to `application.secret`, so the minimal prod setup is a single `APPLICATION_SECRET`; the startup warns as long as a cookie uses it, as dedicated values per cookie are recommended.
 
