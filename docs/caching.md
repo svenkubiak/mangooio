@@ -40,17 +40,19 @@ Map<String, Object> batch = cache.getAll("a", "b");
 ## Counters
 
 ```java
-cache.getAndIncrementCounter("logins");
-cache.getAndDecrementCounter("logins");
-cache.getCounter("logins");
+long logins = cache.increment("logins");   // new value, a missing counter starts at 0
+cache.decrement("logins");
+cache.getCounter("logins");                // 0 if the counter does not exist
 cache.resetCounter("logins");
 ```
+
+`increment` and `decrement` are atomic, concurrent calls are never lost, also not for a counter that does not exist yet. A counter is a `Long` value under its key; calling them on a key that holds another value throws an `IllegalStateException`. Like every value, a counter expires with the cache, or earlier if it was put with an expiry.
 
 ## Named caches
 
 The application cache (`CacheName.APPLICATION`) is the default `Cache` injection; it evicts 30 days after write and holds 50 000 keys. Failed login attempts, one-time claims and token revocations are not kept in a cache but in the `AttemptStore`, `OneTimeStore` and `TokenBlacklist`, which are shared through MongoDB when persistence is enabled, see [Operating](operating.md#running-several-instances).
 
-The cache is local to each instance. If entries must be shared between several instances, bind your own `Cache` implementation in `app.Module`; its counter methods return a local `AtomicInteger` and can not be shared that way.
+The cache is local to each instance. If entries must be shared between several instances, bind your own `Cache` implementation in `app.Module`, for example backed by Redis; the counters map to atomic operations such as `INCRBY`. mangoo I/O ships no shared cache on purpose: a cache in the same MongoDB as the data saves no round trip, and a value of any type can not be read back from it without knowing its class.
 
 ```java
 @Inject

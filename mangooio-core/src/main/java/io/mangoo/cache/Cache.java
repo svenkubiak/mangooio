@@ -3,7 +3,6 @@ package io.mangoo.cache;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public interface Cache {
@@ -27,21 +26,22 @@ public interface Cache {
     void putAll(Map<String, Object> map);
     
     /**
-     * Creates the counter if it does not exist.
+     * Atomically adds one to the counter and returns the new value; a missing counter starts at 0.
+     * Throws IllegalStateException if the key holds a value that is not a counter.
      */
-    AtomicInteger getAndIncrementCounter(String key);
-    
-    /**
-     * Creates the counter if it does not exist.
-     */
-    AtomicInteger getAndDecrementCounter(String key);
+    long increment(String key);
 
     /**
-     * Returns null if no counter exists.
+     * Atomically subtracts one from the counter and returns the new value; a missing counter starts at 0.
+     * Throws IllegalStateException if the key holds a value that is not a counter.
      */
-    AtomicInteger getCounter(String key);
+    long decrement(String key);
 
-    AtomicInteger resetCounter(String key);
+    /** Returns 0 if no counter exists. */
+    long getCounter(String key);
+
+    /** Removes the counter, it starts at 0 again. */
+    void resetCounter(String key);
 
     /**
      * Calls the fallback if the key is not cached and caches its result under the key with the given expiry; a null result is returned but not cached.

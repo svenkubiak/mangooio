@@ -309,4 +309,10 @@ public class ApplicationTest {
         var factory = (org.apache.logging.log4j.core.impl.Log4jContextFactory) org.apache.logging.log4j.LogManager.getFactory();
         assertThat(factory.isShutdownHookEnabled(), equalTo(false));
     }
+
+    @Test
+    void testInstanceIdIsAvailableToLogPatterns() {
+        //then
+        assertThat(System.getProperty(Application.INSTANCE_ID_PROPERTY), equalTo(Application.getInstanceId()));
+    }
 }

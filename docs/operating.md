@@ -134,14 +134,14 @@ Behind a reverse proxy or load balancer the client address of a request and the 
 
 ## Running several instances
 
-Several instances of one application can run behind a load balancer. Session, flash, form and CSRF token live in signed and encrypted cookies and authentication cookies are stateless, so a request can reach any instance. Every instance logs its instance id at startup, the hostname with a random suffix, and the admin dashboard and the OpenTelemetry resource (`service.instance.id`) carry it as well.
+Several instances of one application can run behind a load balancer. Session, flash, form and CSRF token live in signed and encrypted cookies and authentication cookies are stateless, so a request can reach any instance. Every instance logs its instance id at startup, the hostname with a random suffix, and the admin dashboard and the OpenTelemetry resource (`service.instance.id`) carry it as well; add it to the log pattern with `${sys:mangooio.instance.id}`, see [Logging](logging.md). The dashboard metrics are per instance, the OpenTelemetry metrics are aggregated by the collector, see [Observability](observability.md).
 
 * **Secrets**: all instances need the same secrets; pass them with `env{}`, `arg{}` or `file{}`, see [Secrets](secrets.md).
 * **Clocks**: authentication cookies are validated with the clock of the instance and a tolerance of 30 seconds, so keep the clocks in sync with NTP.
 * **MongoDB**: use one external MongoDB for all instances. Embedded MongoDB starts a separate database per instance, the application warns about it in prod mode. A replica set or sharded cluster is configured with `persistence.mongo.url`, see [Persistence](persistence.md).
 * **Scheduler**: `@Run` runs on every instance. A job that must run once per schedule has no `@Run`; expose it as a route protected for example with `ApiKeyFilter` and call it from an external trigger such as a Kubernetes `CronJob` through the load balancer. Delivery is at least once, a retry after a timeout runs the job again, so keep such jobs idempotent and start long jobs asynchronously with a `202` response. Set `scheduler.enable: false` only if no job has to run on every instance.
 * **Startup logic**: `applicationStarted()` runs on every instance at the same time, so migrations and seed data must tolerate concurrent runs.
-* **Cache**: the application cache is local to each instance. Bind your own `Cache` implementation if entries must be shared.
+* **Cache**: the application cache is local to each instance. Bind your own `Cache` implementation, for example backed by Redis, if entries or counters must be shared.
 * **EventBus**: events are processed by the subscribers of the instance that published them.
 * **Server-Sent Events**: an event sent with `ServerSentEventManager` reaches the clients of every instance through the `MessageBroker` (capped collection `mangooio_messages`, best effort, no replay); the connections stay local to an instance.
 * **WebSockets**: the framework holds no WebSocket connections. Use `io.mangoo.interfaces.MessageBroker` to publish to all instances and subscribe on each instance to forward to its own connections.

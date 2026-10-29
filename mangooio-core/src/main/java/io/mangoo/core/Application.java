@@ -101,9 +101,13 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
 
 public final class Application {
-    // Log4j would stop logging in its own shutdown hook, in parallel to Shutdown, which stops Log4j as its last step
+    public static final String INSTANCE_ID_PROPERTY = "mangooio.instance.id";
+    private static final String INSTANCE_ID = instanceId(hostname());
+    // Log4j would stop logging in its own shutdown hook, in parallel to Shutdown, which stops Log4j as its last step.
+    // The instance id is set before Log4j reads its configuration, so a pattern can use ${sys:mangooio.instance.id}.
     static {
         System.setProperty("log4j2.shutdownHookEnabled", "false");
+        System.setProperty(INSTANCE_ID_PROPERTY, INSTANCE_ID);
     }
     private static final Log4jListener LOG4J_LISTENER = new Log4jListener();
     static {
@@ -111,7 +115,6 @@ public final class Application {
     }
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final long START = System.currentTimeMillis();
-    private static final String INSTANCE_ID = instanceId(hostname());
     private static final List<WebSocketProtocolHandshakeHandler> WEB_SOCKET_HANDLERS = new CopyOnWriteArrayList<>();
     private static final int SECRET_BIT_LENGTH = 512;
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
@@ -783,6 +786,10 @@ public final class Application {
             httpHandler = MetricsHandler.HANDLER_WRAPPER.wrap(ExceptionHandler.wrap(pathHandler));
         } else {
             httpHandler = ExceptionHandler.wrap(pathHandler);
+        }
+
+        if (config.isOtlpEnable()) {
+            httpHandler = new TelemetryHandler(httpHandler);
         }
 
         gracefulShutdownHandler = new GracefulShutdownHandler(proxy(httpHandler, config.isConnectorProxy()));

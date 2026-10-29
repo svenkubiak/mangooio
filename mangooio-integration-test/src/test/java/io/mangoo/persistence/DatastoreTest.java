@@ -340,4 +340,33 @@ class DatastoreTest {
         assertThat(closable.isHealthy(), equalTo(false));
         assertThat(datastore.isHealthy(), equalTo(true));
     }
+
+    @Test
+    void testConcurrentFirstCallsForAPrefixShareOneDatastore() throws Exception {
+        //given
+        var provider = Application.getInstance(DatastoreProvider.class);
+        String prefix = "concurrent" + CommonUtils.uuidV6().replace("-", "");
+        var start = new java.util.concurrent.CountDownLatch(1);
+        java.util.Set<Datastore> datastores = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+        //when
+        try (var executor = java.util.concurrent.Executors.newFixedThreadPool(20)) {
+            var futures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
+            for (var i = 0; i < 20; i++) {
+                futures.add(executor.submit(() -> {
+                    start.await();
+                    datastores.add(provider.getDatastore(prefix));
+                    return null;
+                }));
+            }
+            start.countDown();
+            for (var future : futures) {
+                future.get();
+            }
+        }
+
+        //then
+        assertThat(datastores.size(), equalTo(1));
+        ((DatastoreImpl) datastores.iterator().next()).close();
+    }
 }

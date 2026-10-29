@@ -50,6 +50,23 @@ With persistence enabled, failed login budgets, used TOTP codes, the admin pre-a
 
 With persistence enabled, `ServerSentEventManager.send` reaches the connections on every instance through the new `MessageBroker` and the capped collection `mangooio_messages`. A collection of that name that is not capped fails the startup.
 
+### Cache counters
+
+The counter methods of `Cache` are atomic and return the new value as `long`, so a shared implementation can provide them:
+
+| 10.x | 11.0 |
+|---|---|
+| `getAndIncrementCounter(key)` returning `AtomicInteger` | `increment(key)` returning `long` |
+| `getAndDecrementCounter(key)` returning `AtomicInteger` | `decrement(key)` returning `long` |
+| `getCounter(key)`, `null` without counter | `getCounter(key)`, `0` without counter |
+| `resetCounter(key)` returning `AtomicInteger` | `resetCounter(key)` |
+
+An own `Cache` implementation has to implement the new methods.
+
+### OpenTelemetry
+
+`service.name` is `application.name` instead of `io.mangoo`; dashboards and alerts that filter on the old name need to be adapted. With `otlp.enable` the metric `http.server.request.duration` is exported in addition to the traces, to the same endpoint.
+
 ### Bindings and shutdown
 
 * A binding in `app.Module` replaces the framework binding of the same type instead of failing as a duplicate.

@@ -11,6 +11,8 @@ Unreleased
 * **Behaviour change** Failed login budgets, admin pre-authentication and token revocations are kept in MongoDB and shared by all instances when persistence is enabled; MongoDB 4.2 is required (svenkubiak)
 * **Behaviour change** isValidSecondFactor and the admin login accept each TOTP code once (svenkubiak)
 * **Behaviour change** Removed AuthenticationLock and CacheName.AUTH (svenkubiak)
+* **Behaviour change** Cache counters are atomic and return long: increment, decrement, getCounter, resetCounter replace getAndIncrementCounter and getAndDecrementCounter (svenkubiak)
+* **Behaviour change** OpenTelemetry uses application.name as service.name instead of io.mangoo (svenkubiak)
 * Removed all deprecated methods (svenkubiak)
 * Migrated from Jackson 2 to Jackson 3 (svenkubiak)
 * Added support for MongoDB connection strings - replica sets, sharded clusters, SRV (svenkubiak)
@@ -24,11 +26,14 @@ Unreleased
 * Added generated dev and test secrets to the archetype (svenkubiak)
 * Added AttemptStore, OneTimeStore and TotpUtils.verifyTotp(identifier, secret, totp) (svenkubiak)
 * Added MessageBroker, server sent events reach the clients of every instance when persistence is enabled (svenkubiak)
+* Added the OpenTelemetry metric http.server.request.duration when otlp.enable is true (svenkubiak)
+* Added the instance id as system property mangooio.instance.id for log patterns (svenkubiak)
 * Fixed a revoked authentication cookie being accepted again within the JWT clock skew after its expiry (svenkubiak)
 * Fixed MongoDB clients not being closed and embedded MongoDB being stopped before Undertow on shutdown (svenkubiak)
 * Fixed the admin login with a second factor failing when the two steps reached different instances (svenkubiak)
 * Fixed a hashing overload failing the admin login with an error instead of refusing it without counting the attempt (svenkubiak)
 * Fixed the shutdown losing its log output, as Log4j stopped in its own shutdown hook (svenkubiak)
+* Fixed concurrent first calls of DatastoreProvider.getDatastore for a prefix creating a second MongoClient that was never closed (svenkubiak)
 
 ## Version 10.16.0
 

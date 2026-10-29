@@ -8,7 +8,6 @@ import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class CacheImpl implements Cache {
@@ -140,49 +139,47 @@ public class CacheImpl implements Cache {
     }
 
     @Override
-    public AtomicInteger getAndIncrementCounter(String key) {
+    public long increment(String key) {
+        return add(key, 1);
+    }
+
+    @Override
+    public long decrement(String key) {
+        return add(key, -1);
+    }
+
+    @Override
+    public long getCounter(String key) {
         Objects.requireNonNull(key, Required.KEY);
-        
-        AtomicInteger counter = get(key);
-        if (counter == null) {
-            counter = new AtomicInteger(0);
+
+        Object value = get(key);
+        return value == null ? 0 : counter(key, value);
+    }
+
+    @Override
+    public void resetCounter(String key) {
+        remove(key);
+    }
+
+    // merge is atomic, so concurrent increments of a new counter are not lost
+    private long add(String key, long delta) {
+        Objects.requireNonNull(key, Required.KEY);
+
+        // Drops a value whose expiry passed, so the counter starts again instead of continuing it
+        get(key);
+        Object value = caffeineCache.asMap().merge(key, delta, (current, ignored) -> counter(key, current) + delta);
+
+        return (Long) value;
+    }
+
+    private static long counter(String key, Object value) {
+        if (value instanceof Long counter) {
+            return counter;
         }
-        counter.incrementAndGet();
-        put(key, counter);
-        
-        return counter;
-    }
-    
-    @Override
-    public AtomicInteger getCounter(String key) {
-        Objects.requireNonNull(key, Required.KEY);
-        return get(key);
-    }
-    
-    @Override
-    public AtomicInteger resetCounter(String key) {
-        Objects.requireNonNull(key, Required.KEY);
 
-        var counter = new AtomicInteger(0);
-        put(key, counter);
-        
-        return counter;
+        throw new IllegalStateException("Key '" + key + "' holds a " + value.getClass().getName() + ", not a counter");
     }
 
-    @Override
-    public AtomicInteger getAndDecrementCounter(String key) {
-        Objects.requireNonNull(key, Required.KEY);
-
-        AtomicInteger counter = get(key);
-        if (counter == null) {
-            counter = new AtomicInteger(0);
-        }
-        counter.decrementAndGet();
-        put(key, counter);
-        
-        return counter;
-    }
-    
     public CacheStats getStats() {
         return caffeineCache.stats();
     }
