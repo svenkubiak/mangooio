@@ -38,7 +38,7 @@ String jwt = JwtUtils.createJwt(data);
 JWTClaimsSet claims = JwtUtils.parseJwt(jwt, data);
 ```
 
-Signing and encryption keys must be long enough for HS512 / AES respectively; prefer pulling those values from the [vault](secrets.md) rather than hardcoding them.
+Signing and encryption keys must be long enough for HS512 / AES respectively; prefer pulling those values from `env{}` or `file{}` (see [Secrets](secrets.md)) rather than hardcoding them.
 
 ## TotpUtils
 
@@ -91,4 +91,4 @@ Argument.requireNonBlank(value, "value");
 
 ## Crypto
 
-`io.mangoo.crypto.Crypto` encrypts with AES and can also wrap values with RSA (3072-bit, OAEP SHA-512). Inject it whenever you need application-level encryption that goes beyond what the vault already covers.
+`io.mangoo.crypto.Crypto` encrypts with AES and can also wrap values with RSA (3072-bit, OAEP SHA-512). Inject it whenever you need application-level encryption that goes beyond the signed and encrypted cookies.

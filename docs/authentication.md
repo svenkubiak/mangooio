@@ -126,7 +126,7 @@ That last point still leaves the final decision to you: `origin` is a value a vi
 
 Route protection covers controller routes only. SSE and WebSocket routes are registered straight on Undertow's path handler and never reach the authentication check, so `withAuthentication()` does not exist on them and no cookie is verified when a client connects. See [Routing](routing.md) for what that means in practice.
 
-Cookie names, SameSite, Secure, signing keys, and lifetimes are described in [Configuration](configuration.md). Prefer `vault{}` for `authentication.cookie.key` and `authentication.cookie.secret` rather than writing them out in `config.yaml`. See [Secrets](secrets.md).
+Cookie names, SameSite, Secure, signing keys, and lifetimes are described in [Configuration](configuration.md). Set `authentication.cookie.key` and `authentication.cookie.secret` with `env{}`, `arg{}` or `file{}` rather than writing them out in `config.yaml`; in prod mode literal values fail the startup. See [Secrets](secrets.md).
 
 ## Two-factor authentication
 

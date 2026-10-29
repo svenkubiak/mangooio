@@ -2,7 +2,7 @@
 
 Almost all runtime behavior is controlled through one YAML file: `src/main/resources/config.yaml`. mangoo I/O loads it with [SnakeYAML](https://bitbucket.org/snakeyaml/snakeyaml/src/master/), flattens the nested keys into dot notation, and exposes them through the `Config` class and Guice `@Named` bindings. There is deliberately no second configuration mechanism (no properties files, no XML, no `@ConfigurationProperties` classes to keep in sync); if a setting exists, it lives in this one file, which makes it realistic to actually read the whole configuration of an application in one sitting.
 
-Typical uses include connector host and port, cookie names, MongoDB connection details, SMTP settings, feature toggles (admin UI, metrics, scheduler), and security options (CORS, authentication redirects). Sensitive values should reference the [vault](secrets.md), environment variables, or JVM properties rather than plain text in the repository, since `config.yaml` normally ends up committed to source control.
+Typical uses include connector host and port, cookie names, MongoDB connection details, SMTP settings, feature toggles (admin UI, metrics, scheduler), and security options (CORS, authentication redirects). Sensitive values should reference environment variables, JVM properties or [secret files](secrets.md) rather than plain text in the repository, since `config.yaml` normally ends up committed to source control.
 
 The file is split into a **`default`** block (shared by all modes) and an **`environments`** block with overrides for `dev`, `test`, and `prod`. When the application starts, it merges `default` with the section for the active mode, key by key, so a key you only set in `default` still applies everywhere, and a key you also set under `environments.prod` overrides it just for production. Missing an environment section for the active mode causes startup to fail on purpose. That may feel strict the first time it happens, but it exists to catch the case where someone adds a `staging` environment, forgets to add matching config, and the app would otherwise silently fall back to defaults in a place where nobody is watching.
 
@@ -101,9 +101,9 @@ The active environment block is required, even if it only overrides a single key
 
 ## Secrets, environment variables, and JVM arguments
 
-Configuration values can also come from the application vault, environment variables, or JVM arguments instead of being written out in plain text. See [Secrets](secrets.md) for how `vault{}`, `env{}`, and `arg{}` placeholders are resolved.
+Configuration values can also come from environment variables, JVM arguments or secret files instead of being written out in plain text. See [Secrets](secrets.md) for how `env{}`, `arg{}` and `file{}` placeholders are resolved. A placeholder without a value and without a fallback fails the startup, and in prod mode the framework secrets must not be literal.
 
-As a rule of thumb: cookie signing keys, the vault password, and SMTP credentials should never sit in source control as clear text, since `config.yaml` is versioned right alongside your application code and gets the same read access as everything else in the repository.
+As a rule of thumb: cookie secrets and keys, database and SMTP credentials should never sit in source control as clear text, since `config.yaml` is versioned right alongside your application code and gets the same read access as everything else in the repository.
 
 ## Connectors
 
@@ -118,11 +118,11 @@ default:
     https:
       host: localhost
       port: 8443
-      certificate:
-        alias: certificate
+      keystore: /etc/myapp/https.p12
+      password: file{}
 ```
 
-HTTPS uses an SSL context built from the [vault](secrets.md). The certificate alias defaults to `certificate`, which only matters if you store more than one certificate in the same keystore.
+HTTPS reads key and certificate chain from the PKCS12 file in `connector.https.keystore`, see [Secrets](secrets.md#https-certificates). `connector.https.certificate.alias` is only needed if the file holds more than one key entry.
 
 ## Default values
 
@@ -143,11 +143,9 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `application.named` | Example named Guice binding | *(none)* |
 | `application.parameter.strict` | Reject requests whose query parameter collides with a route parameter with a `400` | `false` |
 | `application.secret` | Application secret; fallback for cookie secrets and keys (exactly 64 bytes) | *(none)* |
+| `application.shutdown.timeout` | Time in **seconds** the shutdown waits in total for open requests and running scheduled tasks, see [Graceful shutdown](operating.md#graceful-shutdown) | `20` |
 | `application.timezone` | Application timezone | `UTC` |
 | `application.validation.passthrough` | Return Bean Validation errors as JSON instead of a rendered form | `false` |
-| `application.vault.enable` | Enable the PKCS12 vault | *(none)* |
-| `application.vault.path` | Directory of `vault.p12` in prod | *(none)* |
-| `application.vault.secret` | Vault password (min. 64 characters) | *(none)* |
 | `authentication.blacklist` | Enable revocation of authentication cookies, see [Blacklist](authentication.md#blacklist) | `false` |
 | `authentication.cookie.name` | Authentication cookie name | `mangooio-auth` |
 | `authentication.cookie.key` | JWT signing key (min. 64 bytes); falls back to `application.secret` | *(none)* |
@@ -170,7 +168,10 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `connector.http.port` | HTTP port | *(none)* |
 | `connector.https.host` | HTTPS bind address | *(none)* |
 | `connector.https.port` | HTTPS port | *(none)* |
-| `connector.https.certificate.alias` | Vault certificate alias | `certificate` |
+| `connector.https.certificate.alias` | Alias of the key entry in the keystore; only needed if it holds more than one | *(none)* |
+| `connector.https.keystore` | PKCS12 file with key and certificate chain of the HTTPS connector | *(none)* |
+| `connector.https.password` | Password of the keystore and its key entry | *(none)* |
+| `connector.proxy` | Take client address and scheme from the `X-Forwarded-*` headers; only enable behind a trusted proxy that overwrites them | `false` |
 | `cors.alloworigin` | Regex for `Access-Control-Allow-Origin` | `^http(s)?://(www\.)?example\.(com\|org)$` |
 | `cors.enable` | Send CORS headers | `false` |
 | `cors.headers.allowcredentials` | `Access-Control-Allow-Credentials` | `true` |

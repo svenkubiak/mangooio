@@ -8,7 +8,6 @@ import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.crypto.Vault;
 import io.mangoo.persistence.DatastoreProvider;
 import io.mangoo.persistence.interfaces.Datastore;
 import org.apache.commons.lang3.StringUtils;
@@ -16,8 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.TimeZone;
 
 public class Module extends AbstractModule {
-    private final Vault vault = new Vault();
-    public final Config config = new Config(vault);
+    public final Config config = new Config();
     private EmbeddedMongoDB embeddedMongoDB;
 
     public Module() {
@@ -42,7 +40,6 @@ public class Module extends AbstractModule {
     protected void configure() {
         Names.bindProperties(binder(), config.toProperties());
 
-        bind(Vault.class).toInstance(vault);
         bind(Config.class).toInstance(config);
         bind(Cache.class).toProvider(CacheProvider.class);
         bind(Datastore.class).toProvider(DatastoreProvider.class);

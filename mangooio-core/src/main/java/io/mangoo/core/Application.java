@@ -6,6 +6,7 @@ import com.cronutils.parser.CronParser;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.*;
 import com.google.inject.Module;
+import com.google.inject.util.Modules;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.CollationStrength;
@@ -25,7 +26,6 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.Required;
 import io.mangoo.crypto.PasswordHasher;
-import io.mangoo.crypto.Vault;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Sort;
 import io.mangoo.interfaces.MangooBootstrap;
@@ -48,12 +48,18 @@ import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
+import io.undertow.server.handlers.GracefulShutdownHandler;
+import io.undertow.server.handlers.ProxyPeerAddressHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 import io.undertow.util.Methods;
 import io.undertow.websockets.WebSocketConnectionCallback;
+import io.undertow.websockets.WebSocketProtocolHandshakeHandler;
+import io.undertow.websockets.core.CloseMessage;
+import io.undertow.websockets.core.WebSocketChannel;
+import io.undertow.websockets.core.WebSockets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,15 +67,26 @@ import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.logging.log4j.util.Strings;
 import org.bson.conversions.Bson;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -83,6 +100,8 @@ public final class Application {
     }
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final long START = System.currentTimeMillis();
+    private static final String INSTANCE_ID = instanceId(hostname());
+    private static final List<WebSocketProtocolHandshakeHandler> WEB_SOCKET_HANDLERS = new CopyOnWriteArrayList<>();
     private static final int SECRET_BIT_LENGTH = 512;
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
@@ -119,7 +138,9 @@ public final class Application {
     private static Mode mode;
     private static Injector injector;
     private static PathHandler pathHandler;
+    private static GracefulShutdownHandler gracefulShutdownHandler;
     private static boolean started;
+    private static volatile boolean ready;
     private static int httpPort;
     private static int httpsPort;
 
@@ -163,6 +184,7 @@ public final class Application {
             showTimezone();
             showLogo();
             started = true;
+            ready = true;
         }
     }
 
@@ -410,6 +432,10 @@ public final class Application {
         }
     }
 
+    static boolean isEmbeddedInProd(Mode mode, boolean persistence, Boolean embedded) {
+        return mode == Mode.PROD && persistence && Boolean.TRUE.equals(embedded);
+    }
+
     static boolean isRootForbidden(String uid, Mode mode) {
         return "0".equals(StringUtils.trim(uid)) && mode == Mode.PROD;
     }
@@ -462,7 +488,9 @@ public final class Application {
     }
 
     public static void stopUndertow() {
-        undertow.stop();
+        if (undertow != null) {
+            undertow.stop();
+        }
     }
 
     private static void prepareMode(Mode providedMode) {
@@ -598,6 +626,12 @@ public final class Application {
             LOG.warn(warning);
         }
 
+        if (isEmbeddedInProd(mode, config.isPersistenceEnabled(), config.isMongoEmbedded(Default.PERSISTENCE_PREFIX))) {
+            var warning = "Embedded MongoDB is enabled in prod mode. Every instance starts its own database and shares no state with other instances. It is highly recommended to use an external MongoDB in a production environment.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
         getInstance(CacheProvider.class)
                 .getCache(CacheName.APPLICATION)
                 .put(Key.MANGOOIO_WARNINGS, warnings);
@@ -636,7 +670,9 @@ public final class Application {
 
         Router.getWebSocketRoutes().forEach((WebSocketRoute webSocketRoute) -> {
                     Class<? extends WebSocketConnectionCallback> clazz = webSocketRoute.getHandler();
-                    pathHandler.addExactPath(webSocketRoute.getUrl(), Handlers.websocket(getInstance(clazz)));
+                    WebSocketProtocolHandshakeHandler webSocketHandler = Handlers.websocket(getInstance(clazz));
+                    WEB_SOCKET_HANDLERS.add(webSocketHandler);
+                    pathHandler.addExactPath(webSocketRoute.getUrl(), webSocketHandler);
                 }
         );
 
@@ -692,7 +728,6 @@ public final class Application {
 
     private static void prepareUndertow() {
         var config = getInstance(Config.class);
-        var vault = getInstance(Vault.class);
 
         HttpHandler httpHandler;
         if (config.isMetricsEnable()) {
@@ -701,11 +736,14 @@ public final class Application {
             httpHandler = ExceptionHandler.wrap(pathHandler);
         }
 
+        gracefulShutdownHandler = new GracefulShutdownHandler(proxy(httpHandler, config.isConnectorProxy()));
+
+        // The probes are answered outside the graceful shutdown, so liveness stays healthy while requests drain
         var builder = Undertow.builder()
                 .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getUndertowMaxEntitySize())
                 .setServerOption(UndertowOptions.MAX_PARAMETERS, Default.UNDERTOW_MAX_PARAMETERS)
                 .setServerOption(UndertowOptions.MAX_HEADER_SIZE, Default.UNDERTOW_MAX_HEADER_SIZE)
-                .setHandler(httpHandler);
+                .setHandler(new HealthHandler(gracefulShutdownHandler, Application::isReady));
 
         httpHost = config.getConnectorHttpHost();
         httpPort = config.getConnectorHttpPort();
@@ -719,8 +757,21 @@ public final class Application {
         }
 
         if (httpsPort > 0 && StringUtils.isNotBlank(httpsHost)) {
-            builder.addHttpsListener(httpsPort, httpsHost, vault.getSSLContext(config.getConnectorHttpsCertificateAlias()));
-            hasConnector = true;
+            if (StringUtils.isBlank(config.getConnectorHttpsKeystore())) {
+                LOG.error("The HTTPS connector requires a PKCS12 file with key and certificate in {}", Key.CONNECTOR_HTTPS_KEYSTORE);
+                failsafe();
+            }
+
+            try {
+                builder.addHttpsListener(httpsPort, httpsHost, sslContext(
+                        Path.of(config.getConnectorHttpsKeystore()),
+                        StringUtils.defaultString(config.getConnectorHttpsPassword()).toCharArray(),
+                        config.getConnectorHttpsCertificateAlias()));
+                hasConnector = true;
+            } catch (IllegalStateException e) {
+                LOG.error("Failed to create the HTTPS connector", e);
+                failsafe();
+            }
         }
 
         if (hasConnector) {
@@ -754,7 +805,7 @@ public final class Application {
             LOG.info("HTTPS connector listening @{}:{}", httpsHost, httpsPort);
         }
 
-        LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", System.currentTimeMillis() - START, mode);
+        LOG.info("mangoo I/O application started in {} ms in {} mode as instance '{}'. Enjoy.", System.currentTimeMillis() - START, mode, INSTANCE_ID);
     }
 
     // Secrets are used as dir/A256CBC_HS512 key, which requires exactly 512 bit; any other length fails at runtime.
@@ -784,8 +835,7 @@ public final class Application {
         final List<Module> modules = new ArrayList<>();
         try {
             module = new io.mangoo.core.Module();
-            modules.add(module);
-            modules.add((AbstractModule) Class.forName(MODULE_CLASS).getConstructor().newInstance());
+            modules.add(override(module, (AbstractModule) Class.forName(MODULE_CLASS).getConstructor().newInstance()));
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                  | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             LOG.error("Failed to load modules. Check that app/Module.java exists in your application", e);
@@ -793,6 +843,121 @@ public final class Application {
         }
 
         return modules;
+    }
+
+    /** Throws IllegalStateException if the file can not be read or holds no usable key entry. */
+    static SSLContext sslContext(Path keystore, char[] password, String alias) {
+        Objects.requireNonNull(keystore, "keystore can not be null");
+        Objects.requireNonNull(password, Required.PASSWORD);
+
+        try (var inputStream = Files.newInputStream(keystore)) {
+            var keyStore = KeyStore.getInstance("PKCS12");
+            keyStore.load(inputStream, password);
+
+            String keyAlias = StringUtils.isNotBlank(alias) ? alias : singleKeyAlias(keyStore, keystore);
+            if (!keyStore.isKeyEntry(keyAlias) || keyStore.getCertificateChain(keyAlias) == null) {
+                throw new IllegalStateException(keystore + " has no key entry with a certificate under the alias '" + keyAlias + "'");
+            }
+
+            // Only the selected entry is handed to the key manager, so other entries of the file can not be picked
+            var selected = KeyStore.getInstance("PKCS12");
+            selected.load(null, null);
+            selected.setKeyEntry(keyAlias, keyStore.getKey(keyAlias, password), password, keyStore.getCertificateChain(keyAlias));
+
+            var keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            keyManagerFactory.init(selected, password);
+
+            var sslContext = SSLContext.getInstance("TLSv1.3");
+            sslContext.init(keyManagerFactory.getKeyManagers(), null, new SecureRandom());
+
+            return sslContext;
+        } catch (IOException | GeneralSecurityException e) {
+            throw new IllegalStateException("Failed to load the HTTPS keystore " + keystore, e);
+        }
+    }
+
+    private static String singleKeyAlias(KeyStore keyStore, Path keystore) throws KeyStoreException {
+        List<String> aliases = new ArrayList<>();
+        for (String alias : Collections.list(keyStore.aliases())) {
+            if (keyStore.isKeyEntry(alias)) {
+                aliases.add(alias);
+            }
+        }
+
+        if (aliases.size() != 1) {
+            throw new IllegalStateException(keystore + " holds " + aliases.size() + " key entries, set " + Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
+        }
+
+        return aliases.getFirst();
+    }
+
+    // A binding of the application replaces the core binding of the same key instead of failing as a duplicate
+    static Module override(Module core, Module application) {
+        Objects.requireNonNull(core, "core module can not be null");
+        Objects.requireNonNull(application, "application module can not be null");
+
+        return Modules.override(core).with(application);
+    }
+
+    static HttpHandler proxy(HttpHandler next, boolean enabled) {
+        return enabled ? new ProxyPeerAddressHandler(next) : next;
+    }
+
+    static String instanceId(String hostname) {
+        var bytes = new byte[3];
+        new SecureRandom().nextBytes(bytes);
+
+        return StringUtils.defaultIfBlank(StringUtils.trim(hostname), "mangooio") + "-" + HexFormat.of().formatHex(bytes);
+    }
+
+    private static String hostname() {
+        var hostname = System.getenv("HOSTNAME");
+        if (StringUtils.isBlank(hostname)) {
+            try {
+                hostname = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                hostname = null;
+            }
+        }
+
+        return hostname;
+    }
+
+    /** Hostname with a random suffix, unique for every start of the process. */
+    public static String getInstanceId() {
+        return INSTANCE_ID;
+    }
+
+    /** True once the startup is complete and until the shutdown begins. */
+    public static boolean isReady() {
+        return ready;
+    }
+
+    static void markShuttingDown() {
+        ready = false;
+    }
+
+    static void closeWebSockets() {
+        closeWebSockets(WEB_SOCKET_HANDLERS);
+    }
+
+    // Clients reconnect to another instance instead of losing the connection when Undertow stops
+    static void closeWebSockets(List<WebSocketProtocolHandshakeHandler> handlers) {
+        for (WebSocketProtocolHandshakeHandler handler : handlers) {
+            for (WebSocketChannel channel : handler.getPeerConnections()) {
+                WebSockets.sendClose(CloseMessage.GOING_AWAY, "Server shutdown", channel, null);
+            }
+        }
+    }
+
+    /** Rejects new requests with 503 and waits for the open ones; false if they did not finish in time. */
+    static boolean drain(long timeoutMillis) throws InterruptedException {
+        if (gracefulShutdownHandler == null) {
+            return true;
+        }
+
+        gracefulShutdownHandler.shutdown();
+        return gracefulShutdownHandler.awaitShutdown(Math.max(0, timeoutMillis));
     }
 
     private static void applicationStarted() {

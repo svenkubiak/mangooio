@@ -134,7 +134,8 @@ public class DatastoreImpl implements Datastore {
                     .getDatabase(config.getMongoDbName(prefix))
                     .runCommand(new BsonDocument("ping", new BsonInt64(1)));
             return true;
-        } catch (MongoException e) {
+        } catch (MongoException | IllegalStateException e) {
+            // IllegalStateException is thrown by a closed client
             return false;
         }
     }
@@ -142,6 +143,12 @@ public class DatastoreImpl implements Datastore {
     @Override
     public MongoClient getMongoClient() {
         return mongoClient;
+    }
+
+    public void close() {
+        if (mongoClient != null) {
+            mongoClient.close();
+        }
     }
 
     // Credentials are passed separately instead of in the connection string, so special characters need no URL encoding

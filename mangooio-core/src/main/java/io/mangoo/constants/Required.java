@@ -100,7 +100,6 @@ public final class Required {
     public static final String URI = "uri can not be null or blank";
     public static final String URL = "url can not be null or blank";
     public static final String USERNAME = "username can not be null or blank";
-    public static final String VAULT = "vault can not be null or blank";
     public static final String VALUE = "value can not be null or blank";
     public static final String VALUES = "values can not be null or blank";
     public static final String RESPONSE = "response can not be null";

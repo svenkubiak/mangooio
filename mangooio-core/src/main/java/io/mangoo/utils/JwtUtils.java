@@ -9,6 +9,7 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.mangoo.constants.ClaimKey;
+import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.exceptions.MangooJwtException;
 import org.apache.commons.lang3.StringUtils;
@@ -119,7 +120,7 @@ public final class JwtUtils {
                 throw new JOSEException("Audience mismatch");
             }
 
-            long skew = 30;
+            long skew = Default.JWT_CLOCK_SKEW;
 
             if (exp.toInstant().isBefore(now.minusSeconds(skew))) {
                 throw new JOSEException("Token expired");

@@ -17,16 +17,17 @@ public class ServerSentEventManager {
     private static final Logger LOG = LogManager.getLogger(ServerSentEventManager.class);
 
     // CopyOnWriteArrayList as sending is read-dominated; all mutations run inside compute, so adding and removing can not interleave.
-    private static final Map<String, List<ServerSentEventConnection>> SERVER_SENT_EVENT_CONNECTIONS = new ConcurrentHashMap<>();
+    private final Map<String, List<ServerSentEventConnection>> connections = new ConcurrentHashMap<>();
 
     /** The default handler uses the request URI as key; a custom connection callback may use a key of its own to address a single client. */
     public void addConnection(String key, ServerSentEventConnection connection) {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(connection, Required.CONNECTION);
 
-        SERVER_SENT_EVENT_CONNECTIONS.compute(key, (k, connections) -> {
-            List<ServerSentEventConnection> values =
-                    connections == null ? new CopyOnWriteArrayList<>() : connections;
+        connections.compute(key, (k, values) -> {
+            if (values == null) {
+                values = new CopyOnWriteArrayList<>();
+            }
             values.add(connection);
 
             return values;
@@ -44,9 +45,9 @@ public class ServerSentEventManager {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(connection, Required.CONNECTION);
 
-        SERVER_SENT_EVENT_CONNECTIONS.computeIfPresent(key, (k, connections) -> {
-            connections.remove(connection);
-            return connections.isEmpty() ? null : connections;
+        connections.computeIfPresent(key, (k, values) -> {
+            values.remove(connection);
+            return values.isEmpty() ? null : values;
         });
     }
 
@@ -56,7 +57,7 @@ public class ServerSentEventManager {
         Objects.requireNonNull(data, Required.DATA);
 
         Thread.ofVirtual().start(() -> {
-            for (ServerSentEventConnection connection : SERVER_SENT_EVENT_CONNECTIONS.getOrDefault(key, List.of())) {
+            for (ServerSentEventConnection connection : connections.getOrDefault(key, List.of())) {
                 if (connection.isOpen()) {
                     // A connection can close between check and send, and one failing connection must not abort the broadcast.
                     try {
@@ -67,5 +68,10 @@ public class ServerSentEventManager {
                 }
             }
         });
+    }
+
+    // Open connections keep their exchange active and would hold the graceful shutdown until its timeout
+    public void closeAll() {
+        connections.values().forEach(values -> values.forEach(ServerSentEventConnection::shutdown));
     }
 }

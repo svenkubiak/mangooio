@@ -9,3 +9,4 @@ site/
 !dependencies.jar
 *.class
 settings.local.json
+vault.p12

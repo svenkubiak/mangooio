@@ -5,15 +5,16 @@
 #
 # Values in an active environment overwrite default values
 #
+# Secrets in dev and test have been generated with the project. In prod they must come from
+# outside the JAR: env{} reads an environment variable (session.cookie.secret -> SESSION_COOKIE_SECRET),
+# arg{} a JVM argument and file{} a file in /run/secrets (APPLICATION_SECRETS_PATH).
+#
 # Default configuration:
 
 default:
   application:
     name: ${application-name}
-    secret: application.secret
     language: en
-    vault:
-      enable: true
   connector:
     http:
       host: localhost
@@ -21,8 +22,6 @@ default:
   session:
     cookie:
       name: ${application-name}-session
-      secret: vault{}
-      key: vault{}
       secure: true
   authentication:
     hashing:
@@ -37,14 +36,10 @@ default:
     redirect: /login
     cookie:
       name: ${application-name}-authentication
-      secret: vault{}
-      key: vault{}
       secure: true
   flash:
     cookie:
       name: ${application-name}-flash
-      secret: vault{}
-      key: vault{}
       secure: true
   smtp:
     host: localhost
@@ -54,23 +49,25 @@ default:
 
 environments:
   test:
+    application:
+      secret: generated.secret
     connector:
       http:
         port: 9090
     session:
       cookie:
-        secret: vault{}
-        key: vault{}
+        secret: generated.secret
+        key: generated.secret
         secure: false
     flash:
       cookie:
-        secret: vault{}
-        key: vault{}
+        secret: generated.secret
+        key: generated.secret
         secure: false
     authentication:
       cookie:
-        secret: vault{}
-        key: vault{}
+        secret: generated.secret
+        key: generated.secret
         secure: false
     persistence:
       mongo:
@@ -79,23 +76,25 @@ environments:
         port: 29019
 
   dev:
+    application:
+      secret: generated.secret
     connector:
       http:
         port: 9090
     session:
       cookie:
-        secret: vault{}
-        key: vault{}
+        secret: generated.secret
+        key: generated.secret
         secure: false
     flash:
       cookie:
-        secret: vault{}
-        key: vault{}
+        secret: generated.secret
+        key: generated.secret
         secure: false
     authentication:
       cookie:
-        secret: vault{}
-        key: vault{}
+        secret: generated.secret
+        key: generated.secret
         secure: false
     persistence:
       mongo:
@@ -104,20 +103,27 @@ environments:
         port: 29019
 
   prod:
+    application:
+      secret: env{}
     connector:
       http:
         port: 9090
     session:
       cookie:
+        secret: env{}
+        key: env{}
         secure: true
     flash:
       cookie:
+        secret: env{}
+        key: env{}
         secure: true
     authentication:
       cookie:
+        secret: env{}
+        key: env{}
         secure: true
     persistence:
       mongo:
-        embedded: true
         host: localhost
-        port: 29019
+        port: 27017

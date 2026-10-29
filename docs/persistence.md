@@ -4,7 +4,7 @@ mangoo I/O includes a thin integration layer over the [MongoDB Java Sync Driver]
 
 At startup, the framework scans for classes annotated with `@Collection`, registers their collection names, and optionally creates indexes from `@Indexed` fields. Inject `Datastore` (or `DatastoreProvider` when you need multiple databases) and use familiar driver patterns: `save`, `find`, `findAll`, and `query()` for fluent, driver-level access.
 
-For local development, the archetype can start **embedded MongoDB 7.0** when `persistence.mongo.embedded` is `true`, so you get a working database with zero setup. Turn that off in production and point `host` / `port`, or a `url`, at your actual MongoDB server. Passwords belong in the [vault](secrets.md) or the environment, never in source control.
+For local development, the archetype can start **embedded MongoDB 7.0** when `persistence.mongo.embedded` is `true`, so you get a working database with zero setup. Turn that off in production and point `host` / `port`, or a `url`, at your actual MongoDB server. Passwords belong in the environment or a [secret file](secrets.md), never in source control.
 
 ## Configuration
 
@@ -15,7 +15,7 @@ default:
       host: 127.0.0.1
       port: 27017
       username: myUsername
-      password: vault{}
+      password: env{}
       dbname: myDBname
       authdb: myAuthDB
       auth: true
@@ -31,7 +31,7 @@ persistence:
   mongo:
     url: mongodb://mongo-1:27017,mongo-2:27017/?replicaSet=rs0
     username: myUsername
-    password: vault{}
+    password: env{}
     dbname: myDBname
     authdb: admin
     auth: true
@@ -133,7 +133,7 @@ persistence:
       host: 127.0.0.1
       port: 27017
       username: reader
-      password: vault{}
+      password: env{}
       dbname: myDBname
       authdb: myAuthDB
       auth: true

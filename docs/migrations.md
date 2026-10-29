@@ -2,7 +2,46 @@
 
 Jackson is 3.2.4. `JsonUtils.getMapper()` returns `tools.jackson.databind.ObjectMapper`. Annotations such as `@JsonIgnore`, `@JsonInclude`, `@JsonProperty` and `@JsonCreator` stay in `com.fasterxml.jackson.annotation`. `java.util.Date` is written and read in `application.timezone`.
 
-`application.admin.password` is an Argon2id PHC string, not the cleartext. Generate it with `CommonUtils.hashArgon2(password, CommonUtils.uuidV4())` and store that value, preferably in the vault. A plaintext password no longer signs in. Use a random salt. Passing `application.secret` embeds that secret in the stored hash.
+`application.admin.password` is an Argon2id PHC string, not the cleartext. Generate it with `CommonUtils.hashArgon2(password, CommonUtils.uuidV4())` and pass that value from outside the artifact, e.g. with `env{}`. A plaintext password no longer signs in. Use a random salt. Passing `application.secret` embeds that secret in the stored hash.
+
+### Vault removed
+
+The vault (`vault.p12`, `vault{}`, `io.mangoo.crypto.Vault`) is removed. Secrets come from `env{}`, `arg{}` or the new `file{}`, see [Secrets](secrets.md).
+
+1. Export the values of the old vault with the JDK alone. Start `jshell` with the vault password in `VAULT_SECRET` and paste:
+
+    ```java
+    var keyStore = java.security.KeyStore.getInstance("PKCS12");
+    var password = System.getenv("VAULT_SECRET").toCharArray();
+    keyStore.load(new java.io.FileInputStream("vault.p12"), password);
+    for (var alias : java.util.Collections.list(keyStore.aliases())) {
+        if (keyStore.entryInstanceOf(alias, java.security.KeyStore.SecretKeyEntry.class)) {
+            var entry = (java.security.KeyStore.SecretKeyEntry) keyStore.getEntry(alias, new java.security.KeyStore.PasswordProtection(password));
+            System.out.println(alias + "=" + new String(entry.getSecretKey().getEncoded(), java.nio.charset.StandardCharsets.UTF_8));
+        }
+    }
+    ```
+
+    Cookie secrets are listed as `<mode>.<key>`, e.g. `prod.session.cookie.secret`, values your application stored itself under their key.
+2. Provide the `prod.*` values as environment variables or secret files and replace every `vault{}` with `env{}` or `file{}`. A remaining `vault{}` fails the startup. Without the old cookie secrets all users are logged out once.
+3. HTTPS: extract the certificate into its own file and set `connector.https.keystore` and `connector.https.password` (the old vault password):
+
+    ```shell
+    keytool -importkeystore -srckeystore vault.p12 -srcstoretype PKCS12 -srcalias certificate -destkeystore https.p12 -deststoretype PKCS12
+    ```
+
+    No self-signed certificate is generated any more.
+4. Remove `application.vault.enable`, `application.vault.path`, `application.vault.secret`, `APPLICATION_VAULT_PATH`, `APPLICATION_VAULT_SECRET` and the `vault.p12` volume. Code that injects `Vault` reads its values from `Config`; `new Config(vault)` becomes `new Config()`.
+
+### Placeholders and secrets
+
+* An `env{}`, `arg{}` or `file{}` without a value and without a fallback fails the startup instead of leaving the key unset. Give optional values a fallback, e.g. `arg{false}`.
+* In prod mode `application.secret`, `application.admin.secret`, `application.api.key`, the cookie secrets and keys, `persistence.*mongo.password`, `smtp.password` and `connector.https.password` must not be literal in the `config.yaml` of the classpath, see [Secrets](secrets.md#secrets-in-prod).
+
+### Bindings and shutdown
+
+* A binding in `app.Module` replaces the framework binding of the same type instead of failing as a duplicate.
+* `applicationStopped()` is called after open requests and running `@Run` tasks have finished, see [Graceful shutdown](operating.md#graceful-shutdown).
 
 ## From 10.15.1 to 10.16.0
 

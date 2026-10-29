@@ -2,6 +2,7 @@ package io.mangoo.cache;
 
 import com.github.benmanes.caffeine.cache.*;
 import com.github.benmanes.caffeine.cache.Cache;
+import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
 import io.mangoo.interfaces.TokenBlacklist;
@@ -19,7 +20,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 /**
- * Default TokenBlacklist; every entry lives as long as the revoked token could still be valid, so no revocation expires early.
+ * Default TokenBlacklist; every entry lives as long as the revoked token could still be accepted, including the JWT clock skew, so no revocation expires early.
  * Revocations are local to the running instance and do not survive a restart.
  */
 @Singleton
@@ -44,14 +45,14 @@ public class InMemoryTokenBlacklist implements TokenBlacklist {
         this.tokens = Caffeine.newBuilder()
                 .maximumSize(MAXIMUM_SIZE)
                 .ticker(ticker)
-                .expireAfter(Expiry.writing((String jwtId, Instant expiresAt) -> remaining(expiresAt)))
+                .expireAfter(Expiry.writing((String jwtId, Instant expiresAt) -> remaining(withSkew(expiresAt))))
                 .evictionListener((String jwtId, Instant expiresAt, RemovalCause cause) -> warnOnSizeEviction(cause))
                 .build();
 
         this.subjects = Caffeine.newBuilder()
                 .maximumSize(MAXIMUM_SIZE)
                 .ticker(ticker)
-                .expireAfter(Expiry.writing((String subject, Instant since) -> remaining(since.plus(this.maxTokenLifetime))))
+                .expireAfter(Expiry.writing((String subject, Instant since) -> remaining(withSkew(since.plus(this.maxTokenLifetime)))))
                 .evictionListener((String subject, Instant since, RemovalCause cause) -> warnOnSizeEviction(cause))
                 .build();
     }
@@ -61,7 +62,7 @@ public class InMemoryTokenBlacklist implements TokenBlacklist {
         Argument.requireNonBlank(jwtId, Required.ID);
         Objects.requireNonNull(expiresAt, "expiresAt can not be null");
 
-        if (expiresAt.isAfter(clock.instant())) {
+        if (withSkew(expiresAt).isAfter(clock.instant())) {
             tokens.put(jwtId, expiresAt);
         }
     }
@@ -88,6 +89,11 @@ public class InMemoryTokenBlacklist implements TokenBlacklist {
         }
 
         return false;
+    }
+
+    // JwtUtils accepts a token until exp plus the clock skew
+    private static Instant withSkew(Instant instant) {
+        return instant.plusSeconds(Default.JWT_CLOCK_SKEW);
     }
 
     private Duration remaining(Instant until) {

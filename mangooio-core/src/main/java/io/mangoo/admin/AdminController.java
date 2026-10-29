@@ -86,6 +86,7 @@ public class AdminController {
                     .render("maxRequestTime", metrics.getMaxRequestTime())
                     .render("errorRate", errorRate)
                     .render("mode", Application.getMode())
+                    .render("instance", Application.getInstanceId())
                     .render("events", stream.getHandledEvents())
                     .render("subscribers", stream.getNumberOfSubscribers())
                     .template(Template.adminPath());
@@ -93,6 +94,8 @@ public class AdminController {
         
         return Response.ok()
                 .render(ENABLED, Boolean.FALSE)
+                .render("mode", Application.getMode())
+                .render("instance", Application.getInstanceId())
                 .render("uptime", DateUtils.getPrettyTime(Application.getStart()))
                 .render("events", stream.getHandledEvents())
                 .render("subscribers", stream.getNumberOfSubscribers())

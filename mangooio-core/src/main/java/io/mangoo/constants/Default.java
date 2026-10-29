@@ -11,6 +11,8 @@ public final class Default {
     public static final String APPLICATION_LANGUAGE = "en";
     public static final String APPLICATION_NAME = "mangooio-application";
     public static final Boolean APPLICATION_PARAMETER_STRICT = Boolean.FALSE;
+    public static final String APPLICATION_SECRETS_PATH = "/run/secrets";
+    public static final long APPLICATION_SHUTDOWN_TIMEOUT = 20;
     public static final String APPLICATION_TIMEZONE = "UTC";
     public static final Boolean APPLICATION_VALIDATION_PASSTHROUGH = Boolean.FALSE;
     public static final Boolean AUTHENTICATION_BLACKLIST = Boolean.FALSE;
@@ -28,7 +30,7 @@ public final class Default {
     public static final int AUTHENTICATION_LOCK_DURATION = 60;
     public static final Boolean AUTHENTICATION_ORIGIN = Boolean.FALSE;
     public static final String BUNDLE_NAME = "translations/messages";
-    public static final String CONNECTOR_HTTPS_CERTIFICATE_ALIAS = "certificate";
+    public static final Boolean CONNECTOR_PROXY = Boolean.FALSE;
     public static final String CORS_ALLOW_ORIGIN = "^http(s)?://(www\\.)?example\\.(com|org)$";
     public static final Boolean CORS_ENABLE = Boolean.FALSE;
     public static final Boolean CORS_HEADERS_ALLOW_CREDENTIALS = Boolean.TRUE;
@@ -44,7 +46,11 @@ public final class Default {
     public static final long FORM_MAX_FILE_SIZE = 5L * 1024 * 1024;
     public static final int FORM_MAX_PARAMETERS = 1000;
     public static final int FORM_MAX_VALUE_LENGTH = 10_000;
+    public static final String HEALTH_LIVE = "/@health/live";
+    public static final String HEALTH_READY = "/@health/ready";
     public static final String I18N_COOKIE_NAME = "mangooio-i18n";
+    // Tolerated clock difference in seconds when validating a JWT; everything protecting a token has to outlive exp by it
+    public static final long JWT_CLOCK_SKEW = 30;
     public static final String LANGUAGE = "en";
     public static final Boolean METRICS_ENABLE = Boolean.FALSE;
     public static final Boolean OTLP_ENABLE = Boolean.FALSE;

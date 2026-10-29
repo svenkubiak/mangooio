@@ -4,11 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import io.mangoo.TestExtension;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.crypto.Vault;
 import io.mangoo.enums.Mode;
 import io.mangoo.utils.CommonUtils;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -19,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +27,7 @@ import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @ExtendWith({TestExtension.class})
 class ConfigTest {
@@ -48,16 +48,6 @@ class ConfigTest {
                 currentMap = (Map<String, Object>) currentMap.computeIfAbsent(part, k -> new HashMap<>());
             }
         }
-    }
-
-    @BeforeAll
-    public static void setup(){
-        Vault vault = Application.getInstance(Vault.class);
-        vault.put("application.foo", "admin");
-        vault.put("application.admin.username", "admin");
-        vault.put("application.admin.password", "admin");
-        vault.put("application.foobar", "essos");
-        vault.put("application.bar", "westeros");
     }
 
     @AfterAll
@@ -97,7 +87,7 @@ class ConfigTest {
         try {
             // when
             createTempConfig(ImmutableMap.of(key, "arg{default}"));
-            Config config = new Config(new Vault());
+            Config config = new Config();
 
             // then
             assertThat(config.getString(key), equalTo(value));
@@ -115,7 +105,7 @@ class ConfigTest {
 
         // when
         createTempConfig(ImmutableMap.of(key, "arg{default}"));
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getString(key), equalTo("default"));
@@ -128,7 +118,7 @@ class ConfigTest {
 
         // when
         createTempConfig(ImmutableMap.of("path", "env{default}"));
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(System.getenv("PATH"), not(emptyOrNullString()));
@@ -143,26 +133,10 @@ class ConfigTest {
 
         // when
         createTempConfig(ImmutableMap.of(key, "env{default}"));
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getString(key), equalTo("default"));
-    }
-
-    @Test
-    void testVaultFallbackIsOverriddenByVaultValue() {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        createTempConfig(ImmutableMap.of(
-                "application.foo", "vault{fallback}",
-                "application.notinvault", "vault{fallback}"));
-        Config config = new Config(new Vault());
-
-        // then
-        assertThat(config.getString("application.foo"), equalTo("admin"));
-        assertThat(config.getString("application.notinvault"), equalTo("fallback"));
     }
 
     @Test
@@ -184,7 +158,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.name", sessionCookieName);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSessionCookieName(), equalTo(sessionCookieName));
@@ -198,7 +172,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSessionCookieName(), equalTo(Default.SESSION_COOKIE_NAME));
@@ -213,7 +187,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", applicationSecret);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationSecret(), equalTo(applicationSecret));
@@ -228,7 +202,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.cookie.name", authenticationCookieName);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieName(), equalTo(authenticationCookieName));
@@ -242,7 +216,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieName(), equalTo(Default.AUTHENTICATION_COOKIE_NAME));
@@ -258,7 +232,7 @@ class ConfigTest {
         Map<String, String> configValues = ImmutableMap.of("session.cookie.expires", expires);
         createTempConfig(configValues);
         System.setProperty("application.mode", Mode.TEST.toString().toLowerCase());
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSessionCookieTokenExpires(), equalTo(Long.valueOf(expires)));
@@ -272,7 +246,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSessionCookieTokenExpires(), equalTo(Default.SESSION_COOKIE_TOKEN_EXPIRES));
@@ -287,7 +261,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.secure", secure);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isSessionCookieSecure(), equalTo(Boolean.valueOf(secure)));
@@ -301,7 +275,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isSessionCookieSecure(), equalTo(Default.SESSION_COOKIE_SECURE));
@@ -316,7 +290,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.cookie.secure", secure);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isAuthenticationCookieSecure(), equalTo(Boolean.valueOf(secure)));
@@ -330,7 +304,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isSessionCookieSecure(), equalTo(Default.AUTHENTICATION_COOKIE_SECURE));
@@ -345,7 +319,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("i18n.cookie.name", name);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getI18nCookieName(), equalTo(name));
@@ -359,7 +333,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getI18nCookieName(), equalTo(Default.I18N_COOKIE_NAME));
@@ -374,7 +348,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.secure", secure);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isFlashCookieSecure(), equalTo(Boolean.valueOf(secure)));
@@ -389,7 +363,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.language", language);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationLanguage(), equalTo(language));
@@ -403,7 +377,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationLanguage(), equalTo(Default.APPLICATION_LANGUAGE));
@@ -418,7 +392,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("scheduler.enable", enabled);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isSchedulerEnabled(), equalTo(Boolean.valueOf(enabled)));
@@ -432,10 +406,244 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isSchedulerEnabled(), equalTo(Default.SCHEDULER_ENABLE));
+    }
+
+    private Path secrets(Map<String, String> files) throws IOException {
+        Path directory = Files.createDirectory(tempDir.resolve("secrets-" + CommonUtils.uuidV6()));
+        for (Map.Entry<String, String> file : files.entrySet()) {
+            Files.writeString(directory.resolve(file.getKey()), file.getValue(), StandardCharsets.UTF_8);
+        }
+
+        return directory;
+    }
+
+    @Test
+    void testFileReadsSecretFromSecretsDirectory() throws IOException {
+        // given
+        Path secrets = secrets(Map.of("session.cookie.secret", "from-file\n"));
+
+        // when
+        createTempConfig(ImmutableMap.of("session.cookie.secret", "file{}"));
+        Config config = new Config(secrets);
+
+        // then
+        assertThat(config.getString("session.cookie.secret"), equalTo("from-file"));
+        assertThat(config.getErrors(), empty());
+        assertThat(config.getLiteralSecrets(), empty());
+    }
+
+    @Test
+    void testFileRemovesOnlyOneTrailingLineBreak() throws IOException {
+        // given
+        Path secrets = secrets(Map.of("application.windows", " value \r\n", "application.unix", " value \n\n"));
+
+        // when
+        createTempConfig(ImmutableMap.of("application.windows", "file{}", "application.unix", "file{}"));
+        Config config = new Config(secrets);
+
+        // then
+        assertThat(config.getString("application.windows"), equalTo(" value "));
+        assertThat(config.getString("application.unix"), equalTo(" value \n"));
+    }
+
+    @Test
+    void testFileFollowsSymbolicLinks() throws IOException {
+        // given a secret mounted the way Kubernetes does, through a link into a data directory
+        Path secrets = secrets(Map.of());
+        Path data = Files.createDirectory(secrets.resolve("..data"));
+        Files.writeString(data.resolve("application.linked"), "linked", StandardCharsets.UTF_8);
+        try {
+            Files.createSymbolicLink(secrets.resolve("application.linked"), data.resolve("application.linked"));
+        } catch (UnsupportedOperationException | IOException e) {
+            assumeTrue(false, "Symbolic links are not supported");
+        }
+
+        // when
+        createTempConfig(ImmutableMap.of("application.linked", "file{}"));
+        Config config = new Config(secrets);
+
+        // then
+        assertThat(config.getString("application.linked"), equalTo("linked"));
+    }
+
+    @Test
+    void testFileFallbackIsUsedWithoutFile() throws IOException {
+        // given
+        Path secrets = secrets(Map.of());
+
+        // when
+        createTempConfig(ImmutableMap.of("application.missing", "file{fallback}"));
+        Config config = new Config(secrets);
+
+        // then
+        assertThat(config.getString("application.missing"), equalTo("fallback"));
+        assertThat(config.getErrors(), empty());
+    }
+
+    @Test
+    void testFileWithoutFileAndFallbackFailsValidation() throws IOException {
+        // given
+        Path secrets = secrets(Map.of());
+
+        // when
+        createTempConfig(ImmutableMap.of("application.missing", "file{}"));
+        Config config = new Config(secrets);
+        config.validate();
+
+        // then
+        assertThat(config.getErrors(), contains(startsWith("application.missing has no value")));
+        assertThat(config.isValid(), equalTo(false));
+    }
+
+    @Test
+    void testFileLargerThanTheLimitIsRejected() throws IOException {
+        // given
+        Path secrets = secrets(Map.of("application.large", "x".repeat(64 * 1024 + 1)));
+
+        // when
+        createTempConfig(ImmutableMap.of("application.large", "file{}"));
+        Config config = new Config(secrets);
+
+        // then
+        assertThat(config.getString("application.large"), nullValue());
+        assertThat(config.getErrors(), hasItem(containsString("larger than 64 KiB")));
+    }
+
+    @Test
+    void testUnresolvedArgFailsValidation() {
+        // given
+        String key = "application.unresolved." + CommonUtils.randomString(32).replaceAll("[^A-Za-z0-9]", "");
+
+        // when
+        createTempConfig(ImmutableMap.of(key, "arg{}"));
+        Config config = new Config();
+        config.validate();
+
+        // then
+        assertThat(config.getString(key), nullValue());
+        assertThat(config.getErrors(), contains(key + " has no value, arg{} is not set and has no fallback"));
+        assertThat(config.isValid(), equalTo(false));
+    }
+
+    @Test
+    void testUnresolvedEnvFailsValidation() {
+        // given
+        String key = "application.unresolved.env";
+
+        // when
+        createTempConfig(ImmutableMap.of(key, "env{}"));
+        Config config = new Config();
+        config.validate();
+
+        // then
+        assertThat(config.getErrors(), contains(key + " has no value, env{} is not set and has no fallback"));
+        assertThat(config.isValid(), equalTo(false));
+    }
+
+    @Test
+    void testVaultPlaceholderNamesTheRemoval() {
+        // given
+        createTempConfig(ImmutableMap.of("session.cookie.secret", "vault{}"));
+
+        // when
+        Config config = new Config();
+        config.validate();
+
+        // then
+        assertThat(config.getErrors(), contains(containsString("vault{}, which was removed in 11.0.0")));
+        assertThat(config.isValid(), equalTo(false));
+    }
+
+    @Test
+    void testLiteralSecretsAreDetected() {
+        // given
+        String secret = "s".repeat(64);
+        System.setProperty(Key.SMTP_PASSWORD, "from-arg");
+        try {
+            createTempConfig(ImmutableMap.of(
+                    "application.secret", secret,
+                    "session.cookie.key", "env{" + secret + "}",
+                    "persistence.reporting.mongo.password", "literal",
+                    "smtp.password", "arg{}",
+                    "application.name", "literal"));
+
+            // when
+            Config config = new Config();
+
+            // then a fallback in the braces counts as literal, as it is written into the config.yaml
+            assertThat(config.getLiteralSecrets(), contains("application.secret", "persistence.reporting.mongo.password", "session.cookie.key"));
+        } finally {
+            System.clearProperty(Key.SMTP_PASSWORD);
+        }
+    }
+
+    @Test
+    void testIsSecret() {
+        // then
+        assertThat(Config.isSecret("application.secret"), equalTo(true));
+        assertThat(Config.isSecret("authentication.cookie.key"), equalTo(true));
+        assertThat(Config.isSecret("connector.https.password"), equalTo(true));
+        assertThat(Config.isSecret("persistence.mongo.password"), equalTo(true));
+        assertThat(Config.isSecret("persistence.reporting.mongo.password"), equalTo(true));
+        assertThat(Config.isSecret("application.admin.password"), equalTo(false));
+        assertThat(Config.isSecret("application.name"), equalTo(false));
+    }
+
+    @Test
+    void testStripLineBreak() {
+        // then
+        assertThat(Config.stripLineBreak("value\n"), equalTo("value"));
+        assertThat(Config.stripLineBreak("value\r\n"), equalTo("value"));
+        assertThat(Config.stripLineBreak("value"), equalTo("value"));
+        assertThat(Config.stripLineBreak("value\n\n"), equalTo("value\n"));
+    }
+
+    @Test
+    void testShutdownTimeoutAndProxy() throws IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("application.shutdown.timeout", "5", "connector.proxy", "true");
+        createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getApplicationShutdownTimeout(), equalTo(5L));
+        assertThat(config.isConnectorProxy(), equalTo(true));
+    }
+
+    @Test
+    void testShutdownTimeoutAndProxyDefaultValues() throws IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getApplicationShutdownTimeout(), equalTo(Default.APPLICATION_SHUTDOWN_TIMEOUT));
+        assertThat(config.isConnectorProxy(), equalTo(Default.CONNECTOR_PROXY));
+    }
+
+    @Test
+    void testNegativeShutdownTimeoutIsZero() throws IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("application.shutdown.timeout", "-1");
+        createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getApplicationShutdownTimeout(), equalTo(0L));
     }
 
     @Test
@@ -447,7 +655,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.username", username);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationAdminUsername(), equalTo(username));
@@ -462,7 +670,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.secret", secret);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationAdminSecret(), equalTo(secret));
@@ -476,7 +684,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationAdminSecret(), equalTo(null));
@@ -491,7 +699,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.password", password);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationAdminPassword(), equalTo(password));
@@ -506,7 +714,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.cookie.remember.expires", expires);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieRememberExpires(), equalTo(Long.valueOf(expires)));
@@ -520,7 +728,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieRememberExpires(), equalTo(Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES));
@@ -535,7 +743,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.controller", controller);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationController(), equalTo(controller));
@@ -549,7 +757,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationController(), equalTo(Default.APPLICATION_CONTROLLER));
@@ -592,7 +800,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.enable", enable);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isApplicationAdminEnable(), equalTo(Boolean.valueOf(enable)));
@@ -606,7 +814,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isApplicationAdminEnable(), equalTo(Default.APPLICATION_ADMIN_ENABLE));
@@ -620,7 +828,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.parameter.strict", "true");
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isParameterStrict(), equalTo(true));
@@ -634,7 +842,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isParameterStrict(), equalTo(Default.APPLICATION_PARAMETER_STRICT));
@@ -649,7 +857,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.host", host);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpHost(), equalTo(host));
@@ -663,7 +871,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpHost(), equalTo(Default.SMTP_HOST));
@@ -678,7 +886,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.port", port);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpPort(), equalTo(Integer.valueOf(port)));
@@ -692,7 +900,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpPort(), equalTo(Default.SMTP_PORT));
@@ -707,7 +915,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.authentication", ssl);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isSmtpAuthentication(), equalTo(Boolean.valueOf(ssl)));
@@ -721,7 +929,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isSmtpAuthentication(), equalTo(Default.SMTP_AUTHENTICATION));
@@ -736,7 +944,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.username", username);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpUsername(), equalTo(username));
@@ -750,7 +958,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpUsername(), equalTo(null));
@@ -765,7 +973,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.password", password);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpPassword(), equalTo(password));
@@ -779,7 +987,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpUsername(), equalTo(null));
@@ -794,7 +1002,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.from", from);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpFrom(), equalTo(from));
@@ -808,7 +1016,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpFrom(), equalTo(Default.SMTP_FROM));
@@ -823,7 +1031,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("connector.https.host", host);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorHttpsHost(), equalTo(host));
@@ -837,7 +1045,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorHttpsHost(), equalTo(null));
@@ -853,7 +1061,7 @@ class ConfigTest {
         Map<String, String> configValues = ImmutableMap.of("connector.https.port", port);
         createTempConfig(configValues);
         System.setProperty("application.mode", Mode.TEST.toString().toLowerCase());
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorHttpsPort(), equalTo(Integer.valueOf(port)));
@@ -867,7 +1075,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorHttpsPort(), equalTo(0));
@@ -882,7 +1090,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("connector.http.host", host);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorHttpHost(), equalTo(host));
@@ -896,7 +1104,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorHttpHost(), equalTo(null));
@@ -911,7 +1119,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("connector.http.port", port);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorHttpPort(), equalTo(Integer.valueOf(port)));
@@ -925,7 +1133,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorHttpPort(), equalTo(0));
@@ -941,7 +1149,7 @@ class ConfigTest {
         Map<String, String> configValues = ImmutableMap.of("metrics.enable", enable);
         createTempConfig(configValues);
         System.setProperty("application.mode", Mode.TEST.toString().toLowerCase());
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isMetricsEnable(), equalTo(Boolean.valueOf(enable)));
@@ -955,7 +1163,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isMetricsEnable(), equalTo(Default.METRICS_ENABLE));
@@ -971,7 +1179,7 @@ class ConfigTest {
         Map<String, String> configValues = ImmutableMap.of("mongo.enable", enable);
         createTempConfig(configValues);
         System.setProperty("mongo.enable", Mode.TEST.toString().toLowerCase());
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isPersistenceEnabled(), equalTo(Boolean.valueOf(enable)));
@@ -985,7 +1193,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isPersistenceEnabled(), equalTo(Default.PERSISTENCE_ENABLE));
@@ -1000,7 +1208,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.lock", lock);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationLock(), equalTo(Integer.valueOf(lock)));
@@ -1014,7 +1222,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationLock(), equalTo(Default.AUTHENTICATION_LOCK));
@@ -1029,7 +1237,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.lock.duration", duration);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationLockDuration(), equalTo(Integer.valueOf(duration)));
@@ -1043,7 +1251,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationLockDuration(), equalTo(Default.AUTHENTICATION_LOCK_DURATION));
@@ -1058,7 +1266,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("undertow.maxentitysize", size);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getUndertowMaxEntitySize(), equalTo(Long.valueOf(size)));
@@ -1072,7 +1280,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getUndertowMaxEntitySize(), equalTo(Default.UNDERTOW_MAX_ENTITY_SIZE));
@@ -1087,7 +1295,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("form.maxfilesize", size);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getFormMaxFileSize(), equalTo(Long.valueOf(size)));
@@ -1101,7 +1309,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getFormMaxFileSize(), equalTo(Default.FORM_MAX_FILE_SIZE));
@@ -1116,7 +1324,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.secret", key);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSessionCookieSecret(), equalTo(key.getBytes(StandardCharsets.UTF_8)));
@@ -1131,7 +1339,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSessionCookieSecret(), equalTo(secret.getBytes(StandardCharsets.UTF_8)));
@@ -1146,7 +1354,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("flash.cookie.secret", key);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getFlashCookieSecret(), equalTo(key.getBytes(StandardCharsets.UTF_8)));
@@ -1161,7 +1369,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getFlashCookieSecret(), equalTo(secret.getBytes(StandardCharsets.UTF_8)));
@@ -1176,7 +1384,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieSecret(), equalTo(secret.getBytes(StandardCharsets.UTF_8)));
@@ -1190,7 +1398,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.cookie.secret", key);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieSecret(), equalTo(key.getBytes(StandardCharsets.UTF_8)));
@@ -1205,7 +1413,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieSecret(), equalTo(secret.getBytes(StandardCharsets.UTF_8)));
@@ -1314,36 +1522,6 @@ class ConfigTest {
     }
 
     @Test
-    void testEncryptedValue() {
-        //given
-        System.clearProperty(Key.APPLICATION_CONFIG);
-        final Config config = Application.getInstance(Config.class);
-
-        //then
-        assertThat(config.getString("application.foo"), equalTo("admin"));
-    }
-
-    @Test
-    void testEncryptedValueMultiKeyLineTwo() {
-        //given
-        System.clearProperty(Key.APPLICATION_CONFIG);
-        final Config config = Application.getInstance(Config.class);
-
-        //then
-        assertThat(config.getString("application.bar"), equalTo("westeros"));
-    }
-
-    @Test
-    void testEncryptedValueMultiKeyLineThree() {
-        //given
-        System.clearProperty(Key.APPLICATION_CONFIG);
-        final Config config = Application.getInstance(Config.class);
-
-        //then
-        assertThat(config.getString("application.foobar"), equalTo("essos"));
-    }
-
-    @Test
     void testIsSmtpDebug() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -1352,7 +1530,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.debug", debug);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isSmtpDebug(), equalTo(Boolean.valueOf(debug)));
@@ -1366,7 +1544,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isSmtpDebug(), equalTo(Default.SMTP_DEBUG));
@@ -1381,7 +1559,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.protocol", protocol);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpProtocol(), equalTo(protocol));
@@ -1396,7 +1574,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpProtocol(), equalTo(Default.SMTP_PROTOCOL));
@@ -1411,7 +1589,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.authdb", authDb);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getMongoAuthDB("persistence."), equalTo(authDb));
@@ -1426,7 +1604,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.dbname", mongodb);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getMongoDbName("persistence."), equalTo(mongodb));
@@ -1440,7 +1618,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getMongoDbName("persistence."), equalTo(Default.PERSISTENCE_MONGO_DBNAME));
@@ -1455,7 +1633,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.host", host);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getMongoHost("persistence."), equalTo(host));
@@ -1469,7 +1647,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getMongoHost(""), equalTo(Default.PERSISTENCE_MONGO_HOST));
@@ -1484,7 +1662,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.port", port);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getMongoPort("persistence."), equalTo(Integer.parseInt(port)));
@@ -1498,7 +1676,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getMongoPort("persistence."), equalTo(Default.PERSISTENCE_MONGO_PORT));
@@ -1513,7 +1691,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.password", password);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getMongoPassword("persistence."), equalTo(password));
@@ -1528,7 +1706,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.username", username);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getMongoUsername("persistence."), equalTo(username));
@@ -1543,7 +1721,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.enable", cors);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isCorsEnable(), equalTo(Boolean.valueOf(cors)));
@@ -1557,7 +1735,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isCorsEnable(), equalTo(Default.CORS_ENABLE));
@@ -1572,7 +1750,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.alloworigin", origin);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(origin).toString()));
@@ -1586,7 +1764,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(Default.CORS_ALLOW_ORIGIN).toString()));
@@ -1601,7 +1779,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.headers.allowcredentials", credentials);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsHeadersAllowCredentials(), equalTo(credentials));
@@ -1615,7 +1793,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsHeadersAllowCredentials(), equalTo(Default.CORS_HEADERS_ALLOW_CREDENTIALS.toString()));
@@ -1630,7 +1808,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.headers.allowheaders", headers);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsHeadersAllowHeaders(), equalTo(headers));
@@ -1644,7 +1822,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsHeadersAllowHeaders(), equalTo(Default.CORS_HEADERS_ALLOW_HEADERS));
@@ -1659,7 +1837,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.origin", authOrigin);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isAuthOrigin(), equalTo(Boolean.valueOf(authOrigin)));
@@ -1673,7 +1851,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.isAuthOrigin(), equalTo(Default.AUTHENTICATION_ORIGIN));
@@ -1688,7 +1866,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.locale", adminLocale);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationAdminLocale(), equalTo(adminLocale));
@@ -1702,7 +1880,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationAdminLocale(), equalTo(Default.APPLICATION_ADMIN_LOCALE));
@@ -1717,7 +1895,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.headers.allowmethods", headers);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsHeadersAllowMethods(), equalTo(headers));
@@ -1731,7 +1909,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsHeadersAllowMethods(), equalTo(Default.CORS_HEADERS_ALLOW_METHODS));
@@ -1746,7 +1924,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.headers.exposeheaders", headers);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsHeadersExposeHeaders(), equalTo(headers));
@@ -1760,7 +1938,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsHeadersExposeHeaders(), equalTo(Default.CORS_HEADERS_EXPOSE_HEADERS));
@@ -1775,7 +1953,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.headers.maxage", maxage);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsHeadersMaxAge(), equalTo(maxage));
@@ -1789,7 +1967,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsHeadersMaxAge(), equalTo(Default.CORS_HEADERS_MAX_AGE));
@@ -1804,7 +1982,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.urlpattern", pattern);
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(pattern).toString()));
@@ -1818,7 +1996,7 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config(new Vault());
+        Config config = new Config();
 
         // then
         assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(Default.CORS_URL_PATTERN).toString()));

@@ -16,11 +16,10 @@ public final class Key {
     public static final String APPLICATION_NAMED = "application.named";
     public static final String APPLICATION_PARAMETER_STRICT = "application.parameter.strict";
     public static final String APPLICATION_SECRET = "application.secret";
+    public static final String APPLICATION_SECRETS_PATH = "application.secrets.path";
+    public static final String APPLICATION_SHUTDOWN_TIMEOUT = "application.shutdown.timeout";
     public static final String APPLICATION_TIMEZONE = "application.timezone";
     public static final String APPLICATION_VALIDATION_PASSTHROUGH = "application.validation.passthrough";
-    public static final String APPLICATION_VAULT_ENABLE = "application.vault.enable";
-    public static final String APPLICATION_VAULT_PATH = "application.vault.path";
-    public static final String APPLICATION_VAULT_SECRET = "application.vault.secret";
     public static final String AUTHENTICATION_BLACKLIST = "authentication.blacklist";
     public static final String AUTHENTICATION_COOKIE_NAME = "authentication.cookie.name";
     public static final String AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = "authentication.cookie.remember.expires";
@@ -41,9 +40,12 @@ public final class Key {
     public static final String AUTHENTICATION_REDIRECT_MFA = "authentication.redirect.mfa";
     public static final String CONNECTOR_HTTPS_CERTIFICATE_ALIAS = "connector.https.certificate.alias";
     public static final String CONNECTOR_HTTPS_HOST = "connector.https.host";
+    public static final String CONNECTOR_HTTPS_KEYSTORE = "connector.https.keystore";
+    public static final String CONNECTOR_HTTPS_PASSWORD = "connector.https.password";
     public static final String CONNECTOR_HTTPS_PORT = "connector.https.port";
     public static final String CONNECTOR_HTTP_HOST = "connector.http.host";
     public static final String CONNECTOR_HTTP_PORT = "connector.http.port";
+    public static final String CONNECTOR_PROXY = "connector.proxy";
     public static final String CORS_ALLOW_ORIGIN = "cors.alloworigin";
     public static final String CORS_ENABLE = "cors.enable";
     public static final String CORS_HEADERS_ALLOW_CREDENTIALS = "cors.headers.allowcredentials";

@@ -2,7 +2,7 @@
 
 mangoo I/O applications ship as a **fat JAR** built with the Maven shade plugin. One process runs Undertow, your controllers, and the scheduler, so there is no separate WAR deployment step to manage. Production runs use **Java 25**, **prod** mode, and an external MongoDB instance; embedded MongoDB is strictly for dev and test.
 
-Plan for secrets living outside the JAR: the vault file (`vault.p12`), its password, and any `env{}` / `arg{}` overrides should come from the host or orchestrator, not from the artifact you build. The same `config.yaml` structure applies everywhere; only the active environment section and where the secrets come from actually change.
+Plan for secrets living outside the JAR: they come from the host or orchestrator through `env{}`, `arg{}` or `file{}`, not from the artifact you build, and the application refuses to start in prod mode if a framework secret is written literally into `config.yaml`. The same `config.yaml` structure applies everywhere; only the active environment section and where the secrets come from actually change.
 
 Run the packaged application:
 
@@ -10,17 +10,17 @@ Run the packaged application:
 java -Dapplication.mode=prod -jar myapp.jar
 ```
 
-Provide [vault](secrets.md) location and password in production:
+Provide the [secrets](secrets.md) in production, for example as environment variables for keys set to `env{}`:
 
 ```shell
-export APPLICATION_VAULT_PATH=/var/lib/myapp
-export APPLICATION_VAULT_SECRET='at-least-64-characters-of-entropy............................'
+export APPLICATION_SECRET='exactly-64-bytes................................................'
+export SESSION_COOKIE_SECRET='exactly-64-bytes................................................'
 java -Dapplication.mode=prod -jar /opt/myapp/myapp.jar
 ```
 
 Set `application.mode=prod`, which is also the default if you leave it unset. Configure HTTP and/or HTTPS connectors as needed, and do not enable embedded MongoDB.
 
-In prod mode the application refuses to start when it runs as root (UID 0). Run it as an unprivileged user, which limits the damage of any code execution vulnerability. Make sure that user can read and write the vault directory.
+In prod mode the application refuses to start when it runs as root (UID 0). Run it as an unprivileged user, which limits the damage of any code execution vulnerability. Make sure that user can read the secrets directory if you use `file{}`.
 
 ## Startup and classpath scanning
 
@@ -37,7 +37,7 @@ autorestart=true
 stderr_logfile=/var/log/myapp.err.log
 stdout_logfile=/var/log/myapp.out.log
 user=myuser
-environment=JAVA_TOOL_OPTIONS="-Xms512m -Xmx1024m",APPLICATION_VAULT_PATH="/var/lib/myapp",APPLICATION_VAULT_SECRET="change-me"
+environment=JAVA_TOOL_OPTIONS="-Xms512m -Xmx1024m",APPLICATION_SECRETS_PATH="/etc/myapp/secrets"
 ```
 
 Note that `JAVA_OPTS` set in `environment=` is not read by `java` unless you also put it on the `command` line yourself. `JAVA_TOOL_OPTIONS`, by contrast, is picked up automatically.
@@ -53,19 +53,85 @@ USER app
 ENTRYPOINT ["java", "-Dapplication.mode=prod", "-jar", "/app/myapp.jar"]
 ```
 
-Containers run as root unless the image or the compose file sets a user, so keep the `USER` line, otherwise the application does not start in prod mode. Pass heap settings through `JAVA_TOOL_OPTIONS`. Mount the directory that contains `vault.p12`, not the file itself, and set `APPLICATION_VAULT_PATH` to the path **inside** the container:
+Containers run as root unless the image or the compose file sets a user, so keep the `USER` line, otherwise the application does not start in prod mode. Pass heap settings through `JAVA_TOOL_OPTIONS`. Docker secrets end up in `/run/secrets`, where `file{}` reads them; name each secret like its config key:
 
 ```yaml
 services:
   myapp:
-    environment:
-      APPLICATION_VAULT_PATH: /app/config
-      APPLICATION_VAULT_SECRET: change-me
-    volumes:
-      - /opt/myapp/config:/app/config
+    secrets:
+      - application.secret
+      - session.cookie.secret
+secrets:
+  application.secret:
+    file: ./secrets/application.secret
+  session.cookie.secret:
+    file: ./secrets/session.cookie.secret
 ```
 
-The mounted directory must be writable for the container user, as the vault is replaced atomically through a temporary file in the same directory.
+## Health checks
+
+Two endpoints answer load balancer and orchestrator probes. They are answered before metrics, cookies and filters, return no body and need no configuration:
+
+| Endpoint | `200` | `503` |
+|----------|-------|-------|
+| `/@health/live` | the process is running | - |
+| `/@health/ready` | the startup is complete | during startup and from the beginning of the shutdown |
+
+MongoDB is deliberately not part of readiness. If it became unavailable, every instance would report not ready at the same time and the load balancer would have no target left. A startup without a reachable MongoDB fails anyway.
+
+```yaml
+livenessProbe:
+  httpGet:
+    path: /@health/live
+    port: 8080
+readinessProbe:
+  httpGet:
+    path: /@health/ready
+    port: 8080
+```
+
+## Graceful shutdown
+
+On `SIGTERM` the application
+
+1. reports not ready on `/@health/ready`,
+2. starts no further `@Run` tasks,
+3. closes all SSE and WebSocket connections, clients reconnect to another instance,
+4. answers new requests with `503` and waits for the open ones,
+5. stops Undertow and waits for running `@Run` tasks, interrupting them at the deadline,
+6. calls `applicationStopped()` of your `Bootstrap`, while the datastores are still open,
+7. closes the MongoDB connections, stops telemetry and Log4j.
+
+Steps 4 and 5 share `application.shutdown.timeout`, 20 seconds by default. The application does not wait for the load balancer to notice that the instance is going away; add that delay in front, for example with a Kubernetes `preStop` hook, and keep `terminationGracePeriodSeconds` above `preStop` plus `application.shutdown.timeout`:
+
+```yaml
+terminationGracePeriodSeconds: 40
+containers:
+  - name: myapp
+    lifecycle:
+      preStop:
+        sleep:
+          seconds: 10
+```
+
+## Reverse proxy
+
+Behind a reverse proxy or load balancer the client address of a request and the scheme reported by `Request.getScheme()` are those of the proxy. Set `connector.proxy: true` to take them from the `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host` and `X-Forwarded-Port` headers instead. Only enable it if every request passes a proxy that overwrites these headers, otherwise clients can set any address.
+
+## Running several instances
+
+Several instances of one application can run behind a load balancer. Session, flash, form and CSRF token live in signed and encrypted cookies and authentication cookies are stateless, so a request can reach any instance. Every instance logs its instance id at startup, the hostname with a random suffix, and the admin dashboard and the OpenTelemetry resource (`service.instance.id`) carry it as well.
+
+* **Secrets**: all instances need the same secrets; pass them with `env{}`, `arg{}` or `file{}`, see [Secrets](secrets.md).
+* **Clocks**: authentication cookies are validated with the clock of the instance and a tolerance of 30 seconds, so keep the clocks in sync with NTP.
+* **MongoDB**: use one external MongoDB for all instances. Embedded MongoDB starts a separate database per instance, the application warns about it in prod mode. A replica set or sharded cluster is configured with `persistence.mongo.url`, see [Persistence](persistence.md).
+* **Scheduler**: `@Run` runs on every instance. A job that must run once per schedule has no `@Run`; expose it as a route protected for example with `ApiKeyFilter` and call it from an external trigger such as a Kubernetes `CronJob` through the load balancer. Delivery is at least once, a retry after a timeout runs the job again, so keep such jobs idempotent and start long jobs asynchronously with a `202` response. Set `scheduler.enable: false` only if no job has to run on every instance.
+* **Startup logic**: `applicationStarted()` runs on every instance at the same time, so migrations and seed data must tolerate concurrent runs.
+* **Cache**: the application cache is local to each instance. Bind your own `Cache` implementation if entries must be shared.
+* **EventBus**: events are processed by the subscribers of the instance that published them.
+* **Server-Sent Events and WebSockets**: connections and events are local to an instance. An event sent with `ServerSentEventManager` reaches only the clients connected to the sending instance.
+* **Authentication state**: the failed login lock, the revocation of authentication cookies (`authentication.blacklist`) and the pending second factor of the admin login are still kept per instance. Without sticky sessions, the admin login with a second factor fails when `/@admin/authenticate` and `/@admin/verify` reach different instances.
+* **Indexes**: a changed `@Indexed` definition fails the index creation, and a new instance does not start. During a rolling deploy, drop the old index before the new version starts.
 
 ## Global response headers
 

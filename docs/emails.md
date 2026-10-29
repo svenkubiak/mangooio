@@ -2,7 +2,7 @@
 
 Outbound mail uses **Jakarta Mail** under the hood. The fluent **`Mail`** builder composes messages, and **`PostOffice`** sends them asynchronously on a virtual thread, so your controller can return immediately after calling `send()` instead of waiting on the SMTP round trip.
 
-Templates for HTML or plain text live under `src/main/resources/templates/` and go through the same Freemarker engine as regular HTTP responses. SMTP settings and credentials come from `config.yaml`, and passwords should use `vault{}` rather than sit in the file as plain text. For tests, `SmtpMock` in `mangooio-test` captures messages without needing a real mail server running.
+Templates for HTML or plain text live under `src/main/resources/templates/` and go through the same Freemarker engine as regular HTTP responses. SMTP settings and credentials come from `config.yaml`, and passwords should use `env{}` or `file{}` rather than sit in the file as plain text. For tests, `SmtpMock` in `mangooio-test` captures messages without needing a real mail server running.
 
 Basic send:
 

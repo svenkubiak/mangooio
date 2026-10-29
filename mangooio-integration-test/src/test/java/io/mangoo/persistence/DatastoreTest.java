@@ -3,6 +3,7 @@ package io.mangoo.persistence;
 import com.mongodb.client.model.Sorts;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.models.TestModel;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.test.concurrent.ConcurrentRunner;
@@ -323,5 +324,20 @@ class DatastoreTest {
         assertThat(datastore.query(TestModel.class).countDocuments(eq("_id", model.getId())), equalTo(1L));
         TestModel found = datastore.query(TestModel.class).find(eq("_id", model.getId())).first();
         assertThat(found.getName(), equalTo(name));
+    }
+
+    @Test
+    void testCloseReleasesTheClient() {
+        //given
+        var closable = new DatastoreImpl(Application.getInstance(Config.class));
+        boolean healthyBefore = closable.isHealthy();
+
+        //when
+        closable.close();
+
+        //then
+        assertThat(healthyBefore, equalTo(true));
+        assertThat(closable.isHealthy(), equalTo(false));
+        assertThat(datastore.isHealthy(), equalTo(true));
     }
 }

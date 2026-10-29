@@ -95,4 +95,6 @@ location /sse {
 }
 ```
 
+On shutdown every SSE connection is closed before open requests are drained, as an open connection would otherwise hold the shutdown until its timeout. Browsers reconnect automatically and reach another instance through the load balancer. Events sent with `ServerSentEventManager` reach the clients connected to the sending instance only.
+
 Client setup: [MDN Server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).

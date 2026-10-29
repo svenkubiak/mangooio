@@ -2,7 +2,7 @@
 
 The **admin dashboard** is a built-in UI for operators. It shows cache statistics, registered scheduler jobs, security-related helpers, and request metrics when enabled. It is **disabled by default** because it exposes internal state, so turn it on only in environments where access is actually controlled.
 
-Access uses a **login form** and JWT cookie rather than HTTP Basic. An optional **TOTP** second factor is configured with `application.admin.secret`. In production, protect admin routes with network policy as well as strong credentials stored in the [vault](secrets.md), since the login form alone is not a substitute for keeping the dashboard off the public internet.
+Access uses a **login form** and JWT cookie rather than HTTP Basic. An optional **TOTP** second factor is configured with `application.admin.secret`. In production, protect admin routes with network policy as well as strong credentials kept outside the artifact (see [Secrets](secrets.md)), since the login form alone is not a substitute for keeping the dashboard off the public internet.
 
 Enable and configure:
 
@@ -11,7 +11,7 @@ application:
   admin:
     enable: true
     username: admin
-    password: vault{}
+    password: env{}
     locale: en_EN
 ```
 
@@ -21,7 +21,7 @@ application:
 String hash = CommonUtils.hashArgon2("the-password", CommonUtils.uuidV4());
 ```
 
-Store `hash` in the vault under `application.admin.password`. The salt is part of the hash, so there is no separate salt setting. Use a random salt. Passing `application.secret` embeds that secret in the stored hash.
+Pass `hash` as `application.admin.password`, for example in `APPLICATION_ADMIN_PASSWORD`. The salt is part of the hash, so there is no separate salt setting. Use a random salt. Passing `application.secret` embeds that secret in the stored hash.
 
 Open:
 
@@ -44,6 +44,6 @@ metrics:
   enable: true
 ```
 
-Once enabled, they appear on the dashboard itself. Note that there is no separate `/@admin/health` endpoint to scrape.
+Once enabled, they appear on the dashboard itself. They are collected per instance, and the dashboard footer names the instance that served the page. For load balancer probes use `/@health/live` and `/@health/ready`, see [Operating](operating.md#health-checks).
 
 See [Observability](observability.md) for OpenTelemetry.

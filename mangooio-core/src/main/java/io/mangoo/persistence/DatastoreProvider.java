@@ -26,6 +26,11 @@ public class DatastoreProvider implements Provider<Datastore> {
         return dataStores.computeIfAbsent(prefix, key -> new DatastoreImpl(prefix));
     }
     
+    public void close() {
+        dataStores.values().forEach(DatastoreImpl::close);
+        defaultDatastore.close();
+    }
+
     @Override
     public Datastore get() {
         return defaultDatastore;

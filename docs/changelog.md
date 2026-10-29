@@ -2,11 +2,25 @@
 
 Unreleased
 
+* **Behaviour change** Graceful shutdown: readiness goes down, SSE and WebSocket connections are closed, open requests and running @Run tasks get application.shutdown.timeout, then applicationStopped() is called (svenkubiak)
+* **Behaviour change** A binding in app.Module replaces the core binding of the same type instead of failing (svenkubiak)
+* **Behaviour change** Removed the vault and vault{}, secrets come from env{}, arg{} or file{} (svenkubiak)
+* **Behaviour change** An env{}, arg{} or file{} without value and fallback fails the startup (svenkubiak)
+* **Behaviour change** Framework secrets must not be literal in the config.yaml of the classpath in prod mode (svenkubiak)
+* **Behaviour change** The HTTPS connector reads its certificate from connector.https.keystore, no self-signed certificate is generated (svenkubiak)
 * Removed all deprecated methods (svenkubiak)
 * Migrated from Jackson 2 to Jackson 3 (svenkubiak)
 * Added support for MongoDB connection strings - replica sets, sharded clusters, SRV (svenkubiak)
 * Removed asset minification (svenkubiak)
 * Changed Admin-Password handling (svenkubiak)
+* Added health endpoints /@health/live and /@health/ready (svenkubiak)
+* Added connector.proxy to take client address and scheme from X-Forwarded-* headers (svenkubiak)
+* Added an instance id to the startup log, the admin dashboard and the OpenTelemetry resource (svenkubiak)
+* Added a startup warning for embedded MongoDB in prod mode (svenkubiak)
+* Added file{} to read secrets from mounted files in /run/secrets (svenkubiak)
+* Added generated dev and test secrets to the archetype (svenkubiak)
+* Fixed a revoked authentication cookie being accepted again within the JWT clock skew after its expiry (svenkubiak)
+* Fixed MongoDB clients not being closed and embedded MongoDB being stopped before Undertow on shutdown (svenkubiak)
 
 ## Version 10.16.0
 

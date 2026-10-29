@@ -5,8 +5,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Const;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.Required;
-import io.mangoo.crypto.Vault;
+import io.mangoo.enums.Mode;
 import io.mangoo.utils.internal.MangooUtils;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -25,22 +24,46 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Singleton
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
-    private static final String VAULT_TAG = "vault{}";
-    private static final String ARG_TAG = "arg{}";
+    private static final long MAX_SECRET_FILE_SIZE = 64 * 1024L;
+    private static final Pattern SECRET_FILE_NAME = Pattern.compile("[A-Za-z0-9_-][A-Za-z0-9._-]*");
+    private static final Set<String> SECRETS = Set.of(
+            Key.APPLICATION_SECRET, Key.APPLICATION_ADMIN_SECRET, Key.APPLICATION_API_KEY,
+            Key.SESSION_COOKIE_SECRET, Key.SESSION_COOKIE_KEY,
+            Key.AUTHENTICATION_COOKIE_SECRET, Key.AUTHENTICATION_COOKIE_KEY,
+            Key.FLASH_COOKIE_SECRET, Key.FLASH_COOKIE_KEY,
+            Key.SMTP_PASSWORD, Key.CONNECTOR_HTTPS_PASSWORD);
     private final Map<String, String> values = new ConcurrentHashMap<>();
-    private final Vault vault;
+    private final Set<String> external = ConcurrentHashMap.newKeySet();
+    private final Set<String> errors = new TreeSet<>();
+    private final Path secretsPath;
+    private final boolean externalConfig;
     private Pattern corsUrl;
     private Pattern corsAllowOrigin;
     private boolean valid;
 
     @Inject
-    public Config(Vault vault) {
-        this.vault = Objects.requireNonNull(vault, Required.VAULT);
+    public Config() {
+        this(secretsPath());
+    }
+
+    Config(Path secretsPath) {
+        this.secretsPath = Objects.requireNonNull(secretsPath, "secretsPath can not be null");
+        this.externalConfig = StringUtils.isNotBlank(System.getProperty(Key.APPLICATION_CONFIG));
         load();
+    }
+
+    private static Path secretsPath() {
+        String path = System.getenv("APPLICATION_SECRETS_PATH");
+        if (StringUtils.isBlank(path)) {
+            path = System.getProperty(Key.APPLICATION_SECRETS_PATH);
+        }
+
+        return Path.of(StringUtils.defaultIfBlank(path, Default.APPLICATION_SECRETS_PATH));
     }
 
     @SuppressWarnings("unchecked")
@@ -95,8 +118,10 @@ public class Config {
             resolve(key, value, "env{", System.getenv(toEnvKey(key)));
         } else if (value.startsWith("arg{")) {
             resolve(key, value, "arg{", System.getProperty(key));
+        } else if (value.startsWith("file{")) {
+            resolve(key, value, "file{", readSecretFile(key));
         } else if (value.startsWith("vault{")) {
-            resolve(key, value, "vault{", vault.get(key));
+            errors.add(key + " uses vault{}, which was removed in 11.0.0. Use env{}, arg{} or file{} instead");
         } else {
             values.put(key, value);
         }
@@ -105,12 +130,55 @@ public class Config {
     private void resolve(String key, String value, String tag, String resolved) {
         if (StringUtils.isNotBlank(resolved)) {
             values.put(key, resolved);
+            external.add(key);
         } else {
             String fallback = StringUtils.substringBetween(value, tag, "}");
             if (StringUtils.isNotBlank(fallback)) {
                 values.put(key, fallback);
+            } else {
+                errors.add(key + " has no value, " + tag + "} is not set and has no fallback");
             }
         }
+    }
+
+    // Mounted secrets (Kubernetes, Docker) are files named like the key; symbolic links are followed, as Kubernetes mounts through them
+    private String readSecretFile(String key) {
+        if (!SECRET_FILE_NAME.matcher(key).matches()) {
+            errors.add(key + " can not be read with file{}, as it is not a valid file name");
+            return null;
+        }
+
+        var file = secretsPath.resolve(key);
+        try {
+            if (!Files.isRegularFile(file)) {
+                return null;
+            }
+            if (Files.size(file) > MAX_SECRET_FILE_SIZE) {
+                errors.add(key + " can not be read from " + file + ", as it is larger than 64 KiB");
+                return null;
+            }
+
+            return stripLineBreak(Files.readString(file, StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            errors.add(key + " can not be read from " + file + ": " + e.getMessage());
+            return null;
+        }
+    }
+
+    // Only the line break an editor or echo appends is removed, as secrets must keep their exact length
+    static String stripLineBreak(String value) {
+        if (value.endsWith("\r\n")) {
+            return value.substring(0, value.length() - 2);
+        }
+        if (value.endsWith("\n")) {
+            return value.substring(0, value.length() - 1);
+        }
+
+        return value;
+    }
+
+    static boolean isSecret(String key) {
+        return SECRETS.contains(key) || (key.startsWith(Default.PERSISTENCE_PREFIX) && key.endsWith("." + Key.PERSISTENCE_MONGO_PASSWORD));
     }
 
     private static String toEnvKey(String key) {
@@ -119,14 +187,29 @@ public class Config {
                 .trim();
     }
 
+    /** Fails for unresolved placeholders and, in prod mode, for secrets written literally into the config.yaml of the classpath. */
     public void validate() {
-        for (Map.Entry<String, String> entry : values.entrySet()) {
-            String value = entry.getValue();
-            if (value != null && (value.startsWith(VAULT_TAG) || value.startsWith(ARG_TAG)) ) {
-                LOG.error("{} has not been decrypted or parsed correctly", entry.getKey());
-                valid = false;
-            }
+        Set<String> failures = new TreeSet<>(errors);
+        if (Application.getMode() == Mode.PROD && !externalConfig) {
+            getLiteralSecrets().forEach(key -> failures.add(key + " is a secret and must not be set literally in prod, use env{}, arg{} or file{}"));
         }
+
+        failures.forEach(LOG::error);
+        if (!failures.isEmpty()) {
+            valid = false;
+        }
+    }
+
+    // A fallback in the braces counts as literal, as it is written into the config.yaml as well
+    Set<String> getLiteralSecrets() {
+        return values.keySet().stream()
+                .filter(Config::isSecret)
+                .filter(key -> !external.contains(key))
+                .collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    Set<String> getErrors() {
+        return Collections.unmodifiableSet(errors);
     }
 
     public Properties toProperties() {
@@ -305,6 +388,15 @@ public class Config {
 
     public int getConnectorHttpsPort() {
         return getInt(Key.CONNECTOR_HTTPS_PORT, 0);
+    }
+
+    public boolean isConnectorProxy() {
+        return getBoolean(Key.CONNECTOR_PROXY, Default.CONNECTOR_PROXY);
+    }
+
+    /** Seconds the shutdown waits in total for open requests and running scheduled tasks. */
+    public long getApplicationShutdownTimeout() {
+        return Math.max(0, getLong(Key.APPLICATION_SHUTDOWN_TIMEOUT, Default.APPLICATION_SHUTDOWN_TIMEOUT));
     }
 
     public boolean isMetricsEnable() {
@@ -490,14 +582,6 @@ public class Config {
         return getString(Key.SESSION_COOKIE_SAME_SITE_MODE, Default.SESSION_COOKIE_SAME_SITE_MODE);
     }
 
-    public String getApplicationVaultSecret() {
-        return getString(Key.APPLICATION_VAULT_SECRET, null);
-    }
-
-    public String getApplicationVaultPath() {
-        return getString(Key.APPLICATION_VAULT_PATH, null);
-    }
-
     public byte[] getSessionCookieKey() {
         return getString(Key.SESSION_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
@@ -510,8 +594,17 @@ public class Config {
         return getString(Key.AUTHENTICATION_COOKIE_KEY, getApplicationSecret()).getBytes(StandardCharsets.UTF_8);
     }
 
+    /** May be empty if the keystore holds exactly one key entry. */
     public String getConnectorHttpsCertificateAlias() {
-        return getString(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS, Default.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
+        return getString(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS, null);
+    }
+
+    public String getConnectorHttpsKeystore() {
+        return getString(Key.CONNECTOR_HTTPS_KEYSTORE, null);
+    }
+
+    public String getConnectorHttpsPassword() {
+        return getString(Key.CONNECTOR_HTTPS_PASSWORD, null);
     }
 
     public boolean isAuthenticationBlacklist() {

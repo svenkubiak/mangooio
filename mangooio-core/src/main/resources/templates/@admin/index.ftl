@@ -118,7 +118,7 @@
     </#if>
     <div class="columns">
         <div class="column">
-            <a href="/@admin" aria-current="page">Powered by mangoo I/O ${version} in ${mode} mode</a>
+            <a href="/@admin" aria-current="page">Powered by mangoo I/O ${version} in ${mode} mode on instance ${instance}</a>
         </div>
     </div>
 </div>

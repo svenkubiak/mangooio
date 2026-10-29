@@ -72,7 +72,7 @@ Understanding the boot sequence helps once you start adding your own initializat
 
 1. **Mode** is decided first: `dev` (set by the Maven plugin), `test` (set by `TestRunner`), or `prod` (the default when you run the packaged JAR directly with `java -jar`).
 2. **Config** loads next. `config.yaml` is parsed, and the `environments.<mode>` block is merged on top of `default`, key by key, so values you do not override in an environment simply fall back to the default.
-3. **Vault** runs if `application.vault.enable` is `true`. A `vault.p12` keystore is created (on first run) or opened, and any config value written as `vault{}` is resolved through it. This exists so that cookie secrets and similar sensitive values never have to sit in `config.yaml` as plain text.
+   Placeholders such as `env{}`, `arg{}` and `file{}` are resolved in the same step, so secrets never have to sit in `config.yaml` as plain text in prod.
 4. **Guice** builds the injector. Your `app.Module` class runs and binds `MangooBootstrap` to your `Bootstrap` implementation, plus whatever other services you have added.
 5. **`applicationInitialized()`** is called on your bootstrap class. At this point config and dependency injection are ready, but no routes exist yet and the server is not listening.
 6. **Routes** are registered by your bootstrap's `initializeRoutes()` method: controllers, static files, and any SSE or WebSocket endpoints.
@@ -209,7 +209,7 @@ environments:
         port: 29019
 ```
 
-Read this as "start from `default`, then apply whatever `environments.dev` overrides." So in `dev` mode the effective HTTP port is `9090`, not `8080`, even though `8080` is what `default` says. The archetype also enables the [vault](secrets.md) and references cookie secrets and keys as `vault{}`; a `vault.p12` file appears in your project root the first time you start the app.
+Read this as "start from `default`, then apply whatever `environments.dev` overrides." So in `dev` mode the effective HTTP port is `9090`, not `8080`, even though `8080` is what `default` says. The archetype generated random cookie secrets and keys for `dev` and `test`; `prod` reads them with `env{}`, see [Secrets](secrets.md).
 
 **`templates/`** mirrors controller and method names: `ApplicationController/index.ftl` is what `Response.ok().render()` renders when it is called from `index()`.
 
@@ -221,7 +221,7 @@ Work through these topics in order, or jump straight to what you need:
 
 | Topic | Guide | What you will learn |
 |---|---|---|
-| Settings and secrets | [Configuration](configuration.md), [Secrets](secrets.md) | Keys, modes, vault, env vars, HTTPS |
+| Settings and secrets | [Configuration](configuration.md), [Secrets](secrets.md) | Keys, modes, env vars, secret files, HTTPS |
 | URLs and lifecycle | [Routing](routing.md), [Bootstrap](bootstrap.md) | Mapping paths, static files, SSE |
 | Request handling | [Controllers](controllers.md) | Parameters, validation, `Response` |
 | HTML | [Templating](templating.md) | Freemarker variables, CSRF tags, i18n |
@@ -229,6 +229,6 @@ Work through these topics in order, or jump straight to what you need:
 | Login and cookies | [Authentication](authentication.md), [Sessions](sessions.md) | Auth cookie, session data |
 | Database | [Persistence](persistence.md) | Entities, queries, multiple connections |
 | Quality | [Testing](testing.md) | `TestRequest`, `TestBrowser` |
-| Production | [Operating](operating.md) | JAR, Docker, vault in prod |
+| Production | [Operating](operating.md) | JAR, Docker, secrets in prod |
 
-When you are ready to deploy, read [Operating](operating.md) for fat-JAR packaging, environment variables for the vault, and Log4j configuration exclusions. ✅
+When you are ready to deploy, read [Operating](operating.md) for fat-JAR packaging, secrets in production, and Log4j configuration exclusions. ✅

@@ -66,7 +66,7 @@ Each release is validated against a large [SonarQube](http://www.sonarqube.org/)
 - **Convention over configuration.** Controller package, template paths, and translation bundles follow fixed conventions, so you spend less time on boilerplate and more time writing the parts unique to your app.
 - **Hot compile in dev mode.** `mvn mangooio:run` watches your sources and recompiles changes quickly, usually within about a second, so the edit-save-refresh loop stays fast.
 - **Programmatic routing.** All routes live in `Bootstrap.java`. There is no separate routes file that can drift out of sync with the code that actually handles the request.
-- **Maven archetype.** Generates a working app with vault-backed cookie keys, sample persistence, and a first test already in place.
+- **Maven archetype.** Generates a working app with generated dev and test secrets, sample persistence, and a first test already in place.
 
 ### HTTP and security
 
@@ -95,7 +95,7 @@ Each release is validated against a large [SonarQube](http://www.sonarqube.org/)
 The sidebar groups topics by concern. A typical learning path looks like this:
 
 1. **[Getting started](getting-started.md)**: install Java 25 and Maven, generate a project, run it locally.
-2. **[Configuration](configuration.md)** and **[Secrets](secrets.md)**: `config.yaml`, modes, vault, environment variables, HTTPS.
+2. **[Configuration](configuration.md)** and **[Secrets](secrets.md)**: `config.yaml`, modes, environment variables, secret files, HTTPS.
 3. **[Bootstrap](bootstrap.md)** and **[Routing](routing.md)**: lifecycle hooks and URL mapping.
 4. **[Controllers](controllers.md)** and **[Templating](templating.md)**: request handling, parameters, Freemarker.
 5. **[Working with JSON](working-with-json.md)**: APIs and POJO binding.
@@ -107,7 +107,7 @@ Reference pages cover [filters](filters.md), [forms](forms.md), [flash](flash.md
 
 ## Upgrading
 
-When you move between major or minor versions, read the [changelog](changelog.md) and [migrations](migrations.md) first. Breaking changes, for example the move from Cryptex to the vault, or from Paseto to JWT in the 10.x line, are documented there with pointers to whichever guide reflects the current behavior.
+When you move between major or minor versions, read the [changelog](changelog.md) and [migrations](migrations.md) first. Breaking changes, for example the removal of the vault in 11.0, or from Paseto to JWT in the 10.x line, are documented there with pointers to whichever guide reflects the current behavior.
 
 ## Resources
 

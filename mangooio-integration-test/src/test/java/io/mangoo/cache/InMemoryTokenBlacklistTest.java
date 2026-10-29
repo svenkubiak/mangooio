@@ -1,5 +1,6 @@
 package io.mangoo.cache;
 
+import io.mangoo.constants.Default;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -15,6 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
 class InMemoryTokenBlacklistTest {
     private static final Duration MAX_TOKEN_LIFETIME = Duration.ofDays(30);
     private static final Instant NOW = Instant.parse("2026-10-01T12:00:00.500Z");
+    private static final Duration SKEW = Duration.ofSeconds(Default.JWT_CLOCK_SKEW);
     private final AtomicLong nanos = new AtomicLong();
     private final MutableClock clock = new MutableClock(NOW);
     private final InMemoryTokenBlacklist blacklist = new InMemoryTokenBlacklist(MAX_TOKEN_LIFETIME, nanos::get, clock);
@@ -32,12 +34,24 @@ class InMemoryTokenBlacklistTest {
     }
 
     @Test
-    void testRevocationEndsWithTokenExpiry() {
+    void testRevocationOutlivesTokenExpiryByClockSkew() {
+        //given
+        blacklist.revoke("jti", NOW.plus(MAX_TOKEN_LIFETIME));
+
+        //when the token is past exp, but still accepted by JwtUtils
+        advance(MAX_TOKEN_LIFETIME.plus(SKEW).minusSeconds(1));
+
+        //then
+        assertThat(blacklist.isRevoked("jti", null, null), equalTo(true));
+    }
+
+    @Test
+    void testRevocationEndsWithTokenExpiryAndClockSkew() {
         //given
         blacklist.revoke("jti", NOW.plus(MAX_TOKEN_LIFETIME));
 
         //when
-        advance(MAX_TOKEN_LIFETIME.plusSeconds(1));
+        advance(MAX_TOKEN_LIFETIME.plus(SKEW).plusSeconds(1));
 
         //then
         assertThat(blacklist.isRevoked("jti", null, null), equalTo(false));
@@ -58,10 +72,19 @@ class InMemoryTokenBlacklistTest {
     @Test
     void testAlreadyExpiredTokenIsNotStored() {
         //given
-        blacklist.revoke("jti", NOW.minusSeconds(1));
+        blacklist.revoke("jti", NOW.minus(SKEW).minusSeconds(1));
 
         //then
         assertThat(blacklist.isRevoked("jti", null, null), equalTo(false));
+    }
+
+    @Test
+    void testTokenExpiredWithinClockSkewIsStored() {
+        //given
+        blacklist.revoke("jti", NOW.minusSeconds(1));
+
+        //then
+        assertThat(blacklist.isRevoked("jti", null, null), equalTo(true));
     }
 
     @Test
@@ -86,12 +109,24 @@ class InMemoryTokenBlacklistTest {
     }
 
     @Test
-    void testSubjectRevocationEndsAfterMaxTokenLifetime() {
+    void testSubjectRevocationOutlivesMaxTokenLifetimeByClockSkew() {
         //given
         blacklist.revokeSubject("subject", NOW);
 
         //when
-        advance(MAX_TOKEN_LIFETIME.plusSeconds(1));
+        advance(MAX_TOKEN_LIFETIME.plus(SKEW).minusSeconds(1));
+
+        //then
+        assertThat(blacklist.isRevoked("jti", "subject", NOW.minusSeconds(60)), equalTo(true));
+    }
+
+    @Test
+    void testSubjectRevocationEndsAfterMaxTokenLifetimeAndClockSkew() {
+        //given
+        blacklist.revokeSubject("subject", NOW);
+
+        //when
+        advance(MAX_TOKEN_LIFETIME.plus(SKEW).plusSeconds(1));
 
         //then
         assertThat(blacklist.isRevoked("jti", "subject", NOW.minusSeconds(60)), equalTo(false));

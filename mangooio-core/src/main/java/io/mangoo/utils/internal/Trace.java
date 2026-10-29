@@ -68,6 +68,7 @@ public final class Trace {
                         Resource.create(
                                 Attributes.of(
                                         AttributeKey.stringKey("service.name"), Const.FRAMEWORK,
+                                        AttributeKey.stringKey("service.instance.id"), Application.getInstanceId(),
                                         AttributeKey.stringKey("framework.name"), Const.FRAMEWORK,
                                         AttributeKey.stringKey("framework.version"), MangooUtils.getVersion(),
                                         AttributeKey.stringKey("framework.environment"), Application.getMode().name()
