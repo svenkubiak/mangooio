@@ -292,4 +292,14 @@ public class ApplicationTest {
         //then
         assertThrows(IllegalStateException.class, () -> Application.sslContext(Path.of("does-not-exist.p12"), KEYSTORE_PASSWORD, null));
     }
+
+    @Test
+    void testSupportedMongoVersion() {
+        //then
+        assertThat(Application.isSupportedMongoVersion(List.of(4, 2, 0, 0)), equalTo(true));
+        assertThat(Application.isSupportedMongoVersion(List.of(7, 0, 14, 0)), equalTo(true));
+        assertThat(Application.isSupportedMongoVersion(List.of(4, 0, 28, 0)), equalTo(false));
+        assertThat(Application.isSupportedMongoVersion(List.of(3, 6)), equalTo(false));
+        assertThat(Application.isSupportedMongoVersion(null), equalTo(false));
+    }
 }

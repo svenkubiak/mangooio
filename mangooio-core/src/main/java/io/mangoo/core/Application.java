@@ -28,7 +28,13 @@ import io.mangoo.constants.Required;
 import io.mangoo.crypto.PasswordHasher;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Sort;
+import io.mangoo.interfaces.AttemptStore;
 import io.mangoo.interfaces.MangooBootstrap;
+import io.mangoo.interfaces.MessageBroker;
+import io.mangoo.interfaces.OneTimeStore;
+import io.mangoo.interfaces.TokenBlacklist;
+import io.mangoo.persistence.MongoMessageBroker;
+import io.mangoo.persistence.MongoStore;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
@@ -65,6 +71,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.logging.log4j.util.Strings;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -176,6 +183,7 @@ public final class Application {
             createRoutes();
             validateUrls();
             awaitScan(scan);
+            startMessageBroker();
             prepareUndertow();
             prepareShutdown();
             sanityChecks();
@@ -210,6 +218,19 @@ public final class Application {
             Thread.currentThread().interrupt();
             LOG.error("Interrupted while waiting for the classpath scan", e);
             failsafe();
+        }
+    }
+
+    // Started after the classpath scan prepared its collection and before the first request may publish
+    private static void startMessageBroker() {
+        if (getInstance(MessageBroker.class) instanceof MongoMessageBroker broker) {
+            broker.start();
+        }
+    }
+
+    static void stopMessageBroker() {
+        if (getInstance(MessageBroker.class) instanceof MongoMessageBroker broker) {
+            broker.stop();
         }
     }
 
@@ -361,6 +382,8 @@ public final class Application {
             });
 
             Datastore datastore = getInstance(Datastore.class);
+            checkMongoVersion(datastore);
+
             scanResult.getClassesWithFieldAnnotation(INDEXED).forEach(classInfo -> {
                 var clazz = loadClass(classInfo);
                 for (IndexDefinition index : getIndexDefinitions(clazz)) {
@@ -373,7 +396,29 @@ public final class Application {
                 }
             });
 
+            for (Class<?> store : List.of(AttemptStore.class, OneTimeStore.class, TokenBlacklist.class, MessageBroker.class)) {
+                if (getInstance(store) instanceof MongoStore mongoStore) {
+                    mongoStore.prepare();
+                }
+            }
         }
+    }
+
+    // Pipeline updates and $$NOW of the shared stores require MongoDB 4.2
+    private static void checkMongoVersion(Datastore datastore) {
+        var buildInfo = datastore.getMongoDatabase().runCommand(new Document("buildInfo", 1));
+        List<Integer> version = buildInfo.getList("versionArray", Integer.class);
+        if (!isSupportedMongoVersion(version)) {
+            throw new IllegalStateException("MongoDB " + buildInfo.getString("version") + " is not supported, mangoo I/O requires MongoDB 4.2 or later");
+        }
+    }
+
+    static boolean isSupportedMongoVersion(List<Integer> version) {
+        if (version == null || version.size() < 2) {
+            return false;
+        }
+
+        return version.get(0) > 4 || (version.get(0) == 4 && version.get(1) >= 2);
     }
 
     private static void prepareSubscriber(ScanResult scanResult) {

@@ -99,7 +99,7 @@ On `SIGTERM` the application
 3. closes all SSE and WebSocket connections, clients reconnect to another instance,
 4. answers new requests with `503` and waits for the open ones,
 5. stops Undertow and waits for running `@Run` tasks, interrupting them at the deadline,
-6. calls `applicationStopped()` of your `Bootstrap`, while the datastores are still open,
+6. stops the `MessageBroker` and calls `applicationStopped()` of your `Bootstrap`, while the datastores are still open,
 7. closes the MongoDB connections, stops telemetry and Log4j.
 
 Steps 4 and 5 share `application.shutdown.timeout`, 20 seconds by default. The application does not wait for the load balancer to notice that the instance is going away; add that delay in front, for example with a Kubernetes `preStop` hook, and keep `terminationGracePeriodSeconds` above `preStop` plus `application.shutdown.timeout`:
@@ -129,8 +129,9 @@ Several instances of one application can run behind a load balancer. Session, fl
 * **Startup logic**: `applicationStarted()` runs on every instance at the same time, so migrations and seed data must tolerate concurrent runs.
 * **Cache**: the application cache is local to each instance. Bind your own `Cache` implementation if entries must be shared.
 * **EventBus**: events are processed by the subscribers of the instance that published them.
-* **Server-Sent Events and WebSockets**: connections and events are local to an instance. An event sent with `ServerSentEventManager` reaches only the clients connected to the sending instance.
-* **Authentication state**: the failed login lock, the revocation of authentication cookies (`authentication.blacklist`) and the pending second factor of the admin login are still kept per instance. Without sticky sessions, the admin login with a second factor fails when `/@admin/authenticate` and `/@admin/verify` reach different instances.
+* **Server-Sent Events**: an event sent with `ServerSentEventManager` reaches the clients of every instance through the `MessageBroker` (capped collection `mangooio_messages`, best effort, no replay); the connections stay local to an instance.
+* **WebSockets**: the framework holds no WebSocket connections. Use `io.mangoo.interfaces.MessageBroker` to publish to all instances and subscribe on each instance to forward to its own connections.
+* **Authentication state**: the failed login budget, used TOTP codes, the pending second factor of the admin login and the revocation of authentication cookies (`authentication.blacklist`) are kept in MongoDB (`mangooio_attempts`, `mangooio_claims`, `mangooio_revocations`) and shared by all instances. Reads go to the primary and writes are acknowledged by the majority, whatever `persistence.mongo.url` sets. If MongoDB is unavailable, logins, second factors and authenticated requests are refused. MongoDB 4.2 or later is required.
 * **Indexes**: a changed `@Indexed` definition fails the index creation, and a new instance does not start. During a rolling deploy, drop the old index before the new version starts.
 
 ## Global response headers

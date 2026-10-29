@@ -8,6 +8,9 @@ Unreleased
 * **Behaviour change** An env{}, arg{} or file{} without value and fallback fails the startup (svenkubiak)
 * **Behaviour change** Framework secrets must not be literal in the config.yaml of the classpath in prod mode (svenkubiak)
 * **Behaviour change** The HTTPS connector reads its certificate from connector.https.keystore, no self-signed certificate is generated (svenkubiak)
+* **Behaviour change** Failed login budgets, admin pre-authentication and token revocations are kept in MongoDB and shared by all instances when persistence is enabled; MongoDB 4.2 is required (svenkubiak)
+* **Behaviour change** isValidSecondFactor and the admin login accept each TOTP code once (svenkubiak)
+* **Behaviour change** Removed AuthenticationLock and CacheName.AUTH (svenkubiak)
 * Removed all deprecated methods (svenkubiak)
 * Migrated from Jackson 2 to Jackson 3 (svenkubiak)
 * Added support for MongoDB connection strings - replica sets, sharded clusters, SRV (svenkubiak)
@@ -19,8 +22,12 @@ Unreleased
 * Added a startup warning for embedded MongoDB in prod mode (svenkubiak)
 * Added file{} to read secrets from mounted files in /run/secrets (svenkubiak)
 * Added generated dev and test secrets to the archetype (svenkubiak)
+* Added AttemptStore, OneTimeStore and TotpUtils.verifyTotp(identifier, secret, totp) (svenkubiak)
+* Added MessageBroker, server sent events reach the clients of every instance when persistence is enabled (svenkubiak)
 * Fixed a revoked authentication cookie being accepted again within the JWT clock skew after its expiry (svenkubiak)
 * Fixed MongoDB clients not being closed and embedded MongoDB being stopped before Undertow on shutdown (svenkubiak)
+* Fixed the admin login with a second factor failing when the two steps reached different instances (svenkubiak)
+* Fixed a hashing overload failing the admin login with an error instead of refusing it without counting the attempt (svenkubiak)
 
 ## Version 10.16.0
 

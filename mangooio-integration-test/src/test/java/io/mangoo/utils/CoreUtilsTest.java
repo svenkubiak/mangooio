@@ -1,24 +1,34 @@
 package io.mangoo.utils;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
+import com.nimbusds.jwt.JWTClaimsSet;
 import io.mangoo.TestExtension;
-import io.mangoo.cache.Cache;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.exceptions.MangooTranslationException;
+import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.bindings.Form;
+import io.mangoo.constants.ClaimKey;
 import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.server.handlers.Cookie;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.time.LocalDateTime;
+import org.bson.Document;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.mangoo.core.Application.getInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,15 +40,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CoreUtilsTest {
     /** Cleartext of the Argon2id hash stored as application.admin.password. */
     private static final String ADMIN_PASSWORD = "admin";
-    private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
-    private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
     private Config config;
-    private Cache cache;
 
     @BeforeEach
     void setUp() {
         config = getInstance(Config.class);
-        cache = getInstance(Cache.class);
+        resetAdmin();
+    }
+
+    // A locked admin step would make the admin controller tests fail, which run in the same JVM
+    @AfterEach
+    void resetAdmin() {
+        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_PASSWORD);
+        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_SECOND_FACTOR);
     }
 
     @Test
@@ -193,86 +207,134 @@ class CoreUtilsTest {
     }
 
     @Test
-    void testInvalidAuthentication() {
-        //given
-        MangooUtils.resetLockCounter();
-
+    void testAcquireAdminAttempt() {
         //when
-        MangooUtils.invalidAuthentication();
+        boolean granted = MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD);
 
         //then
-        AtomicInteger counter = cache.get(MANGOOIO_ADMIN_LOCK_COUNT);
-        assertThat(counter, not(nullValue()));
-        assertThat(counter.intValue(), equalTo(1));
+        assertThat(granted, is(true));
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), is(false));
     }
 
     @Test
-    void testInvalidAuthenticationMaxRetries() {
-        //given
-        MangooUtils.resetLockCounter();
-
+    void testAdminAttemptMaxRetries() {
         //when
         for (int i = 0; i < 10; i++) {
-            MangooUtils.invalidAuthentication();
+            assertThat(MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD), is(true));
         }
 
-        //then
-        assertThat(MangooUtils.isNotLocked(), is(false));
-        LocalDateTime lockedUntil = cache.get(MANGOOIO_ADMIN_LOCKED_UNTIL);
-        assertThat(lockedUntil, not(nullValue()));
-        assertThat(lockedUntil.isAfter(LocalDateTime.now()), is(true));
+        //then the attempt that used up the budget was granted and set the lock
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), is(true));
+        assertThat(MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD), is(false));
+        Date lockedUntil = adminAttempts().getDate("lockedUntil");
+        assertThat(lockedUntil.toInstant().isAfter(Instant.now().plus(Duration.ofMinutes(59))), is(true));
     }
 
     @Test
-    void testIsNotLockedWhenNotLocked() {
-        //given
-        cache.remove(MANGOOIO_ADMIN_LOCKED_UNTIL);
-
-        //when
-        boolean notLocked = MangooUtils.isNotLocked();
-
+    void testIsAdminLockedWhenNotLocked() {
         //then
-        assertThat(notLocked, is(true));
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), is(false));
     }
 
     @Test
-    void testIsNotLockedWhenLocked() {
+    void testIsAdminLockedWhenLocked() {
         //given
-        LocalDateTime futureTime = LocalDateTime.now().plusMinutes(30);
-        cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, futureTime);
-
-        //when
-        boolean notLocked = MangooUtils.isNotLocked();
+        lockAdmin(Instant.now().plus(Duration.ofMinutes(30)));
 
         //then
-        assertThat(notLocked, is(false));
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), is(true));
+        assertThat(MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD), is(false));
     }
 
     @Test
-    void testIsNotLockedWhenLockExpired() {
+    void testElapsedAdminLockResetsTheBudget() {
         //given
-        LocalDateTime pastTime = LocalDateTime.now().minusMinutes(30);
-        cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, pastTime);
+        lockAdmin(Instant.now().minus(Duration.ofMinutes(30)));
 
         //when
-        boolean notLocked = MangooUtils.isNotLocked();
+        boolean granted = MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD);
 
         //then
-        assertThat(notLocked, is(true));
+        assertThat(granted, is(true));
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), is(false));
+        assertThat(adminAttempts().getInteger("attempts"), equalTo(1));
     }
 
     @Test
-    void testResetLockCounter() {
+    void testResetAdminAttempts() {
         //given
-        cache.put(MANGOOIO_ADMIN_LOCK_COUNT, new AtomicInteger(5));
+        for (int i = 0; i < 5; i++) {
+            MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD);
+        }
 
         //when
-        MangooUtils.resetLockCounter();
+        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_PASSWORD);
 
         //then
-        AtomicInteger counter = cache.get(MANGOOIO_ADMIN_LOCK_COUNT);
-        assertThat(counter, not(nullValue()));
-        assertThat(counter.intValue(), equalTo(0));
+        assertThat(adminAttempts(), nullValue());
+    }
+
+    @Test
+    void testPreAuthenticationIsConsumedOnce() {
+        //given
+        JWTClaimsSet claims = preAuthClaims(CommonUtils.uuidV6());
+
+        //when
+        boolean first = MangooUtils.consumePreAuthentication(claims);
+        boolean replay = MangooUtils.consumePreAuthentication(claims);
+
+        //then
+        assertThat(first, is(true));
+        assertThat(replay, is(false));
+    }
+
+    private static Document adminAttempts() {
+        return attemptsCollection().find(Filters.eq("_id", MangooUtils.ADMIN_PASSWORD)).first();
+    }
+
+    private static void lockAdmin(Instant lockedUntil) {
+        attemptsCollection().updateOne(Filters.eq("_id", MangooUtils.ADMIN_PASSWORD),
+                Updates.combine(Updates.set("attempts", 10), Updates.set("lockedUntil", Date.from(lockedUntil))),
+                new UpdateOptions().upsert(true));
+    }
+
+    private static MongoCollection<Document> attemptsCollection() {
+        return getInstance(Datastore.class).getMongoDatabase().getCollection("mangooio_attempts");
+    }
+
+    private static JWTClaimsSet preAuthClaims(String jwtId) {
+        return new JWTClaimsSet.Builder()
+                .jwtID(jwtId)
+                .claim(ClaimKey.TWO_FACTOR, "true")
+                .expirationTime(Date.from(Instant.now().plusSeconds(120)))
+                .build();
+    }
+
+    @Test
+    void testPreAuthenticationWithoutPendingSecondFactorIsRefused() {
+        //given
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .jwtID(CommonUtils.uuidV6())
+                .expirationTime(Date.from(Instant.now().plusSeconds(120)))
+                .build();
+
+        //then
+        assertThat(MangooUtils.consumePreAuthentication(claims), is(false));
+    }
+
+    @Test
+    void testPreAuthenticationClaimOutlivesTheCookieByTheClockSkew() {
+        //given
+        String jwtId = CommonUtils.uuidV6();
+        JWTClaimsSet claims = preAuthClaims(jwtId);
+
+        //when
+        MangooUtils.consumePreAuthentication(claims);
+
+        //then
+        Document claim = getInstance(Datastore.class).getMongoDatabase().getCollection("mangooio_claims")
+                .find(Filters.eq("_id", "admin-pre-auth:" + jwtId)).first();
+        assertThat(claim.getDate("expireAt").toInstant(), equalTo(claims.getExpirationTime().toInstant().plusSeconds(30)));
     }
 
     @Test

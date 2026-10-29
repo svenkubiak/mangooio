@@ -4,7 +4,6 @@ import com.google.common.io.Resources;
 import com.google.common.reflect.ClassPath;
 import com.nimbusds.jwt.JWTClaimsSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.cache.Cache;
 import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
@@ -13,6 +12,8 @@ import io.mangoo.core.Config;
 import io.mangoo.crypto.Argon2Hash;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.exceptions.MangooTranslationException;
+import io.mangoo.interfaces.AttemptStore;
+import io.mangoo.interfaces.OneTimeStore;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
@@ -20,6 +21,7 @@ import io.mangoo.routing.bindings.Validator;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.JwtUtils;
+import io.mangoo.utils.TotpUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import jakarta.validation.MessageInterpolator;
@@ -45,24 +47,25 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.mangoo.core.Application.getInstance;
 
 public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
+    /** Budget of the admin password step, separate from the second factor, so a successful password login does not reset it. */
+    public static final String ADMIN_PASSWORD = "admin:pwd";
+    public static final String ADMIN_SECOND_FACTOR = "admin:2fa";
+    private static final String ADMIN_IDENTIFIER = "admin";
+    private static final String ADMIN_PRE_AUTH = "admin-pre-auth:";
     private static final int ADMIN_LOGIN_MAX_RETRIES = 10;
+    private static final Duration ADMIN_LOCK_DURATION = Duration.ofMinutes(60);
     private static final int ADMIN_COOKIE_TTL = 1800;
     private static final int ADMIN_PRE_AUTH_COOKIE_TTL = 120;
-    private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
-    private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
-    private static final String MANGOOIO_ADMIN_TWO_FACTOR_LOCKED_UNTIL = "mangooio-admin-twofactor-locked-until";
-    private static final String MANGOOIO_ADMIN_TWO_FACTOR_LOCK_COUNT = "mangooio-admin-twofactor-lock-count";
-    private static final String MANGOOIO_ADMIN_PRE_AUTH = "mangooio-admin-pre-auth-";
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
     private static final Set<String> VALID_TIMEZONES = ZoneId.getAvailableZoneIds();
@@ -243,10 +246,6 @@ public final class MangooUtils {
 
             var jwt = JwtUtils.createJwt(jwtData);
 
-            if (preAuthentication) {
-                getInstance(Cache.class).put(MANGOOIO_ADMIN_PRE_AUTH + subject, Boolean.TRUE, ttl, ChronoUnit.SECONDS);
-            }
-
             return new CookieImpl(getAdminCookieName())
                     .setValue(jwt)
                     .setHttpOnly(true)
@@ -289,71 +288,43 @@ public final class MangooUtils {
         return ("true").equals(claims.getClaim(ClaimKey.TWO_FACTOR));
     }
 
-    // One-time use, so a captured pre-authentication cookie cannot be replayed
+    // One-time use on every instance, so a captured pre-authentication cookie cannot be replayed; the claim outlives
+    // the cookie by the JWT clock skew, as the cookie is still accepted until then
     public static boolean consumePreAuthentication(JWTClaimsSet claims) {
         Objects.requireNonNull(claims, Required.CLAIMS);
 
-        String subject = claims.getSubject();
-        if (!isTwoFactorPending(claims) || StringUtils.isBlank(subject)) {
+        String jwtId = claims.getJWTID();
+        if (!isTwoFactorPending(claims) || StringUtils.isBlank(jwtId) || claims.getExpirationTime() == null) {
             return false;
         }
 
-        Cache cache = getInstance(Cache.class);
-        String key = MANGOOIO_ADMIN_PRE_AUTH + subject;
-        if (cache.get(key) == null) {
-            return false;
-        }
-
-        cache.remove(key);
-        return true;
+        Instant expiresAt = claims.getExpirationTime().toInstant().plusSeconds(Default.JWT_CLOCK_SKEW);
+        return getInstance(OneTimeStore.class).claim(ADMIN_PRE_AUTH + jwtId, expiresAt);
     }
 
     public static String getAdminCookieName() {
         return Application.inProdMode() ? "__Host-" + Default.APPLICATION_ADMIN_COOKIE_NAME : Default.APPLICATION_ADMIN_COOKIE_NAME;
     }
 
-    public static void invalidAuthentication() {
-        invalidAttempt(MANGOOIO_ADMIN_LOCK_COUNT, MANGOOIO_ADMIN_LOCKED_UNTIL);
+    /** Reserves an attempt of ADMIN_PASSWORD or ADMIN_SECOND_FACTOR before it is verified; false while the step is locked. */
+    public static boolean acquireAdminAttempt(String step) {
+        return getInstance(AttemptStore.class).tryAcquire(step, ADMIN_LOGIN_MAX_RETRIES, ADMIN_LOCK_DURATION);
     }
 
-    public static boolean isNotLocked() {
-        return isNotLocked(MANGOOIO_ADMIN_LOCKED_UNTIL);
+    public static void releaseAdminAttempt(String step) {
+        getInstance(AttemptStore.class).release(step, ADMIN_LOGIN_MAX_RETRIES);
     }
 
-    public static void resetLockCounter() {
-        resetLock(MANGOOIO_ADMIN_LOCK_COUNT, MANGOOIO_ADMIN_LOCKED_UNTIL);
+    public static void resetAdminAttempts(String step) {
+        getInstance(AttemptStore.class).reset(step);
     }
 
-    // Separate budget from the password step, so a successful password login does not reset it
-    public static void invalidSecondFactor() {
-        invalidAttempt(MANGOOIO_ADMIN_TWO_FACTOR_LOCK_COUNT, MANGOOIO_ADMIN_TWO_FACTOR_LOCKED_UNTIL);
+    public static boolean isAdminLocked(String step) {
+        return getInstance(AttemptStore.class).isLocked(step);
     }
 
-    public static boolean isSecondFactorNotLocked() {
-        return isNotLocked(MANGOOIO_ADMIN_TWO_FACTOR_LOCKED_UNTIL);
-    }
-
-    public static void resetSecondFactorLockCounter() {
-        resetLock(MANGOOIO_ADMIN_TWO_FACTOR_LOCK_COUNT, MANGOOIO_ADMIN_TWO_FACTOR_LOCKED_UNTIL);
-    }
-
-    private static void invalidAttempt(String countKey, String lockedUntilKey) {
-        AtomicInteger counter = getInstance(Cache.class).getAndIncrementCounter(countKey);
-        if (counter.intValue() >= ADMIN_LOGIN_MAX_RETRIES) {
-            getInstance(Cache.class).put(lockedUntilKey, LocalDateTime.now().plusMinutes(60));
-        }
-
-        getInstance(Cache.class).put(countKey, counter);
-    }
-
-    private static boolean isNotLocked(String lockedUntilKey) {
-        LocalDateTime lockedUntil = getInstance(Cache.class).get(lockedUntilKey);
-        return lockedUntil == null || lockedUntil.isBefore(LocalDateTime.now());
-    }
-
-    private static void resetLock(String countKey, String lockedUntilKey) {
-        getInstance(Cache.class).resetCounter(countKey);
-        getInstance(Cache.class).remove(lockedUntilKey);
+    public static boolean isValidAdminSecondFactor(String secret, String code) {
+        return TotpUtils.verifyTotp(ADMIN_IDENTIFIER, secret, code);
     }
 
     public static void mergeMaps(Map<String, Object> baseMap, Map<String, Object> overrideMap) {

@@ -13,6 +13,7 @@ public final class Required {
     public static final String CLASS = "class can not be null ";
     public static final String CLEARTEXT = "cleartext can not be null or blank";
     public static final String CONFIG = "config can not be null";
+    public static final String CONSUMER = "consumer can not be null";
     public static final String CONNECTION = "connection can not be null";
     public static final String CONTENT = "content can not be null or blank";
     public static final String CONTENT_TYPE = "content type can not be null or blank";
@@ -37,6 +38,7 @@ public final class Required {
     public static final String HTTP_METHOD = "HTTP method can not be null or blank";
     public static final String HTTP_SERVER_EXCHANGE = "httpServerExchange can not be null or blank";
     public static final String ID = "id can not be null or blank";
+    public static final String IDENTIFIER = "identifier can not be null or blank";
     public static final String INDEX = "index can not be null or blank";
     public static final String INDEX_OPTIONS = "indexOptions can not be null or blank";
     public static final String INDEXES = "indexes van not be null";
@@ -94,6 +96,7 @@ public final class Required {
     public static final String TEMPLATE_NAME = "template name can not be null or blank";
     public static final String TEMPORAL_UNIT = "temporal unit can not be null or blank";
     public static final String TOS = "tos can not be null or blank";
+    public static final String TOPIC = "topic can not be null or blank";
     public static final String TOTP = "totp can not be null or blank";
     public static final String TYPE = "type can not be null or blank";
     public static final String UNIT = "unit can not be null or blank";

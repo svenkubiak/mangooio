@@ -39,6 +39,8 @@ public class NotifyService {
 
 The first argument is the key the connections are held under, which for the default handler is the route URL, and the payload is a plain string. Delivery runs on a virtual thread, so `sendData()` returns immediately without blocking on connected clients.
 
+With persistence enabled, `send` reaches the connections of the key on **every instance**: the event is delivered to the connections of the sending instance directly and published through the `MessageBroker`, which every other instance reads from the capped collection `mangooio_messages`. Delivery is best effort: an instance that is restarting or disconnected from MongoDB misses the events of that time, there is no replay. Connections themselves stay local to the instance that accepted them.
+
 ## Custom connection handler
 
 Everything above is what the default handler gives you: every connection of a route lands under the route URL, and `send()` is a broadcast to all of them. When you need to look at a connection before accepting it, or address a single client rather than a whole path, pass your own Undertow `ServerSentEventConnectionCallback` to the route:
@@ -95,6 +97,6 @@ location /sse {
 }
 ```
 
-On shutdown every SSE connection is closed before open requests are drained, as an open connection would otherwise hold the shutdown until its timeout. Browsers reconnect automatically and reach another instance through the load balancer. Events sent with `ServerSentEventManager` reach the clients connected to the sending instance only.
+On shutdown every SSE connection is closed before open requests are drained, as an open connection would otherwise hold the shutdown until its timeout. Browsers reconnect automatically and reach another instance through the load balancer.
 
 Client setup: [MDN Server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).

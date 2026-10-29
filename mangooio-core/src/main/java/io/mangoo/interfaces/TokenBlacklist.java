@@ -1,15 +1,12 @@
 package io.mangoo.interfaces;
 
-import com.google.inject.ImplementedBy;
-import io.mangoo.cache.InMemoryTokenBlacklist;
-
 import java.time.Instant;
 
 /**
  * Revokes authentication tokens before their expiry; only consulted when authentication.blacklist is enabled.
- * The default in-memory implementation is local to the instance; bind your own implementation to share or persist revocations.
+ * The MongoDB implementation is bound when persistence is enabled and shares revocations between all instances, the
+ * in-memory implementation otherwise; bind your own implementation in app.Module to replace it.
  */
-@ImplementedBy(InMemoryTokenBlacklist.class)
 public interface TokenBlacklist {
 
     /**

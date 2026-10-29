@@ -33,7 +33,7 @@ You sign in with a form at `/@admin/login`. A JWT cookie is issued for later req
 
 ## MFA
 
-Set `application.admin.secret` to a TOTP secret and a second factor kicks in automatically. After username/password, `/@admin/twofactor` asks for a 6-digit code (SHA-512, 30-second period). Generate secrets with `TotpUtils` as described in [Authentication](authentication.md).
+Set `application.admin.secret` to a TOTP secret and a second factor kicks in automatically. After username/password, `/@admin/twofactor` asks for a 6-digit code (SHA-512, 30-second period). Each code and each pre-authentication cookie is accepted once, and the failed attempt budget of both steps (10 attempts, then locked for 60 minutes) is shared by all instances when persistence is enabled. Generate secrets with `TotpUtils` as described in [Authentication](authentication.md).
 
 ## Metrics
 

@@ -89,6 +89,15 @@ public class Shutdown extends Thread {
         }
     }
 
+    private void stopMessageBroker() {
+        try {
+            LOG.info("Stopping MessageBroker");
+            Application.stopMessageBroker();
+        } catch (Exception e) {
+            LOG.error("Error stopping MessageBroker", e);
+        }
+    }
+
     private void invokeLifecycle() {
         try {
             Application.getInstance(MangooBootstrap.class).applicationStopped();
@@ -147,6 +156,7 @@ public class Shutdown extends Thread {
         drainRequests();
         stopUndertow();
         awaitScheduledTasks();
+        stopMessageBroker();
         invokeLifecycle();
         closeDatastores();
         stopEmbeddedMongoDB();

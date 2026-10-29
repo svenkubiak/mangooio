@@ -4,11 +4,23 @@ import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.svenkubiak.embeddedmongodb.EmbeddedMongoDB;
+import io.mangoo.async.InMemoryMessageBroker;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
+import io.mangoo.cache.InMemoryAttemptStore;
+import io.mangoo.cache.InMemoryOneTimeStore;
+import io.mangoo.cache.InMemoryTokenBlacklist;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
+import io.mangoo.interfaces.AttemptStore;
+import io.mangoo.interfaces.MessageBroker;
+import io.mangoo.interfaces.OneTimeStore;
+import io.mangoo.interfaces.TokenBlacklist;
 import io.mangoo.persistence.DatastoreProvider;
+import io.mangoo.persistence.MongoAttemptStore;
+import io.mangoo.persistence.MongoMessageBroker;
+import io.mangoo.persistence.MongoOneTimeStore;
+import io.mangoo.persistence.MongoTokenBlacklist;
 import io.mangoo.persistence.interfaces.Datastore;
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,6 +55,19 @@ public class Module extends AbstractModule {
         bind(Config.class).toInstance(config);
         bind(Cache.class).toProvider(CacheProvider.class);
         bind(Datastore.class).toProvider(DatastoreProvider.class);
+
+        // Persistence means several instances may run, so the state they have to share is kept in MongoDB
+        if (config.isPersistenceEnabled()) {
+            bind(AttemptStore.class).to(MongoAttemptStore.class);
+            bind(OneTimeStore.class).to(MongoOneTimeStore.class);
+            bind(TokenBlacklist.class).to(MongoTokenBlacklist.class);
+            bind(MessageBroker.class).to(MongoMessageBroker.class);
+        } else {
+            bind(AttemptStore.class).to(InMemoryAttemptStore.class);
+            bind(OneTimeStore.class).to(InMemoryOneTimeStore.class);
+            bind(TokenBlacklist.class).to(InMemoryTokenBlacklist.class);
+            bind(MessageBroker.class).to(InMemoryMessageBroker.class);
+        }
     }
 
     public void stopEmbeddedMongoDB() {

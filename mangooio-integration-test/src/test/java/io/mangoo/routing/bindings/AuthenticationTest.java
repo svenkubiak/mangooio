@@ -1,13 +1,11 @@
 package io.mangoo.routing.bindings;
 
 import io.mangoo.TestExtension;
-import io.mangoo.cache.Cache;
-import io.mangoo.cache.CacheProvider;
-import io.mangoo.constants.CacheName;
+import com.mongodb.client.model.Filters;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooHashingException;
-import io.mangoo.models.AuthenticationLock;
+import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.TotpUtils;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,9 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.time.LocalDateTime;
+import org.bson.Document;
+
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -38,8 +38,22 @@ class AuthenticationTest {
         return UUID.randomUUID().toString();
     }
 
-    private static Cache authCache() {
-        return Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
+    // The integration tests run with persistence, so the budgets are kept by MongoAttemptStore
+    private static Document attempts(String key) {
+        return Application.getInstance(Datastore.class).getMongoDatabase()
+                .getCollection("mangooio_attempts")
+                .find(Filters.eq("_id", key))
+                .first();
+    }
+
+    private static int attemptCount(String key) {
+        Document document = attempts(key);
+        return document == null ? 0 : document.getInteger("attempts");
+    }
+
+    private static Date lockedUntil(String key) {
+        Document document = attempts(key);
+        return document == null ? null : document.getDate("lockedUntil");
     }
 
     private static int lockAfter() {
@@ -111,8 +125,7 @@ class AuthenticationTest {
         assertThat(valid, equalTo(false));
 
         //and the failed attempt budget is untouched
-        AuthenticationLock lock = authCache().get(CacheName.AUTH_PASSWORD_PREFIX + identifier);
-        assertThat(lock, nullValue());
+        assertThat(attemptCount("pwd:" + identifier), equalTo(0));
         assertThat(authentication.userHasLock(identifier), equalTo(false));
     }
 
@@ -186,8 +199,7 @@ class AuthenticationTest {
         assertThat(authentication.userHasSecondFactorLock(identifier), equalTo(true));
 
         //given
-        AuthenticationLock lock = authCache().get(CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier);
-        LocalDateTime lockedUntil = lock.getLockedUntil();
+        Date lockedUntil = lockedUntil("2fa:" + identifier);
 
         //then
         assertThat(lockedUntil, notNullValue());
@@ -198,8 +210,7 @@ class AuthenticationTest {
         }
 
         //then the absolute unlock timestamp did not move
-        AuthenticationLock current = authCache().get(CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier);
-        assertThat(current.getLockedUntil(), equalTo(lockedUntil));
+        assertThat(lockedUntil("2fa:" + identifier), equalTo(lockedUntil));
     }
 
     @Test
@@ -217,8 +228,7 @@ class AuthenticationTest {
         assertThat(authentication.userHasLock(identifier), equalTo(true));
 
         //given
-        AuthenticationLock lock = authCache().get(CacheName.AUTH_PASSWORD_PREFIX + identifier);
-        LocalDateTime lockedUntil = lock.getLockedUntil();
+        Date lockedUntil = lockedUntil("pwd:" + identifier);
 
         //when
         for (int i = 1; i <= 5; i++) {
@@ -226,8 +236,8 @@ class AuthenticationTest {
         }
 
         //then the absolute unlock timestamp did not move
-        AuthenticationLock current = authCache().get(CacheName.AUTH_PASSWORD_PREFIX + identifier);
-        assertThat(current.getLockedUntil(), equalTo(lockedUntil));
+        assertThat(lockedUntil, notNullValue());
+        assertThat(lockedUntil("pwd:" + identifier), equalTo(lockedUntil));
     }
 
     @Test
@@ -373,8 +383,7 @@ class AuthenticationTest {
         concurrently(50, () -> authentication.isValidSecondFactor(identifier, secret, invalidTotp(secret)));
 
         //then
-        AuthenticationLock lock = authCache().get(CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier);
-        assertThat(lock.getAttempts(), equalTo(lockAfter()));
+        assertThat(attemptCount("2fa:" + identifier), equalTo(lockAfter()));
         assertThat(authentication.userHasSecondFactorLock(identifier), equalTo(true));
     }
 
@@ -390,8 +399,7 @@ class AuthenticationTest {
         concurrently(attempts, () -> authentication.isValidSecondFactor(identifier, secret, invalidTotp(secret)));
 
         //then
-        AuthenticationLock lock = authCache().get(CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier);
-        assertThat(lock.getAttempts(), equalTo(attempts));
+        assertThat(attemptCount("2fa:" + identifier), equalTo(attempts));
         assertThat(authentication.userHasSecondFactorLock(identifier), equalTo(false));
     }
 
@@ -421,7 +429,39 @@ class AuthenticationTest {
         }
 
         //then
-        AuthenticationLock lock = authCache().get(CacheName.AUTH_PASSWORD_PREFIX + identifier);
-        assertThat(lock, nullValue());
+        assertThat(attempts("pwd:" + identifier), nullValue());
+    }
+
+    @Test
+    void testSecondFactorCodeIsAcceptedOnce() {
+        //given
+        Authentication authentication = Application.getInstance(Authentication.class);
+        String identifier = identifier();
+        String secret = TotpUtils.createSecret();
+        String code = TotpUtils.getTotp(secret);
+
+        //when
+        boolean first = authentication.isValidSecondFactor(identifier, secret, code);
+        boolean replay = authentication.isValidSecondFactor(identifier, secret, code);
+
+        //then
+        assertThat(first, equalTo(true));
+        assertThat(replay, equalTo(false));
+    }
+
+    @Test
+    void testSecondFactorCodeOfOneIdentifierDoesNotBlockAnother() {
+        //given
+        Authentication authentication = Application.getInstance(Authentication.class);
+        String secret = TotpUtils.createSecret();
+        String code = TotpUtils.getTotp(secret);
+
+        //when
+        boolean first = authentication.isValidSecondFactor(identifier(), secret, code);
+        boolean other = authentication.isValidSecondFactor(identifier(), secret, code);
+
+        //then
+        assertThat(first, equalTo(true));
+        assertThat(other, equalTo(true));
     }
 }

@@ -112,7 +112,6 @@ class AdminControllerTest {
             assertThat(response, not(nullValue()));
             assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
             assertThat(response.getContent(), containsString(CacheName.APPLICATION));
-            assertThat(response.getContent(), containsString(CacheName.AUTH));
         } finally {
             Application.getInstance(CacheProvider.class).getCaches().remove(name);
         }

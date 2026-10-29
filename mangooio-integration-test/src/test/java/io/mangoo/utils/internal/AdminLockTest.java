@@ -13,60 +13,71 @@ class AdminLockTest {
 
     @AfterEach
     void tearDown() {
-        MangooUtils.resetLockCounter();
-        MangooUtils.resetSecondFactorLockCounter();
+        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_PASSWORD);
+        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_SECOND_FACTOR);
+    }
+
+    private static void attempts(String step, int times) {
+        for (var i = 0; i < times; i++) {
+            MangooUtils.acquireAdminAttempt(step);
+        }
     }
 
     @Test
     void testPasswordLoginDoesNotResetSecondFactorAttempts() {
         //given
-        for (var i = 0; i < 9; i++) {
-            MangooUtils.invalidSecondFactor();
-        }
+        attempts(MangooUtils.ADMIN_SECOND_FACTOR, 9);
 
         //when
-        MangooUtils.resetLockCounter();
-        MangooUtils.invalidSecondFactor();
+        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_PASSWORD);
+        attempts(MangooUtils.ADMIN_SECOND_FACTOR, 1);
 
         //then
-        assertThat(MangooUtils.isSecondFactorNotLocked(), equalTo(false));
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_SECOND_FACTOR), equalTo(true));
     }
 
     @Test
     void testSecondFactorLockDoesNotLockPassword() {
         //given
-        for (var i = 0; i < 10; i++) {
-            MangooUtils.invalidSecondFactor();
-        }
+        attempts(MangooUtils.ADMIN_SECOND_FACTOR, 10);
 
         //then
-        assertThat(MangooUtils.isSecondFactorNotLocked(), equalTo(false));
-        assertThat(MangooUtils.isNotLocked(), equalTo(true));
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_SECOND_FACTOR), equalTo(true));
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), equalTo(false));
     }
 
     @Test
     void testPasswordLockDoesNotLockSecondFactor() {
         //given
-        for (var i = 0; i < 10; i++) {
-            MangooUtils.invalidAuthentication();
-        }
+        attempts(MangooUtils.ADMIN_PASSWORD, 10);
 
         //then
-        assertThat(MangooUtils.isNotLocked(), equalTo(false));
-        assertThat(MangooUtils.isSecondFactorNotLocked(), equalTo(true));
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), equalTo(true));
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_SECOND_FACTOR), equalTo(false));
     }
 
     @Test
-    void testResetSecondFactorLockCounter() {
+    void testResetSecondFactorAttempts() {
         //given
-        for (var i = 0; i < 10; i++) {
-            MangooUtils.invalidSecondFactor();
-        }
+        attempts(MangooUtils.ADMIN_SECOND_FACTOR, 10);
 
         //when
-        MangooUtils.resetSecondFactorLockCounter();
+        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_SECOND_FACTOR);
 
         //then
-        assertThat(MangooUtils.isSecondFactorNotLocked(), equalTo(true));
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_SECOND_FACTOR), equalTo(false));
+    }
+
+    @Test
+    void testReleasedAttemptIsGivenBack() {
+        //given
+        attempts(MangooUtils.ADMIN_PASSWORD, 9);
+
+        //when the tenth attempt could not be verified
+        MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD);
+        MangooUtils.releaseAdminAttempt(MangooUtils.ADMIN_PASSWORD);
+
+        //then
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), equalTo(false));
     }
 }

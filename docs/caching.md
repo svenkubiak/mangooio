@@ -48,17 +48,14 @@ cache.resetCounter("logins");
 
 ## Named caches
 
-The application cache is the default, but one more cache exists out of the box:
+The application cache (`CacheName.APPLICATION`) is the default `Cache` injection; it evicts 30 days after write and holds 50 000 keys. Failed login attempts, one-time claims and token revocations are not kept in a cache but in the `AttemptStore`, `OneTimeStore` and `TokenBlacklist`, which are shared through MongoDB when persistence is enabled, see [Operating](operating.md#running-several-instances).
 
-| Name (`CacheName`) | Use | Eviction |
-|---|---|---|
-| `APPLICATION` | Default `Cache` injection | 30 days after write, 50 000 keys |
-| `AUTH` | Failed attempt budgets for login and second factor | 60 minutes after write, or `authentication.lock.duration` if longer |
+The cache is local to each instance. If entries must be shared between several instances, bind your own `Cache` implementation in `app.Module`; its counter methods return a local `AtomicInteger` and can not be shared that way.
 
 ```java
 @Inject
 public MyService(CacheProvider cacheProvider) {
-    Cache auth = cacheProvider.getCache(CacheName.AUTH);
+    Cache cache = cacheProvider.getCache(CacheName.APPLICATION);
 }
 ```
 

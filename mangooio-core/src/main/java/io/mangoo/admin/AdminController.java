@@ -9,6 +9,7 @@ import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.*;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.exceptions.MangooHashingException;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.filters.AdminFilter;
 import io.mangoo.filters.CsrfFilter;
@@ -25,6 +26,8 @@ import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.server.handlers.CookieImpl;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.Date;
@@ -36,6 +39,7 @@ import java.util.concurrent.atomic.LongAdder;
 
 @FilterWith(AdminFilter.class)
 public class AdminController {
+    private static final Logger LOG = LogManager.getLogger(AdminController.class);
     private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
     private static final String ADMIN_LOGIN = "/@admin/login";
@@ -160,16 +164,23 @@ public class AdminController {
         form.expectValue("username");
         form.expectValue("password");
         
-        if (MangooUtils.isNotLocked() && form.isValid()) {
-            if (MangooUtils.isValidAuthentication(form)) {
-                MangooUtils.resetLockCounter();
+        // The attempt is reserved before the password is verified, so concurrent attempts can not exceed the budget
+        if (form.isValid() && MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD)) {
+            boolean valid = false;
+            try {
+                valid = MangooUtils.isValidAuthentication(form);
+            } catch (MangooHashingException e) {
+                MangooUtils.releaseAdminAttempt(MangooUtils.ADMIN_PASSWORD);
+                LOG.error("Failed to check admin credentials", e);
+            }
+
+            if (valid) {
+                MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_PASSWORD);
                 try {
                     return Response.redirect(ADMIN_INDEX).cookie(MangooUtils.getAdminCookie(true));
                 } catch (MangooJwtException e) {
-                    MangooUtils.invalidAuthentication();
+                    LOG.error("Failed to create the admin cookie", e);
                 }
-            } else {
-                MangooUtils.invalidAuthentication();
             }
         }
         form.invalidate();
@@ -194,20 +205,17 @@ public class AdminController {
             return Response.redirect(ADMIN_LOGIN);
         }
 
-        if (MangooUtils.isSecondFactorNotLocked() && form.isValid()) {
-            if (TotpUtils.verifyTotp(config.getApplicationAdminSecret(), form.get("code"))) {
-                if (!MangooUtils.consumePreAuthentication(claims)) {
-                    return Response.redirect(ADMIN_LOGIN);
-                }
+        if (form.isValid() && MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_SECOND_FACTOR)
+                && MangooUtils.isValidAdminSecondFactor(config.getApplicationAdminSecret(), form.get("code"))) {
+            if (!MangooUtils.consumePreAuthentication(claims)) {
+                return Response.redirect(ADMIN_LOGIN);
+            }
 
-                MangooUtils.resetSecondFactorLockCounter();
-                try {
-                    return Response.redirect(ADMIN_INDEX).cookie(MangooUtils.getAdminCookie(false));
-                } catch (MangooJwtException e) {
-                    MangooUtils.invalidSecondFactor();
-                }
-            } else {
-                MangooUtils.invalidSecondFactor();
+            MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_SECOND_FACTOR);
+            try {
+                return Response.redirect(ADMIN_INDEX).cookie(MangooUtils.getAdminCookie(false));
+            } catch (MangooJwtException e) {
+                LOG.error("Failed to create the admin cookie", e);
             }
         }
         form.invalidate();

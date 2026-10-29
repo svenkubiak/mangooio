@@ -1,13 +1,10 @@
 package io.mangoo.routing.bindings;
 
-import io.mangoo.cache.Cache;
-import io.mangoo.cache.CacheProvider;
-import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooHashingException;
-import io.mangoo.models.AuthenticationLock;
+import io.mangoo.interfaces.AttemptStore;
 import io.mangoo.utils.Argument;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.TotpUtils;
@@ -21,7 +18,8 @@ import java.util.Objects;
 
 public class Authentication {
     private static final Logger LOG = LogManager.getLogger(Authentication.class);
-    private static final Object ATTEMPTS = new Object();
+    private static final String PASSWORD_PREFIX = "pwd:";
+    private static final String SECOND_FACTOR_PREFIX = "2fa:";
     private LocalDateTime expires;
     private String subject;
     private String id;
@@ -95,19 +93,18 @@ public class Authentication {
         Argument.requireNonBlank(salt, Required.SALT);
         Objects.requireNonNull(hash, Required.HASH);
 
-        var key = CacheName.AUTH_PASSWORD_PREFIX + identifier;
-        var lock = acquire(key);
-        if (lock == null) {
+        var key = PASSWORD_PREFIX + identifier;
+        if (!acquire(key)) {
             return false;
         }
 
         try {
             if (CommonUtils.matchArgon2(password, salt, hash)) {
-                reset(key);
+                attempts().reset(key);
                 return true;
             }
         } catch (MangooHashingException e) {
-            release(key, lock);
+            attempts().release(key, Application.getInstance(Config.class).getAuthenticationLock());
             LOG.error("Failed to check login credentials", e);
         }
 
@@ -142,70 +139,41 @@ public class Authentication {
      */
     public boolean userHasLock(String username) {
         Objects.requireNonNull(username, Required.USERNAME);
-        return hasLock(CacheName.AUTH_PASSWORD_PREFIX + username);
+        return attempts().isLocked(PASSWORD_PREFIX + username);
     }
 
     public boolean userHasSecondFactorLock(String identifier) {
         Objects.requireNonNull(identifier, Required.USERNAME);
-        return hasLock(CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier);
+        return attempts().isLocked(SECOND_FACTOR_PREFIX + identifier);
     }
 
+    /** Each code is accepted once per identifier, so a captured code can not be replayed within its 30 second step. */
     public boolean isValidSecondFactor(String identifier, String secret, String totp) {
         Objects.requireNonNull(identifier, Required.USERNAME);
         Objects.requireNonNull(secret, Required.SECRET);
         Objects.requireNonNull(totp, Required.TOTP);
 
-        var key = CacheName.AUTH_SECOND_FACTOR_PREFIX + identifier;
-        if (acquire(key) == null) {
+        var key = SECOND_FACTOR_PREFIX + identifier;
+        if (!acquire(key)) {
             return false;
         }
 
-        if (TotpUtils.verifyTotp(secret, totp)) {
-            reset(key);
+        if (TotpUtils.verifyTotp(identifier, secret, totp)) {
+            attempts().reset(key);
             return true;
         }
 
         return false;
     }
 
-    private boolean hasLock(String key) {
-        var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
-        AuthenticationLock lock = cache.get(key);
-
-        return lock != null && lock.isLocked();
-    }
-
-    // Reserves an attempt before verification and returns null if the budget is used up; the put renews the cache expiry
-    private static AuthenticationLock acquire(String key) {
+    // Reserves the attempt before it is verified, so concurrent attempts can not exceed the budget
+    private static boolean acquire(String key) {
         var config = Application.getInstance(Config.class);
-        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
-
-        synchronized (ATTEMPTS) {
-            AuthenticationLock lock = cache.get(key);
-            if (lock == null) {
-                lock = new AuthenticationLock();
-            }
-
-            boolean acquired = lock.tryAcquire(config.getAuthenticationLock(), Duration.ofMinutes(config.getAuthenticationLockDuration()));
-            cache.put(key, lock);
-
-            return acquired ? lock : null;
-        }
+        return attempts().tryAcquire(key, config.getAuthenticationLock(), Duration.ofMinutes(config.getAuthenticationLockDuration()));
     }
 
-    private static void release(String key, AuthenticationLock lock) {
-        synchronized (ATTEMPTS) {
-            lock.release(Application.getInstance(Config.class).getAuthenticationLock());
-            if (lock.getAttempts() == 0) {
-                Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH).remove(key);
-            }
-        }
-    }
-
-    private static void reset(String key) {
-        synchronized (ATTEMPTS) {
-            Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH).remove(key);
-        }
+    private static AttemptStore attempts() {
+        return Application.getInstance(AttemptStore.class);
     }
 
     public void logout() {

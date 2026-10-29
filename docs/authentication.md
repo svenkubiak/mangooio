@@ -79,7 +79,7 @@ The lockout is an **absolute** point in time, set once when the budget is used u
 
 The same budget applies to the second factor, see [Two-factor authentication](#two-factor-authentication). Both steps are counted separately per identifier, so a failed password attempt never consumes the budget of the second factor and vice versa.
 
-The counter lives in the auth cache and is therefore per process. An application running several instances behind a load balancer gets one budget per instance; if you need a shared or restart-safe budget, keep it in your own data store instead.
+With persistence enabled the budget is kept in MongoDB (`mangooio_attempts`), so several instances behind a load balancer share one budget per identifier and a restart does not reset it. The lock time is computed by the database, clock differences between the instances do not shift it. If MongoDB is unavailable, the attempt is refused and the identifier counts as locked. Without persistence the budget is kept in memory per process. Bind your own `io.mangoo.interfaces.AttemptStore` in `app.Module` to keep it elsewhere.
 
 Then, once logged in, you can adjust the cookie further:
 
@@ -148,6 +148,8 @@ A typical flow: after the password check succeeds, call `login(subject)` with `t
 While the flag is set, `isValid()` returns false, so the TOTP entry page itself has to use `hasSubject()` to find the subject the code is being checked for.
 
 Pass the identifier as the first argument. A TOTP has six digits and is verified without a tolerance window, so exactly one of a million codes is valid per 30-second window — that is only a second factor as long as something limits how often it may be guessed. With the identifier, the same `authentication.lock` budget as for the password step applies, counted under its own key, and a successful check clears it. An upstream reverse proxy only counts requests per source address and does not bound the total number of guesses; a budget per identity does.
+
+Each code is accepted **once** per identifier: the used 30-second step is stored in the `OneTimeStore` (MongoDB with persistence, shared by all instances), so a code that was observed on its way cannot be replayed within its window. `TotpUtils.verifyTotp(identifier, secret, totp)` does the same outside of `Authentication`; `TotpUtils.verifyTotp(secret, totp)` without an identifier accepts a valid code any number of times.
 
 ## Complete login flow
 
@@ -294,14 +296,11 @@ public Response changePassword(Authentication authentication) {
 }
 ```
 
-Every revocation is kept exactly as long as the revoked token could still be valid, that is until its expiry or, for a subject, for the longest token lifetime (`authentication.cookie.remember.expires` or `authentication.cookie.token.expires`).
+Every revocation is kept exactly as long as the revoked token could still be accepted, that is until its expiry or, for a subject, for the longest token lifetime (`authentication.cookie.remember.expires` or `authentication.cookie.token.expires`), plus the 30 second clock tolerance of the JWT validation.
 
-The default implementation keeps revocations **in memory**. That has two consequences you should be aware of:
+With persistence enabled, revocations are kept in MongoDB (`mangooio_revocations`): they survive a restart and apply to every instance behind a load balancer. Each authenticated request costs one lookup on the primary key; if MongoDB is unavailable, the cookie counts as revoked. Without persistence, revocations are kept in memory and only apply to the instance that received them.
 
-* Revocations do not survive a restart or a deployment.
-* With more than one instance behind a load balancer, a revocation only applies to the instance that received it.
-
-If either matters for you, bind your own implementation backed by a shared store such as Redis or MongoDB in your `Module`. The framework picks it up instead of the default one:
+To keep revocations elsewhere, bind your own implementation in your `Module`. It replaces the one of the framework:
 
 ```java
 public class Module extends AbstractModule {

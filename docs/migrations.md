@@ -38,6 +38,18 @@ The vault (`vault.p12`, `vault{}`, `io.mangoo.crypto.Vault`) is removed. Secrets
 * An `env{}`, `arg{}` or `file{}` without a value and without a fallback fails the startup instead of leaving the key unset. Give optional values a fallback, e.g. `arg{false}`.
 * In prod mode `application.secret`, `application.admin.secret`, `application.api.key`, the cookie secrets and keys, `persistence.*mongo.password`, `smtp.password` and `connector.https.password` must not be literal in the `config.yaml` of the classpath, see [Secrets](secrets.md#secrets-in-prod).
 
+### Authentication state
+
+With persistence enabled, failed login budgets, used TOTP codes, the admin pre-authentication and token revocations are kept in MongoDB and shared by all instances; without persistence they stay in memory. MongoDB 4.2 or later is required.
+
+* `isValidSecondFactor(identifier, secret, totp)` accepts each code once per identifier. A test or flow that verifies the same code twice now gets `false` the second time.
+* `AuthenticationLock` and `CacheName.AUTH` are removed. Read a lock with `Authentication.userHasLock` / `userHasSecondFactorLock` or bind your own `AttemptStore`.
+* `TokenBlacklist` is bound by the framework and no longer has `@ImplementedBy`. An own binding in `app.Module` keeps working.
+
+### Server-sent events
+
+With persistence enabled, `ServerSentEventManager.send` reaches the connections on every instance through the new `MessageBroker` and the capped collection `mangooio_messages`. A collection of that name that is not capped fails the startup.
+
 ### Bindings and shutdown
 
 * A binding in `app.Module` replaces the framework binding of the same type instead of failing as a duplicate.

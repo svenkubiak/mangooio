@@ -3,12 +3,15 @@ package io.mangoo.utils;
 import com.bastiaanjansen.otp.HMACAlgorithm;
 import com.bastiaanjansen.otp.TOTPGenerator;
 import io.mangoo.constants.Required;
+import io.mangoo.core.Application;
+import io.mangoo.interfaces.OneTimeStore;
 import net.glxn.qrgen.QRCode;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Random;
 
 public class TotpUtils {
@@ -54,19 +57,42 @@ public class TotpUtils {
         return totp.now();
     }
 
+    /** Accepts a valid code any number of times within its 30 second step; use the overload with an identifier to accept it once. */
     public static boolean verifyTotp(String secret, String totp) {
         Argument.requireNonBlank(secret, Required.SECRET);
         Argument.requireNonBlank(totp, Required.TOTP);
 
-        TOTPGenerator expected = new TOTPGenerator.Builder(secret)
+        return generator(secret).build().verify(totp);
+    }
+
+    /**
+     * Accepts each code of the identifier once, on every instance, as the used step is stored in the OneTimeStore.
+     * Only codes of the current 30 second step are valid.
+     */
+    public static boolean verifyTotp(String identifier, String secret, String totp) {
+        Argument.requireNonBlank(identifier, Required.IDENTIFIER);
+        Argument.requireNonBlank(secret, Required.SECRET);
+        Argument.requireNonBlank(totp, Required.TOTP);
+
+        var oneTimeStore = Application.getInstance(OneTimeStore.class);
+        return generator(secret)
+                .withCounterStorage(counter -> oneTimeStore.advance("totp:" + identifier, counter, usedUntil(counter)))
+                .build()
+                .verify(totp);
+    }
+
+    // One period past the end of the step, so an instance whose clock lags behind can not accept the code again
+    static Instant usedUntil(long counter) {
+        return Instant.ofEpochSecond((counter + 2) * PERIOD);
+    }
+
+    private static TOTPGenerator.Builder generator(String secret) {
+        return new TOTPGenerator.Builder(secret)
                 .withHOTPGenerator(builder -> {
                     builder.withPasswordLength(DIGITS);
                     builder.withAlgorithm(ALGORITHM);
                 })
-                .withPeriod(Duration.ofSeconds(PERIOD))
-                .build();
-
-        return expected.verify(totp);
+                .withPeriod(Duration.ofSeconds(PERIOD));
     }
 
     /**
