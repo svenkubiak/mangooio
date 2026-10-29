@@ -9,6 +9,7 @@ Unreleased
   * greenmail 2.1.14 -&gt; 2.1.15
   * mongo-driver-sync 5.13.0 -&gt; 5.14.0
   * classgraph 6.0.0 -&gt; 6.0.1
+  * tika-core 5.0.1 -&gt; 5.0.2
 
 ## Version 10.15.1
 
