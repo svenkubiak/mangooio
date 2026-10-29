@@ -2,7 +2,6 @@ package io.mangoo.core;
 
 import io.mangoo.constants.Default;
 import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.manager.ServerSentEventManager;
 import io.mangoo.persistence.DatastoreProvider;
 import io.mangoo.utils.internal.Trace;
 import jakarta.inject.Singleton;
@@ -45,7 +44,7 @@ public class Shutdown extends Thread {
     private void closeConnections() {
         try {
             LOG.info("Closing server sent event and websocket connections");
-            Application.getInstance(ServerSentEventManager.class).closeAll();
+            Application.closeServerSentEvents();
             Application.closeWebSockets();
         } catch (Exception e) {
             LOG.error("Error closing server sent event and websocket connections", e);

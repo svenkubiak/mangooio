@@ -36,6 +36,7 @@ Unreleased
 * Fixed the shutdown losing its log output, as Log4j stopped in its own shutdown hook (svenkubiak)
 * Fixed concurrent first calls of DatastoreProvider.getDatastore for a prefix creating a second MongoClient that was never closed (svenkubiak)
 * Fixed an empty secret such as smtp.password: "" failing the startup in prod as a literal secret (svenkubiak)
+* Fixed server sent event connections not registered in the ServerSentEventManager holding the shutdown until application.shutdown.timeout (svenkubiak)
 
 ## Version 10.16.0
 

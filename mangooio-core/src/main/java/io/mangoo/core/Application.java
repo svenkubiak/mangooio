@@ -59,6 +59,7 @@ import io.undertow.server.handlers.ProxyPeerAddressHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
+import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 import io.undertow.util.Methods;
 import io.undertow.websockets.WebSocketConnectionCallback;
@@ -116,6 +117,7 @@ public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final long START = System.currentTimeMillis();
     private static final List<WebSocketProtocolHandshakeHandler> WEB_SOCKET_HANDLERS = new CopyOnWriteArrayList<>();
+    private static final List<io.undertow.server.handlers.sse.ServerSentEventHandler> SERVER_SENT_EVENT_HANDLERS = new CopyOnWriteArrayList<>();
     private static final int SECRET_BIT_LENGTH = 512;
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
@@ -716,7 +718,9 @@ public final class Application {
                             ? getInstance(ServerSentEventHandler.class)
                             : getInstance(clazz);
 
-                    pathHandler.addExactPath(serverSentEventRoute.getUrl(), ServerSentEventHandler.wrap(callback));
+                    var serverSentEventHandler = ServerSentEventHandler.serverSentEvents(callback);
+                    SERVER_SENT_EVENT_HANDLERS.add(serverSentEventHandler);
+                    pathHandler.addExactPath(serverSentEventRoute.getUrl(), ServerSentEventHandler.withHeaders(serverSentEventHandler));
                 }
         );
 
@@ -991,6 +995,17 @@ public final class Application {
 
     static void markShuttingDown() {
         ready = false;
+    }
+
+    static void closeServerSentEvents() {
+        closeServerSentEvents(SERVER_SENT_EVENT_HANDLERS);
+    }
+
+    // Covers connections a custom callback did not register in the ServerSentEventManager, which would hold the drain until its timeout
+    static void closeServerSentEvents(List<io.undertow.server.handlers.sse.ServerSentEventHandler> handlers) {
+        for (io.undertow.server.handlers.sse.ServerSentEventHandler handler : handlers) {
+            handler.getConnections().forEach(ServerSentEventConnection::shutdown);
+        }
     }
 
     static void closeWebSockets() {

@@ -84,6 +84,35 @@ class GracefulShutdownTest {
     }
 
     @Test
+    void testUnregisteredServerSentEventConnectionIsClosed() throws Exception {
+        //given
+        var connected = new CountDownLatch(1);
+        var serverSentEvents = ServerSentEventHandler.serverSentEvents((connection, lastEventId) -> connected.countDown());
+        var graceful = new GracefulShutdownHandler(ServerSentEventHandler.withHeaders(serverSentEvents));
+        var undertow = start(graceful);
+
+        try {
+            CompletableFuture<HttpResponse<InputStream>> stream = CLIENT.sendAsync(
+                    HttpRequest.newBuilder(uri(undertow, "http", "/sse")).build(), HttpResponse.BodyHandlers.ofInputStream());
+            assertThat(connected.await(5, TimeUnit.SECONDS), equalTo(true));
+
+            //when
+            graceful.shutdown();
+            boolean drainedWhileOpen = graceful.awaitShutdown(500);
+            Application.closeServerSentEvents(List.of(serverSentEvents));
+            boolean drainedAfterClose = graceful.awaitShutdown(5000);
+
+            //then
+            assertThat(drainedWhileOpen, equalTo(false));
+            assertThat(drainedAfterClose, equalTo(true));
+            assertThat(serverSentEvents.getConnections().isEmpty(), equalTo(true));
+            stream.cancel(true);
+        } finally {
+            undertow.stop();
+        }
+    }
+
+    @Test
     void testNewRequestIsRejectedAfterShutdown() throws Exception {
         //given
         var graceful = new GracefulShutdownHandler(exchange -> exchange.setStatusCode(StatusCodes.OK));
