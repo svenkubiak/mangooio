@@ -109,6 +109,105 @@ containers:
 
 The keys of the Secret `myapp` are the config keys, e.g. `session.cookie.secret`.
 
+## Docker Compose
+
+With Compose the secrets are files in one directory on the host, mounted read-only as `/run/secrets` into the container. `/run/secrets` is the default secrets directory, so `APPLICATION_SECRETS_PATH` is not needed.
+
+### Creating the secret files
+
+Keep the files in a directory next to `compose.yaml`, e.g. `./secrets`, and add it to `.gitignore`. Name each file like the config key:
+
+| File | Content | Create with |
+|---|---|---|
+| `application.secret` | exactly 64 bytes | `tr` command below |
+| `session.cookie.secret`, `authentication.cookie.secret`, `flash.cookie.secret` | exactly 64 bytes | `tr` command below |
+| `session.cookie.key`, `authentication.cookie.key`, `flash.cookie.key` | at least 64 bytes | `tr` command below |
+| `application.api.key` | at least 64 bytes | `tr` command below |
+| `application.admin.secret` | TOTP secret, Base32 | `tr -dc 'A-Z2-7'` or `TotpUtils.createSecret()` |
+| `application.admin.password` | Argon2id hash | `CommonUtils.hashArgon2`, see [Administration](administration.md) |
+| `persistence.mongo.password`, `smtp.password` | password of the service | set in MongoDB or given by the SMTP provider |
+
+Use a separate random value for every key. The cookie secrets and keys fall back to `application.secret`, but dedicated values per cookie are recommended. Create the random values in one go:
+
+```shell
+mkdir -p secrets && cd secrets
+umask 077
+for key in application.secret \
+           session.cookie.secret session.cookie.key \
+           authentication.cookie.secret authentication.cookie.key \
+           flash.cookie.secret flash.cookie.key; do
+  LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 64 > "$key"
+done
+LC_ALL=C tr -dc 'A-Z2-7' < /dev/urandom | head -c 64 > application.admin.secret
+printf '%s' 'the-mongo-password' > persistence.mongo.password
+```
+
+`umask 077` makes the files readable by their owner only, `wc -c < application.secret` prints `64`. A single trailing line break is removed when the file is read, more than one breaks the length check.
+
+### compose.yaml
+
+Mount the whole directory, a new secret is then just a new file:
+
+```yaml
+services:
+  myapp:
+    image: myapp:latest
+    user: "10001:10001"
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xms512m -Xmx1024m"
+    volumes:
+      - ./secrets:/run/secrets:ro
+```
+
+Without Swarm the `secrets:` block of Compose is a bind mount per file as well, so the directory mount offers the same protection with one line. Use the `secrets:` block with Docker Swarm, which stores secrets encrypted and mounts them on tmpfs. Use the long syntax there and set `target` to the config key, so the file name inside the container does not depend on which characters Swarm allows in secret names:
+
+```yaml
+services:
+  myapp:
+    secrets:
+      - source: application_secret
+        target: application.secret
+secrets:
+  application_secret:
+    external: true
+```
+
+Podman does the same with `podman secret create` and `--secret <name>,target=<config key>`.
+
+### config.yaml
+
+Set every key that comes from a file to `file{}` in the prod section:
+
+```yaml
+environments:
+  prod:
+    application:
+      secret: file{}
+    session:
+      cookie:
+        secret: file{}
+        key: file{}
+    persistence:
+      mongo:
+        password: file{}
+```
+
+A key set to `file{}` without a file fails the startup and names the key. Use `file{?}` for a key that may be missing.
+
+### File permissions
+
+A bind mount keeps owner and permissions of the host, so the container user must be able to read the directory and its files. Give it a fixed numeric id, in the image with `useradd --uid 10001` or with `user:` in `compose.yaml`, and hand directory and files to that id. Change the permissions first, after the `chown` your own user can no longer list the directory:
+
+```shell
+chmod 0400 secrets/*
+chmod 0500 secrets
+sudo chown -R 10001:10001 secrets
+```
+
+The application refuses to start as root in prod mode, so a permission problem can not be solved by running the container as root.
+
+Without Compose, mount the directory the same way, `docker run -v "$PWD/secrets:/run/secrets:ro" myapp`, or point `APPLICATION_SECRETS_PATH` to another directory.
+
 ## External configuration
 
 You can also point the whole configuration file elsewhere, which is useful when your deployment mounts config outside the JAR entirely (a Kubernetes ConfigMap or Secret, for instance) instead of baking it into the artifact:
