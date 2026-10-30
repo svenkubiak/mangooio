@@ -2,9 +2,16 @@ package io.mangoo.core;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.launchdarkly.eventsource.EventSource;
+import com.launchdarkly.eventsource.MessageEvent;
+import com.launchdarkly.eventsource.background.BackgroundEventHandler;
+import com.launchdarkly.eventsource.background.BackgroundEventSource;
 import io.mangoo.TestExtension;
+import io.mangoo.admin.InstanceHeartbeat;
 import io.mangoo.constants.Const;
 import io.mangoo.enums.Mode;
+import io.mangoo.interfaces.InstanceRegistry;
+import io.mangoo.models.InstanceStatus;
 import io.undertow.Undertow;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +22,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.net.ServerSocket;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.cert.X509Certificate;
@@ -23,12 +31,61 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith({TestExtension.class})
 public class ApplicationTest {
+    @Test
+    void testHeartbeatReportsThisInstance() {
+        //given
+        var registry = Application.getInstance(InstanceRegistry.class);
+
+        //then
+        await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> assertThat(registry.getInstances().stream().map(InstanceStatus::id).toList(), hasItem(Application.getInstanceId())));
+    }
+
+    @Test
+    void testStoppedHeartbeatRemovesThisInstance() {
+        //given
+        var registry = Application.getInstance(InstanceRegistry.class);
+        var heartbeat = Application.getInstance(InstanceHeartbeat.class);
+
+        try {
+            //when
+            heartbeat.stop();
+
+            //then
+            assertThat(registry.getInstances().stream().map(InstanceStatus::id).toList(), not(hasItem(Application.getInstanceId())));
+        } finally {
+            heartbeat.start();
+        }
+    }
+
+    @Test
+    void testServerSentEventConnectionsAreCountedByRoute() {
+        //given
+        Config config = Application.getInstance(Config.class);
+        String url = "http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse";
+        BackgroundEventSource.Builder builder = new BackgroundEventSource.Builder(new BackgroundEventHandler() {
+            @Override public void onOpen() {}
+            @Override public void onClosed() {}
+            @Override public void onMessage(String event, MessageEvent messageEvent) {}
+            @Override public void onComment(String comment) {}
+            @Override public void onError(Throwable throwable) {}
+        }, new EventSource.Builder(URI.create(url)));
+
+        //when
+        try (BackgroundEventSource eventSource = builder.build()) {
+            eventSource.start();
+
+            //then
+            await().atMost(Duration.ofSeconds(3)).untilAsserted(() -> assertThat(Application.getServerSentEventConnections().get("/sse"), greaterThanOrEqualTo(1)));
+        }
+    }
+
     @Test
     void testIsStarted() {
         //given

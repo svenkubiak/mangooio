@@ -1,44 +1,43 @@
-const button = document.getElementById('login');
-if (button) {
-    button.addEventListener('click', () => {
-        button.textContent = '...';
-        button.classList.add('is-loading');
+const form = document.getElementById('login-form');
+if (form) {
+    form.addEventListener('submit', () => {
+        const button = document.getElementById('login');
+        button.setAttribute('aria-busy', 'true');
         button.disabled = true;
-        document.getElementById("login-form").submit();
     });
 }
 
-const copyIcons = document.querySelectorAll('.gg-copy');
-copyIcons.forEach(icon => {
-    icon.addEventListener('click', () => {
-        const targetId = icon.getAttribute('data-copy-target');
-        const targetElement = document.getElementById(targetId);
-        const status = document.getElementById(targetId + "-copy-status");
+document.querySelectorAll('[data-copy-target]').forEach(button => {
+    button.addEventListener('click', () => {
+        const targetId = button.getAttribute('data-copy-target');
+        const target = document.getElementById(targetId);
+        const status = document.getElementById(targetId + '-copy-status');
 
-        if (targetElement) {
-            const textToCopy = targetElement.value;
-            navigator.clipboard.writeText(textToCopy)
+        if (target) {
+            navigator.clipboard.writeText(target.value)
                 .then(() => {
-                    status.textContent = 'Copied!';
+                    status.textContent = 'Copied to clipboard';
                     setTimeout(() => status.textContent = '', 2000);
                 })
-                .catch(err => {
-                    status.textContent = 'Failed to copy text.';
+                .catch(() => {
+                    status.textContent = 'Failed to copy text';
                 });
         }
     });
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-    $navbarBurgers.forEach( el => {
-        el.addEventListener('click', () => {
-            const target = el.dataset.target;
-            const $target = document.getElementById(target);
+document.querySelectorAll('form[data-confirm]').forEach(confirmForm => {
+    confirmForm.addEventListener('submit', event => {
+        if (!window.confirm(confirmForm.getAttribute('data-confirm'))) {
+            event.preventDefault();
+        }
+    });
+});
 
-            el.classList.toggle('is-active');
-            $target.classList.toggle('is-active');
-
-        });
+document.querySelectorAll('input[data-filter]').forEach(input => {
+    const rows = document.querySelectorAll('#' + input.getAttribute('data-filter') + ' tbody tr');
+    input.addEventListener('input', () => {
+        const term = input.value.trim().toLowerCase();
+        rows.forEach(row => row.hidden = term !== '' && !row.textContent.toLowerCase().includes(term));
     });
 });

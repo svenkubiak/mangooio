@@ -1,12 +1,18 @@
 package io.mangoo.persistence;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.mangoo.TestExtension;
+import io.mangoo.cache.Cache;
+import io.mangoo.cache.CacheImpl;
+import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.interfaces.MessageBroker;
 import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.manager.ServerSentEventManager;
+import io.mangoo.models.Metrics;
 import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.utils.CommonUtils;
+import io.mangoo.utils.JsonUtils;
 import io.undertow.Undertow;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +28,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -84,6 +91,40 @@ class MongoMessageBrokerTest {
             first.stop();
             second.stop();
         }
+    }
+
+    @Test
+    void testCacheIsClearedByAnotherInstance() {
+        //given
+        String name = "broker-clear-test";
+        Cache cache = new CacheImpl(Caffeine.newBuilder().build());
+        cache.put("key", "value");
+        Application.getInstance(CacheProvider.class).addCache(name, cache);
+        var other = new MongoMessageBroker(datastore(), "mangooio_messages", "other-instance");
+
+        try {
+            //when
+            other.publish("mangooio-admin", JsonUtils.toJson(Map.of("type", "clear-cache", "cache", name)));
+
+            //then
+            await().atMost(TIMEOUT).untilAsserted(() -> assertThat(cache.get("key"), nullValue()));
+        } finally {
+            Application.getInstance(CacheProvider.class).getCaches().remove(name);
+        }
+    }
+
+    @Test
+    void testMetricsAreResetByAnotherInstance() {
+        //given
+        int statusCode = 598;
+        Application.getInstance(Metrics.class).addStatusCode(statusCode);
+        var other = new MongoMessageBroker(datastore(), "mangooio_messages", "other-instance");
+
+        //when
+        other.publish("mangooio-admin", JsonUtils.toJson(Map.of("type", "reset-metrics")));
+
+        //then
+        await().atMost(TIMEOUT).untilAsserted(() -> assertThat(Application.getInstance(Metrics.class).getResponseMetrics(), not(hasKey(statusCode))));
     }
 
     @Test

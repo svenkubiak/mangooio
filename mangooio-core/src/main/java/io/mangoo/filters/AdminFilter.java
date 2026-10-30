@@ -57,6 +57,8 @@ public class AdminFilter implements PerRequestFilter {
         }
 
         response.render("version", VERSION_TAG);
+        response.render("mode", Application.getMode());
+        response.render("instance", Application.getInstanceId());
         return response;
     }
 }

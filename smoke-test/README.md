@@ -17,5 +17,7 @@ mvn -o install -DskipTests    # in the repository root, so the app uses the curr
 
 The app in `app/` is built against the framework version of the repository and reads `config.yaml` of this directory,
 which holds test secrets only. Requires Java 25, Docker with the image `nginx:1.27-alpine` and a `mongod` binary (`MONGOD`, defaults to the one the
-embedded MongoDB of the integration tests downloaded to `~/.embedmongo`). Logs of all processes end up in
-`smoke-test/target/run`.
+embedded MongoDB of the integration tests downloaded to `~/.embedmongo`). The console shows the setup steps and
+scenarios with their progress and a summary at the end, the exit code is 0 only if all scenarios passed. Logs of all
+processes end up in `smoke-test/target/run`: `setup.log`, `smoke-test.log` (MongoDB driver of the scenarios),
+`app-*.log`, `mongod-*.log` and `scenarios.tsv` with the results.

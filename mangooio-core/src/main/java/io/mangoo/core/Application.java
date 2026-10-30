@@ -17,7 +17,9 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.MethodInfo;
 import io.github.classgraph.ScanResult;
+import io.mangoo.admin.AdminActions;
 import io.mangoo.admin.AdminController;
+import io.mangoo.admin.InstanceHeartbeat;
 import io.mangoo.async.EventBus;
 import io.mangoo.async.Subscriber;
 import io.mangoo.cache.CacheProvider;
@@ -108,8 +110,8 @@ public final class Application {
     }
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final long START = System.currentTimeMillis();
-    private static final List<WebSocketProtocolHandshakeHandler> WEB_SOCKET_HANDLERS = new CopyOnWriteArrayList<>();
-    private static final List<io.undertow.server.handlers.sse.ServerSentEventHandler> SERVER_SENT_EVENT_HANDLERS = new CopyOnWriteArrayList<>();
+    private static final Map<String, WebSocketProtocolHandshakeHandler> WEB_SOCKET_HANDLERS = new ConcurrentHashMap<>();
+    private static final Map<String, io.undertow.server.handlers.sse.ServerSentEventHandler> SERVER_SENT_EVENT_HANDLERS = new ConcurrentHashMap<>();
     private static final int SECRET_BIT_LENGTH = 512;
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
@@ -171,6 +173,7 @@ public final class Application {
             validateUrls();
             awaitScan(scan);
             startMessageBroker();
+            prepareAdmin();
             prepareUndertow();
             prepareShutdown();
             sanityChecks();
@@ -211,6 +214,20 @@ public final class Application {
     private static void startMessageBroker() {
         if (getInstance(MessageBroker.class) instanceof MongoMessageBroker broker) {
             broker.start();
+        }
+    }
+
+    // Created at startup, so every instance subscribes to the admin actions and not only the one that served the dashboard
+    private static void prepareAdmin() {
+        if (getInstance(Config.class).isApplicationAdminEnable()) {
+            getInstance(AdminActions.class);
+            getInstance(InstanceHeartbeat.class).start();
+        }
+    }
+
+    static void stopHeartbeat() {
+        if (getInstance(Config.class).isApplicationAdminEnable()) {
+            getInstance(InstanceHeartbeat.class).stop();
         }
     }
 
@@ -377,7 +394,7 @@ public final class Application {
             List<Class<?>> indexed = scanResult.getClassesWithFieldAnnotation(INDEXED).stream()
                     .<Class<?>>map(Application::loadClass)
                     .toList();
-            List<MongoStore> stores = Stream.of(AttemptStore.class, OneTimeStore.class, TokenBlacklist.class, MessageBroker.class)
+            List<MongoStore> stores = Stream.of(AttemptStore.class, OneTimeStore.class, TokenBlacklist.class, MessageBroker.class, InstanceRegistry.class)
                     .map(Application::getInstance)
                     .filter(MongoStore.class::isInstance)
                     .map(MongoStore.class::cast)
@@ -744,7 +761,7 @@ public final class Application {
                             : getInstance(clazz);
 
                     var serverSentEventHandler = ServerSentEventHandler.serverSentEvents(callback);
-                    SERVER_SENT_EVENT_HANDLERS.add(serverSentEventHandler);
+                    SERVER_SENT_EVENT_HANDLERS.put(serverSentEventRoute.getUrl(), serverSentEventHandler);
                     pathHandler.addExactPath(serverSentEventRoute.getUrl(), ServerSentEventHandler.withHeaders(serverSentEventHandler));
                 }
         );
@@ -752,7 +769,7 @@ public final class Application {
         Router.getWebSocketRoutes().forEach((WebSocketRoute webSocketRoute) -> {
                     Class<? extends WebSocketConnectionCallback> clazz = webSocketRoute.getHandler();
                     WebSocketProtocolHandshakeHandler webSocketHandler = Handlers.websocket(getInstance(clazz));
-                    WEB_SOCKET_HANDLERS.add(webSocketHandler);
+                    WEB_SOCKET_HANDLERS.put(webSocketRoute.getUrl(), webSocketHandler);
                     pathHandler.addExactPath(webSocketRoute.getUrl(), webSocketHandler);
                 }
         );
@@ -780,10 +797,13 @@ public final class Application {
                             On.get().to("/@admin/login").respondeWith("login"),
                             On.get().to("/@admin/twofactor").respondeWith("twofactor"),
                             On.get().to("/@admin/scheduler").respondeWith("scheduler"),
+                            On.get().to("/@admin/routes").respondeWith("routes"),
                             On.get().to("/@admin/security").respondeWith("security"),
                             On.get().to("/@admin/logout").respondeWith("logout"),
                             On.post().to("/@admin/authenticate").respondeWith("authenticate"),
-                            On.post().to("/@admin/verify").respondeWith("verify")
+                            On.post().to("/@admin/verify").respondeWith("verify"),
+                            On.post().to("/@admin/cache/clear").respondeWith("clearCache"),
+                            On.post().to("/@admin/metrics/reset").respondeWith("resetMetrics")
                     );
         }
 
@@ -1025,8 +1045,24 @@ public final class Application {
         ready = false;
     }
 
+    /** Open server-sent event connections of this instance by route URL. */
+    public static Map<String, Integer> getServerSentEventConnections() {
+        Map<String, Integer> connections = new TreeMap<>();
+        SERVER_SENT_EVENT_HANDLERS.forEach((url, handler) -> connections.put(url, handler.getConnections().size()));
+
+        return connections;
+    }
+
+    /** Open WebSocket connections of this instance by route URL. */
+    public static Map<String, Integer> getWebSocketConnections() {
+        Map<String, Integer> connections = new TreeMap<>();
+        WEB_SOCKET_HANDLERS.forEach((url, handler) -> connections.put(url, handler.getPeerConnections().size()));
+
+        return connections;
+    }
+
     static void closeServerSentEvents() {
-        closeServerSentEvents(SERVER_SENT_EVENT_HANDLERS);
+        closeServerSentEvents(List.copyOf(SERVER_SENT_EVENT_HANDLERS.values()));
     }
 
     static void closeServerSentEvents(List<io.undertow.server.handlers.sse.ServerSentEventHandler> handlers) {
@@ -1036,7 +1072,7 @@ public final class Application {
     }
 
     static void closeWebSockets() {
-        closeWebSockets(WEB_SOCKET_HANDLERS);
+        closeWebSockets(List.copyOf(WEB_SOCKET_HANDLERS.values()));
     }
 
     static void closeWebSockets(List<WebSocketProtocolHandshakeHandler> handlers) {

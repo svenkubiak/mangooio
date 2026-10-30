@@ -9,6 +9,7 @@ import io.mangoo.cache.*;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.interfaces.AttemptStore;
+import io.mangoo.interfaces.InstanceRegistry;
 import io.mangoo.interfaces.MessageBroker;
 import io.mangoo.interfaces.OneTimeStore;
 import io.mangoo.interfaces.TokenBlacklist;
@@ -54,11 +55,13 @@ public class Module extends AbstractModule {
             bind(OneTimeStore.class).to(MongoOneTimeStore.class);
             bind(TokenBlacklist.class).to(MongoTokenBlacklist.class);
             bind(MessageBroker.class).to(MongoMessageBroker.class);
+            bind(InstanceRegistry.class).to(MongoInstanceRegistry.class);
         } else {
             bind(AttemptStore.class).to(InMemoryAttemptStore.class);
             bind(OneTimeStore.class).to(InMemoryOneTimeStore.class);
             bind(TokenBlacklist.class).to(InMemoryTokenBlacklist.class);
             bind(MessageBroker.class).to(InMemoryMessageBroker.class);
+            bind(InstanceRegistry.class).to(InMemoryInstanceRegistry.class);
         }
     }
 

@@ -5,6 +5,7 @@ import io.mangoo.utils.TotpUtils;
 import org.bson.Document;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -14,6 +15,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -35,7 +37,14 @@ public class SmokeTest {
     static final String REPLICA_SET = "mongodb://localhost:27117,localhost:27118,localhost:27119/?replicaSet=rs0";
     static final Pattern CSRF = Pattern.compile("value=\"([^\"]+)\" name=\"x-csrf-token\"");
     static final HttpClient HTTP = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).connectTimeout(Duration.ofSeconds(5)).build();
-    static final List<String> FAILURES = new ArrayList<>();
+    static final boolean TTY = Boolean.getBoolean("smoke.tty");
+    static final boolean COLOR = Boolean.getBoolean("smoke.color");
+    static final int COLUMNS = Integer.getInteger("smoke.columns", 120);
+    static final String[] FRAMES = {"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
+    static final List<String> NOTES = new CopyOnWriteArrayList<>();
+    static volatile String running;
+    static volatile String status;
+    static volatile Instant runningSince;
     static Path work;
 
     public static void main(String[] args) throws Exception {
@@ -56,7 +65,7 @@ public class SmokeTest {
         }
         try (MongoClient client = MongoClients.create(REPLICA_SET)) {
             await("replica set has a primary", Duration.ofSeconds(60), () -> primaryPort(client) > 0);
-            System.out.println("Replica set ready, primary on " + primaryPort(client));
+            System.out.println("primary on " + primaryPort(client));
         }
     }
 
@@ -65,34 +74,113 @@ public class SmokeTest {
     }
 
     static void run() throws Exception {
-        scenario("round robin reaches both instances", SmokeTest::roundRobin);
-        scenario("session cookie works on the other instance", SmokeTest::sessionAcrossInstances);
-        scenario("failed login budget is shared", SmokeTest::sharedLock);
-        scenario("logout revocation applies on the other instance", SmokeTest::revocationAcrossInstances);
-        scenario("TOTP code is accepted once across instances", SmokeTest::totpReplayAcrossInstances);
-        scenario("admin second factor works across instances", SmokeTest::adminTwoFactorAcrossInstances);
-        scenario("server sent event reaches a client of the other instance", SmokeTest::sseAcrossInstances);
-        scenario("replica set failover", SmokeTest::failover);
-        scenario("graceful shutdown of instance A", SmokeTest::gracefulShutdown);
+        var scenarios = List.of(
+                new Named("round robin reaches both instances", SmokeTest::roundRobin),
+                new Named("session cookie works on the other instance", SmokeTest::sessionAcrossInstances),
+                new Named("failed login budget is shared", SmokeTest::sharedLock),
+                new Named("logout revocation applies on the other instance", SmokeTest::revocationAcrossInstances),
+                new Named("TOTP code is accepted once across instances", SmokeTest::totpReplayAcrossInstances),
+                new Named("admin second factor works across instances", SmokeTest::adminTwoFactorAcrossInstances),
+                new Named("server sent event reaches a client of the other instance", SmokeTest::sseAcrossInstances),
+                new Named("replica set failover", SmokeTest::failover),
+                new Named("graceful shutdown of instance A", SmokeTest::gracefulShutdown));
 
-        System.out.println();
-        System.out.println(FAILURES.isEmpty() ? "ALL SCENARIOS PASSED" : FAILURES.size() + " SCENARIO(S) FAILED: " + FAILURES);
-        System.exit(FAILURES.isEmpty() ? 0 : 1);
+        var labels = new ArrayList<String>();
+        for (var i = 0; i < scenarios.size(); i++) {
+            labels.add("[%d/%d] %s".formatted(i + 1, scenarios.size(), scenarios.get(i).name()));
+        }
+        int width = labels.stream().mapToInt(String::length).max().orElse(0);
+        if (TTY) {
+            Thread.ofPlatform().daemon().start(SmokeTest::spin);
+        }
+
+        var failed = 0;
+        for (var i = 0; i < scenarios.size(); i++) {
+            if (!scenario(scenarios.get(i), labels.get(i), width)) {
+                failed++;
+            }
+        }
+        System.exit(failed == 0 ? 0 : 1);
     }
 
     interface Scenario {
         void run() throws Exception;
     }
 
-    static void scenario(String name, Scenario scenario) {
-        var start = Instant.now();
+    record Named(String name, Scenario scenario) {}
+
+    // Prints the result line with the notes of the scenario and appends the result to scenarios.tsv for the summary
+    static boolean scenario(Named scenario, String label, int width) throws IOException {
+        NOTES.clear();
+        status = null;
+        runningSince = Instant.now();
+        running = label;
+
+        String error = null;
         try {
-            scenario.run();
-            System.out.printf("PASS  %s (%d ms)%n", name, Duration.between(start, Instant.now()).toMillis());
+            scenario.scenario().run();
         } catch (Throwable e) {
-            FAILURES.add(name);
-            System.out.printf("FAIL  %s: %s%n", name, e.getMessage());
+            error = Objects.requireNonNullElse(e.getMessage(), e.toString()).replaceAll("\\s+", " ");
         }
+        long millis = Duration.between(runningSince, Instant.now()).toMillis();
+
+        synchronized (SmokeTest.class) {
+            running = null;
+            var out = new StringBuilder(TTY ? "\r\033[K" : "");
+            out.append("  ").append(error == null ? color("32", "✓") : color("31", "✗")).append(' ')
+                    .append(("%-" + width + "s").formatted(label)).append(' ')
+                    .append(color("2", "%7s".formatted(elapsed(millis)))).append('\n');
+            NOTES.forEach(note -> out.append("      ").append(color("2", note)).append('\n'));
+            if (error != null) {
+                out.append("      ").append(color("31", error)).append('\n');
+            }
+            System.out.print(out);
+            System.out.flush();
+        }
+
+        String line = String.join("\t", error == null ? "PASS" : "FAIL", scenario.name(), String.valueOf(millis), Objects.requireNonNullElse(error, ""));
+        Files.writeString(work.resolve("scenarios.tsv"), line + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        return error == null;
+    }
+
+    // Redraws the line of the running scenario with its current status, only on a terminal
+    static void spin() {
+        for (var frame = 0; ; frame++) {
+            synchronized (SmokeTest.class) {
+                String label = running;
+                if (label != null) {
+                    var notes = List.copyOf(NOTES);
+                    String current = status != null ? status : notes.isEmpty() ? null : notes.getLast();
+                    var line = "  " + FRAMES[frame % FRAMES.length] + " " + label + (current != null ? " · " + current : "")
+                            + " " + Duration.between(runningSince, Instant.now()).toSeconds() + " s";
+                    System.out.print("\r\033[K" + (line.length() < COLUMNS ? line : line.substring(0, COLUMNS - 1)));
+                    System.out.flush();
+                }
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
+    }
+
+    // Shown below the result of the scenario
+    static void note(String text) {
+        NOTES.add(text);
+    }
+
+    // Shown while the scenario runs only
+    static void status(String text) {
+        status = text;
+    }
+
+    static String elapsed(long millis) {
+        return millis < 1000 ? millis + " ms" : String.format(Locale.ROOT, "%.1f s", millis / 1000.0);
+    }
+
+    static String color(String code, String text) {
+        return COLOR ? "\033[" + code + "m" + text + "\033[0m" : text;
     }
 
     // --- scenarios ---
@@ -175,22 +263,26 @@ public class SmokeTest {
 
     static void failover() throws Exception {
         try (MongoClient client = MongoClients.create(REPLICA_SET)) {
+            status("discovering the primary");
             await("primary discovered", Duration.ofSeconds(30), () -> primaryPort(client) > 0);
             int primary = primaryPort(client);
             long pid = Long.parseLong(Files.readString(work.resolve("mongod-" + primary + ".pid")).trim());
-            System.out.println("      killing primary on " + primary + " (pid " + pid + ")");
             ProcessHandle.of(pid).orElseThrow().destroyForcibly();
+            note("killed primary on " + primary + " (pid " + pid + ")");
 
             var start = Instant.now();
+            status("waiting for a new primary");
             await("new primary", Duration.ofSeconds(60), () -> {
                 int current = primaryPort(client);
                 return current > 0 && current != primary;
             });
-            System.out.println("      new primary on " + primaryPort(client) + " after " + Duration.between(start, Instant.now()).toMillis() + " ms");
+            note("new primary on " + primaryPort(client) + " after " + Duration.between(start, Instant.now()).toMillis() + " ms");
         }
 
         // Logins write with majority, which two of three nodes still provide
+        status("waiting for logins on A and B");
         await("login on A and B after failover", Duration.ofSeconds(60), () -> loginWorks(A) && loginWorks(B));
+        status("checking the shared lock");
         String user = "dave-" + UUID.randomUUID();
         for (var i = 0; i < 10; i++) {
             new Browser().post(i % 2 == 0 ? A : B, "/login", Map.of("username", user, "password", "wrong"));
@@ -198,6 +290,7 @@ public class SmokeTest {
         check("true".equals(new Browser().get(B, "/locked/" + user).body()), "lock not shared after failover");
 
         // The broker thread reconnects with backoff; events in between are lost by design
+        status("waiting for the message broker to reconnect");
         try (var stream = new EventStream(B)) {
             String data = "after-failover-" + UUID.randomUUID();
             await("event across instances after failover", Duration.ofSeconds(60), () -> {
@@ -215,6 +308,7 @@ public class SmokeTest {
 
         ProcessHandle.of(pid).orElseThrow().destroy();
         var stopping = Instant.now();
+        status("draining instance A");
 
         // The shutdown hook runs asynchronously, so readiness is polled until it reports the shutdown
         int ready = 0;
@@ -235,8 +329,10 @@ public class SmokeTest {
         check(stream.closed(Duration.ofSeconds(5)), "SSE connection on A was not closed");
         stream.close();
 
+        status("waiting for instance A to exit");
         check(ProcessHandle.of(pid).map(handle -> handle.onExit().orTimeout(20, TimeUnit.SECONDS).join()).isPresent(), "instance A did not exit");
-        System.out.println("      instance A exited " + Duration.between(stopping, Instant.now()).toMillis() + " ms after SIGTERM");
+        note("instance A exited " + Duration.between(stopping, Instant.now()).toMillis() + " ms after SIGTERM");
+        status("checking that nginx serves B");
 
         for (var i = 0; i < 4; i++) {
             var instance = new Browser().get(LB, "/instance");
@@ -276,6 +372,7 @@ public class SmokeTest {
     static String freshCode(String secret) throws InterruptedException {
         long remaining = 30 - (Instant.now().getEpochSecond() % 30);
         if (remaining < 5) {
+            status("waiting for the next TOTP step");
             Thread.sleep((remaining + 1) * 1000);
         }
         return TotpUtils.getTotp(secret);

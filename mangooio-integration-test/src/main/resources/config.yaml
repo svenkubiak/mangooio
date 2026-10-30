@@ -113,6 +113,9 @@ environments:
       https:
         host: localhost
         port: 8443
+        # Self-signed, resolved against the repository root
+        keystore: mangooio-integration-test/https.p12
+        password: changeit
     smtp:
       port: 3125
     persistence:

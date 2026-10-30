@@ -24,6 +24,14 @@ public class Shutdown extends Thread {
         deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(Application.getInstance(Config.class).getApplicationShutdownTimeout());
     }
 
+    private void stopHeartbeat() {
+        try {
+            Application.stopHeartbeat();
+        } catch (Exception e) {
+            LOG.error("Error stopping the instance heartbeat", e);
+        }
+    }
+
     // No new run is started, running tasks finish until the deadline
     private void stopScheduling() {
         try {
@@ -148,6 +156,7 @@ public class Shutdown extends Thread {
     @Override
     public void run() {
         markShuttingDown();
+        stopHeartbeat();
         stopScheduling();
         closeConnections();
         drainRequests();
