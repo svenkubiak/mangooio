@@ -27,7 +27,6 @@ public final class Server {
         return headers;
     }
     
-    /** Sets a header that is added to every server response. */
     public static void header(HttpString header, String value) {
         Objects.requireNonNull(header, Required.HEADER);
         

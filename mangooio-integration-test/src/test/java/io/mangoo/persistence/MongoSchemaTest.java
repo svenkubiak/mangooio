@@ -1,13 +1,9 @@
 package io.mangoo.persistence;
 
-import com.mongodb.client.model.Collation;
-import com.mongodb.client.model.CollationStrength;
-import com.mongodb.client.model.CreateCollectionOptions;
-import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Indexes;
+import com.mongodb.client.model.*;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
-import io.mangoo.persistence.interfaces.Datastore;
+import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.utils.CommonUtils;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;

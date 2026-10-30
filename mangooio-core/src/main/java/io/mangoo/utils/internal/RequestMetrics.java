@@ -9,7 +9,6 @@ import org.apache.commons.lang3.Strings;
 import java.util.List;
 import java.util.Objects;
 
-/** Records http.server.request.duration as defined by the OpenTelemetry semantic conventions for HTTP. */
 final class RequestMetrics {
     private static final AttributeKey<String> METHOD = AttributeKey.stringKey("http.request.method");
     private static final AttributeKey<Long> STATUS = AttributeKey.longKey("http.response.status_code");

@@ -69,7 +69,7 @@ public class Person extends Entity {
 ## Datastore
 
 ```java
-import io.mangoo.persistence.interfaces.Datastore;
+import io.mangoo.interfaces.persistence.Datastore;
 import jakarta.inject.Inject;
 
 public class PersonService {

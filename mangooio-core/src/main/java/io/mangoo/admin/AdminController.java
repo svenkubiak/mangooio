@@ -23,14 +23,11 @@ import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.FileUtils;
 import io.mangoo.utils.TotpUtils;
 import io.mangoo.utils.internal.MangooUtils;
-import io.undertow.server.handlers.CookieImpl;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -58,10 +55,8 @@ public class AdminController {
     }
 
     public Response index() {
-        boolean enabled = config.isMetricsEnable();
         var stream = Application.getInstance(EventBus.class);
-
-        if (enabled) {
+        if (config.isMetricsEnable()) {
             var metrics = Application.getInstance(Metrics.class);
             long totalRequests = 0;
             long errorRequests = 0;
@@ -109,7 +104,6 @@ public class AdminController {
 
     public Response cache() {
         Map<String, CacheStats> statistics = new HashMap<>();
-        // Only the built-in implementation records statistics, caches added via CacheProvider#addCache may not
         for (Entry<String, Cache> entry : cacheProvider.getCaches().entrySet()) {
             if (entry.getValue() instanceof CacheImpl cacheImpl) {
                 statistics.put(entry.getKey(), cacheImpl.getStats());
@@ -132,7 +126,10 @@ public class AdminController {
 
         if (StringUtils.isBlank(secret)) {
             secret = CommonUtils.randomString(64);
-            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", Const.NAME_PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret);
+            qrCode = TotpUtils.getQRCode(
+                    "mangoo_IO_Admin",
+                    Const.NAME_PATTERN.matcher(config.getApplicationName()).replaceAll(""),
+                    secret);
         }
 
         return Response.ok()
@@ -142,21 +139,12 @@ public class AdminController {
     }
 
     public Response login() {
-        return Response.ok()
-                .template(Template.loginPath());
+        return Response.ok().template(Template.loginPath());
     }
     
     public Response logout() {
-        var cookie = new CookieImpl(MangooUtils.getAdminCookieName())
-                .setValue(Strings.EMPTY)
-                .setHttpOnly(true)
-                .setSecure(Application.inProdMode())
-                .setPath("/")
-                .setDiscard(true)
-                .setExpires(new Date())
-                .setSameSiteMode("Strict");
-        
-        return Response.redirect(ADMIN_INDEX).cookie(cookie);
+        return Response.redirect(ADMIN_INDEX)
+                .disposeCookie(MangooUtils.getAdminCookieName(), Application.inProdMode());
     }
 
     @FilterWith(CsrfFilter.class)
@@ -205,8 +193,10 @@ public class AdminController {
             return Response.redirect(ADMIN_LOGIN);
         }
 
-        if (form.isValid() && MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_SECOND_FACTOR)
+        if (form.isValid()
+                && MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_SECOND_FACTOR)
                 && MangooUtils.isValidAdminSecondFactor(config.getApplicationAdminSecret(), form.get("code"))) {
+
             if (!MangooUtils.consumePreAuthentication(claims)) {
                 return Response.redirect(ADMIN_LOGIN);
             }

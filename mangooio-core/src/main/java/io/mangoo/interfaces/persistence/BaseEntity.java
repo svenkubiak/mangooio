@@ -1,4 +1,4 @@
-package io.mangoo.persistence.interfaces;
+package io.mangoo.interfaces.persistence;
 
 import org.bson.types.ObjectId;
 

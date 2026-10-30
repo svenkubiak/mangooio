@@ -14,7 +14,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 
-/** Default OneTimeStore without persistence; claims are local to the running instance and do not survive a restart. */
 @Singleton
 public class InMemoryOneTimeStore implements OneTimeStore {
     private static final Logger LOG = LogManager.getLogger(InMemoryOneTimeStore.class);
@@ -22,22 +21,21 @@ public class InMemoryOneTimeStore implements OneTimeStore {
     private final Cache<String, Entry> entries;
     private final Clock clock;
 
-    private record Entry(long value, Instant expiresAt) {
-    }
+    private record Entry(long value, Instant expiresAt) {}
 
     public InMemoryOneTimeStore() {
         this(Ticker.systemTicker(), Clock.systemUTC());
     }
 
     InMemoryOneTimeStore(Ticker ticker, Clock clock) {
-        this.clock = Objects.requireNonNull(clock, "clock can not be null");
-        Objects.requireNonNull(ticker, "ticker can not be null");
+        this.clock = Objects.requireNonNull(clock, Required.CLOCK);
+        Objects.requireNonNull(ticker, Required.TICKER);
 
         this.entries = Caffeine.newBuilder()
                 .maximumSize(MAXIMUM_SIZE)
                 .ticker(ticker)
-                .expireAfter(Expiry.writing((String key, Entry entry) -> remaining(entry.expiresAt())))
-                .evictionListener((String key, Entry entry, RemovalCause cause) -> {
+                .expireAfter(Expiry.writing((String _, Entry entry) -> remaining(entry.expiresAt())))
+                .evictionListener((String _, Entry _, RemovalCause cause) -> {
                     if (cause == RemovalCause.SIZE) {
                         LOG.warn("One-time store reached its maximum size of {} entries, claims are being evicted before their expiry", MAXIMUM_SIZE);
                     }
@@ -48,7 +46,7 @@ public class InMemoryOneTimeStore implements OneTimeStore {
     @Override
     public boolean claim(String key, Instant expiresAt) {
         Argument.requireNonBlank(key, Required.KEY);
-        Objects.requireNonNull(expiresAt, "expiresAt can not be null");
+        Objects.requireNonNull(expiresAt, Required.EXPIRES);
 
         return entries.asMap().putIfAbsent(key, new Entry(0, expiresAt)) == null;
     }
@@ -56,7 +54,7 @@ public class InMemoryOneTimeStore implements OneTimeStore {
     @Override
     public boolean advance(String key, long value, Instant expiresAt) {
         Argument.requireNonBlank(key, Required.KEY);
-        Objects.requireNonNull(expiresAt, "expiresAt can not be null");
+        Objects.requireNonNull(expiresAt, Required.EXPIRES);
 
         var advanced = new boolean[1];
         entries.asMap().compute(key, (k, entry) -> {

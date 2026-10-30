@@ -19,15 +19,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ServerSentEventManager {
     private static final Logger LOG = LogManager.getLogger(ServerSentEventManager.class);
     private static final String TOPIC = "mangooio-sse";
-
-    // CopyOnWriteArrayList as sending is read-dominated; all mutations run inside compute, so adding and removing can not interleave.
     private final Map<String, List<ServerSentEventConnection>> connections = new ConcurrentHashMap<>();
     private final MessageBroker messageBroker;
 
     record Event(String key, String data) {
     }
 
-    /** Sends to the connections of every instance through the MessageBroker. */
     @Inject
     public ServerSentEventManager(MessageBroker messageBroker) {
         this.messageBroker = Objects.requireNonNull(messageBroker, "messageBroker can not be null");
@@ -39,12 +36,10 @@ public class ServerSentEventManager {
         });
     }
 
-    /** Sends to the connections of this instance only. */
     public ServerSentEventManager() {
         this.messageBroker = null;
     }
 
-    /** The default handler uses the request URI as key; a custom connection callback may use a key of its own to address a single client. */
     public void addConnection(String key, ServerSentEventConnection connection) {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(connection, Required.CONNECTION);
@@ -59,7 +54,6 @@ public class ServerSentEventManager {
         });
     }
 
-    /** Only finds connections held under their request URI; use {@link #removeConnection(String, ServerSentEventConnection)} for a custom key. */
     public void removeConnection(ServerSentEventConnection connection) {
         Objects.requireNonNull(connection, Required.CONNECTION);
 
@@ -76,7 +70,6 @@ public class ServerSentEventManager {
         });
     }
 
-    /** Sends to the connections of the key on every instance; returns without waiting for the connections. */
     public void send(String key, String data) {
         Objects.requireNonNull(key, Required.KEY);
         Objects.requireNonNull(data, Required.DATA);
@@ -103,7 +96,6 @@ public class ServerSentEventManager {
         });
     }
 
-    // Open connections keep their exchange active and would hold the graceful shutdown until its timeout
     public void closeAll() {
         connections.values().forEach(values -> values.forEach(ServerSentEventConnection::shutdown));
     }

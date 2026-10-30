@@ -9,7 +9,7 @@ import io.mangoo.core.Config;
 import io.mangoo.interfaces.AttemptStore;
 import io.mangoo.interfaces.OneTimeStore;
 import io.mangoo.interfaces.TokenBlacklist;
-import io.mangoo.persistence.interfaces.Datastore;
+import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.utils.CommonUtils;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;

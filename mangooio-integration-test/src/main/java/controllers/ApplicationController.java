@@ -7,7 +7,7 @@ import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.filters.ApiKeyFilter;
 import io.mangoo.filters.OriginFilter;
-import io.mangoo.persistence.interfaces.Datastore;
+import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import jakarta.inject.Inject;

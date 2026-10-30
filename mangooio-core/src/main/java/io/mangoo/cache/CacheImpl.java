@@ -23,7 +23,6 @@ public class CacheImpl implements Cache {
     public void put(String key, Object value) {
         Objects.requireNonNull(key, Required.KEY);
 
-        // Caffeine does not allow null values, a null value removes the cached one instead
         if (value == null) {
             remove(key);
         } else {
@@ -161,13 +160,13 @@ public class CacheImpl implements Cache {
         remove(key);
     }
 
-    // merge is atomic, so concurrent increments of a new counter are not lost
     private long add(String key, long delta) {
         Objects.requireNonNull(key, Required.KEY);
 
-        // Drops a value whose expiry passed, so the counter starts again instead of continuing it
         get(key);
-        Object value = caffeineCache.asMap().merge(key, delta, (current, ignored) -> counter(key, current) + delta);
+        Object value = caffeineCache
+                .asMap()
+                .merge(key, delta, (current, ignored) -> counter(key, current) + delta);
 
         return (Long) value;
     }

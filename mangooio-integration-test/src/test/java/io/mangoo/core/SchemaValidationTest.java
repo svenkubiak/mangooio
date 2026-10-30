@@ -1,7 +1,7 @@
 package io.mangoo.core;
 
 import io.mangoo.TestExtension;
-import io.mangoo.persistence.interfaces.Datastore;
+import io.mangoo.interfaces.persistence.Datastore;
 import models.AnnotatedModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

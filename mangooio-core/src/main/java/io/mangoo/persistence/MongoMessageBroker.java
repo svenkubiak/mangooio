@@ -11,7 +11,7 @@ import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.interfaces.MessageBroker;
-import io.mangoo.persistence.interfaces.Datastore;
+import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.utils.Argument;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

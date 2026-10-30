@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 public class Mail {
     private static final int LOWEST_PRIORITY = 5;
     private static final int HIGHEST_PRIORITY = 1;
-    // RFC 5322 field name: printable ASCII except colon
     private static final Pattern HEADER_NAME = Pattern.compile("[\\x21-\\x39\\x3B-\\x7E]+");
     private final Map<String, String> mailHeaders = new HashMap<>();
     private final List<String> mailTos = new ArrayList<>();
@@ -33,7 +32,6 @@ public class Mail {
         return new Mail();
     }
     
-    /** Addresses may include a personal name, e.g. {@code Jenny Doe <email@foo.com>}. */
     public Mail to(String... tos) {
         Objects.requireNonNull(tos, Required.TOS);
         mailTos.addAll(Arrays.asList(tos));
@@ -55,7 +53,6 @@ public class Mail {
         return this;
     }
     
-    /** Line breaks in the subject are folded by Jakarta Mail and can not inject headers, but are not removed. */
     public Mail subject(String subject) {
         Objects.requireNonNull(subject, Required.SUBJECT);
         mailSubject = subject;
@@ -79,9 +76,6 @@ public class Mail {
         return this;
     }
     
-    /**
-     * Rejects a name that is not a valid header field name and a value with line breaks, as both would allow header injection.
-     */
     public Mail header(String name, String value) {
         Objects.requireNonNull(name, Required.NAME);
         Objects.requireNonNull(value, Required.VALUE);
@@ -92,7 +86,6 @@ public class Mail {
         return this;
     }
     
-    /** The address may include a personal name, e.g. {@code Jenny Doe <email@foo.com>}. */
     public Mail replyTo(String replyTo) {
         Objects.requireNonNull(replyTo, Required.REPLY_TO);
         mailReplyTo = replyTo;
@@ -100,7 +93,6 @@ public class Mail {
         return this;
     }
     
-    /** 1 is the highest, 3 the normal and 5 the lowest priority. */
     public Mail priority(int priority) {
         Preconditions.checkArgument(priority >= HIGHEST_PRIORITY && priority <= LOWEST_PRIORITY, Required.PRIORITY);
         mailHeaders.put("X-Priority", String.valueOf(priority));

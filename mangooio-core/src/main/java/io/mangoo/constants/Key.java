@@ -10,6 +10,7 @@ public final class Key {
     public static final String APPLICATION_API_KEY = "application.api.key";
     public static final String APPLICATION_CONFIG = "application.config";
     public static final String APPLICATION_CONTROLLER = "application.controller";
+    public static final String APPLICATION_INSTANCE_ID = "application.instance.id";
     public static final String APPLICATION_LANGUAGE = "application.language";
     public static final String APPLICATION_MODE = "application.mode";
     public static final String APPLICATION_NAME = "application.name";

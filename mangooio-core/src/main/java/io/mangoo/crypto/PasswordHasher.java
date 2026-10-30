@@ -19,10 +19,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-/**
- * Limits concurrent Argon2id computations, as each holds authentication.hashing.memory KiB of heap for its whole duration.
- * Hashes are PHC encoded and verified with their own parameters, so configuration changes do not lock out users.
- */
 @Singleton
 public class PasswordHasher {
     private static final Logger LOG = LogManager.getLogger(PasswordHasher.class);

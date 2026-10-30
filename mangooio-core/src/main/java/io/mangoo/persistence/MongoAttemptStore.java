@@ -7,7 +7,7 @@ import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import io.mangoo.constants.Required;
 import io.mangoo.interfaces.AttemptStore;
-import io.mangoo.persistence.interfaces.Datastore;
+import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.utils.Argument;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

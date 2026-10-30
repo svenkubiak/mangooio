@@ -6,22 +6,17 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.nimbusds.jwt.JWTClaimsSet;
 import io.mangoo.TestExtension;
+import io.mangoo.constants.ClaimKey;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.exceptions.MangooTranslationException;
-import io.mangoo.persistence.interfaces.Datastore;
+import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.routing.bindings.Form;
-import io.mangoo.constants.ClaimKey;
 import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.server.handlers.Cookie;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.bson.Document;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.Duration;
 import java.time.Instant;

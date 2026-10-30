@@ -10,10 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Stops the instance on SIGTERM: readiness goes down, long-lived connections are closed, open requests and running
- * scheduled tasks get application.shutdown.timeout in total, then the lifecycle, telemetry and datastores are stopped.
- */
 @Singleton
 public class Shutdown extends Thread {
     private static final Logger LOG = LogManager.getLogger(Shutdown.class);
@@ -106,7 +102,7 @@ public class Shutdown extends Thread {
         }
     }
 
-    private void closeDatastores() {
+    private void closeDatastore() {
         try {
             if (Application.getInstance(Config.class).isPersistenceEnabled()) {
                 LOG.info("Closing MongoDB connections");
@@ -159,7 +155,7 @@ public class Shutdown extends Thread {
         awaitScheduledTasks();
         stopMessageBroker();
         invokeLifecycle();
-        closeDatastores();
+        closeDatastore();
         stopEmbeddedMongoDB();
         stopTelemetry();
         stopLogger();

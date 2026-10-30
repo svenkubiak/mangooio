@@ -4,6 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.CreationException;
 import com.google.inject.Guice;
 import io.mangoo.TestExtension;
+import io.mangoo.constants.Const;
+import io.mangoo.constants.Key;
 import io.mangoo.enums.Mode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -118,7 +120,7 @@ public class ApplicationTest {
     @Test
     void testClasspathScanDoesNotRejectApplicationPackages() {
         //given
-        var rejected = Arrays.asList(Application.SCAN_REJECTED_PACKAGES);
+        var rejected = Arrays.asList(Const.SCAN_REJECTED_PACKAGES);
 
         //then
         for (String broad : new String[] {"io", "io.mangoo", "com", "com.github", "org", "de", "de.svenkubiak", "net", "app", "controllers"}) {
@@ -313,6 +315,6 @@ public class ApplicationTest {
     @Test
     void testInstanceIdIsAvailableToLogPatterns() {
         //then
-        assertThat(System.getProperty(Application.INSTANCE_ID_PROPERTY), equalTo(Application.getInstanceId()));
+        assertThat(System.getProperty(Key.APPLICATION_INSTANCE_ID), equalTo(Application.getInstanceId()));
     }
 }

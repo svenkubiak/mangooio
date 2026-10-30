@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-/** Default MessageBroker without persistence; messages reach the subscribers of this instance only. */
 @Singleton
 public class InMemoryMessageBroker implements MessageBroker {
     private static final Logger LOG = LogManager.getLogger(InMemoryMessageBroker.class);
@@ -36,7 +35,6 @@ public class InMemoryMessageBroker implements MessageBroker {
         subscribers.computeIfAbsent(topic, key -> new CopyOnWriteArrayList<>()).add(consumer);
     }
 
-    /** Hands the message to every subscriber of the topic on its own virtual thread; failures are only logged. */
     public static void deliver(Map<String, List<Consumer<String>>> subscribers, String topic, String message) {
         for (Consumer<String> consumer : subscribers.getOrDefault(topic, List.of())) {
             Thread.ofVirtual().start(() -> {

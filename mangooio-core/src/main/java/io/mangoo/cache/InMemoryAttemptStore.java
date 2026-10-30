@@ -14,10 +14,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 
-/**
- * Default AttemptStore without persistence; the budgets are local to the running instance and do not survive a restart.
- * An entry lives at least 60 minutes after the last attempt and never shorter than its lock.
- */
 @Singleton
 public class InMemoryAttemptStore implements AttemptStore {
     private static final Logger LOG = LogManager.getLogger(InMemoryAttemptStore.class);
@@ -37,14 +33,14 @@ public class InMemoryAttemptStore implements AttemptStore {
     }
 
     InMemoryAttemptStore(Ticker ticker, Clock clock) {
-        this.clock = Objects.requireNonNull(clock, "clock can not be null");
-        Objects.requireNonNull(ticker, "ticker can not be null");
+        this.clock = Objects.requireNonNull(clock, Required.CLOCK);
+        Objects.requireNonNull(ticker, Required.TICKER);
 
         this.states = Caffeine.newBuilder()
                 .maximumSize(MAXIMUM_SIZE)
                 .ticker(ticker)
-                .expireAfter(Expiry.writing((String key, State state) -> remaining(state.expireAt())))
-                .evictionListener((String key, State state, RemovalCause cause) -> {
+                .expireAfter(Expiry.writing((String _, State state) -> remaining(state.expireAt())))
+                .evictionListener((String _, State _, RemovalCause cause) -> {
                     if (cause == RemovalCause.SIZE) {
                         LOG.warn("Attempt store reached its maximum size of {} entries, budgets are being evicted before their expiry", MAXIMUM_SIZE);
                     }

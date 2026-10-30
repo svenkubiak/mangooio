@@ -62,7 +62,6 @@ public class PostOffice {
         this.session = Session.getInstance(properties, authenticator);
     }
 
-    /** Sends the mail synchronously; failures are logged and not thrown to the caller. */
     public void send(Mail mail) {
         Objects.requireNonNull(mail, Required.MAIL);
 
@@ -82,7 +81,6 @@ public class PostOffice {
 
             Transport.send(mimeMessage);
         } catch (IOException | MessagingException | RuntimeException e) {
-            // Sending runs on a virtual thread nobody waits for, so every failure has to end up in the log
             LOG.error("Failed to send mail", e);
         }
     }
@@ -104,7 +102,6 @@ public class PostOffice {
                     throw new MessagingException("Attachment has no file name: " + path);
                 }
 
-                // The file is read from the given path, its name is only used as display name
                 var attachmentPart = new MimeBodyPart();
                 attachmentPart.setDataHandler(new DataHandler(new FileDataSource(path.toFile())));
                 attachmentPart.setFileName(fileName.toString());

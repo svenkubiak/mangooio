@@ -1,4 +1,4 @@
-package io.mangoo.persistence.interfaces;
+package io.mangoo.interfaces.persistence;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;

@@ -21,22 +21,16 @@ import io.mangoo.admin.AdminController;
 import io.mangoo.async.EventBus;
 import io.mangoo.async.Subscriber;
 import io.mangoo.cache.CacheProvider;
-import io.mangoo.constants.CacheName;
-import io.mangoo.constants.Default;
+import io.mangoo.constants.*;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.Required;
 import io.mangoo.crypto.PasswordHasher;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Sort;
-import io.mangoo.interfaces.AttemptStore;
-import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.interfaces.MessageBroker;
-import io.mangoo.interfaces.OneTimeStore;
-import io.mangoo.interfaces.TokenBlacklist;
+import io.mangoo.interfaces.*;
+import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.persistence.MongoMessageBroker;
 import io.mangoo.persistence.MongoSchema;
 import io.mangoo.persistence.MongoStore;
-import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
@@ -56,8 +50,8 @@ import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
 import io.undertow.server.handlers.GracefulShutdownHandler;
-import io.undertow.server.handlers.ProxyPeerAddressHandler;
 import io.undertow.server.handlers.PathHandler;
+import io.undertow.server.handlers.ProxyPeerAddressHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
@@ -95,22 +89,15 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class Application {
-    public static final String INSTANCE_ID_PROPERTY = "mangooio.instance.id";
     private static final String INSTANCE_ID = instanceId(hostname());
-    // Log4j would stop logging in its own shutdown hook, in parallel to Shutdown, which stops Log4j as its last step.
-    // The instance id is set before Log4j reads its configuration, so a pattern can use ${sys:mangooio.instance.id}.
     static {
         System.setProperty("log4j2.shutdownHookEnabled", "false");
-        System.setProperty(INSTANCE_ID_PROPERTY, INSTANCE_ID);
+        System.setProperty(Key.APPLICATION_INSTANCE_ID, INSTANCE_ID);
     }
     private static final Log4jListener LOG4J_LISTENER = new Log4jListener();
     static {
@@ -126,20 +113,6 @@ public final class Application {
     private static final String SCHEDULER = "io.mangoo.annotations.Run";
     private static final String MODULE_CLASS = "app.Module";
     private static final String ALL_PACKAGES = "*";
-    // Only unambiguous third-party prefixes, as application classes must still be found in any other package
-    static final String[] SCAN_REJECTED_PACKAGES = {
-            "com.bastiaanjansen", "com.cronutils", "com.fasterxml", "com.github.benmanes", "com.google", "com.icegreen",
-            "com.launchdarkly", "com.mongodb", "com.nimbusds", "com.sun", "de.flapdoodle",
-            "de.svenkubiak.embeddedmongodb", "edu.umd", "freemarker", "io.github.classgraph", "io.micrometer",
-            "io.netty", "io.opentelemetry", "io.smallrye", "io.undertow", "jakarta", "javassist", "javax",
-            "jersey.repackaged", "kotlin", "net.bytebuddy", "net.glxn", "net.jcip",
-            "okhttp3", "okio", "org.aopalliance", "org.apache", "org.apiguardian",
-            "org.awaitility", "org.bouncycastle", "org.bson", "org.cactoos", "org.codehaus", "org.commonmark",
-            "org.eclipse", "org.exparity", "org.glassfish", "org.hamcrest", "org.hibernate", "org.jboss", "org.jgrapht",
-            "org.jheaps", "org.jspecify", "org.junit", "org.jvnet", "org.llorllale", "org.mockito", "org.objenesis",
-            "org.ocpsoft", "org.opentest4j", "org.reactivestreams", "org.reflections", "org.slf4j", "org.wildfly",
-            "org.xnio", "org.yaml"
-    };
     private static final String LOGO = """
                                                         ___     __  ___ \s
          _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \\\s
@@ -207,7 +180,6 @@ public final class Application {
         }
     }
 
-    // Instantiated eagerly so the effective Argon2 concurrency is logged at startup, not on the first hash.
     private static void preparePasswordHasher() {
         getInstance(PasswordHasher.class);
     }
@@ -352,8 +324,7 @@ public final class Application {
         }
     }
 
-    record IndexDefinition(String field, Bson keys, IndexOptions options) {
-    }
+    record IndexDefinition(String field, Bson keys, IndexOptions options) { }
 
     // One index per @Indexed field; other annotations on the field and their order are irrelevant.
     static List<IndexDefinition> getIndexDefinitions(Class<?> clazz) {
@@ -473,6 +444,7 @@ public final class Application {
         return version.get(0) > 4 || (version.get(0) == 4 && version.get(1) >= 2);
     }
 
+    @SuppressWarnings("unchecked")
     private static void prepareSubscriber(ScanResult scanResult) {
         scanResult.getAllClassesImplementing(Subscriber.class).forEach(classInfo -> {
             if (classInfo.isAbstract() || classInfo.isInterface()) {
@@ -841,7 +813,6 @@ public final class Application {
 
         gracefulShutdownHandler = new GracefulShutdownHandler(proxy(httpHandler, config.isConnectorProxy()));
 
-        // The probes are answered outside the graceful shutdown, so liveness stays healthy while requests drain
         var builder = Undertow.builder()
                 .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getUndertowMaxEntitySize())
                 .setServerOption(UndertowOptions.MAX_PARAMETERS, Default.UNDERTOW_MAX_PARAMETERS)
@@ -948,7 +919,6 @@ public final class Application {
         return modules;
     }
 
-    /** Throws IllegalStateException if the file can not be read or holds no usable key entry. */
     static SSLContext sslContext(Path keystore, char[] password, String alias) {
         Objects.requireNonNull(keystore, "keystore can not be null");
         Objects.requireNonNull(password, Required.PASSWORD);
@@ -1026,12 +996,10 @@ public final class Application {
         return hostname;
     }
 
-    /** Hostname with a random suffix, unique for every start of the process. */
     public static String getInstanceId() {
         return INSTANCE_ID;
     }
 
-    /** True once the startup is complete and until the shutdown begins. */
     public static boolean isReady() {
         return ready;
     }
@@ -1044,7 +1012,6 @@ public final class Application {
         closeServerSentEvents(SERVER_SENT_EVENT_HANDLERS);
     }
 
-    // Covers connections a custom callback did not register in the ServerSentEventManager, which would hold the drain until its timeout
     static void closeServerSentEvents(List<io.undertow.server.handlers.sse.ServerSentEventHandler> handlers) {
         for (io.undertow.server.handlers.sse.ServerSentEventHandler handler : handlers) {
             handler.getConnections().forEach(ServerSentEventConnection::shutdown);
@@ -1055,7 +1022,6 @@ public final class Application {
         closeWebSockets(WEB_SOCKET_HANDLERS);
     }
 
-    // Clients reconnect to another instance instead of losing the connection when Undertow stops
     static void closeWebSockets(List<WebSocketProtocolHandshakeHandler> handlers) {
         for (WebSocketProtocolHandshakeHandler handler : handlers) {
             for (WebSocketChannel channel : handler.getPeerConnections()) {
@@ -1064,7 +1030,6 @@ public final class Application {
         }
     }
 
-    /** Rejects new requests with 503 and waits for the open ones; false if they did not finish in time. */
     static boolean drain(long timeoutMillis) throws InterruptedException {
         if (gracefulShutdownHandler == null) {
             return true;
@@ -1102,16 +1067,15 @@ public final class Application {
                 .ignoreMethodVisibility()
                 .ignoreFieldVisibility()
                 .acceptPackages(ALL_PACKAGES)
-                .rejectPackages(SCAN_REJECTED_PACKAGES)
+                .rejectPackages(Const.SCAN_REJECTED_PACKAGES)
                 .scan();
 
         LOG.info("Scanned {} classes in {} ms, known library packages are excluded", scanResult.getAllClasses().size(), System.currentTimeMillis() - start);
-        LOG.debug("Excluded packages from classpath scan: {}", String.join(", ", SCAN_REJECTED_PACKAGES));
+        LOG.debug("Excluded packages from classpath scan: {}", String.join(", ", Const.SCAN_REJECTED_PACKAGES));
 
         return scanResult;
     }
 
-    // ClassGraph no longer loads classes, loading without initialization matches the former ClassInfo#loadClass
     private static Class<?> loadClass(ClassInfo classInfo) {
         var classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
