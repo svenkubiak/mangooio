@@ -34,6 +34,7 @@ import io.mangoo.interfaces.MessageBroker;
 import io.mangoo.interfaces.OneTimeStore;
 import io.mangoo.interfaces.TokenBlacklist;
 import io.mangoo.persistence.MongoMessageBroker;
+import io.mangoo.persistence.MongoSchema;
 import io.mangoo.persistence.MongoStore;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Bind;
@@ -100,6 +101,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class Application {
     public static final String INSTANCE_ID_PROPERTY = "mangooio.instance.id";
@@ -393,23 +395,64 @@ public final class Application {
             Datastore datastore = getInstance(Datastore.class);
             checkMongoVersion(datastore);
 
-            scanResult.getClassesWithFieldAnnotation(INDEXED).forEach(classInfo -> {
-                var clazz = loadClass(classInfo);
-                for (IndexDefinition index : getIndexDefinitions(clazz)) {
-                    try {
-                        datastore.addIndex(clazz, index.keys(), index.options());
-                    } catch (MongoCommandException e) {
-                        LOG.error("Failed to add mongodb index for class {} and index name {}", clazz, index.field(), e);
-                        throw e;
-                    }
-                }
-            });
+            String schema = config.getMongoSchema();
+            if (!MongoSchema.CREATE.equals(schema) && !MongoSchema.VALIDATE.equals(schema)) {
+                throw new IllegalArgumentException(Key.PERSISTENCE_MONGO_SCHEMA + " must be " + MongoSchema.CREATE + " or " + MongoSchema.VALIDATE + ", but is " + schema);
+            }
 
-            for (Class<?> store : List.of(AttemptStore.class, OneTimeStore.class, TokenBlacklist.class, MessageBroker.class)) {
-                if (getInstance(store) instanceof MongoStore mongoStore) {
-                    mongoStore.prepare();
+            List<Class<?>> indexed = scanResult.getClassesWithFieldAnnotation(INDEXED).stream()
+                    .<Class<?>>map(Application::loadClass)
+                    .toList();
+            List<MongoStore> stores = Stream.of(AttemptStore.class, OneTimeStore.class, TokenBlacklist.class, MessageBroker.class)
+                    .map(Application::getInstance)
+                    .filter(MongoStore.class::isInstance)
+                    .map(MongoStore.class::cast)
+                    .toList();
+
+            if (MongoSchema.CREATE.equals(schema)) {
+                createSchema(datastore, indexed, stores);
+            } else {
+                validateSchema(datastore, indexed, stores);
+            }
+        }
+    }
+
+    private static void createSchema(Datastore datastore, List<Class<?>> indexed, List<MongoStore> stores) {
+        for (Class<?> clazz : indexed) {
+            for (IndexDefinition index : getIndexDefinitions(clazz)) {
+                try {
+                    datastore.addIndex(clazz, index.keys(), index.options());
+                } catch (MongoCommandException e) {
+                    LOG.error("Failed to add mongodb index for class {} and index name {}", clazz, index.field(), e);
+                    throw e;
                 }
             }
+        }
+
+        stores.forEach(MongoStore::prepare);
+    }
+
+    // Creates nothing, so a database user without the right to create collections and indexes can run the application
+    static void validateSchema(Datastore datastore, List<Class<?>> indexed, List<MongoStore> stores) {
+        List<String> missing = new ArrayList<>();
+        for (Class<?> clazz : indexed) {
+            String name = PersistenceUtils.getCollectionName(clazz);
+            if (name == null) {
+                continue;
+            }
+
+            var collection = datastore.getMongoDatabase().getCollection(name);
+            for (IndexDefinition index : getIndexDefinitions(clazz)) {
+                if (!MongoSchema.hasIndex(collection, index.keys(), index.options())) {
+                    missing.add(MongoSchema.createIndexCommand(name, index.keys(), index.options()));
+                }
+            }
+        }
+        stores.forEach(store -> missing.addAll(store.validate()));
+
+        if (!missing.isEmpty()) {
+            throw new IllegalStateException(Key.PERSISTENCE_MONGO_SCHEMA + " is " + MongoSchema.VALIDATE
+                    + ", but the database lacks the following, create it with mongosh:\n  " + String.join("\n  ", missing));
         }
     }
 

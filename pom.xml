@@ -5,7 +5,7 @@
 	<version>11.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>mangoo I/O</name>
-	<description>mangoo I/O is a Modern, Intuitive, Lightweight, High Performance Full Stack Java Web Framework.</description>
+	<description>mangoo I/O is a lean, opinionated Java web framework for MongoDB that scales out securely, no assembly required.</description>
 	<url>https://github.com/svenkubiak/mangooio</url>
 	<inceptionYear>2015</inceptionYear>
 	<licenses>

@@ -29,6 +29,7 @@ Unreleased
 * Added the OpenTelemetry metric http.server.request.duration when otlp.enable is true (svenkubiak)
 * Added the instance id as system property mangooio.instance.id for log patterns (svenkubiak)
 * Added env{?}, arg{?} and file{?} for optional values, which leave the key unset if the source is empty (svenkubiak)
+* Added persistence.mongo.schema: validate to check collections and indexes at startup instead of creating them (svenkubiak)
 * Fixed a revoked authentication cookie being accepted again within the JWT clock skew after its expiry (svenkubiak)
 * Fixed MongoDB clients not being closed and embedded MongoDB being stopped before Undertow on shutdown (svenkubiak)
 * Fixed the admin login with a second factor failing when the two steps reached different instances (svenkubiak)

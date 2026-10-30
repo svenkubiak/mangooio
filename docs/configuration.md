@@ -196,6 +196,7 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `persistence.mongo.host` | MongoDB host | `localhost` |
 | `persistence.mongo.password` | MongoDB password, passed to the driver as is, so special characters need no encoding | *(none)* |
 | `persistence.mongo.port` | MongoDB port | `27017` |
+| `persistence.mongo.schema` | `create` creates missing collections and indexes at startup, `validate` only checks them, see [Schema](persistence.md#schema) | `create` |
 | `persistence.mongo.username` | MongoDB username | *(none)* |
 | `persistence.mongo.url` | `mongodb://` or `mongodb+srv://` connection string that replaces host and port. Credentials in the URL are rejected | *(none)* |
 | `scheduler.enable` | Enable `@Run` scheduling | `true` |

@@ -1,6 +1,6 @@
 # Home 👋
 
-**mangoo I/O** is a full-stack Java web framework for building HTTP applications, everything from server-rendered HTML sites to JSON APIs. It is built on [Undertow](http://undertow.io/) and follows a classic MVC style: you map URLs to controller methods, return a `Response`, and optionally render Freemarker templates or send JSON.
+**mangoo I/O** is a lean, opinionated full-stack Java web framework for MongoDB that scales out securely, no assembly required. It builds HTTP applications, everything from server-rendered HTML sites to JSON APIs, on [Undertow](http://undertow.io/) and follows a classic MVC style: you map URLs to controller methods, return a `Response`, and optionally render Freemarker templates or send JSON.
 
 The framework favors **convention over configuration**. Controllers live in a package you configure once, templates follow a predictable path, and cross-cutting concerns like sessions, flash messages, CSRF tokens, and locale are just available as method parameters, no extra wiring required. At the same time, mangoo I/O tries hard not to be "magic": routes are plain Java code, configuration is a single YAML file you can read top to bottom, and dependency injection is just [Google Guice](https://github.com/google/guice), not a custom container reinventing what Guice already does well.
 

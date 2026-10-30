@@ -2,9 +2,9 @@
 ![SemVer](https://img.shields.io/badge/SemVer-2.0.0-green)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%F0%9F%8D%BA-yellow)](https://buymeacoffee.com/svenkubiak)
 
-# mangoo I/O – A Modern, High-Performance Full-Stack Java Web Framework
+# mangoo I/O – A Lean, Opinionated Java Web Framework for MongoDB
 
-**mangoo I/O** is a **modern, intuitive, lightweight, and high-performance** full-stack Java web framework designed for developers who value speed and simplicity.
+**mangoo I/O** is a **lean, opinionated** full-stack Java web framework for MongoDB that **scales out securely, no assembly required**.
 
 ## Built on a Robust Foundation
 
@@ -33,11 +33,11 @@ With **mangoo I/O**, you get a framework that prioritizes **developer experience
 ### 🚀 **Developer Productivity**
 - **Convention-over-configuration** for intuitive development
 - **Hot-compiling development mode** for instant feedback
-- **Straightforward persistence integration** with popular data stores
+- **MongoDB as first-class database** with a thin layer over the official driver
 - **Easy-to-use template engine** for dynamic content rendering
 
 ### ⚡ **High Performance & Scalability**
-- **Share-nothing, stateless architecture** for effortless scaling
+- **Runs on one instance or many**, with shared security state out of the box
 - **Built-in caching** for optimized performance
 - **Asynchronous email handling** for efficient processing
 - **Event-driven architecture** with a **built-in EventBus**

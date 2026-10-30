@@ -9,6 +9,7 @@ import com.mongodb.client.model.Filters;
 import io.mangoo.async.InMemoryMessageBroker;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.interfaces.MessageBroker;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.utils.Argument;
@@ -49,20 +50,26 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
     private final Datastore datastore;
     private final String name;
     private final String instanceId;
+    private final boolean create;
     private volatile boolean running;
     private volatile Object marker;
     private Thread thread;
 
     @Inject
-    public MongoMessageBroker(Datastore datastore) {
-        this(datastore, COLLECTION, Application.getInstanceId());
+    public MongoMessageBroker(Datastore datastore, Config config) {
+        this(datastore, COLLECTION, Application.getInstanceId(), Objects.requireNonNull(config, Required.CONFIG).isMongoSchemaCreate());
     }
 
     MongoMessageBroker(Datastore datastore, String name, String instanceId) {
+        this(datastore, name, instanceId, true);
+    }
+
+    MongoMessageBroker(Datastore datastore, String name, String instanceId, boolean create) {
         super(datastore, name);
         this.datastore = datastore;
         this.name = name;
         this.instanceId = Argument.requireNonBlank(instanceId, "instanceId can not be null or blank");
+        this.create = create;
     }
 
     @Override
@@ -101,13 +108,32 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
             }
         }
 
-        Document options = database.listCollections().filter(Filters.eq("name", name)).first();
-        boolean capped = options != null && Boolean.TRUE.equals(options.get("options", Document.class).getBoolean("capped"));
-        if (!capped) {
+        if (!isCapped()) {
             throw new IllegalStateException("Collection " + name + " exists but is not capped, drop it to let mangoo I/O create it");
         }
+        seed();
+    }
 
-        // A tailable cursor on an empty capped collection is closed immediately
+    @Override
+    public List<String> validate() {
+        String command = "db.createCollection(\"" + name + "\", {\"capped\": true, \"size\": " + CAPPED_SIZE + "})";
+        if (!exists()) {
+            return List.of(command);
+        }
+        if (!isCapped()) {
+            return List.of("Collection " + name + " exists but is not capped, drop it and run " + command);
+        }
+
+        return List.of();
+    }
+
+    private boolean isCapped() {
+        Document options = datastore.getMongoDatabase().listCollections().filter(Filters.eq("name", name)).first();
+        return options != null && Boolean.TRUE.equals(options.get("options", Document.class).getBoolean("capped"));
+    }
+
+    // A tailable cursor on an empty capped collection is closed immediately
+    private void seed() {
         if (collection().estimatedDocumentCount() == 0) {
             collection().insertOne(new Document(TOPIC, SEED).append(INSTANCE, instanceId));
         }
@@ -123,6 +149,7 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
             return;
         }
 
+        seed();
         Document last = collection().find().sort(new Document("$natural", -1)).limit(1).first();
         marker = last == null ? null : last.get(ID);
         running = true;
@@ -200,9 +227,16 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
         return marker != null && collection().find(Filters.eq(ID, marker)).first() != null;
     }
 
+    // With persistence.mongo.schema validate a dropped collection is not created again, tailing retries until it exists
     private void reprepare() {
         try {
-            prepare();
+            if (create) {
+                prepare();
+            } else if (validate().isEmpty()) {
+                seed();
+            } else {
+                LOG.warn("Collection {} is missing or not capped, persistence.mongo.schema is validate", name);
+            }
         } catch (MongoException | IllegalStateException e) {
             LOG.warn("Failed to prepare {}: {}", name, e.getMessage());
         }

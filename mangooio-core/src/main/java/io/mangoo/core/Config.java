@@ -6,6 +6,7 @@ import io.mangoo.constants.Const;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.enums.Mode;
+import io.mangoo.persistence.MongoSchema;
 import io.mangoo.utils.internal.MangooUtils;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -547,6 +548,15 @@ public class Config {
 
     public String getMongoDbName(String prefix) {
         return getString(prefix + Key.PERSISTENCE_MONGO_DBNAME, Default.PERSISTENCE_MONGO_DBNAME);
+    }
+
+    /** Applies to the default datastore only, as the startup creates collections and indexes there only. */
+    public String getMongoSchema() {
+        return getString(Key.PERSISTENCE_MONGO_SCHEMA, Default.PERSISTENCE_MONGO_SCHEMA);
+    }
+
+    public boolean isMongoSchemaCreate() {
+        return !MongoSchema.VALIDATE.equals(getMongoSchema());
     }
 
     public Boolean isMongoEmbedded(String prefix) {

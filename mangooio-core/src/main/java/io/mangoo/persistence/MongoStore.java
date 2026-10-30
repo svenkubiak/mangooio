@@ -11,7 +11,9 @@ import io.mangoo.constants.Required;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.utils.Argument;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class MongoStore {
     static final String EXPIRE_AT = "expireAt";
     static final String ID = "_id";
+    private static final Bson TTL_KEYS = Indexes.ascending(EXPIRE_AT);
     private final MongoCollection<Document> collection;
 
     // Must not access the database, as the injector creates singletons eagerly before the datastore is checked
@@ -41,9 +44,22 @@ public abstract class MongoStore {
         return collection;
     }
 
-    /** Creates the TTL index on expireAt; called once by the startup after the classpath scan. */
+    /** Creates the TTL index on expireAt; called once by the startup with persistence.mongo.schema create. */
     public void prepare() {
-        collection.createIndex(Indexes.ascending(EXPIRE_AT), new IndexOptions().expireAfter(0L, TimeUnit.SECONDS));
+        collection.createIndex(TTL_KEYS, ttlOptions());
+    }
+
+    /** Lists what is missing as mongosh commands; called once by the startup with persistence.mongo.schema validate. */
+    public List<String> validate() {
+        if (MongoSchema.hasIndex(collection, TTL_KEYS, ttlOptions())) {
+            return List.of();
+        }
+
+        return List.of(MongoSchema.createIndexCommand(collection.getNamespace().getCollectionName(), TTL_KEYS, ttlOptions()));
+    }
+
+    private static IndexOptions ttlOptions() {
+        return new IndexOptions().expireAfter(0L, TimeUnit.SECONDS);
     }
 
     static boolean isDuplicateKey(MongoServerException e) {

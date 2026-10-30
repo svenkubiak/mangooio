@@ -22,7 +22,7 @@ default:
       embedded: false
 ```
 
-Set `persistence.enable` to `false` if you want to skip MongoDB entirely.
+Set `persistence.enable` to `false` if you want to skip MongoDB entirely; the framework then keeps its own state in memory, see [Framework collections](#framework-collections).
 
 `host` and `port` address one server. A replica set, several mongos instances, or an SRV address such as MongoDB Atlas goes into `url`, which then replaces `host` and `port`:
 
@@ -139,3 +139,38 @@ persistence:
       auth: true
       embedded: false
 ```
+
+## Framework collections
+
+With persistence enabled, the framework keeps the state that all instances have to share in the default datastore, i.e. in the database of `persistence.mongo.dbname`, next to the collections of your application. Give every application its own `dbname`: two applications in one database would share these collections, so a lock of one user name would apply to both and server sent events would reach the clients of the other application.
+
+| Collection | Store | Content |
+|---|---|---|
+| `mangooio_attempts` | `AttemptStore` | Failed login budgets and locks |
+| `mangooio_claims` | `OneTimeStore` | Used TOTP codes and the pending second factor of the admin login |
+| `mangooio_revocations` | `TokenBlacklist` | Revoked authentication cookies (`authentication.blacklist`) |
+| `mangooio_messages` | `MessageBroker` | Server sent events for the other instances, capped at 16 MB |
+
+The startup creates them: a TTL index on `expireAt` for the first three, which removes expired entries, and the capped collection `mangooio_messages`. A `mangooio_messages` that exists but is not capped fails the startup. After the database was dropped, e.g. in tests, the indexes are created again on the next start. The database user needs the built-in role `readWrite` on `dbname`, which covers creating collections and indexes, see [Schema](#schema) for a user without that right. MongoDB 4.2 or later is required. Reads go to the primary and writes are acknowledged by the majority, whatever `url` sets; if MongoDB is unavailable, the first three fail closed and refuse logins, second factors and authenticated requests, see [Operating](operating.md#running-several-instances).
+
+Without persistence the same state is kept in memory per process. It is lost on a restart, so a revoked cookie that has not yet expired is accepted again, and a lock or used TOTP code is forgotten. This is fine for a single instance that can accept it; several instances always need persistence. `persistence.enable` switches the datastore and the framework state together, there is no separate switch: an application that does not use the `Datastore` itself still gets the shared state with persistence enabled. To keep the state elsewhere, bind your own implementation of the store in `app.Module`.
+
+## Schema
+
+`persistence.mongo.schema` controls whether the startup creates the collections and indexes of the default datastore: the `@Indexed` indexes of your entities and the [framework collections](#framework-collections).
+
+| Value | Behaviour |
+|---|---|
+| `create` | Creates missing collections and indexes (default) |
+| `validate` | Creates nothing and checks that everything exists; the startup fails with a list of the missing parts as mongosh commands |
+
+Use `validate` when the database user may not create collections or indexes, e.g. because a DBA manages the schema. Run the listed commands once with a user that may, then start again:
+
+```
+persistence.mongo.schema is validate, but the database lacks the following, create it with mongosh:
+  db.getCollection("mangooio_attempts").createIndex({"expireAt": 1}, {"expireAfterSeconds": 0})
+  db.createCollection("mangooio_messages", {"capped": true, "size": 16777216})
+```
+
+An index counts as present if its keys, uniqueness, collation and expiry match. Without the TTL indexes expired entries would never be removed, which is why a missing one fails the startup instead of logging a warning. With `validate`, a `mangooio_messages` that is dropped while the application runs is not created again; the server sent events of the other instances pause until it exists.
+

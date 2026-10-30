@@ -61,6 +61,7 @@ public final class Default {
     public static final String PERSISTENCE_MONGO_HOST = "localhost";
     public static final int PERSISTENCE_MONGO_PORT = 27017;
     public static final String PERSISTENCE_PREFIX = "persistence.";
+    public static final String PERSISTENCE_MONGO_SCHEMA = "create";
     public static final Boolean SCHEDULER_ENABLE = Boolean.TRUE;
     // Below the 60 second proxy_read_timeout of nginx and the idle timeout of common load balancers
     public static final long SERVER_SENT_EVENT_KEEP_ALIVE = 30000;
