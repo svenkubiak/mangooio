@@ -107,9 +107,9 @@ public final class JwtUtils {
             var claims = signedJWT.getJWTClaimsSet();
             var now = Instant.now();
 
-            var exp = Objects.requireNonNull(claims.getExpirationTime(), "exp is required");
-            var iat = Objects.requireNonNull(claims.getIssueTime(), "iat is required");
-            var nbf = Objects.requireNonNull(claims.getNotBeforeTime(), "nbf is required");
+            var exp = requireClaim(claims.getExpirationTime(), "exp");
+            var iat = requireClaim(claims.getIssueTime(), "iat");
+            var nbf = requireClaim(claims.getNotBeforeTime(), "nbf");
 
             if (!Objects.equals(jwtData.issuer(), claims.getIssuer())) {
                 throw new JOSEException("Issuer mismatch");
@@ -151,6 +151,13 @@ public final class JwtUtils {
             }
         });
         return builder.build();
+    }
+
+    private static Date requireClaim(Date value, String name) throws JOSEException {
+        if (value == null) {
+            throw new JOSEException("Missing claim: " + name);
+        }
+        return value;
     }
 
     private static void validate(JwtData jwtData) {

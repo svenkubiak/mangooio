@@ -5,6 +5,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
+import io.mangoo.utils.internal.Trace;
 import io.undertow.util.StatusCodes;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -29,12 +30,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Only runs in the tracing-tests surefire execution with -Dotlp.enable=true, otherwise every Trace method returns immediately and the tests pass vacuously.
- * Assertions are made on the Trace diagnostics logs, as span defects do not surface as failing requests.
+ * Assertions are made on the started and ended span counts and on the Trace diagnostics logs, as span defects do not surface as failing requests.
  */
 @ExtendWith({TestExtension.class})
 @Execution(ExecutionMode.SAME_THREAD)
@@ -90,6 +92,8 @@ class TracingTest {
     @Test
     void parallelRequestsOnTheSamePathDoNotInterfere() throws Exception {
         int requests = 400;
+        long started = Trace.getStartedSpans();
+        long ended = Trace.getEndedSpans();
         var succeeded = new AtomicInteger();
         var errors = new CopyOnWriteArrayList<String>();
 
@@ -116,27 +120,43 @@ class TracingTest {
         }
 
         assertEquals(requests, succeeded.get(), "All requests must succeed, got: " + errors);
+        // A root span for the request and a child span for the controller invocation
+        assertAllSpansEnded(started, ended, 2L * requests);
         assertNoImbalance();
     }
 
     @Test
     void abortedRequestsDoNotLeaveSpansOpen() {
         // The AuthenticationHandler ends the exchange before the ResponseHandler, so the completion listener has to close the root span.
+        long started = Trace.getStartedSpans();
+        long ended = Trace.getEndedSpans();
+
         for (var i = 0; i < 100; i++) {
-            TestRequest.get("/authenticationrequired").execute();
+            TestRequest.get("/authenticationrequired").withDisabledRedirects().execute();
         }
 
+        assertAllSpansEnded(started, ended, 100);
         assertNoImbalance();
     }
 
     @Test
     void notFoundRequestsAreNotTraced() {
         // The fallback handler runs outside the dispatcher, so no span is started and ending it must not produce a warning.
+        long started = Trace.getStartedSpans();
+
         for (var i = 0; i < 20; i++) {
             TestRequest.get("/this-route-does-not-exist").execute();
         }
 
+        assertEquals(started, Trace.getStartedSpans(), "A request without route must not start a span");
         assertNoImbalance();
+    }
+
+    // The completion listener may run after the client received the response, so the ended spans are awaited
+    private static void assertAllSpansEnded(long started, long ended, long expected) {
+        assertEquals(expected, Trace.getStartedSpans() - started, "Unexpected number of started spans");
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() ->
+                assertEquals(expected, Trace.getEndedSpans() - ended, "Every started span must be ended"));
     }
 
     private void assertNoImbalance() {

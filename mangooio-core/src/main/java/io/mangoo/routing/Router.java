@@ -103,6 +103,7 @@ public final class Router {
     }
     
     public static void reset() {
+        urls.clear();
         routes = ConcurrentHashMap.newKeySet();
         reverseRoutes = new ConcurrentHashMap<>();
     }

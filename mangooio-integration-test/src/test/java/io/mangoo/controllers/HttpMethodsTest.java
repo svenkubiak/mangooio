@@ -12,44 +12,22 @@ import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class HttpMethodsTest {
-    
-    @Test
-    void testGet() {
-        //given
-        final TestResponse response = TestRequest.get("/").execute();
 
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-    }
-    
     @Test
     void testPost() {
         //given
         final TestResponse response = TestRequest.post("/").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
     
-    @Test
-    void testPut() {
-        //given
-        final TestResponse response = TestRequest.put("/put").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-    }
-
     @Test
     void testHead() {
         //given
         final TestResponse response = TestRequest.head("/").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
     
@@ -59,7 +37,6 @@ class HttpMethodsTest {
         final TestResponse response = TestRequest.delete("/").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
     
@@ -69,7 +46,6 @@ class HttpMethodsTest {
         final TestResponse response = TestRequest.options("/").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
     
@@ -79,27 +55,6 @@ class HttpMethodsTest {
         final TestResponse response = TestRequest.patch("/").execute();
 
         //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-    }
-
-    @Test
-    void testAnyOfDelete() {
-        //given
-        final TestResponse response = TestRequest.delete("/anyof").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-    }
-
-    @Test
-    void testAnyOfPatch() {
-        //given
-        final TestResponse response = TestRequest.patch("/anyof").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
 }

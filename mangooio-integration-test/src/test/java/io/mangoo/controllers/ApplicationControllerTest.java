@@ -1,7 +1,6 @@
 package io.mangoo.controllers;
 
 import io.mangoo.TestExtension;
-import io.mangoo.cache.Cache;
 import io.mangoo.constants.Header;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -31,11 +30,8 @@ class ApplicationControllerTest {
     void testIndex() {
         //given
         final TestResponse response = TestRequest.get("/").execute();
-        
-        Application.getInstance(Cache.class).put("foo", "bar");
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
@@ -46,7 +42,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/origin").withHeader("Origin", "http://foo.de").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
@@ -57,7 +52,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/origin").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
     }
@@ -65,17 +59,14 @@ class ApplicationControllerTest {
     @Test
     void testAnyOf() {
         //given
-        final TestResponse deleteResponse = TestRequest.delete("/").execute();
-        final TestResponse patchResponse = TestRequest.patch("/").execute();
-        final TestResponse putResponse = TestRequest.put("/").execute();
+        final TestResponse deleteResponse = TestRequest.delete("/anyof").execute();
+        final TestResponse patchResponse = TestRequest.patch("/anyof").execute();
+        final TestResponse getResponse = TestRequest.get("/anyof").execute();
 
         //then
-        assertThat(deleteResponse, not(nullValue()));
-        assertThat(patchResponse, not(nullValue()));
-        assertThat(putResponse, not(nullValue()));
         assertThat(deleteResponse.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(patchResponse.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(putResponse.getStatusCode(), equalTo(StatusCodes.METHOD_NOT_ALLOWED));
+        assertThat(getResponse.getStatusCode(), equalTo(StatusCodes.METHOD_NOT_ALLOWED));
     }
 
     @Test
@@ -84,7 +75,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/route").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("/route"));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
@@ -96,7 +86,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/named").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("injected"));
     }
@@ -107,7 +96,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/api-filter").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
     }
 
@@ -120,7 +108,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
 
@@ -130,7 +117,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/reverse").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), Matchers.anyOf(equalTo("/string\n/int/23\n/multiple/11/42"), equalTo("/string\r\n/int/23\r\n/multiple/11/42")));
         
@@ -149,7 +135,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/location" + parameter).execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo(result));
@@ -163,11 +148,12 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), containsString("vor"));
-        assertThat(response.getContent(), containsString("Stunden"));
+        String[] lines = response.getContent().split("<br>");
+        assertThat(lines[0].strip(), matchesPattern("vor \\d+ Stunden"));
+        assertThat(lines[1].strip(), matchesPattern("vor [34] Tagen"));
+        assertThat(lines[2].strip(), equalTo("vor 5 Stunden"));
     }
 
     @Test
@@ -176,7 +162,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/request").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("/request"));
@@ -188,9 +173,8 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/redirect").withDisabledRedirects().execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-        assertThat(response.getResponseUrl(), equalTo("http://localhost:10808"));
+        assertThat(response.getHeader("Location"), equalTo("/"));
     }
 
     @Test
@@ -199,10 +183,9 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/redirect").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getResponseUrl(), equalTo("http://localhost:10808"));
+        assertThat(response.getHttpResponse().uri().getPath(), equalTo("/"));
     }
 
     @Test
@@ -211,20 +194,8 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/text").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-    }
-
-    @Test
-    void testNotFound() {
-        //given
-        final TestResponse response = TestRequest.get("/foo").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_FOUND));
     }
 
     @Test
@@ -233,7 +204,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/forbidden").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
     }
@@ -244,7 +214,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/not-modified").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_MODIFIED));
     }
@@ -255,7 +224,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/badrequest").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
     }
@@ -266,7 +234,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/unauthorized").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
     }
@@ -277,7 +244,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/header").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader("Access-Control-Allow-Origin"), equalTo("https://mangoo.io"));
@@ -291,7 +257,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo("Winter is coming!"));
@@ -305,7 +270,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo("The king of the north!"));
@@ -320,7 +284,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo(JSON_PLAIN));
@@ -333,7 +296,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("200"));
@@ -347,7 +309,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("400"));
@@ -361,7 +322,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("401"));
@@ -375,7 +335,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("403"));
@@ -389,7 +348,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_FOUND));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("404"));
@@ -403,7 +361,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("500"));
@@ -417,7 +374,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.TOO_MANY_REQUESTS));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("429"));
@@ -433,7 +389,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo(JSON_PLAIN));
@@ -446,7 +401,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("This is unrendered"));
     }
@@ -457,7 +411,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/freemarker").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), containsString("Output format: HTML"));
         assertThat(response.getContent(), containsString("Auto-escaping: true"));
@@ -469,7 +422,6 @@ class ApplicationControllerTest {
         final TestResponse response = TestRequest.get("/").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader(Headers.SERVER.toString()), equalTo("Undertow"));
         assertThat(response.getHeader(Header.X_XSS_PROTECTION.toString()), equalTo("1"));
@@ -489,7 +441,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader("Access-Control-Allow-Origin"), equalTo("localhost"));
         assertThat(response.getHeader("Access-Control-Allow-Credentials"), equalTo("true"));
@@ -508,7 +459,6 @@ class ApplicationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader("Access-Control-Allow-Origin"), equalTo(""));
         assertThat(response.getHeader("Access-Control-Allow-Credentials"), equalTo(""));

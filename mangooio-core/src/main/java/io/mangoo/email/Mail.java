@@ -61,8 +61,8 @@ public class Mail {
     }
     
     public Mail from(String fromName, String fromAddress) {
-        Objects.requireNonNull(fromName, Required.FROM);
-        Objects.requireNonNull(fromAddress, Required.NAME);
+        Objects.requireNonNull(fromName, Required.NAME);
+        Objects.requireNonNull(fromAddress, Required.FROM);
         mailFromName = fromName;
         mailFromAddress = fromAddress;
         
@@ -113,7 +113,7 @@ public class Mail {
         Objects.requireNonNull(paths, Required.PATH);
         paths.forEach(path -> {
             Objects.requireNonNull(path, Required.PATH);
-            Preconditions.checkArgument(path.toFile().length() != 0, Required.PATH);
+            Preconditions.checkArgument(path.toFile().length() != 0, Required.CONTENT);
         });
         
         mailAttachments.addAll(paths);
@@ -155,7 +155,7 @@ public class Mail {
     
     private String render(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE);
-        Objects.requireNonNull(template, Required.CONTENT);
+        Objects.requireNonNull(content, Required.CONTENT);
         
         if (template.charAt(0) == '/' || template.startsWith("\\")) {
             template = template.substring(1, template.length());

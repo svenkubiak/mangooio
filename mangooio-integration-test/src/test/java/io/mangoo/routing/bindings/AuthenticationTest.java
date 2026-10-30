@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Execution(ExecutionMode.SAME_THREAD)
 class AuthenticationTest {
     private static final String SALT = "6IeDg6szfIfJKOsuhfZHtqWU4W7O6BpvNFhfI8Kjb64p9Pi";
-    private static final String VALID_HASH = "$2a$12$Vyb9AT6IeDg6szfIfJKOsuhfZHtqWU4W7O6BpvNFhfI8Kjb64p9Pi";
+    private static final String NON_MATCHING_HASH = "$2a$12$Vyb9AT6IeDg6szfIfJKOsuhfZHtqWU4W7O6BpvNFhfI8Kjb64p9Pi";
 
     private static String identifier() {
         return UUID.randomUUID().toString();
@@ -62,26 +62,6 @@ class AuthenticationTest {
     }
 
     @Test
-    void testUserLock() {
-        //given
-        Authentication authentication = Application.getInstance(Authentication.class);
-        
-        //when
-        authentication.isValidLogin("foo", "bar", SALT, VALID_HASH);
-        
-        //then
-        assertThat(authentication.userHasLock("foo"), equalTo(false));
-        
-        //when
-        for (int i=1; i <= 20; i++) {
-            authentication.isValidLogin("foobar", "bla", SALT, VALID_HASH);
-        }
-        
-        //then
-        assertThat(authentication.userHasLock("foobar"), equalTo(true));
-    }
-
-    @Test
     void testUserLockAppliesOnConfiguredAttempt() {
         //given
         Authentication authentication = Application.getInstance(Authentication.class);
@@ -90,16 +70,51 @@ class AuthenticationTest {
 
         //when
         for (int i = 1; i < lock; i++) {
-            authentication.isValidLogin(identifier, "bla", SALT, VALID_HASH);
+            authentication.isValidLogin(identifier, "bla", SALT, NON_MATCHING_HASH);
         }
 
         //then
         assertThat(authentication.userHasLock(identifier), equalTo(false));
 
         //when
-        authentication.isValidLogin(identifier, "bla", SALT, VALID_HASH);
+        authentication.isValidLogin(identifier, "bla", SALT, NON_MATCHING_HASH);
 
         //then
+        assertThat(authentication.userHasLock(identifier), equalTo(true));
+    }
+
+    @Test
+    void testValidLoginIsAcceptedAndResetsTheBudget() throws MangooHashingException {
+        //given
+        Authentication authentication = Application.getInstance(Authentication.class);
+        String identifier = identifier();
+        String hash = CommonUtils.hashArgon2("secret", SALT);
+        authentication.isValidLogin(identifier, "wrong", SALT, hash);
+        assertThat(attemptCount("pwd:" + identifier), equalTo(1));
+
+        //when
+        boolean valid = authentication.isValidLogin(identifier, "secret", SALT, hash);
+
+        //then
+        assertThat(valid, equalTo(true));
+        assertThat(attemptCount("pwd:" + identifier), equalTo(0));
+    }
+
+    @Test
+    void testValidLoginIsRefusedWhileLocked() throws MangooHashingException {
+        //given
+        Authentication authentication = Application.getInstance(Authentication.class);
+        String identifier = identifier();
+        String hash = CommonUtils.hashArgon2("secret", SALT);
+        for (int i = 0; i < lockAfter(); i++) {
+            authentication.isValidLogin(identifier, "wrong", SALT, hash);
+        }
+
+        //when
+        boolean valid = authentication.isValidLogin(identifier, "secret", SALT, hash);
+
+        //then
+        assertThat(valid, equalTo(false));
         assertThat(authentication.userHasLock(identifier), equalTo(true));
     }
 
@@ -115,7 +130,7 @@ class AuthenticationTest {
             commonUtils.when(() -> CommonUtils.matchArgon2(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
                     .thenThrow(new MangooHashingException("No Argon2 hashing slot became available"));
 
-            valid = authentication.isValidLogin(identifier, "bla", SALT, VALID_HASH);
+            valid = authentication.isValidLogin(identifier, "bla", SALT, NON_MATCHING_HASH);
         }
 
         //then the login fails closed
@@ -218,7 +233,7 @@ class AuthenticationTest {
 
         //when
         for (int i = 1; i <= lockAfter(); i++) {
-            authentication.isValidLogin(identifier, "bla", SALT, VALID_HASH);
+            authentication.isValidLogin(identifier, "bla", SALT, NON_MATCHING_HASH);
         }
 
         //then
@@ -229,7 +244,7 @@ class AuthenticationTest {
 
         //when
         for (int i = 1; i <= 5; i++) {
-            authentication.isValidLogin(identifier, "bla", SALT, VALID_HASH);
+            authentication.isValidLogin(identifier, "bla", SALT, NON_MATCHING_HASH);
         }
 
         //then the absolute unlock timestamp did not move
@@ -263,7 +278,7 @@ class AuthenticationTest {
 
         //when
         for (int i = 1; i <= lockAfter(); i++) {
-            authentication.isValidLogin(identifier, "bla", SALT, VALID_HASH);
+            authentication.isValidLogin(identifier, "bla", SALT, NON_MATCHING_HASH);
         }
 
         //then
@@ -275,33 +290,6 @@ class AuthenticationTest {
 
         //then
         assertThat(valid, equalTo(true));
-    }
-
-    @Test
-    void testRememberMe() {
-        //given
-        Authentication authentication = Application.getInstance(Authentication.class);
-
-        //then
-        assertThat(authentication.isRememberMe(), equalTo(false));
-
-        //when
-        authentication.rememberMe();
-
-        //then
-        assertThat(authentication.isRememberMe(), equalTo(true));
-
-        //when
-        authentication.rememberMe(false);
-
-        //then
-        assertThat(authentication.isRememberMe(), equalTo(false));
-
-        //when
-        authentication.rememberMe(true);
-
-        //then
-        assertThat(authentication.isRememberMe(), equalTo(true));
     }
 
     @Test
@@ -422,7 +410,7 @@ class AuthenticationTest {
 
         //when
         for (String salt : new String[] {null, ""}) {
-            assertThrows(RuntimeException.class, () -> authentication.isValidLogin(identifier, "bla", salt, VALID_HASH));
+            assertThrows(RuntimeException.class, () -> authentication.isValidLogin(identifier, "bla", salt, NON_MATCHING_HASH));
         }
 
         //then

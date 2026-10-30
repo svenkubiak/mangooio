@@ -37,7 +37,6 @@ class CacheTest {
         cache.put(key, value);
 
         //then
-        assertThat(cache.get(key), not(nullValue()));
         assertThat(cache.get(key), equalTo(value));
     }
 
@@ -52,7 +51,6 @@ class CacheTest {
         cache.put(key, value, LocalDateTime.now().plusMinutes(5));
 
         //then
-        assertThat(cache.get(key), not(nullValue()));
         assertThat(cache.get(key), equalTo(value));
     }
 
@@ -67,7 +65,6 @@ class CacheTest {
         cache.put(key, value, 5, ChronoUnit.MINUTES);
 
         //then
-        assertThat(cache.get(key), not(nullValue()));
         assertThat(cache.get(key), equalTo(value));
     }
 
@@ -84,20 +81,6 @@ class CacheTest {
 
         //then
         assertThat(cache.get(key), equalTo(null));
-    }
-
-    @Test
-    void testCast() {
-        //given
-        String key = UUID.randomUUID().toString();
-        String value = UUID.randomUUID().toString();
-        Cache cache = Application.getInstance(Cache.class);
-        
-        //when
-    	cache.put(key, value);
-
-    	//then
-        assertThat(cache.get(key), equalTo(value));
     }
     
     @Test
@@ -153,7 +136,6 @@ class CacheTest {
         cache.put(key2, value2);
         
         //then
-        assertThat(cache.getAll(key1, key2), not(equalTo(null)));
         assertThat(cache.getAll(key1, key2).get(key1), equalTo(value1));
         assertThat(cache.getAll(key1, key2).get(key2), equalTo(value2));
     }

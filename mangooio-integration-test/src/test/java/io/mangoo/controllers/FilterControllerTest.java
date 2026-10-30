@@ -20,7 +20,6 @@ class FilterControllerTest {
         TestResponse response = TestRequest.get("/filter").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("bar"));
     }
@@ -31,7 +30,6 @@ class FilterControllerTest {
         TestResponse response = TestRequest.get("/headerfilter").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader(Headers.CONTENT_MD5_STRING), equalTo("12"));
     }
@@ -42,7 +40,6 @@ class FilterControllerTest {
         TestResponse response = TestRequest.get("/filters").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("filteronefiltertwofilterthree"));
     }

@@ -18,18 +18,6 @@ import static org.hamcrest.Matchers.equalTo;
 class ControllerRouteTest {
 
     @Test
-    void testCreation() {
-        //given
-        Class<?> clazz = ApplicationController.class;
-        
-        //when
-        ControllerRoute route = new ControllerRoute(clazz);
-        
-        //then
-        assertThat(route.getControllerClass(), equalTo(clazz));
-    }
-    
-    @Test
     void testWithMethods() {
         //given
         String route1 = UUID.randomUUID().toString();

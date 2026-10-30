@@ -17,7 +17,6 @@ import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 public class CsrfControllerTest {
-	private static final int AUTHENTICITY_LENGTH = 32;
 
     @Test
     public void testValidCsrfForm() {
@@ -30,7 +29,6 @@ public class CsrfControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
         String token = getCsrf(response.getContent());
@@ -61,7 +59,6 @@ public class CsrfControllerTest {
         String token = response.getContent();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
         //when
@@ -79,6 +76,48 @@ public class CsrfControllerTest {
     public void testInvalidCsrf() {
         //when
         TestResponse response = TestRequest.get("/csrf/validate").execute();
+
+        //then
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
+        assertThat(response.getContent(), not(containsString("bar")));
+    }
+
+    @Test
+    public void testWrongCsrfTokenIsRejected() {
+        //given
+        TestBrowser instance = TestBrowser.open();
+        instance.to("/csrf/token")
+                .withHTTPMethod(Methods.GET.toString())
+                .execute();
+
+        //when
+        TestResponse response = instance.to("/csrf/validate")
+                .withHeader(Const.CSRF_TOKEN, "wrong-token")
+                .withHTTPMethod(Methods.GET.toString())
+                .execute();
+
+        //then
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
+        assertThat(response.getContent(), not(containsString("bar")));
+    }
+
+    @Test
+    public void testCsrfTokenOfAnotherSessionIsRejected() {
+        //given
+        String token = TestBrowser.open().to("/csrf/token")
+                .withHTTPMethod(Methods.GET.toString())
+                .execute()
+                .getContent();
+        TestBrowser instance = TestBrowser.open();
+        instance.to("/csrf/token")
+                .withHTTPMethod(Methods.GET.toString())
+                .execute();
+
+        //when
+        TestResponse response = instance.to("/csrf/validate")
+                .withHeader(Const.CSRF_TOKEN, token)
+                .withHTTPMethod(Methods.GET.toString())
+                .execute();
 
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));

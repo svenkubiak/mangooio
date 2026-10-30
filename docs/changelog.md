@@ -38,6 +38,14 @@ Unreleased
 * Fixed concurrent first calls of DatastoreProvider.getDatastore for a prefix creating a second MongoClient that was never closed (svenkubiak)
 * Fixed an empty secret such as smtp.password: "" failing the startup in prod as a literal secret (svenkubiak)
 * Fixed server sent event connections not registered in the ServerSentEventManager holding the shutdown until application.shutdown.timeout (svenkubiak)
+* Fixed Crypto.encrypt and Crypto.decrypt with a public or private key not rejecting a null key (svenkubiak)
+* Fixed Router.reset not clearing the registered URLs (svenkubiak)
+* Fixed TotpUtils.getOtpAuthURL not encoding name and issuer, which broke the URL for values with spaces or & (svenkubiak)
+* Fixed JwtUtils.parseJwt failing with a NullPointerException instead of a MangooJwtException when exp, iat or nbf is missing (svenkubiak)
+* Fixed MangooUtils.flattenMapHelper not rejecting a null target map (svenkubiak)
+* Fixed Mail.from(name, address) reporting a missing name as missing address and vice versa (svenkubiak)
+* Fixed Mail.textMessage and Mail.htmlMessage with a template not rejecting null content with a clear message (svenkubiak)
+* Fixed TemplateContext writing into the content map of the caller, which failed for immutable maps such as Map.of (svenkubiak)
 
 ## Version 10.16.0
 

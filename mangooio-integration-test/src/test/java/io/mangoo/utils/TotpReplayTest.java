@@ -59,11 +59,9 @@ class TotpReplayTest {
 
     @Test
     void testUsedStepOutlivesItsEndByOnePeriod() {
-        //given
-        long counter = Instant.now().getEpochSecond() / 30;
-
-        //then
-        assertThat(TotpUtils.usedUntil(counter), equalTo(Instant.ofEpochSecond((counter + 2) * 30)));
+        //then step 0 covers [0, 30) and step 10 covers [300, 330)
+        assertThat(TotpUtils.usedUntil(0), equalTo(Instant.ofEpochSecond(60)));
+        assertThat(TotpUtils.usedUntil(10), equalTo(Instant.ofEpochSecond(360)));
     }
 
     @Test

@@ -273,6 +273,8 @@ public final class CommonUtils {
 
     /**
      * Returns an empty string if the resource cannot be read.
+     *
+     * @throws IllegalArgumentException if the resource does not exist
      */
     public static String readResourceToString(String resource) {
         Argument.requireNonBlank(resource, Required.RESOURCE);

@@ -20,7 +20,6 @@ class DefaultTemplatesTest {
         final TestResponse response = TestRequest.get("/foo").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_FOUND));
         assertThat(response.getContent(), containsString("The server has not found anything matching the Request-URI."));
@@ -32,7 +31,6 @@ class DefaultTemplatesTest {
         final TestResponse response = TestRequest.get("/error").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo("text/html"));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
         assertThat(response.getContent(), containsString("The server encountered something it didn't expect and was unable to complete the request."));

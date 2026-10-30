@@ -351,8 +351,8 @@ public final class MangooUtils {
     @SuppressWarnings("unchecked")
     public static void flattenMapHelper(Map<String, Object> map, String prefix, Map<String, String> flatMap) {
         Objects.requireNonNull(map, Required.MAP);
-        Objects.requireNonNull(prefix, Required.MAP);
-        Objects.requireNonNull(map, Required.MAP);
+        Objects.requireNonNull(prefix, Required.PREFIX);
+        Objects.requireNonNull(flatMap, Required.FLAT_MAP);
 
         map.forEach((key, value) -> {
             String newKey = prefix.isEmpty() ? key : prefix + "." + key;

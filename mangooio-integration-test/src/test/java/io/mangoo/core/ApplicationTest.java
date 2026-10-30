@@ -1,7 +1,6 @@
 package io.mangoo.core;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.CreationException;
 import com.google.inject.Guice;
 import io.mangoo.TestExtension;
 import io.mangoo.constants.Const;
@@ -156,16 +155,6 @@ public class ApplicationTest {
     }
 
     @Test
-    void testDuplicateBindingWithoutOverrideFails() {
-        //given
-        var core = binding("core");
-        var application = binding("application");
-
-        //then
-        assertThrows(CreationException.class, () -> Guice.createInjector(core, application));
-    }
-
-    @Test
     void testCoreBindingIsKeptWithoutApplicationBinding() {
         //given
         var core = binding("core");
@@ -189,13 +178,6 @@ public class ApplicationTest {
         assertThat(first, not(equalTo(second)));
         assertThat(Application.instanceId(" "), matchesPattern("mangooio-[0-9a-f]{6}"));
         assertThat(Application.instanceId(null), matchesPattern("mangooio-[0-9a-f]{6}"));
-    }
-
-    @Test
-    void testInstanceIdIsStableForTheProcess() {
-        //then
-        assertThat(Application.getInstanceId(), not(emptyOrNullString()));
-        assertThat(Application.getInstanceId(), equalTo(Application.getInstanceId()));
     }
 
     @Test

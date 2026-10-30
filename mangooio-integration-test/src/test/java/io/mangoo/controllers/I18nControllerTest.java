@@ -31,7 +31,6 @@ class I18nControllerTest {
         TestResponse response = TestRequest.get("/translation").execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("welcome"));
     }
@@ -44,7 +43,6 @@ class I18nControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("Côte d&#39;Ivoire"));
     }
@@ -57,7 +55,6 @@ class I18nControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("willkommen"));
 
@@ -67,7 +64,6 @@ class I18nControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("welcome"));
     }
@@ -80,7 +76,6 @@ class I18nControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("default"));
     }
@@ -91,7 +86,6 @@ class I18nControllerTest {
         TestResponse response = TestRequest.get("/missingkey?lang=en").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("beforeafter"));
     }
@@ -104,7 +98,6 @@ class I18nControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("Umlaute test : äöü und special (§&amp;! charcter- . te;;st"));
     }
@@ -117,7 +110,6 @@ class I18nControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("willkommen"));
     }
@@ -130,7 +122,6 @@ class I18nControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("welcome"));
     }
@@ -143,7 +134,6 @@ class I18nControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("willkommen"));
     }
@@ -155,7 +145,6 @@ class I18nControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("welcome"));
     }
@@ -167,15 +156,15 @@ class I18nControllerTest {
         TestResponse response = browser.withHTTPMethod(Methods.GET.toString()).to("/localize").execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getCookie(Default.I18N_COOKIE_NAME.toString()), not(nullValue()));
         
-        //given
-        response = browser.to("/translation").execute();
+        //given the cookie (en) must take precedence over the Accept-Language header (de)
+        response = browser.to("/translation")
+                .withHeader("Accept-Language", "de-DE")
+                .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("welcome"));
     }

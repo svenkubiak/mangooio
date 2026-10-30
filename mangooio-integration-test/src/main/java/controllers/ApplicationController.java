@@ -5,6 +5,7 @@ import io.mangoo.annotations.FilterWith;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.filters.ApiKeyFilter;
 import io.mangoo.filters.OriginFilter;
 import io.mangoo.interfaces.persistence.Datastore;
@@ -16,8 +17,10 @@ import models.Person;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Objects;
 
@@ -89,10 +92,12 @@ public class ApplicationController {
         return Response.ok().render();
     }
     
+    // Fixed distances in the application time zone, so the rendered text does not depend on the time of day
     public Response prettytime() {
-        var localDateTime = LocalDateTime.now();
-        var localDate = LocalDate.now();
-        Date date = new Date(); //NOSONAR
+        ZoneId zone = Application.getInstance(Config.class).getApplicationTimeZone();
+        var localDateTime = ZonedDateTime.now(zone).minusHours(3).toLocalDateTime();
+        var localDate = LocalDate.now(zone).minusDays(3);
+        Date date = new Date(System.currentTimeMillis() - Duration.ofHours(5).toMillis()); //NOSONAR
         
         return Response.ok()
                 .render("localDateTime", localDateTime)

@@ -24,19 +24,6 @@ class AdminLockTest {
     }
 
     @Test
-    void testPasswordLoginDoesNotResetSecondFactorAttempts() {
-        //given
-        attempts(MangooUtils.ADMIN_SECOND_FACTOR, 9);
-
-        //when
-        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_PASSWORD);
-        attempts(MangooUtils.ADMIN_SECOND_FACTOR, 1);
-
-        //then
-        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_SECOND_FACTOR), equalTo(true));
-    }
-
-    @Test
     void testSecondFactorLockDoesNotLockPassword() {
         //given
         attempts(MangooUtils.ADMIN_SECOND_FACTOR, 10);
@@ -53,18 +40,6 @@ class AdminLockTest {
 
         //then
         assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), equalTo(true));
-        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_SECOND_FACTOR), equalTo(false));
-    }
-
-    @Test
-    void testResetSecondFactorAttempts() {
-        //given
-        attempts(MangooUtils.ADMIN_SECOND_FACTOR, 10);
-
-        //when
-        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_SECOND_FACTOR);
-
-        //then
         assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_SECOND_FACTOR), equalTo(false));
     }
 

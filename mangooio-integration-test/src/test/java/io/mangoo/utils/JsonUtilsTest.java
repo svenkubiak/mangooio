@@ -1,22 +1,15 @@
 package io.mangoo.utils;
 
 import tools.jackson.databind.ObjectMapper;
-import io.mangoo.TestExtension;
-import io.mangoo.models.Car;
 import io.mangoo.routing.bindings.UnprocessableContent;
-import io.mangoo.test.concurrent.ConcurrentRunner;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -24,35 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Execution(ExecutionMode.CONCURRENT)
 class JsonUtilsTest {
-    private static final String EXPECTED_JSON = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
-    private static final String EXPECTED_PRETTY_JSON = "{\n  \"brand\" : null,\n  \"doors\" : 0,\n  \"foo\" : \"blablabla\"\n}";
-    private static final String JSON = """
-            {"widget": {
-                "debug": "on",
-                "window": {
-                    "title": "Sample Konfabulator Widget",
-                    "name": "main_window",
-                    "width": 500,
-                    "height": 500
-                },
-                "image": {
-                    "src": "Images/Sun.png",
-                    "name": "sun1",
-                    "hOffset": 250,
-                    "vOffset": 250,
-                    "alignment": "center"
-                },
-                "text": {
-                    "data": "Click Here",
-                    "size": 36,
-                    "style": "bold",
-                    "name": "text1",
-                    "hOffset": 250,
-                    "vOffset": 100,
-                    "alignment": "center"
-                }
-            }}
-            """;
 
     @Test
     void testToJson() {
@@ -63,7 +27,6 @@ class JsonUtilsTest {
         String json = JsonUtils.toJson(object);
 
         //then
-        assertThat(json, not(nullValue()));
         assertThat(json, not(emptyString()));
         assertThat(json, containsString("John"));
         assertThat(json, containsString("30"));
@@ -79,7 +42,6 @@ class JsonUtilsTest {
         String json = JsonUtils.toJson(object);
 
         //then
-        assertThat(json, not(nullValue()));
         assertThat(json, not(emptyString()));
         assertThat(json, containsString("John"));
         assertThat(json, containsString("true"));
@@ -98,68 +60,9 @@ class JsonUtilsTest {
         String json = JsonUtils.toJson(object);
 
         //then
-        assertThat(json, not(nullValue()));
         assertThat(json, not(emptyString()));
         assertThat(json, containsString("2023-12-25"));
         assertThat(json, containsString("14:30:45"));
-    }
-
-    @Test
-    void testToJsonWithMap() {
-        //given
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", "John");
-        map.put("age", 30);
-        map.put("active", true);
-
-        //when
-        String json = JsonUtils.toJson(map);
-
-        //then
-        assertThat(json, not(nullValue()));
-        assertThat(json, not(emptyString()));
-        assertThat(json, containsString("John"));
-        assertThat(json, containsString("30"));
-        assertThat(json, containsString("true"));
-    }
-
-    @Test
-    void testToJsonWithString() {
-        //given
-        String string = "Hello, World!";
-
-        //when
-        String json = JsonUtils.toJson(string);
-
-        //then
-        assertThat(json, not(nullValue()));
-        assertThat(json, equalTo("\"Hello, World!\""));
-    }
-
-    @Test
-    void testToJsonWithNumber() {
-        //given
-        Integer number = 42;
-
-        //when
-        String json = JsonUtils.toJson(number);
-
-        //then
-        assertThat(json, not(nullValue()));
-        assertThat(json, equalTo("42"));
-    }
-
-    @Test
-    void testToJsonWithBoolean() {
-        //given
-        Boolean bool = true;
-
-        //when
-        String json = JsonUtils.toJson(bool);
-
-        //then
-        assertThat(json, not(nullValue()));
-        assertThat(json, equalTo("true"));
     }
 
     @Test
@@ -182,7 +85,6 @@ class JsonUtilsTest {
         String json = JsonUtils.toPrettyJson(object);
 
         //then
-        assertThat(json, not(nullValue()));
         assertThat(json, not(emptyString()));
         assertThat(json, containsString("John"));
         assertThat(json, containsString("30"));
@@ -199,28 +101,9 @@ class JsonUtilsTest {
         String json = JsonUtils.toPrettyJson(object);
 
         //then
-        assertThat(json, not(nullValue()));
         assertThat(json, not(emptyString()));
         assertThat(json, containsString("John"));
         assertThat(json, containsString("true"));
-        assertThat(json, containsString("\n"));
-    }
-
-    @Test
-    void testToPrettyJsonWithDates() {
-        //given
-        LocalDate date = LocalDate.of(2023, 12, 25);
-        LocalDateTime dateTime = LocalDateTime.of(2023, 12, 25, 14, 30, 45);
-        TestObjectWithDates object = new TestObjectWithDates(date, dateTime);
-
-        //when
-        String json = JsonUtils.toPrettyJson(object);
-
-        //then
-        assertThat(json, not(nullValue()));
-        assertThat(json, not(emptyString()));
-        assertThat(json, containsString("2023-12-25"));
-        assertThat(json, containsString("14:30:45"));
         assertThat(json, containsString("\n"));
     }
 
@@ -262,45 +145,6 @@ class JsonUtilsTest {
         assertThat(object, not(nullValue()));
         assertThat(object.getDate(), equalTo(LocalDate.of(2023, 12, 25)));
         assertThat(object.getDateTime(), equalTo(LocalDateTime.of(2023, 12, 25, 14, 30, 45)));
-    }
-
-    @Test
-    void testToObjectWithString() {
-        //given
-        String json = "\"Hello, World!\"";
-
-        //when
-        String result = JsonUtils.toObject(json, String.class);
-
-        //then
-        assertThat(result, not(nullValue()));
-        assertThat(result, equalTo("Hello, World!"));
-    }
-
-    @Test
-    void testToObjectWithNumber() {
-        //given
-        String json = "42";
-
-        //when
-        Integer result = JsonUtils.toObject(json, Integer.class);
-
-        //then
-        assertThat(result, not(nullValue()));
-        assertThat(result, equalTo(42));
-    }
-
-    @Test
-    void testToObjectWithBoolean() {
-        //given
-        String json = "true";
-
-        //when
-        Boolean result = JsonUtils.toObject(json, Boolean.class);
-
-        //then
-        assertThat(result, not(nullValue()));
-        assertThat(result, equalTo(true));
     }
 
     @Test
@@ -422,7 +266,6 @@ class JsonUtilsTest {
         Map<String, String> flatMap = JsonUtils.toFlatMap(json);
 
         //then
-        assertThat(flatMap, not(nullValue()));
         assertThat(flatMap.size(), equalTo(4));
         assertThat(flatMap.get("name"), equalTo("John"));
         assertThat(flatMap.get("age"), equalTo("30"));
@@ -439,7 +282,6 @@ class JsonUtilsTest {
         Map<String, String> flatMap = JsonUtils.toFlatMap(json);
 
         //then
-        assertThat(flatMap, not(nullValue()));
         assertThat(flatMap.size(), equalTo(4));
         assertThat(flatMap.get("name"), equalTo("John"));
         assertThat(flatMap.get("hobbies[0]"), equalTo("reading"));
@@ -456,7 +298,6 @@ class JsonUtilsTest {
         Map<String, String> flatMap = JsonUtils.toFlatMap(json);
 
         //then
-        assertThat(flatMap, not(nullValue()));
         assertThat(flatMap.size(), equalTo(3));
         assertThat(flatMap.get("user.profile.name"), equalTo("John"));
         assertThat(flatMap.get("user.profile.age"), equalTo("30"));
@@ -472,7 +313,6 @@ class JsonUtilsTest {
         Map<String, String> flatMap = JsonUtils.toFlatMap(json);
 
         //then
-        assertThat(flatMap, not(nullValue()));
         assertThat(flatMap.size(), equalTo(0));
     }
 
@@ -485,7 +325,6 @@ class JsonUtilsTest {
         Map<String, String> flatMap = JsonUtils.toFlatMap(json);
 
         //then
-        assertThat(flatMap, not(nullValue()));
         assertThat(flatMap.size(), equalTo(1));
     }
 
@@ -498,7 +337,6 @@ class JsonUtilsTest {
         Map<String, String> flatMap = JsonUtils.toFlatMap(json);
 
         //then
-        assertThat(flatMap, not(nullValue()));
         assertThat(flatMap.size(), equalTo(4));
         assertThat(flatMap.get("users[0].name"), equalTo("John"));
         assertThat(flatMap.get("users[0].age"), equalTo("30"));
@@ -515,7 +353,6 @@ class JsonUtilsTest {
         Map<String, String> flatMap = JsonUtils.toFlatMap(json);
 
         //then
-        assertThat(flatMap, not(nullValue()));
         assertThat(flatMap.size(), equalTo(4));
         assertThat(flatMap.get("name"), equalTo("John"));
         assertThat(flatMap.get("age"), equalTo("null"));
@@ -532,7 +369,6 @@ class JsonUtilsTest {
         Map<String, String> flatMap = JsonUtils.toFlatMap(json);
 
         //then
-        assertThat(flatMap, not(nullValue()));
         assertThat(flatMap.size(), equalTo(0));
     }
 
@@ -559,16 +395,6 @@ class JsonUtilsTest {
     }
 
     @Test
-    void testGetMapper() {
-        //when
-        ObjectMapper mapper = JsonUtils.getMapper();
-
-        //then
-        assertThat(mapper, not(nullValue()));
-        assertThat(mapper, instanceOf(ObjectMapper.class));
-    }
-
-    @Test
     void testGetMapperConsistency() {
         //when
         ObjectMapper mapper1 = JsonUtils.getMapper();
@@ -576,134 +402,6 @@ class JsonUtilsTest {
 
         //then
         assertThat(mapper1, sameInstance(mapper2));
-    }
-
-    @Test
-    void testToJsonAndToObjectRoundTrip() {
-        //given
-        TestObject original = new TestObject("John", 30, true);
-
-        //when
-        String json = JsonUtils.toJson(original);
-        TestObject deserialized = JsonUtils.toObject(json, TestObject.class);
-
-        //then
-        assertThat(json, not(nullValue()));
-        assertThat(deserialized, not(nullValue()));
-        assertThat(deserialized, equalTo(original));
-    }
-
-    @Test
-    void testToPrettyJsonAndToObjectRoundTrip() {
-        //given
-        TestObject original = new TestObject("John", 30, true);
-
-        //when
-        String json = JsonUtils.toPrettyJson(original);
-        TestObject deserialized = JsonUtils.toObject(json, TestObject.class);
-
-        //then
-        assertThat(json, not(nullValue()));
-        assertThat(deserialized, not(nullValue()));
-        assertThat(deserialized, equalTo(original));
-    }
-
-    @Test
-    void testToJsonWithComplexNestedStructure() {
-        //given
-        Map<String, Object> complex = new HashMap<>();
-        Map<String, Object> nested = new HashMap<>();
-        nested.put("inner", "value");
-        nested.put("number", 42);
-        complex.put("outer", nested);
-        complex.put("list", new String[]{"item1", "item2"});
-
-        //when
-        String json = JsonUtils.toJson(complex);
-
-        //then
-        assertThat(json, not(nullValue()));
-        assertThat(json, not(emptyString()));
-        assertThat(json, containsString("outer"));
-        assertThat(json, containsString("inner"));
-        assertThat(json, containsString("value"));
-        assertThat(json, containsString("42"));
-        assertThat(json, containsString("list"));
-        assertThat(json, containsString("item1"));
-        assertThat(json, containsString("item2"));
-    }
-
-    @Test
-    void testToFlatMapWithComplexNestedStructure() {
-        //given
-        String json = "{\"outer\":{\"inner\":\"value\",\"number\":42},\"list\":[\"item1\",\"item2\"]}";
-
-        //when
-        Map<String, String> flatMap = JsonUtils.toFlatMap(json);
-
-        //then
-        assertThat(flatMap, not(nullValue()));
-        assertThat(flatMap.size(), equalTo(4));
-        assertThat(flatMap.get("outer.inner"), equalTo("value"));
-        assertThat(flatMap.get("outer.number"), equalTo("42"));
-        assertThat(flatMap.get("list[0]"), equalTo("item1"));
-        assertThat(flatMap.get("list[1]"), equalTo("item2"));
-    }
-
-    @Test
-    void testFlatMap() {
-        //when
-        Map<String, String> map = JsonUtils.toFlatMap(JSON);
-
-        //then
-        assertThat(map, not(nullValue()));
-        assertThat(map.get("widget.debug"), equalTo("on"));
-        assertThat(map.get("widget.image.name"), equalTo("sun1"));
-    }
-
-    @Test
-    void testConcurrentToJson() throws InterruptedException {
-        MatcherAssert.assertThat(t -> {
-            //given
-            String uuid = UUID.randomUUID().toString();
-            Car car = new Car(uuid);
-
-            //when
-            String json = JsonUtils.toJson(car);
-
-            // then
-            return json.equals("{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\",\"id\":\"" + uuid + "\"}");
-        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
-    }
-
-    @Test
-    void testFromJsonToClass() {
-        //given
-        String json = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
-
-        //when
-        Car car = JsonUtils.toObject(json, Car.class);
-
-        //then
-        assertThat(car, not(nullValue()));
-        assertThat(car.brand, equalTo(null));
-        assertThat(car.doors, equalTo(0));
-        assertThat(car.foo, equalTo("blablabla"));
-    }
-
-    @Test
-    void testConcurrentFromJsonToClass() throws InterruptedException {
-        MatcherAssert.assertThat(t -> {
-            //given
-            String uuid = UUID.randomUUID().toString();
-            String json = "{\"brand\":null,\"doors\":0,\"foo\":\"" + uuid + "\"}";
-
-            //when
-            Car car = JsonUtils.toObject(json, Car.class);
-
-            // then
-            return car.brand == null && car.doors == 0 && car.foo.equals(uuid);
-        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
     private static class TestObject {

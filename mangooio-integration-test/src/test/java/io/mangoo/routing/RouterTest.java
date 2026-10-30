@@ -19,16 +19,6 @@ import static org.hamcrest.Matchers.*;
 class RouterTest {
     
     @Test
-    void testAddRoute() {
-        //given
-        On.get().to("/foo").respondeWith("index");
-        
-        //then
-        assertThat(Router.getRoutes(), not(nullValue()));
-        assertThat(Router.getRoutes().size(), greaterThan(0));
-    }
-    
-    @Test
     void testAnyOfRegistersEveryMethod() {
         //given
         Bind.controller(ApplicationController.class).withRoutes(
@@ -57,5 +47,22 @@ class RouterTest {
         
         Router.reset();
         Application.getInstance(MangooBootstrap.class).initializeRoutes();
+    }
+
+    @Test
+    void testResetClearsRegisteredUrls() {
+        //given
+        try {
+            Bind.controller(ApplicationController.class).withRoutes(On.get().to("/reset-router").respondeWith("index"));
+            Bind.controller(ApplicationController.class).withRoutes(On.get().to("/reset-router").respondeWith("index"));
+            assertThat(Router.validUrls(), equalTo(false));
+        } finally {
+            //when
+            Router.reset();
+            Application.getInstance(MangooBootstrap.class).initializeRoutes();
+        }
+
+        //then
+        assertThat(Router.validUrls(), equalTo(true));
     }
 }

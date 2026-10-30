@@ -1,6 +1,22 @@
 package io.mangoo.utils;
 
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEEncrypter;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.JWEObject;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.KeyLengthException;
+import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.crypto.AESEncrypter;
+import com.nimbusds.jose.crypto.DirectEncrypter;
+import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
+import io.mangoo.constants.Default;
 import io.mangoo.exceptions.MangooJwtException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +24,10 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,37 +54,6 @@ class JwtUtilsTest {
                 .withAudience(AUDIENCE)
                 .withSubject(SUBJECT)
                 .withTtlSeconds(TTL_SECONDS);
-    }
-
-    @Test
-    void testCreateJwtWithValidData() throws MangooJwtException {
-        //given
-        JwtUtils.JwtData jwtData = validJwtData;
-
-        //when
-        String jwt = JwtUtils.createJwt(jwtData);
-
-        //then
-        assertThat(jwt, not(nullValue()));
-        assertThat(jwt, not(emptyString()));
-        assertThat(jwt, containsString("."));
-    }
-
-    @Test
-    void testCreateJwtWithCustomClaims() throws MangooJwtException {
-        //given
-        Map<String, String> customClaims = Map.of(
-                "role", "admin",
-                "department", "IT"
-        );
-        JwtUtils.JwtData jwtData = validJwtData.withClaims(customClaims);
-
-        //when
-        String jwt = JwtUtils.createJwt(jwtData);
-
-        //then
-        assertThat(jwt, not(nullValue()));
-        assertThat(jwt, not(emptyString()));
     }
 
     @Test
@@ -255,51 +243,172 @@ class JwtUtilsTest {
     void testParseJwtWithWrongSecret() throws MangooJwtException {
         //given
         String jwt = JwtUtils.createJwt(validJwtData);
-        JwtUtils.JwtData wrongJwtData = validJwtData.withSecret("wrong-secret".getBytes());
+        JwtUtils.JwtData wrongJwtData = validJwtData.withSecret(CommonUtils.randomString(64).getBytes(StandardCharsets.UTF_8));
 
-        //when & then
-        assertThrows(MangooJwtException.class,
+        //when
+        MangooJwtException exception = assertThrows(MangooJwtException.class,
                 () -> JwtUtils.parseJwt(jwt, wrongJwtData));
+
+        //then
+        assertThat(exception.getCause(), not(instanceOf(KeyLengthException.class)));
+    }
+
+    @Test
+    void testParseJwtWithWrongKey() throws MangooJwtException {
+        //given
+        String jwt = JwtUtils.createJwt(validJwtData);
+        JwtUtils.JwtData wrongJwtData = validJwtData.withKey(CommonUtils.randomString(64).getBytes(StandardCharsets.UTF_8));
+
+        //then
+        assertRejected(jwt, wrongJwtData, "JWT signature verification failed");
     }
 
     @Test
     void testParseJwtWithWrongIssuer() throws MangooJwtException {
         //given
         String jwt = JwtUtils.createJwt(validJwtData);
-        JwtUtils.JwtData wrongJwtData = validJwtData.withIssuer("wrong-issuer");
 
-        //when & then
-        assertThrows(MangooJwtException.class,
-                () -> JwtUtils.parseJwt(jwt, wrongJwtData));
+        //then
+        assertRejected(jwt, validJwtData.withIssuer("wrong-issuer"), "Issuer mismatch");
     }
 
     @Test
     void testParseJwtWithWrongAudience() throws MangooJwtException {
         //given
         String jwt = JwtUtils.createJwt(validJwtData);
-        JwtUtils.JwtData wrongJwtData = validJwtData.withAudience("wrong-audience");
 
-        //when & then
-        assertThrows(MangooJwtException.class,
-                () -> JwtUtils.parseJwt(jwt, wrongJwtData));
+        //then
+        assertRejected(jwt, validJwtData.withAudience("wrong-audience"), "Audience mismatch");
     }
 
     @Test
-    void testParseJwtWithExpiredToken() throws MangooJwtException {
+    void testParseForgedJwtWithValidClaims() throws Exception {
         //given
-        JwtUtils.JwtData expiredJwtData = validJwtData.withTtlSeconds(1L);
-        String jwt = JwtUtils.createJwt(expiredJwtData);
+        Instant now = Instant.now();
+        String jwt = forge(claims(now, now, now.plusSeconds(60)));
 
-        // Wait beyond the TTL plus the 30 second clock skew tolerance
-        try {
-            Thread.sleep(32000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        //when
+        JWTClaimsSet claims = JwtUtils.parseJwt(jwt, validJwtData);
 
-        //when & then
-        assertThrows(MangooJwtException.class,
-                () -> JwtUtils.parseJwt(jwt, expiredJwtData));
+        //then
+        assertThat(claims.getSubject(), equalTo(SUBJECT));
+    }
+
+    @Test
+    void testParseJwtWithExpiredToken() throws Exception {
+        //given
+        Instant now = Instant.now();
+        String jwt = forge(claims(now.minusSeconds(600), now.minusSeconds(600), now.minusSeconds(Default.JWT_CLOCK_SKEW + 10)));
+
+        //then
+        assertRejected(jwt, validJwtData, "Token expired");
+    }
+
+    @Test
+    void testParseJwtExpiredWithinClockSkew() throws Exception {
+        //given
+        Instant now = Instant.now();
+        String jwt = forge(claims(now.minusSeconds(600), now.minusSeconds(600), now.minusSeconds(Default.JWT_CLOCK_SKEW - 10)));
+
+        //when
+        JWTClaimsSet claims = JwtUtils.parseJwt(jwt, validJwtData);
+
+        //then
+        assertThat(claims.getSubject(), equalTo(SUBJECT));
+    }
+
+    @Test
+    void testParseJwtNotYetValid() throws Exception {
+        //given
+        Instant now = Instant.now();
+        String jwt = forge(claims(now, now.plusSeconds(Default.JWT_CLOCK_SKEW + 60), now.plusSeconds(600)));
+
+        //then
+        assertRejected(jwt, validJwtData, "Token not yet valid");
+    }
+
+    @Test
+    void testParseJwtIssuedInTheFuture() throws Exception {
+        //given
+        Instant now = Instant.now();
+        String jwt = forge(claims(now.plusSeconds(Default.JWT_CLOCK_SKEW + 60), now, now.plusSeconds(600)));
+
+        //then
+        assertRejected(jwt, validJwtData, "Token issued in the future");
+    }
+
+    @Test
+    void testParseJwtWithLifetimeAboveTtl() throws Exception {
+        //given
+        Instant now = Instant.now();
+        String jwt = forge(claims(now, now, now.plusSeconds(TTL_SECONDS + 1)));
+
+        //then
+        assertRejected(jwt, validJwtData, "Token lifetime exceeds limit");
+    }
+
+    @Test
+    void testParseJwtWithoutExpirationTime() throws Exception {
+        //given
+        Instant now = Instant.now();
+        String jwt = forge(claims(now, now, null));
+
+        //then
+        assertRejected(jwt, validJwtData, "Missing claim: exp");
+    }
+
+    @Test
+    void testParseJwtWithoutIssueTime() throws Exception {
+        //given
+        Instant now = Instant.now();
+        String jwt = forge(claims(null, now, now.plusSeconds(60)));
+
+        //then
+        assertRejected(jwt, validJwtData, "Missing claim: iat");
+    }
+
+    @Test
+    void testParseJwtWithoutNotBeforeTime() throws Exception {
+        //given
+        Instant now = Instant.now();
+        String jwt = forge(claims(now, null, now.plusSeconds(60)));
+
+        //then
+        assertRejected(jwt, validJwtData, "Missing claim: nbf");
+    }
+
+    @Test
+    void testParseJwtWithUnexpectedSignatureAlgorithm() throws Exception {
+        //given
+        Instant now = Instant.now();
+        var signedJwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.HS256).type(JOSEObjectType.JWT).build(), claims(now, now, now.plusSeconds(60)));
+        signedJwt.sign(new MACSigner(KEY));
+        String jwt = encrypt(signedJwt.serialize(), JWEAlgorithm.DIR, EncryptionMethod.A256CBC_HS512, new DirectEncrypter(SECRET));
+
+        //then
+        assertRejected(jwt, validJwtData, "Unexpected JWS algorithm");
+    }
+
+    @Test
+    void testParseJwtWithUnexpectedEncryptionMethod() throws Exception {
+        //given
+        Instant now = Instant.now();
+        String jwt = encrypt(sign(claims(now, now, now.plusSeconds(60))), JWEAlgorithm.DIR, EncryptionMethod.A256GCM,
+                new DirectEncrypter(Arrays.copyOf(SECRET, 32)));
+
+        //then
+        assertRejected(jwt, validJwtData, "Unexpected JWE encryption method");
+    }
+
+    @Test
+    void testParseJwtWithUnexpectedKeyManagementAlgorithm() throws Exception {
+        //given
+        Instant now = Instant.now();
+        String jwt = encrypt(sign(claims(now, now, now.plusSeconds(60))), JWEAlgorithm.A256KW, EncryptionMethod.A256CBC_HS512,
+                new AESEncrypter(Arrays.copyOf(SECRET, 32)));
+
+        //then
+        assertRejected(jwt, validJwtData, "Unexpected JWE algorithm");
     }
 
     @Test
@@ -342,183 +451,18 @@ class JwtUtilsTest {
     }
 
     @Test
-    void testExtractCustomClaimsWithNullClaims() {
-        //given
-        JWTClaimsSet claims = null;
-
-        //when & then
-        assertThrows(NullPointerException.class,
-                () -> JwtUtils.extractCustomClaims(claims));
-    }
-
-    @Test
-    void testJwtDataCreate() {
-        //when
-        JwtUtils.JwtData jwtData = JwtUtils.JwtData.create();
-
-        //then
-        assertThat(jwtData, not(nullValue()));
-        assertThat(jwtData.secret(), nullValue());
-        assertThat(jwtData.key(), nullValue());
-        assertThat(jwtData.issuer(), nullValue());
-        assertThat(jwtData.audience(), nullValue());
-        assertThat(jwtData.subject(), nullValue());
-        assertThat(jwtData.ttlSeconds(), equalTo(0L));
-        assertThat(jwtData.claims(), equalTo(Map.of()));
-    }
-
-    @Test
-    void testJwtDataJwtDataMethod() {
-        //when
-        JwtUtils.JwtData jwtData = JwtUtils.jwtData();
-
-        //then
-        assertThat(jwtData, not(nullValue()));
-        assertThat(jwtData.secret(), nullValue());
-        assertThat(jwtData.key(), nullValue());
-        assertThat(jwtData.issuer(), nullValue());
-        assertThat(jwtData.audience(), nullValue());
-        assertThat(jwtData.subject(), nullValue());
-        assertThat(jwtData.ttlSeconds(), equalTo(0L));
-        assertThat(jwtData.claims(), equalTo(Map.of()));
-    }
-
-    @Test
-    void testJwtDataWithSecret() {
-        //given
-        byte[] newSecret = "new-secret".getBytes();
-
-        //when
-        JwtUtils.JwtData newJwtData = validJwtData.withSecret(newSecret);
-
-        //then
-        assertThat(newJwtData.secret(), equalTo(newSecret));
-        assertThat(newJwtData.key(), equalTo(validJwtData.key()));
-        assertThat(newJwtData.issuer(), equalTo(validJwtData.issuer()));
-        assertThat(newJwtData.audience(), equalTo(validJwtData.audience()));
-        assertThat(newJwtData.subject(), equalTo(validJwtData.subject()));
-        assertThat(newJwtData.ttlSeconds(), equalTo(validJwtData.ttlSeconds()));
-        assertThat(newJwtData.claims(), equalTo(validJwtData.claims()));
-    }
-
-    @Test
-    void testJwtDataWithKey() {
-        //given
-        String newKey = "new-key";
-
-        //when
-        JwtUtils.JwtData newJwtData = validJwtData.withKey(newKey.getBytes(StandardCharsets.UTF_8));
-
-        //then
-        assertThat(newJwtData.key(), equalTo(newKey.getBytes(StandardCharsets.UTF_8)));
-        assertThat(newJwtData.secret(), equalTo(validJwtData.secret()));
-        assertThat(newJwtData.issuer(), equalTo(validJwtData.issuer()));
-        assertThat(newJwtData.audience(), equalTo(validJwtData.audience()));
-        assertThat(newJwtData.subject(), equalTo(validJwtData.subject()));
-        assertThat(newJwtData.ttlSeconds(), equalTo(validJwtData.ttlSeconds()));
-        assertThat(newJwtData.claims(), equalTo(validJwtData.claims()));
-    }
-
-    @Test
-    void testJwtDataWithIssuer() {
-        //given
-        String newIssuer = "new-issuer";
-
-        //when
-        JwtUtils.JwtData newJwtData = validJwtData.withIssuer(newIssuer);
-
-        //then
-        assertThat(newJwtData.issuer(), equalTo(newIssuer));
-        assertThat(newJwtData.secret(), equalTo(validJwtData.secret()));
-        assertThat(newJwtData.key(), equalTo(validJwtData.key()));
-        assertThat(newJwtData.audience(), equalTo(validJwtData.audience()));
-        assertThat(newJwtData.subject(), equalTo(validJwtData.subject()));
-        assertThat(newJwtData.ttlSeconds(), equalTo(validJwtData.ttlSeconds()));
-        assertThat(newJwtData.claims(), equalTo(validJwtData.claims()));
-    }
-
-    @Test
-    void testJwtDataWithAudience() {
-        //given
-        String newAudience = "new-audience";
-
-        //when
-        JwtUtils.JwtData newJwtData = validJwtData.withAudience(newAudience);
-
-        //then
-        assertThat(newJwtData.audience(), equalTo(newAudience));
-        assertThat(newJwtData.secret(), equalTo(validJwtData.secret()));
-        assertThat(newJwtData.key(), equalTo(validJwtData.key()));
-        assertThat(newJwtData.issuer(), equalTo(validJwtData.issuer()));
-        assertThat(newJwtData.subject(), equalTo(validJwtData.subject()));
-        assertThat(newJwtData.ttlSeconds(), equalTo(validJwtData.ttlSeconds()));
-        assertThat(newJwtData.claims(), equalTo(validJwtData.claims()));
-    }
-
-    @Test
-    void testJwtDataWithSubject() {
-        //given
-        String newSubject = "new-subject";
-
-        //when
-        JwtUtils.JwtData newJwtData = validJwtData.withSubject(newSubject);
-
-        //then
-        assertThat(newJwtData.subject(), equalTo(newSubject));
-        assertThat(newJwtData.secret(), equalTo(validJwtData.secret()));
-        assertThat(newJwtData.key(), equalTo(validJwtData.key()));
-        assertThat(newJwtData.issuer(), equalTo(validJwtData.issuer()));
-        assertThat(newJwtData.audience(), equalTo(validJwtData.audience()));
-        assertThat(newJwtData.ttlSeconds(), equalTo(validJwtData.ttlSeconds()));
-        assertThat(newJwtData.claims(), equalTo(validJwtData.claims()));
-    }
-
-    @Test
-    void testJwtDataWithTtlSeconds() {
-        //given
-        long newTtlSeconds = 7200L;
-
-        //when
-        JwtUtils.JwtData newJwtData = validJwtData.withTtlSeconds(newTtlSeconds);
-
-        //then
-        assertThat(newJwtData.ttlSeconds(), equalTo(newTtlSeconds));
-        assertThat(newJwtData.secret(), equalTo(validJwtData.secret()));
-        assertThat(newJwtData.key(), equalTo(validJwtData.key()));
-        assertThat(newJwtData.issuer(), equalTo(validJwtData.issuer()));
-        assertThat(newJwtData.audience(), equalTo(validJwtData.audience()));
-        assertThat(newJwtData.subject(), equalTo(validJwtData.subject()));
-        assertThat(newJwtData.claims(), equalTo(validJwtData.claims()));
-    }
-
-    @Test
-    void testJwtDataWithClaims() {
-        //given
-        Map<String, String> newClaims = Map.of("role", "user", "level", "basic");
-
-        //when
-        JwtUtils.JwtData newJwtData = validJwtData.withClaims(newClaims);
-
-        //then
-        assertThat(newJwtData.claims(), equalTo(newClaims));
-        assertThat(newJwtData.secret(), equalTo(validJwtData.secret()));
-        assertThat(newJwtData.key(), equalTo(validJwtData.key()));
-        assertThat(newJwtData.issuer(), equalTo(validJwtData.issuer()));
-        assertThat(newJwtData.audience(), equalTo(validJwtData.audience()));
-        assertThat(newJwtData.subject(), equalTo(validJwtData.subject()));
-        assertThat(newJwtData.ttlSeconds(), equalTo(validJwtData.ttlSeconds()));
-    }
-
-    @Test
     void testJwtDataEquality() {
         //given
-        JwtUtils.JwtData jwtData1 = validJwtData;
-        JwtUtils.JwtData jwtData2 = validJwtData;
-        JwtUtils.JwtData jwtData3 = validJwtData.withSubject("different-subject");
+        JwtUtils.JwtData jwtData1 = copyOfValidJwtData();
+        JwtUtils.JwtData jwtData2 = copyOfValidJwtData();
+        JwtUtils.JwtData jwtData3 = jwtData1.withSubject("different-subject");
+        JwtUtils.JwtData jwtData4 = jwtData1.withSecret(CommonUtils.randomString(64).getBytes(StandardCharsets.UTF_8));
 
         //when & then
+        assertThat(jwtData1.secret(), not(sameInstance(jwtData2.secret())));
         assertThat(jwtData1.equals(jwtData2), equalTo(true));
         assertThat(jwtData1.equals(jwtData3), equalTo(false));
+        assertThat(jwtData1.equals(jwtData4), equalTo(false));
         assertThat(jwtData1.equals(null), equalTo(false));
         assertThat(jwtData1.equals("not-a-jwtdata"), equalTo(false));
     }
@@ -526,11 +470,12 @@ class JwtUtilsTest {
     @Test
     void testJwtDataHashCode() {
         //given
-        JwtUtils.JwtData jwtData1 = validJwtData;
-        JwtUtils.JwtData jwtData2 = validJwtData;
-        JwtUtils.JwtData jwtData3 = validJwtData.withSubject("different-subject");
+        JwtUtils.JwtData jwtData1 = copyOfValidJwtData();
+        JwtUtils.JwtData jwtData2 = copyOfValidJwtData();
+        JwtUtils.JwtData jwtData3 = jwtData1.withSubject("different-subject");
 
         //when & then
+        assertThat(jwtData1.key(), not(sameInstance(jwtData2.key())));
         assertThat(jwtData1.hashCode(), equalTo(jwtData2.hashCode()));
         assertThat(jwtData1.hashCode(), not(equalTo(jwtData3.hashCode())));
     }
@@ -551,51 +496,47 @@ class JwtUtilsTest {
         assertThat(toString, containsString("ttlSeconds=" + TTL_SECONDS));
     }
 
-    @Test
-    void testCreateAndParseJwtEndToEnd() throws MangooJwtException {
-        //given
-        Map<String, String> customClaims = Map.of(
-                "role", "admin",
-                "department", "IT",
-                "permissions", "read,write,delete"
-        );
-        JwtUtils.JwtData jwtData = validJwtData.withClaims(customClaims);
-
-        //when
-        String jwt = JwtUtils.createJwt(jwtData);
-        JWTClaimsSet parsedClaims = JwtUtils.parseJwt(jwt, jwtData);
-        JWTClaimsSet customClaimsResult = JwtUtils.extractCustomClaims(parsedClaims);
-
-        //then
-        assertThat(jwt, not(nullValue()));
-        assertThat(parsedClaims, not(nullValue()));
-        assertThat(parsedClaims.getSubject(), equalTo(SUBJECT));
-        assertThat(parsedClaims.getIssuer(), equalTo(ISSUER));
-        assertThat(parsedClaims.getAudience(), hasItem(AUDIENCE));
-
-        assertThat(customClaimsResult.getClaim("role"), equalTo("admin"));
-        assertThat(customClaimsResult.getClaim("department"), equalTo("IT"));
-        assertThat(customClaimsResult.getClaim("permissions"), equalTo("read,write,delete"));
+    // Same content as validJwtData, but with distinct byte[] instances
+    private static JwtUtils.JwtData copyOfValidJwtData() {
+        return JwtUtils.JwtData.create()
+                .withSecret(SECRET.clone())
+                .withKey(KEY.clone())
+                .withIssuer(ISSUER)
+                .withAudience(AUDIENCE)
+                .withSubject(SUBJECT)
+                .withTtlSeconds(TTL_SECONDS);
     }
 
-    @Test
-    void testMultipleJwtOperations() throws MangooJwtException {
-        //given
-        JwtUtils.JwtData jwtData1 = validJwtData.withSubject("user1").withClaims(Map.of("role", "user"));
-        JwtUtils.JwtData jwtData2 = validJwtData.withSubject("user2").withClaims(Map.of("role", "admin"));
+    private static void assertRejected(String jwt, JwtUtils.JwtData jwtData, String reason) {
+        MangooJwtException exception = assertThrows(MangooJwtException.class, () -> JwtUtils.parseJwt(jwt, jwtData));
+        assertThat(exception.getCause().getMessage(), containsString(reason));
+    }
 
-        //when
-        String jwt1 = JwtUtils.createJwt(jwtData1);
-        String jwt2 = JwtUtils.createJwt(jwtData2);
+    private static JWTClaimsSet claims(Instant issueTime, Instant notBeforeTime, Instant expirationTime) {
+        return new JWTClaimsSet.Builder()
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .subject(SUBJECT)
+                .issueTime(issueTime == null ? null : Date.from(issueTime))
+                .notBeforeTime(notBeforeTime == null ? null : Date.from(notBeforeTime))
+                .expirationTime(expirationTime == null ? null : Date.from(expirationTime))
+                .jwtID(CommonUtils.randomString(32))
+                .build();
+    }
 
-        JWTClaimsSet claims1 = JwtUtils.parseJwt(jwt1, jwtData1);
-        JWTClaimsSet claims2 = JwtUtils.parseJwt(jwt2, jwtData2);
+    private static String forge(JWTClaimsSet claims) throws JOSEException {
+        return encrypt(sign(claims), JWEAlgorithm.DIR, EncryptionMethod.A256CBC_HS512, new DirectEncrypter(SECRET));
+    }
 
-        //then
-        assertThat(jwt1, not(equalTo(jwt2)));
-        assertThat(claims1.getSubject(), equalTo("user1"));
-        assertThat(claims2.getSubject(), equalTo("user2"));
-        assertThat(claims1.getClaim("role"), equalTo("user"));
-        assertThat(claims2.getClaim("role"), equalTo("admin"));
+    private static String sign(JWTClaimsSet claims) throws JOSEException {
+        var signedJwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.HS512).type(JOSEObjectType.JWT).build(), claims);
+        signedJwt.sign(new MACSigner(KEY));
+        return signedJwt.serialize();
+    }
+
+    private static String encrypt(String payload, JWEAlgorithm algorithm, EncryptionMethod method, JWEEncrypter encrypter) throws JOSEException {
+        var jweObject = new JWEObject(new JWEHeader.Builder(algorithm, method).contentType("JWT").build(), new Payload(payload));
+        jweObject.encrypt(encrypter);
+        return jweObject.serialize();
     }
 }

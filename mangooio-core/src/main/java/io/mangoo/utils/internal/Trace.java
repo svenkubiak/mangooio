@@ -29,10 +29,13 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 public final class Trace {
     private static final Logger LOG = LogManager.getLogger(Trace.class);
     private static final AttachmentKey<TraceState> TRACE_STATE = AttachmentKey.create(TraceState.class);
+    private static final AtomicLong STARTED_SPANS = new AtomicLong();
+    private static final AtomicLong ENDED_SPANS = new AtomicLong();
     private static volatile boolean initialized;
     private static boolean enabled;
     private static SdkTracerProvider tracerProvider;
@@ -216,17 +219,30 @@ public final class Trace {
         }
     }
 
+    /** Number of spans started since startup; equals getEndedSpans() once all exchanges are complete. */
+    public static long getStartedSpans() {
+        return STARTED_SPANS.get();
+    }
+
+    public static long getEndedSpans() {
+        return ENDED_SPANS.get();
+    }
+
     private static Span createSpan(String process, Context parent) {
-        return openTelemetry.getTracer(Const.FRAMEWORK)
+        var span = openTelemetry.getTracer(Const.FRAMEWORK)
                 .spanBuilder(process)
                 .setSpanKind(SpanKind.INTERNAL)
                 .setParent(parent)
                 .startSpan();
+        STARTED_SPANS.incrementAndGet();
+
+        return span;
     }
 
     private static void endSpan(Span span) {
         try {
             span.end();
+            ENDED_SPANS.incrementAndGet();
         } catch (Exception e) {
             LOG.error("Failed to end span", e);
         }

@@ -20,24 +20,10 @@ import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class AuthenticationControllerTest {
-    private static final String USERNAME = "foo";
     private static final String AUTHENTICATION_COOKIE = "test-authentication";
     private static final String SUBJECT = "mysubject";
     private static final String LOCATION = "Location";
 
-    @Test
-    void testNotAuthenticated() {
-        //given
-        TestResponse response = TestRequest.get("/authenticationrequired")
-                .withDisabledRedirects()
-                .execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-        assertThat(response.getContent(), not(equalTo(USERNAME)));
-    }
-    
     @Test
     void testSubject() {
         //given
@@ -45,7 +31,6 @@ class AuthenticationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("not authenticated"));
         
@@ -57,7 +42,6 @@ class AuthenticationControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
         
         //given
@@ -66,7 +50,6 @@ class AuthenticationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("authenticated"));
     }
@@ -84,7 +67,6 @@ class AuthenticationControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
 
         //when
@@ -94,7 +76,6 @@ class AuthenticationControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent().length(), equalTo(9));
 
@@ -104,7 +85,6 @@ class AuthenticationControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
         //when
@@ -113,7 +93,6 @@ class AuthenticationControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
     }
 

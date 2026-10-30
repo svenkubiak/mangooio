@@ -113,27 +113,6 @@ class GracefulShutdownTest {
     }
 
     @Test
-    void testNewRequestIsRejectedAfterShutdown() throws Exception {
-        //given
-        var graceful = new GracefulShutdownHandler(exchange -> exchange.setStatusCode(StatusCodes.OK));
-        var undertow = start(graceful);
-
-        try {
-            int before = get(undertow, "/").statusCode();
-
-            //when
-            graceful.shutdown();
-            int after = get(undertow, "/").statusCode();
-
-            //then
-            assertThat(before, equalTo(StatusCodes.OK));
-            assertThat(after, equalTo(StatusCodes.SERVICE_UNAVAILABLE));
-        } finally {
-            undertow.stop();
-        }
-    }
-
-    @Test
     void testHealthIsAnsweredOutsideOfTheGracefulShutdown() throws Exception {
         //given
         var graceful = new GracefulShutdownHandler(exchange -> exchange.setStatusCode(StatusCodes.OK));

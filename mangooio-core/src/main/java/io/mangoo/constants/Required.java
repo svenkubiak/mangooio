@@ -31,6 +31,7 @@ public final class Required {
     public static final String ENCRYPTED_TEXT = "encrypted text can not be null or blank";
     public static final String EXPIRES = "expires can not be null or blank";
     public static final String FALLBACK = "fallback can not be null or blank";
+    public static final String FLAT_MAP = "flatMap can not be null";
     public static final String FROM = "from can not be null or blank";
     public static final String HASH = "hash can not be null or blank";
     public static final String HEADER = "header can not be null or blank";

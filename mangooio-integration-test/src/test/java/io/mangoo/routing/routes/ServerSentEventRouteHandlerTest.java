@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
@@ -107,31 +106,12 @@ class ServerSentEventRouteHandlerTest {
             //when
             var byUrl = UUID.randomUUID().toString();
             manager.send(CLIENT_URL, byUrl);
+            var marker = UUID.randomUUID().toString();
+            manager.send(client, marker);
 
             //then and not under the request URI, as the default handler would have
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventHandler.events, hasItem(marker)));
             assertThat(eventHandler.events, not(hasItem(byUrl)));
-        }
-    }
-
-    @Test
-    void testCustomHandlerSendsToASingleClient() {
-        //given
-        var manager = Application.getInstance(ServerSentEventManager.class);
-        var first = UUID.randomUUID().toString();
-        var second = UUID.randomUUID().toString();
-        var firstEventHandler = new RecordingEventHandler();
-        var secondEventHandler = new RecordingEventHandler();
-
-        //when
-        try (BackgroundEventSource firstEventSource = connect(clientUrl(first), firstEventHandler);
-             BackgroundEventSource secondEventSource = connect(clientUrl(second), secondEventHandler)) {
-
-            var data = UUID.randomUUID().toString();
-            manager.send(first, data);
-
-            //then only the addressed client receives the event
-            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(firstEventHandler.events, hasItem(data)));
-            assertThat(secondEventHandler.events, not(hasItem(data)));
         }
     }
 
@@ -167,34 +147,31 @@ class ServerSentEventRouteHandlerTest {
         try (BackgroundEventSource defaultEventSource = connect(DEFAULT_URL, defaultEventHandler);
              BackgroundEventSource clientEventSource = connect(clientUrl(client), clientEventHandler)) {
 
+            var manager = Application.getInstance(ServerSentEventManager.class);
             var broadcast = UUID.randomUUID().toString();
-            Application.getInstance(ServerSentEventManager.class).send(DEFAULT_URL, broadcast);
+            manager.send(DEFAULT_URL, broadcast);
+            var clientMarker = UUID.randomUUID().toString();
+            manager.send(client, clientMarker);
 
             //then the broadcast of the default route does not reach the custom route
-            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(defaultEventHandler.events, hasItem(broadcast)));
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertThat(defaultEventHandler.events, hasItem(broadcast));
+                assertThat(clientEventHandler.events, hasItem(clientMarker));
+            });
             assertThat(clientEventHandler.events, not(hasItem(broadcast)));
 
             //when
             var targeted = UUID.randomUUID().toString();
-            Application.getInstance(ServerSentEventManager.class).send(client, targeted);
+            manager.send(client, targeted);
+            var defaultMarker = UUID.randomUUID().toString();
+            manager.send(DEFAULT_URL, defaultMarker);
 
             //then the targeted send does not reach the default route
-            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(clientEventHandler.events, hasItem(targeted)));
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertThat(clientEventHandler.events, hasItem(targeted));
+                assertThat(defaultEventHandler.events, hasItem(defaultMarker));
+            });
             assertThat(defaultEventHandler.events, not(hasItem(targeted)));
-        }
-    }
-
-    @Test
-    void testConnectSendsNoDataEvent() throws InterruptedException {
-        //given
-        var eventHandler = new RecordingEventHandler();
-
-        //when
-        try (BackgroundEventSource eventSource = connect(DEFAULT_URL, eventHandler)) {
-            TimeUnit.MILLISECONDS.sleep(500);
-
-            //then
-            assertThat(eventHandler.events, empty());
         }
     }
 

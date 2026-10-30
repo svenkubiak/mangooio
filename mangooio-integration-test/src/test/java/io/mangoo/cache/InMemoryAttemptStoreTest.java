@@ -76,6 +76,20 @@ class InMemoryAttemptStoreTest {
     }
 
     @Test
+    void testLockOutlivesARefusedAttemptWithAShorterLockDuration() {
+        //given
+        store.tryAcquire("key", 1, Duration.ofHours(5));
+        advance(Duration.ofMinutes(10));
+
+        //when
+        assertThat(store.tryAcquire("key", 1, LOCK), equalTo(false));
+        advance(Duration.ofHours(4));
+
+        //then
+        assertThat(store.isLocked("key"), equalTo(true));
+    }
+
+    @Test
     void testBudgetEndsAfterTheRetention() {
         //given
         store.tryAcquire("key", 5, LOCK);

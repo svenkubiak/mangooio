@@ -1,5 +1,6 @@
 package io.mangoo.templating;
 
+import io.mangoo.constants.Required;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
@@ -14,6 +15,7 @@ import io.mangoo.templating.methods.RouteMethod;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class TemplateContext {
     private String templatePath;
@@ -23,9 +25,11 @@ public class TemplateContext {
         content.put("route", new RouteMethod());
     }
     
+    // Copies the content, so the caller's map is neither modified nor required to be mutable
     public TemplateContext(Map<String, Object> content) {
-        this.content = content;
-        content.put("route", new RouteMethod());
+        Objects.requireNonNull(content, Required.CONTENT);
+        this.content = new HashMap<>(content);
+        this.content.put("route", new RouteMethod());
     }
     
     public TemplateContext withForm(Form form) {

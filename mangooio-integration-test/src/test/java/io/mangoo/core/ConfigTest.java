@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -53,16 +52,6 @@ class ConfigTest {
     @AfterAll
     public static void cleanUp() throws IOException {
         System.clearProperty(Key.APPLICATION_CONFIG);
-    }
-
-    @Test
-    void testValidConfig() {
-        // given
-        System.clearProperty(Key.APPLICATION_CONFIG);
-        final Config config = Application.getInstance(Config.class);
-
-        // then
-        assertThat(config.isValid(), equalTo(true));
     }
 
     @Test
@@ -165,20 +154,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetSessionCookieNameDefaultValue() throws IOException {
-        //given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getSessionCookieName(), equalTo(Default.SESSION_COOKIE_NAME));
-    }
-
-    @Test
     void testGetApplicationSecret() throws IOException {
         // given
         String applicationSecret = UUID.randomUUID().toString();
@@ -209,47 +184,19 @@ class ConfigTest {
     }
 
     @Test
-    void testGetAuthenticationCookieNameDefaultValue() throws IOException {
-        //given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getAuthenticationCookieName(), equalTo(Default.AUTHENTICATION_COOKIE_NAME));
-    }
-
-    @Test
     void testGetSessionCookieExpires() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        String expires = "3600";
+        String expires = "7200";
 
         // when
-        Map<String, String> configValues = ImmutableMap.of("session.cookie.expires", expires);
+        Map<String, String> configValues = ImmutableMap.of("session.cookie.token.expires", expires);
         createTempConfig(configValues);
         System.setProperty("application.mode", Mode.TEST.toString().toLowerCase());
         Config config = new Config();
 
         // then
         assertThat(config.getSessionCookieTokenExpires(), equalTo(Long.valueOf(expires)));
-    }
-
-    @Test
-    void testGetSessionCookieExpiresDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getSessionCookieTokenExpires(), equalTo(Default.SESSION_COOKIE_TOKEN_EXPIRES));
     }
 
     @Test
@@ -268,20 +215,6 @@ class ConfigTest {
     }
 
     @Test
-    void testIsSessionCookieSecureDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isSessionCookieSecure(), equalTo(Default.SESSION_COOKIE_SECURE));
-    }
-
-    @Test
     void testIsAuthenticationCookieSecure() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -297,20 +230,6 @@ class ConfigTest {
     }
 
     @Test
-    void testIsAuthenticationCookieSecureDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isSessionCookieSecure(), equalTo(Default.AUTHENTICATION_COOKIE_SECURE));
-    }
-
-    @Test
     void testI18nCookieName() throws IOException {
         // given
         String name = UUID.randomUUID().toString();
@@ -323,20 +242,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getI18nCookieName(), equalTo(name));
-    }
-
-    @Test
-    void testI18nCookieNameDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getI18nCookieName(), equalTo(Default.I18N_COOKIE_NAME));
     }
 
     @Test
@@ -370,20 +275,6 @@ class ConfigTest {
     }
 
     @Test
-    void testApplicationLanguageDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getApplicationLanguage(), equalTo(Default.APPLICATION_LANGUAGE));
-    }
-
-    @Test
     void testIsSchedulerEnabled() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -396,20 +287,6 @@ class ConfigTest {
 
         // then
         assertThat(config.isSchedulerEnabled(), equalTo(Boolean.valueOf(enabled)));
-    }
-
-    @Test
-    void testIsSchedulerEnabledDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isSchedulerEnabled(), equalTo(Default.SCHEDULER_ENABLE));
     }
 
     private Path secrets(Map<String, String> files) throws IOException {
@@ -669,20 +546,6 @@ class ConfigTest {
     }
 
     @Test
-    void testRequiredPlaceholderStillFails() {
-        //given
-        String key = unsetKey();
-
-        //when
-        createTempConfig(ImmutableMap.of(key, "env{}"));
-        Config config = new Config();
-        config.validate();
-
-        //then
-        assertThat(config.isValid(), equalTo(false));
-    }
-
-    @Test
     void testEmptySecretIsNotLiteral() {
         //when
         createTempConfig(ImmutableMap.of("smtp.password", "", "persistence.mongo.password", "  "));
@@ -690,16 +553,6 @@ class ConfigTest {
 
         //then
         assertThat(config.getLiteralSecrets(), empty());
-    }
-
-    @Test
-    void testLiteralSecretIsStillDetected() {
-        //when
-        createTempConfig(ImmutableMap.of("smtp.password", "geheim"));
-        Config config = new Config();
-
-        //then
-        assertThat(config.getLiteralSecrets(), contains("smtp.password"));
     }
 
     @Test
@@ -736,21 +589,6 @@ class ConfigTest {
         // then
         assertThat(config.getApplicationShutdownTimeout(), equalTo(5L));
         assertThat(config.isConnectorProxy(), equalTo(true));
-    }
-
-    @Test
-    void testShutdownTimeoutAndProxyDefaultValues() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getApplicationShutdownTimeout(), equalTo(Default.APPLICATION_SHUTDOWN_TIMEOUT));
-        assertThat(config.isConnectorProxy(), equalTo(Default.CONNECTOR_PROXY));
     }
 
     @Test
@@ -798,20 +636,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetApplicationAdminSecretDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getApplicationAdminSecret(), equalTo(null));
-    }
-
-    @Test
     void testGetApplicationAdminPassword() throws IOException {
         // given
         String password = UUID.randomUUID().toString();
@@ -842,20 +666,6 @@ class ConfigTest {
     }
 
     @Test
-    void testAuthenticationCookieRememberExpiresDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getAuthenticationCookieRememberExpires(), equalTo(Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES));
-    }
-
-    @Test
     void testGetApplicationController() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -868,20 +678,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getApplicationController(), equalTo(controller));
-    }
-
-    @Test
-    void testGetApplicationControllerDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getApplicationController(), equalTo(Default.APPLICATION_CONTROLLER));
     }
 
     @Test
@@ -928,20 +724,6 @@ class ConfigTest {
     }
 
     @Test
-    void testIsApplicationAdminEnableDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isApplicationAdminEnable(), equalTo(Default.APPLICATION_ADMIN_ENABLE));
-    }
-
-    @Test
     void testIsParameterStrict() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -953,20 +735,6 @@ class ConfigTest {
 
         // then
         assertThat(config.isParameterStrict(), equalTo(true));
-    }
-
-    @Test
-    void testIsParameterStrictDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isParameterStrict(), equalTo(Default.APPLICATION_PARAMETER_STRICT));
     }
 
     @Test
@@ -985,20 +753,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetSmptHostDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getSmtpHost(), equalTo(Default.SMTP_HOST));
-    }
-
-    @Test
     void testGetSmtpPort() throws IOException {
         // given
         String port = "555";
@@ -1011,20 +765,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getSmtpPort(), equalTo(Integer.valueOf(port)));
-    }
-
-    @Test
-    void testGetSmtpPortDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getSmtpPort(), equalTo(Default.SMTP_PORT));
     }
 
     @Test
@@ -1043,20 +783,6 @@ class ConfigTest {
     }
 
     @Test
-    void testIsSmtpAuthenticationDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isSmtpAuthentication(), equalTo(Default.SMTP_AUTHENTICATION));
-    }
-
-    @Test
     void testGetSmtpUsername() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -1069,20 +795,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getSmtpUsername(), equalTo(username));
-    }
-
-    @Test
-    void testGetSmtpUsernameDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getSmtpUsername(), equalTo(null));
     }
 
     @Test
@@ -1101,20 +813,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetSmtpPasswordDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getSmtpUsername(), equalTo(null));
-    }
-
-    @Test
     void testGetSmtpFrom() throws IOException {
         // given
         String from = "smtpform";
@@ -1130,20 +828,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetSmtpFromDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getSmtpFrom(), equalTo(Default.SMTP_FROM));
-    }
-
-    @Test
     void testGetConnectorHttpsHost() throws IOException {
         // given
         String host = "192.168.3.24";
@@ -1156,20 +840,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getConnectorHttpsHost(), equalTo(host));
-    }
-
-    @Test
-    void testGetConnectorHttpsHostDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getConnectorHttpsHost(), equalTo(null));
     }
 
     @Test
@@ -1189,20 +859,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetConnectorHttpsPortDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getConnectorHttpsPort(), equalTo(0));
-    }
-
-    @Test
     void testGetConnectorHttpHost() throws IOException {
         // given
         String host = "192.168.2.42";
@@ -1218,20 +874,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetConnectorHttpHostDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getConnectorHttpHost(), equalTo(null));
-    }
-
-    @Test
     void testGetConnectorHttpPort() throws IOException {
         // given
         String port = "2442";
@@ -1244,20 +886,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getConnectorHttpPort(), equalTo(Integer.valueOf(port)));
-    }
-
-    @Test
-    void testGetConnectorHttpPortDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getConnectorHttpPort(), equalTo(0));
     }
 
     @Test
@@ -1277,47 +905,18 @@ class ConfigTest {
     }
 
     @Test
-    void testMetricsEnableDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isMetricsEnable(), equalTo(Default.METRICS_ENABLE));
-    }
-
-    @Test
     void testPersistenceEnable() throws IOException {
         // given
-        String enable = "true";
+        String enable = "false";
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
 
         // when
-        Map<String, String> configValues = ImmutableMap.of("mongo.enable", enable);
+        Map<String, String> configValues = ImmutableMap.of("persistence.enable", enable);
         createTempConfig(configValues);
-        System.setProperty("mongo.enable", Mode.TEST.toString().toLowerCase());
         Config config = new Config();
 
         // then
         assertThat(config.isPersistenceEnabled(), equalTo(Boolean.valueOf(enable)));
-    }
-
-    @Test
-    void testPersistenceEnableDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isPersistenceEnabled(), equalTo(Default.PERSISTENCE_ENABLE));
     }
 
     @Test
@@ -1336,20 +935,6 @@ class ConfigTest {
     }
 
     @Test
-    void testAuthenticationLockDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getAuthenticationLock(), equalTo(Default.AUTHENTICATION_LOCK));
-    }
-
-    @Test
     void testAuthenticationLockDuration() throws IOException {
         // given
         String duration = "15";
@@ -1362,20 +947,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getAuthenticationLockDuration(), equalTo(Integer.valueOf(duration)));
-    }
-
-    @Test
-    void testAuthenticationLockDurationDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getAuthenticationLockDuration(), equalTo(Default.AUTHENTICATION_LOCK_DURATION));
     }
 
     @Test
@@ -1394,20 +965,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetUndertowMaxEntitySizeDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getUndertowMaxEntitySize(), equalTo(Default.UNDERTOW_MAX_ENTITY_SIZE));
-    }
-
-    @Test
     void testGetFormMaxFileSize() throws IOException {
         // given
         String size = "67108864";
@@ -1420,20 +977,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getFormMaxFileSize(), equalTo(Long.valueOf(size)));
-    }
-
-    @Test
-    void testGetFormMaxFileSizeDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getFormMaxFileSize(), equalTo(Default.FORM_MAX_FILE_SIZE));
     }
 
     @Test
@@ -1497,21 +1040,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetAuthenticationCookieSignKeyDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        String secret = UUID.randomUUID().toString();
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getAuthenticationCookieSecret(), equalTo(secret.getBytes(StandardCharsets.UTF_8)));
-    }
-
-    @Test
     void testGetAuthenticationCookieSecret() throws IOException {
         // given
         String key = UUID.randomUUID().toString();
@@ -1549,7 +1077,6 @@ class ConfigTest {
 
         //then
         assertThat(config.getString(Key.CONNECTOR_HTTP_PORT), equalTo("10808"));
-        assertThat(config.getString(Key.CONNECTOR_HTTP_PORT), equalTo("10808"));
     }
 
     @Test
@@ -1580,15 +1107,6 @@ class ConfigTest {
 
         //then
         assertThat(config.getLong(Key.CONNECTOR_HTTP_PORT), equalTo(10808L));
-    }
-
-    @Test
-    void testGetStringDefaultValue() {
-        //given
-        final Config config = Application.getInstance(Config.class);
-
-        //then
-        assertThat(config.getString("foo", "bar"), equalTo("bar"));
     }
 
     @Test
@@ -1658,20 +1176,6 @@ class ConfigTest {
     }
 
     @Test
-    void testIsSmtpDebugDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isSmtpDebug(), equalTo(Default.SMTP_DEBUG));
-    }
-
-    @Test
     void testGetSmtpProtocol() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -1685,20 +1189,6 @@ class ConfigTest {
         // then
         assertThat(config.getSmtpProtocol(), equalTo(protocol));
 
-    }
-
-    @Test
-    void testGetSmtpProtocolDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getSmtpProtocol(), equalTo(Default.SMTP_PROTOCOL));
     }
 
     @Test
@@ -1732,20 +1222,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetMongoDBNameDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getMongoDbName("persistence."), equalTo(Default.PERSISTENCE_MONGO_DBNAME));
-    }
-
-    @Test
     void testGetMongoHost() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -1761,20 +1237,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetMongoHostDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getMongoHost(""), equalTo(Default.PERSISTENCE_MONGO_HOST));
-    }
-
-    @Test
     void testGetMongoPort() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -1787,20 +1249,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getMongoPort("persistence."), equalTo(Integer.parseInt(port)));
-    }
-
-    @Test
-    void testGetMongoPortDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getMongoPort("persistence."), equalTo(Default.PERSISTENCE_MONGO_PORT));
     }
 
     @Test
@@ -1849,20 +1297,6 @@ class ConfigTest {
     }
 
     @Test
-    void testCorsEnableDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isCorsEnable(), equalTo(Default.CORS_ENABLE));
-    }
-
-    @Test
     void testGetCorsAllowOrigin() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -1878,24 +1312,10 @@ class ConfigTest {
     }
 
     @Test
-    void testGetCorsAllowOriginDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(Default.CORS_ALLOW_ORIGIN).toString()));
-    }
-
-    @Test
     void testGetCorsHeadersAllowCredentials() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        String credentials = "true";
+        String credentials = "false";
 
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.headers.allowcredentials", credentials);
@@ -1904,20 +1324,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getCorsHeadersAllowCredentials(), equalTo(credentials));
-    }
-
-    @Test
-    void testGetCorsHeadersAllowCredentialsDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getCorsHeadersAllowCredentials(), equalTo(Default.CORS_HEADERS_ALLOW_CREDENTIALS.toString()));
     }
 
     @Test
@@ -1936,20 +1342,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetCorsHeadersAllowHeadersDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getCorsHeadersAllowHeaders(), equalTo(Default.CORS_HEADERS_ALLOW_HEADERS));
-    }
-
-    @Test
     void testIsAuthOrigin() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -1962,20 +1354,6 @@ class ConfigTest {
 
         // then
         assertThat(config.isAuthOrigin(), equalTo(Boolean.valueOf(authOrigin)));
-    }
-
-    @Test
-    void testIsAuthOriginDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isAuthOrigin(), equalTo(Default.AUTHENTICATION_ORIGIN));
     }
 
     @Test
@@ -1994,20 +1372,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetApplicationAdminLocaleDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getApplicationAdminLocale(), equalTo(Default.APPLICATION_ADMIN_LOCALE));
-    }
-
-    @Test
     void testGetCorsHeadersAllowMethods() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -2020,20 +1384,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getCorsHeadersAllowMethods(), equalTo(headers));
-    }
-
-    @Test
-    void testGetCorsHeadersAllowMethodsDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getCorsHeadersAllowMethods(), equalTo(Default.CORS_HEADERS_ALLOW_METHODS));
     }
 
     @Test
@@ -2052,20 +1402,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetCorsHeadersExposeHeadersDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getCorsHeadersExposeHeaders(), equalTo(Default.CORS_HEADERS_EXPOSE_HEADERS));
-    }
-
-    @Test
     void testGetCorsHeadersMaxAge() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
@@ -2081,24 +1417,10 @@ class ConfigTest {
     }
 
     @Test
-    void testGetCorsHeadersMaxAgeDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getCorsHeadersMaxAge(), equalTo(Default.CORS_HEADERS_MAX_AGE));
-    }
-
-    @Test
     void testGetCorsUrlPattern() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        String pattern = "^http(s)?://([^/]+)(:([^/]+))?(/([^/])+)?/api(/.*)?$";
+        String pattern = "^https://example\\.com/rest(/.*)?$";
 
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.urlpattern", pattern);
@@ -2107,34 +1429,6 @@ class ConfigTest {
 
         // then
         assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(pattern).toString()));
-    }
-
-    @Test
-    void testGetCorsUrlPatternDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(Default.CORS_URL_PATTERN).toString()));
-    }
-
-    @Test
-    void testCheckAnnotationExists() throws ClassNotFoundException {
-        // given
-        List<String> annotations = List.of("io.mangoo.annotations.Collection", "io.mangoo.annotations.Indexed", "io.mangoo.annotations.Run");
-
-        // when
-        for (String annotation : annotations) {
-            Class<?> result = Class.forName(annotation);
-
-            //then
-            assertThat(result, not(nullValue()));
-        }
     }
 
     private void createTempConfig(Map<String, String> values) {

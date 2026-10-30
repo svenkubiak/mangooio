@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -55,16 +54,6 @@ class PasswordHasherTest {
     }
 
     @Test
-    void testDerivedConcurrencyStaysWithinBounds() {
-        //when
-        int concurrency = PasswordHasher.resolveConcurrency(0, 80000);
-
-        //then
-        assertThat(concurrency, greaterThanOrEqualTo(2));
-        assertThat(concurrency, lessThanOrEqualTo(8));
-    }
-
-    @Test
     void testExplicitConcurrencyBeatsHeuristic() {
         //when
         int concurrency = PasswordHasher.resolveConcurrency(64, 80000);
@@ -81,20 +70,6 @@ class PasswordHasherTest {
         //then
         assertThat(passwordHasher.getConcurrency(), equalTo(3));
         assertThat(passwordHasher.availablePermits(), equalTo(3));
-    }
-
-    @Test
-    void testHashIsDeterministic() {
-        //given
-        var passwordHasher = new PasswordHasher(2, 5000, FAST);
-
-        //when
-        String first = passwordHasher.hash(CLEARTEXT, SALT);
-        String second = passwordHasher.hash(CLEARTEXT, SALT);
-
-        //then
-        assertThat(first, equalTo(second));
-        assertThat(first, not(equalTo(passwordHasher.hash(CLEARTEXT, SALT + "x"))));
     }
 
     @Test

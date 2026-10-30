@@ -9,8 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
 
 @ExtendWith({TestExtension.class})
 class ParameterPollutionTest {
@@ -21,7 +19,6 @@ class ParameterPollutionTest {
         final TestResponse response = TestRequest.get("/?lang=de").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
 
@@ -31,7 +28,6 @@ class ParameterPollutionTest {
         final TestResponse response = TestRequest.get("/?lang=de&lang=en").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
     }
 
@@ -41,7 +37,6 @@ class ParameterPollutionTest {
         final TestResponse response = TestRequest.get("/?lang=de&%6Cang=en").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
     }
 
@@ -51,7 +46,6 @@ class ParameterPollutionTest {
         final TestResponse response = TestRequest.get("/string/routevalue?foo=spoofed").execute();
 
         //then the route value must win, a client must never be able to forge it
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("routevalue"));
     }
@@ -62,7 +56,6 @@ class ParameterPollutionTest {
         final TestResponse response = TestRequest.get("/multiple/bar/1?foo=spoofed&bar=99").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("bar:1"));
     }
@@ -73,7 +66,6 @@ class ParameterPollutionTest {
         final TestResponse response = TestRequest.get("/string/routevalue?other=x").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("routevalue"));
     }

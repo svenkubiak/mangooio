@@ -22,8 +22,7 @@ class SessionControllerTest {
         TestResponse response = TestRequest.get("/session").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getCookie(config.getSessionCookieName()).getName(), equalTo(config.getSessionCookieName()));
+        assertThat(response.getCookie(config.getSessionCookieName()), not(nullValue()));
     }
 }

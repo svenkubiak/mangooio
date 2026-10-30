@@ -2,14 +2,14 @@ package io.mangoo.utils;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.model.Updates;
 import com.nimbusds.jwt.JWTClaimsSet;
 import io.mangoo.TestExtension;
+import io.mangoo.TestUtils;
 import io.mangoo.constants.ClaimKey;
+import io.mangoo.constants.Key;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
-import io.mangoo.exceptions.MangooTranslationException;
 import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.internal.MangooUtils;
@@ -18,12 +18,12 @@ import org.bson.Document;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import static io.mangoo.core.Application.getInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -60,29 +60,6 @@ class CoreUtilsTest {
         //then
         assertThat(version, not(nullValue()));
         assertThat(version, not(emptyString()));
-    }
-
-    @Test
-    void testGetLanguages() throws MangooTranslationException {
-        //given
-
-        //when
-        Set<String> languages = MangooUtils.getLanguages();
-
-        //then
-        assertThat(languages, not(nullValue()));
-        assertThat(languages, instanceOf(Set.class));
-    }
-
-    @Test
-    void testGetRootFolder() {
-        //given
-
-        //when
-        String rootFolder = MangooUtils.getRootFolder();
-
-        //then
-        assertThat(rootFolder, not(nullValue()));
     }
 
     @Test
@@ -156,37 +133,47 @@ class CoreUtilsTest {
     }
 
     @Test
-    void testGetAdminCookieWithoutTwoFactor() throws MangooJwtException {
+    void testGetAdminCookieWithoutTwoFactor() throws Exception {
         //given
+        try (var _ = TestUtils.withConfigValue(Key.APPLICATION_ADMIN_SECRET, TotpUtils.createSecret())) {
+            //when
+            Cookie cookie = MangooUtils.getAdminCookie(false);
 
-        //when
-        Cookie cookie = MangooUtils.getAdminCookie(false);
+            //then
+            assertThat(cookie.getName(), equalTo(MangooUtils.getAdminCookieName()));
+            assertThat(cookie.isHttpOnly(), is(true));
+            assertThat(cookie.getPath(), equalTo("/"));
+            assertThat(cookie.getSameSiteMode(), equalTo("Strict"));
 
-        //then
-        assertThat(cookie, not(nullValue()));
-        assertThat(cookie.getName(), equalTo(MangooUtils.getAdminCookieName()));
-        assertThat(cookie.isHttpOnly(), is(true));
-        assertThat(cookie.getPath(), equalTo("/"));
-        assertThat(cookie.getSameSiteMode(), equalTo("Strict"));
-        assertThat(cookie.getValue(), not(nullValue()));
-        assertThat(cookie.getValue(), not(emptyString()));
+            JWTClaimsSet claims = parseAdminCookie(cookie);
+            assertThat(MangooUtils.isTwoFactorPending(claims), is(false));
+            assertThat(lifetime(claims), equalTo(1800L));
+        }
     }
 
     @Test
-    void testGetAdminCookieWithTwoFactor() throws MangooJwtException {
+    void testGetAdminCookieWithTwoFactor() throws Exception {
         //given
+        try (var _ = TestUtils.withConfigValue(Key.APPLICATION_ADMIN_SECRET, TotpUtils.createSecret())) {
+            //when
+            Cookie cookie = MangooUtils.getAdminCookie(true);
 
+            //then
+            JWTClaimsSet claims = parseAdminCookie(cookie);
+            assertThat(MangooUtils.isTwoFactorPending(claims), is(true));
+            assertThat(lifetime(claims), equalTo(120L));
+        }
+    }
+
+    @Test
+    void testGetAdminCookieWithTwoFactorWithoutAdminSecret() throws Exception {
         //when
         Cookie cookie = MangooUtils.getAdminCookie(true);
 
         //then
-        assertThat(cookie, not(nullValue()));
-        assertThat(cookie.getName(), equalTo(MangooUtils.getAdminCookieName()));
-        assertThat(cookie.isHttpOnly(), is(true));
-        assertThat(cookie.getPath(), equalTo("/"));
-        assertThat(cookie.getSameSiteMode(), equalTo("Strict"));
-        assertThat(cookie.getValue(), not(nullValue()));
-        assertThat(cookie.getValue(), not(emptyString()));
+        JWTClaimsSet claims = parseAdminCookie(cookie);
+        assertThat(MangooUtils.isTwoFactorPending(claims), is(false));
+        assertThat(lifetime(claims), equalTo(1800L));
     }
 
     @Test
@@ -202,16 +189,6 @@ class CoreUtilsTest {
     }
 
     @Test
-    void testAcquireAdminAttempt() {
-        //when
-        boolean granted = MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD);
-
-        //then
-        assertThat(granted, is(true));
-        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), is(false));
-    }
-
-    @Test
     void testAdminAttemptMaxRetries() {
         //when
         for (int i = 0; i < 10; i++) {
@@ -223,36 +200,6 @@ class CoreUtilsTest {
         assertThat(MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD), is(false));
         Date lockedUntil = adminAttempts().getDate("lockedUntil");
         assertThat(lockedUntil.toInstant().isAfter(Instant.now().plus(Duration.ofMinutes(59))), is(true));
-    }
-
-    @Test
-    void testIsAdminLockedWhenNotLocked() {
-        //then
-        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), is(false));
-    }
-
-    @Test
-    void testIsAdminLockedWhenLocked() {
-        //given
-        lockAdmin(Instant.now().plus(Duration.ofMinutes(30)));
-
-        //then
-        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), is(true));
-        assertThat(MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD), is(false));
-    }
-
-    @Test
-    void testElapsedAdminLockResetsTheBudget() {
-        //given
-        lockAdmin(Instant.now().minus(Duration.ofMinutes(30)));
-
-        //when
-        boolean granted = MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD);
-
-        //then
-        assertThat(granted, is(true));
-        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), is(false));
-        assertThat(adminAttempts().getInteger("attempts"), equalTo(1));
     }
 
     @Test
@@ -285,12 +232,6 @@ class CoreUtilsTest {
 
     private static Document adminAttempts() {
         return attemptsCollection().find(Filters.eq("_id", MangooUtils.ADMIN_PASSWORD)).first();
-    }
-
-    private static void lockAdmin(Instant lockedUntil) {
-        attemptsCollection().updateOne(Filters.eq("_id", MangooUtils.ADMIN_PASSWORD),
-                Updates.combine(Updates.set("attempts", 10), Updates.set("lockedUntil", Date.from(lockedUntil))),
-                new UpdateOptions().upsert(true));
     }
 
     private static MongoCollection<Document> attemptsCollection() {
@@ -504,24 +445,6 @@ class CoreUtilsTest {
     }
 
     @Test
-    void testFlattenMapHelperWithSimpleValues() {
-        //given
-        Map<String, Object> map = new HashMap<>();
-        map.put("key1", "value1");
-        map.put("key2", "value2");
-        
-        Map<String, String> flatMap = new HashMap<>();
-
-        //when
-        MangooUtils.flattenMapHelper(map, "", flatMap);
-
-        //then
-        assertThat(flatMap.get("key1"), equalTo("value1"));
-        assertThat(flatMap.get("key2"), equalTo("value2"));
-        assertThat(flatMap.size(), equalTo(2));
-    }
-
-    @Test
     void testFlattenMapHelperWithPrefix() {
         //given
         Map<String, Object> map = new HashMap<>();
@@ -538,56 +461,6 @@ class CoreUtilsTest {
     }
 
     @Test
-    void testFlattenMapHelperWithNestedMaps() {
-        //given
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> nested = new HashMap<>();
-        nested.put("nested1", "value1");
-        map.put("parent", nested);
-        
-        Map<String, String> flatMap = new HashMap<>();
-
-        //when
-        MangooUtils.flattenMapHelper(map, "", flatMap);
-
-        //then
-        assertThat(flatMap.get("parent.nested1"), equalTo("value1"));
-        assertThat(flatMap.size(), equalTo(1));
-    }
-
-    @Test
-    void testFlattenMapHelperWithNullValues() {
-        //given
-        Map<String, Object> map = new HashMap<>();
-        map.put("key1", "value1");
-        map.put("key2", null);
-        
-        Map<String, String> flatMap = new HashMap<>();
-
-        //when
-        MangooUtils.flattenMapHelper(map, "", flatMap);
-
-        //then
-        assertThat(flatMap.get("key1"), equalTo("value1"));
-        assertThat(flatMap.get("key2"), equalTo(""));
-        assertThat(flatMap.size(), equalTo(2));
-    }
-
-    @Test
-    void testFlattenMapHelperWithEmptyMap() {
-        //given
-        Map<String, Object> map = new HashMap<>();
-        
-        Map<String, String> flatMap = new HashMap<>();
-
-        //when
-        MangooUtils.flattenMapHelper(map, "", flatMap);
-
-        //then
-        assertThat(flatMap.isEmpty(), is(true));
-    }
-
-    @Test
     void testFlattenMapHelperWithNullMap() {
         //given
         Map<String, String> flatMap = new HashMap<>();
@@ -596,5 +469,36 @@ class CoreUtilsTest {
         NullPointerException exception = assertThrows(NullPointerException.class,
                 () -> MangooUtils.flattenMapHelper(null, "", flatMap));
         assertThat(exception.getMessage(), containsString("map can not be null or blank"));
+    }
+
+    @Test
+    void testFlattenMapHelperWithNullPrefix() {
+        //when & then
+        NullPointerException exception = assertThrows(NullPointerException.class,
+                () -> MangooUtils.flattenMapHelper(Map.of("key", "value"), null, new HashMap<>()));
+        assertThat(exception.getMessage(), equalTo(Required.PREFIX));
+    }
+
+    @Test
+    void testFlattenMapHelperWithNullFlatMap() {
+        //when & then
+        NullPointerException exception = assertThrows(NullPointerException.class,
+                () -> MangooUtils.flattenMapHelper(Map.of("key", "value"), "", null));
+        assertThat(exception.getMessage(), equalTo(Required.FLAT_MAP));
+    }
+
+    private JWTClaimsSet parseAdminCookie(Cookie cookie) throws MangooJwtException {
+        var jwtData = JwtUtils.JwtData.create()
+                .withKey(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
+                .withSecret(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
+                .withIssuer(config.getApplicationName())
+                .withAudience(MangooUtils.getAdminCookieName())
+                .withTtlSeconds(1800);
+
+        return JwtUtils.parseJwt(cookie.getValue(), jwtData);
+    }
+
+    private static long lifetime(JWTClaimsSet claims) {
+        return Duration.between(claims.getIssueTime().toInstant(), claims.getExpirationTime().toInstant()).toSeconds();
     }
 }

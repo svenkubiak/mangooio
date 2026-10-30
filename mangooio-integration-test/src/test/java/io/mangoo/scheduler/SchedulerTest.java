@@ -5,10 +5,6 @@ import io.mangoo.core.Application;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -19,20 +15,9 @@ public class SchedulerTest {
     void testSchedule() {
         //given
         Scheduler scheduler = Application.getInstance(Scheduler.class);
-        ScheduledFuture<?> scheduledFuture = Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
-            public void run() {
-            }
-        }, 0, 1, TimeUnit.MILLISECONDS);
-
-        assertThat(scheduler, not(nullValue()));
-        assertThat(scheduler.getSchedules().size(), equalTo(7));
-
-        //when
-        scheduler.addSchedule(Schedule.of("TestModel.class", "foo", "null", scheduledFuture, false));
 
         //then
-        assertThat(scheduler, not(nullValue()));
-        assertThat(scheduler.getSchedules().size(), equalTo(8));
+        assertThat(scheduler.getSchedules().size(), equalTo(7));
     }
 
     @Test

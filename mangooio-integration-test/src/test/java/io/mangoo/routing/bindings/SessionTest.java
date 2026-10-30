@@ -4,6 +4,9 @@ import io.mangoo.TestExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,53 +36,35 @@ class SessionTest {
         //then
         assertThat(session.hasContent(), equalTo(true));
         assertThat(session.get(FOO), equalTo(BAR));
-        assertThat(session.isKept(), equalTo(false));
+        assertThat(session.hasChanged(), equalTo(true));
     }
 
     @Test
     void testRemove() {
         //given
-        final Session session = Session.create();
+        final Session session = Session.create().withContent(new HashMap<>(Map.of(FOO, BAR)));
 
         //when
-        session.put(FOO, BAR);
         session.remove(FOO);
 
         //then
         assertThat(session.hasContent(), equalTo(false));
         assertThat(session.get(FOO), equalTo(null));
-        assertThat(session.isKept(), equalTo(false));
+        assertThat(session.hasChanged(), equalTo(true));
     }
 
     @Test
     void testClear() {
         //given
-        final Session session = Session.create();
+        final Session session = Session.create().withContent(new HashMap<>(Map.of(FOO, BAR)));
 
         //when
-        session.put(FOO, BAR);
         session.clear();
 
         //then
         assertThat(session.hasContent(), equalTo(false));
         assertThat(session.get(FOO), equalTo(null));
-        assertThat(session.isKept(), equalTo(false));
-    }
-
-    @Test
-    void testFormerSeparatorCharactersAreStored() {
-        //given
-        final Session session = Session.create();
-
-        //when
-        session.put("|", FOO);
-        session.put(FOO, " ");
-        session.put("text", "a|b: c&d");
-
-        //then
-        assertThat(session.get("|"), equalTo(FOO));
-        assertThat(session.get(FOO), equalTo(" "));
-        assertThat(session.get("text"), equalTo("a|b: c&d"));
+        assertThat(session.isInvalid(), equalTo(true));
     }
 
     @Test

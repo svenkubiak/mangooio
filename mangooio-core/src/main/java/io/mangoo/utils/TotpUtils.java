@@ -8,6 +8,7 @@ import io.mangoo.interfaces.OneTimeStore;
 import net.glxn.qrgen.QRCode;
 
 import java.io.ByteArrayOutputStream;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -120,18 +121,22 @@ public class TotpUtils {
 
         var buffer = new StringBuilder();
         buffer.append("otpauth://totp/")
-            .append(name)
+            .append(encode(name))
             .append("?secret=")
             .append(secret)
             .append("&algorithm=")
             .append("SHA512")
             .append("&issuer=")
-            .append(issuer)
+            .append(encode(issuer))
             .append("&digits=")
             .append(DIGITS)
             .append("&period=")
             .append(PERIOD);
 
         return buffer.toString();
+    }
+
+    private static String encode(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8).replace("+", "%20");
     }
 }
