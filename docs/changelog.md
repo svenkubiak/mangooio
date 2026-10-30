@@ -8,11 +8,14 @@ Unreleased
 * **Behaviour change** An env{}, arg{} or file{} without value and fallback fails the startup (svenkubiak)
 * **Behaviour change** Framework secrets must not be literal in the config.yaml of the classpath in prod mode (svenkubiak)
 * **Behaviour change** The HTTPS connector reads its certificate from connector.https.keystore, no self-signed certificate is generated (svenkubiak)
+* **Behaviour change** The HTTPS connector accepts TLS 1.3 only, TLS 1.2 is refused (svenkubiak)
 * **Behaviour change** Failed login budgets, admin pre-authentication and token revocations are kept in MongoDB and shared by all instances when persistence is enabled; MongoDB 4.2 is required (svenkubiak)
 * **Behaviour change** isValidSecondFactor and the admin login accept each TOTP code once (svenkubiak)
 * **Behaviour change** Removed AuthenticationLock and CacheName.AUTH (svenkubiak)
 * **Behaviour change** Cache counters are atomic and return long: increment, decrement, getCounter, resetCounter replace getAndIncrementCounter and getAndDecrementCounter (svenkubiak)
 * **Behaviour change** OpenTelemetry uses application.name as service.name instead of io.mangoo (svenkubiak)
+* **Behaviour change** The session cookie ends with the browser session unless session.cookie.expires is true (svenkubiak)
+* **Behaviour change** Removed the unused application.controller (svenkubiak)
 * Removed all deprecated methods (svenkubiak)
 * Migrated from Jackson 2 to Jackson 3 (svenkubiak)
 * Added support for MongoDB connection strings - replica sets, sharded clusters, SRV (svenkubiak)
@@ -46,6 +49,13 @@ Unreleased
 * Fixed Mail.from(name, address) reporting a missing name as missing address and vice versa (svenkubiak)
 * Fixed Mail.textMessage and Mail.htmlMessage with a template not rejecting null content with a clear message (svenkubiak)
 * Fixed TemplateContext writing into the content map of the caller, which failed for immutable maps such as Map.of (svenkubiak)
+* Fixed Authentication.login not writing a cookie while the browser still sent a stale or revoked one (svenkubiak)
+* Fixed the admin security page proposing a TOTP secret that is not Base32 (svenkubiak)
+* Fixed expectTrue, expectFalse, expectNull and expectNotNull having no default error message (svenkubiak)
+* Fixed a missing application.secret failing the startup with a NullPointerException instead of an error message (svenkubiak)
+* Fixed the instance id system property being application.instance.id instead of mangooio.instance.id (svenkubiak)
+* Fixed TestRequest.withBasicAuthentication not sending the credentials (svenkubiak)
+* Fixed the archetype importing Datastore from its old package and setting authentication.redirect instead of authentication.redirect.login (svenkubiak)
 
 ## Version 10.16.0
 

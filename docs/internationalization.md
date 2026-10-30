@@ -6,13 +6,7 @@ Templates call `${i18n("key")}`, with arguments if you need them. Controllers ta
 
 ## Locale order
 
-1. **`lang` request parameter** (query or path). A path parameter must be mapped:
-
-    ```java
-    On.get().to("/page/{lang}").respondeWith("page")
-    ```
-
-    Examples: `/page?lang=en`, `/page/en`
+1. **`lang` query parameter**, e.g. `/page?lang=en`. A route parameter named `lang` is not evaluated.
 
 2. **i18n cookie** (`i18n.cookie.name`, default `mangooio-i18n`)
 

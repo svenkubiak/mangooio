@@ -9,8 +9,6 @@ public final class Key {
     public static final String APPLICATION_ALLOWED_ORIGINS = "application.allowedOrigins";
     public static final String APPLICATION_API_KEY = "application.api.key";
     public static final String APPLICATION_CONFIG = "application.config";
-    public static final String APPLICATION_CONTROLLER = "application.controller";
-    public static final String APPLICATION_INSTANCE_ID = "application.instance.id";
     public static final String APPLICATION_LANGUAGE = "application.language";
     public static final String APPLICATION_MODE = "application.mode";
     public static final String APPLICATION_NAME = "application.name";
@@ -60,6 +58,7 @@ public final class Key {
     public static final String FLASH_COOKIE_SECRET = "flash.cookie.secret";
     public static final String FLASH_COOKIE_KEY = "flash.cookie.key";
     public static final String I18N_COOKIE_NAME = "i18n.cookie.name";
+    public static final String INSTANCE_ID = "mangooio.instance.id";
     public static final String MANGOOIO_WARNINGS = "MANGOOIO-WARNINGS";
     public static final String METRICS_ENABLE = "metrics.enable";
     public static final String PERSISTENCE_ENABLE = "persistence.enable";

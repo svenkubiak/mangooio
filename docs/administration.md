@@ -21,6 +21,8 @@ application:
 String hash = CommonUtils.hashArgon2("the-password", CommonUtils.uuidV4());
 ```
 
+Run this inside a started application, e.g. in a test with `TestRunner`; outside of it no hasher is available.
+
 Pass `hash` as `application.admin.password`, for example in `APPLICATION_ADMIN_PASSWORD`. The salt is part of the hash, so there is no separate salt setting. Use a random salt. Passing `application.secret` embeds that secret in the stored hash.
 
 Open:

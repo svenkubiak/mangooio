@@ -116,6 +116,8 @@ public class Authentication {
      */
     public Authentication login(String subject) {
         this.subject = subject;
+        // A stale or revoked cookie the browser still sends must not suppress the new one
+        this.update = true;
         return this;
     }
     

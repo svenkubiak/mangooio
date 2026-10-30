@@ -69,6 +69,8 @@ import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.logging.log4j.util.Strings;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.xnio.Options;
+import org.xnio.Sequence;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -95,9 +97,10 @@ import java.util.stream.Stream;
 
 public final class Application {
     private static final String INSTANCE_ID = instanceId(hostname());
+    private static final String TLS_PROTOCOL = "TLSv1.3";
     static {
         System.setProperty("log4j2.shutdownHookEnabled", "false");
-        System.setProperty(Key.APPLICATION_INSTANCE_ID, INSTANCE_ID);
+        System.setProperty(Key.INSTANCE_ID, INSTANCE_ID);
     }
     private static final Log4jListener LOG4J_LISTENER = new Log4jListener();
     static {
@@ -592,6 +595,13 @@ public final class Application {
             failsafe();
         }
 
+        // The cookie secrets and keys fall back to it, and the admin and hashing code use it directly
+        if (StringUtils.isBlank(config.getApplicationSecret())) {
+            LOG.error("{} is required, also if every cookie has dedicated secrets and keys", Key.APPLICATION_SECRET);
+            failsafe();
+            return;
+        }
+
         checkSecret(Key.APPLICATION_SECRET, config.getApplicationSecret().getBytes(StandardCharsets.UTF_8));
         checkSecret(Key.AUTHENTICATION_COOKIE_SECRET, config.getAuthenticationCookieSecret());
         checkSecret(Key.SESSION_COOKIE_SECRET, config.getSessionCookieSecret());
@@ -837,7 +847,7 @@ public final class Application {
             }
 
             try {
-                builder.addHttpsListener(httpsPort, httpsHost, sslContext(
+                addHttpsListener(builder, httpsPort, httpsHost, sslContext(
                         Path.of(config.getConnectorHttpsKeystore()),
                         StringUtils.defaultString(config.getConnectorHttpsPassword()).toCharArray(),
                         config.getConnectorHttpsCertificateAlias()));
@@ -919,6 +929,13 @@ public final class Application {
         return modules;
     }
 
+    // SSLContext.getInstance("TLSv1.3") still enables TLS 1.2 on the server side, so the protocols are restricted explicitly
+    static Undertow.Builder addHttpsListener(Undertow.Builder builder, int port, String host, SSLContext sslContext) {
+        return builder
+                .setSocketOption(Options.SSL_ENABLED_PROTOCOLS, Sequence.of(TLS_PROTOCOL))
+                .addHttpsListener(port, host, sslContext);
+    }
+
     static SSLContext sslContext(Path keystore, char[] password, String alias) {
         Objects.requireNonNull(keystore, "keystore can not be null");
         Objects.requireNonNull(password, Required.PASSWORD);
@@ -940,7 +957,7 @@ public final class Application {
             var keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             keyManagerFactory.init(selected, password);
 
-            var sslContext = SSLContext.getInstance("TLSv1.3");
+            var sslContext = SSLContext.getInstance(TLS_PROTOCOL);
             sslContext.init(keyManagerFactory.getKeyManagers(), null, new SecureRandom());
 
             return sslContext;

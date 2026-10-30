@@ -4,7 +4,7 @@ Almost all runtime behavior is controlled through one YAML file: `src/main/resou
 
 Typical uses include connector host and port, cookie names, MongoDB connection details, SMTP settings, feature toggles (admin UI, metrics, scheduler), and security options (CORS, authentication redirects). Sensitive values should reference environment variables, JVM properties or [secret files](secrets.md) rather than plain text in the repository, since `config.yaml` normally ends up committed to source control.
 
-The file is split into a **`default`** block (shared by all modes) and an **`environments`** block with overrides for `dev`, `test`, and `prod`. When the application starts, it merges `default` with the section for the active mode, key by key, so a key you only set in `default` still applies everywhere, and a key you also set under `environments.prod` overrides it just for production. Missing an environment section for the active mode causes startup to fail on purpose. That may feel strict the first time it happens, but it exists to catch the case where someone adds a `staging` environment, forgets to add matching config, and the app would otherwise silently fall back to defaults in a place where nobody is watching.
+The file is split into a **`default`** block (shared by all modes) and an **`environments`** block with overrides for `dev`, `test`, and `prod`. When the application starts, it merges `default` with the section for the active mode, key by key, so a key you only set in `default` still applies everywhere, and a key you also set under `environments.prod` overrides it just for production. Missing an environment section for the active mode causes startup to fail on purpose. That may feel strict the first time it happens, but it exists to catch an environment block that was renamed or forgotten, where the app would otherwise silently fall back to defaults in a place where nobody is watching. Only `dev`, `test` and `prod` exist; any other value of `application.mode` selects `prod`.
 
 Values are addressed with dot notation that mirrors the YAML hierarchy:
 
@@ -107,7 +107,7 @@ As a rule of thumb: cookie secrets and keys, database and SMTP credentials shoul
 
 ## Connectors
 
-At least one HTTP or HTTPS connector must be configured, otherwise the application refuses to start. There is no implicit default port, on purpose: a web framework that silently picks a port for you is more surprising than one that asks you to say so once.
+At least one HTTP or HTTPS connector must be configured, otherwise the application refuses to start. There is no implicit default port, on purpose: a web framework that silently picks a port for you is more surprising than one that asks you to say so once. A connector is only started if both `host` and `port` are set.
 
 ```yaml
 default:
@@ -136,13 +136,12 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `application.admin.secret` | Admin TOTP secret; if set, MFA is required | *(none)* |
 | `application.admin.username` | Admin dashboard username | *(none)* |
 | `application.allowedOrigins` | Comma-separated origins for `OriginFilter` | *(none)* |
-| `application.api.key` | Shared secret for `ApiKeyFilter` | *(none)* |
-| `application.controller` | Controller package prefix | `controllers.` |
+| `application.api.key` | Shared secret for `ApiKeyFilter` (at least 64 bytes) | *(none)* |
 | `application.language` | Default application language | `en` |
 | `application.name` | Application name (JWT issuer, logs) | `mangooio-application` |
 | `application.named` | Example named Guice binding | *(none)* |
 | `application.parameter.strict` | Reject requests whose query parameter collides with a route parameter with a `400` | `false` |
-| `application.secret` | Application secret; fallback for cookie secrets and keys (exactly 64 bytes) | *(none)* |
+| `application.secret` | Application secret, **required**; fallback for cookie secrets and keys (exactly 64 bytes) | *(none)* |
 | `application.shutdown.timeout` | Time in **seconds** the shutdown waits in total for open requests and running scheduled tasks, see [Graceful shutdown](operating.md#graceful-shutdown) | `20` |
 | `application.timezone` | Application timezone | `UTC` |
 | `application.validation.passthrough` | Return Bean Validation errors as JSON instead of a rendered form | `false` |

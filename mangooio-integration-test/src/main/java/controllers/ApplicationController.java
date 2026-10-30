@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Objects;
 
@@ -103,6 +104,16 @@ public class ApplicationController {
                 .render("localDateTime", localDateTime)
                 .render("localDate", localDate)
                 .render("date", date); //NOSONAR
+    }
+
+    // Challenges like a server with HTTP basic authentication, so TestRequest.withBasicAuthentication can be tested
+    public Response basicauth(Request request) {
+        String expected = "Basic " + Base64.getEncoder().encodeToString("user:pass".getBytes(StandardCharsets.UTF_8));
+        if (expected.equals(request.getHeader("Authorization"))) {
+            return Response.ok().bodyText("authenticated");
+        }
+
+        return Response.unauthorized().header("WWW-Authenticate", "Basic realm=\"mangoo\"").bodyText("");
     }
 
     public Response forbidden() {

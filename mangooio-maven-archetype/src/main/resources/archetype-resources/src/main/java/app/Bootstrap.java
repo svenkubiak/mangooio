@@ -4,7 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import controllers.ApplicationController;
 import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.persistence.interfaces.Datastore;
+import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import models.Person;

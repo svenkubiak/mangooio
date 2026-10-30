@@ -4,13 +4,20 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import io.mangoo.TestExtension;
 import io.mangoo.constants.Const;
-import io.mangoo.constants.Key;
 import io.mangoo.enums.Mode;
+import io.undertow.Undertow;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.net.ServerSocket;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -230,6 +237,54 @@ public class ApplicationTest {
     }
 
     @Test
+    void testHttpsListenerAcceptsOnlyTls13() throws Exception {
+        //given
+        var sslContext = Application.sslContext(keystore("certificate"), KEYSTORE_PASSWORD, "certificate");
+        int port;
+        try (var socket = new ServerSocket(0)) {
+            port = socket.getLocalPort();
+        }
+        Undertow undertow = Application.addHttpsListener(Undertow.builder(), port, "localhost", sslContext)
+                .setHandler(exchange -> exchange.getResponseSender().send("ok"))
+                .build();
+        undertow.start();
+
+        try {
+            //then
+            assertThat(handshake(port, "TLSv1.3"), equalTo("TLSv1.3"));
+            assertThrows(SSLHandshakeException.class, () -> handshake(port, "TLSv1.2"));
+        } finally {
+            undertow.stop();
+        }
+    }
+
+    private static String handshake(int port, String protocol) throws Exception {
+        var client = SSLContext.getInstance("TLS");
+        client.init(null, new TrustManager[] {new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) {
+                // trusts the self-signed test certificate
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                // trusts the self-signed test certificate
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        }}, null);
+
+        try (var socket = (SSLSocket) client.getSocketFactory().createSocket("localhost", port)) {
+            socket.setEnabledProtocols(new String[] {protocol});
+            socket.startHandshake();
+            return socket.getSession().getProtocol();
+        }
+    }
+
+    @Test
     void testSslContextWithoutAliasUsesTheOnlyKeyEntry() throws Exception {
         //given
         Path keystore = keystore("certificate");
@@ -297,6 +352,6 @@ public class ApplicationTest {
     @Test
     void testInstanceIdIsAvailableToLogPatterns() {
         //then
-        assertThat(System.getProperty(Key.APPLICATION_INSTANCE_ID), equalTo(Application.getInstanceId()));
+        assertThat(System.getProperty("mangooio.instance.id"), equalTo(Application.getInstanceId()));
     }
 }

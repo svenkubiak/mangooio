@@ -26,7 +26,7 @@ Generate a new project from the archetype. Replace the version with the latest r
 mvn archetype:generate \
   -DarchetypeGroupId=io.mangoo \
   -DarchetypeArtifactId=mangooio-maven-archetype \
-  -DarchetypeVersion=10.11.0
+  -DarchetypeVersion=11.0.0
 ```
 
 Maven will ask you a few questions interactively:
@@ -51,7 +51,7 @@ mvn clean package
 mvn mangooio:run
 ```
 
-`mvn mangooio:run` does more than just launch a JVM. It forks your application as a separate process (so your terminal stays usable and you can attach a debugger to it), sets the system property that puts the app into **dev mode**, and starts a file watcher on your build output and source directories. When you save a Java file, the watcher notices the change, waits briefly for other saves to settle, and restarts the forked process automatically. That is the whole "save and refresh the browser" workflow: there is no separate build step you need to run by hand.
+`mvn mangooio:run` does more than just launch a JVM. It forks your application as a separate process (so your terminal stays usable and you can attach a debugger to it), sets the system property that puts the app into **dev mode**, and starts a file watcher on your build output directory (`target/classes`). When the compiled classes change, for example because your IDE builds automatically or you run `mvn compile`, the watcher notices the change, waits briefly for other saves to settle, and restarts the forked process automatically. That is the whole "save and refresh the browser" workflow: there is no separate build step you need to run by hand.
 
 On first start you should see something like:
 
@@ -85,12 +85,12 @@ See [Bootstrap](bootstrap.md) for details on each hook.
 
 ## Hot compile
 
-In development mode, saving a Java file triggers a recompile so you can refresh the browser without restarting the JVM by hand. This convenience comes with one sharp edge: controller methods that take request parameters rely on **parameter names being present in the compiled bytecode**, and Java does not keep them by default.
+In development mode, recompiling (IDE auto-build or `mvn compile`) triggers a restart so you can refresh the browser without restarting the JVM by hand. This convenience comes with one sharp edge: controller methods that take request parameters rely on **parameter names being present in the compiled bytecode**, and Java does not keep them by default.
 
 For example, a controller method like this:
 
 ```java
-public Response show(@Param("id") long id) {
+public Response show(long id) {
     ...
 }
 ```

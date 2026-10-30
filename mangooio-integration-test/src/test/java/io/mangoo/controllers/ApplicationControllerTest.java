@@ -467,4 +467,25 @@ class ApplicationControllerTest {
         //cache does not serve this response to an origin that is allowed
         assertThat(response.getHeader("Vary"), equalTo("Origin"));
     }
+
+    @Test
+    void testBasicAuthentication() {
+        //when
+        TestResponse response = TestRequest.get("/basicauth")
+                .withBasicAuthentication("user", "pass")
+                .execute();
+
+        //then
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("authenticated"));
+    }
+
+    @Test
+    void testBasicAuthenticationWithoutCredentials() {
+        //when
+        TestResponse response = TestRequest.get("/basicauth").execute();
+
+        //then
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+    }
 }

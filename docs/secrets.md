@@ -37,11 +37,11 @@ In prod mode the framework secrets must come from one of the placeholders. A lit
 
 A fallback in the braces counts as literal, an empty value does not, as it holds no secret. A `config.yaml` passed with `-Dapplication.config` lives outside the JAR and may contain literal values. `application.admin.password` is an Argon2id hash and may stay literal. In dev and test literal values are allowed, a project created with the archetype ships generated secrets for both.
 
-The cookie secrets and keys fall back to `application.secret`, so the minimal prod setup is a single `APPLICATION_SECRET`; the startup warns as long as a cookie uses it, as dedicated values per cookie are recommended.
+The cookie secrets and keys fall back to `application.secret`, so the minimal prod setup is a single `APPLICATION_SECRET`. `application.secret` is always required, even if every cookie has dedicated values; the startup warns as long as a cookie uses it, as dedicated values per cookie are recommended.
 
 ## Secret and key length
 
-The cookie secrets (`*.cookie.secret`) and `application.secret` are used directly as encryption key for `dir` with `A256CBC_HS512`. That algorithm accepts a key of exactly 512 bit, so these values must be **exactly 64 bytes** long — not more, not less. Bytes count, not characters: a non-ASCII character such as `ä` takes two bytes in UTF-8. The cookie keys (`*.cookie.key`) are used for HS512 signing and must be **at least 64 bytes**. The application refuses to start if a value does not meet these rules.
+The cookie secrets (`*.cookie.secret`) and `application.secret` are used directly as encryption key for `dir` with `A256CBC_HS512`. That algorithm accepts a key of exactly 512 bit, so these values must be **exactly 64 bytes** long — not more, not less. Bytes count, not characters: a non-ASCII character such as `ä` takes two bytes in UTF-8. The cookie keys (`*.cookie.key`) are used for HS512 signing and must be **at least 64 bytes**, as must `application.api.key`. The application refuses to start if a value does not meet these rules.
 
 Generate a value with 64 ASCII characters, for example:
 
@@ -130,6 +130,6 @@ connector:
     password: file{}
 ```
 
-`connector.https.certificate.alias` selects the entry and may stay empty if the file holds exactly one key entry. The connector accepts TLS 1.3 only. Behind a load balancer TLS usually ends at the proxy and the application runs plain HTTP, see [Operating](operating.md). For local HTTPS a tool like `mkcert` creates a trusted certificate.
+`connector.https.certificate.alias` selects the entry and may stay empty if the file holds exactly one key entry. The connector accepts TLS 1.3 only; clients that need TLS 1.2 have to connect through a proxy that terminates TLS. Behind a load balancer TLS usually ends at the proxy and the application runs plain HTTP, see [Operating](operating.md). For local HTTPS a tool like `mkcert` creates a trusted certificate.
 
 See [Configuration](configuration.md) for all keys and [Migrations](migrations.md) for the move from the vault of 10.x.

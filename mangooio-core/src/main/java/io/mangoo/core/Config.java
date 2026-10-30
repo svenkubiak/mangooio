@@ -349,10 +349,6 @@ public class Config {
         return getLong(Key.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES, Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES);
     }
 
-    public String getApplicationController() {
-        return getString(Key.APPLICATION_CONTROLLER, Default.APPLICATION_CONTROLLER);
-    }
-
     public boolean isApplicationAdminEnable() {
         return getBoolean(Key.APPLICATION_ADMIN_ENABLE, Default.APPLICATION_ADMIN_ENABLE);
     }

@@ -25,17 +25,17 @@ public class FlashController {
 
 `setSuccess`, `setWarning`, and `setError` store under the fixed keys `success`, `warning`, and `error`. Reach for `put` when you need a custom key instead.
 
-Keys and values must not contain spaces, `|`, `:`, or `&`.
+The keys `iss`, `aud`, `sub`, `iat`, `nbf`, `exp`, `jti` and `form` are reserved; `put()` rejects them with an `IllegalArgumentException`.
 
 ## Templates
 
 Flash is available in Freemarker automatically, with no need to pass it from the controller:
 
 ```ftl
-${flash.success}
-${flash.warning}
-${flash.error}
-${flash.foo}
+${flash.success!}
+${flash.warning!}
+${flash.error!}
+${flash.foo!}
 ```
 
 Cookie name, key, and secret are configured under `flash.cookie.*`. The Secure flag follows `session.cookie.secure` rather than having its own setting. See [Configuration](configuration.md).

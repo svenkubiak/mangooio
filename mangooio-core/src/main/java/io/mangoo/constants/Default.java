@@ -7,7 +7,6 @@ public final class Default {
     public static final String APPLICATION_ADMIN_COOKIE_NAME = "mangooio-admin";
     public static final Boolean APPLICATION_ADMIN_ENABLE = Boolean.FALSE;
     public static final String APPLICATION_ADMIN_LOCALE = "en_EN";
-    public static final String APPLICATION_CONTROLLER = "controllers.";
     public static final String APPLICATION_LANGUAGE = "en";
     public static final String APPLICATION_NAME = "mangooio-application";
     public static final Boolean APPLICATION_PARAMETER_STRICT = Boolean.FALSE;
@@ -103,6 +102,10 @@ public final class Default {
         messages.put(Validation.MIME_TYPE_KEY, Validation.MIME_TYPE);
         messages.put(Validation.FILE_SIZE_KEY, Validation.FILE_SIZE);
         messages.put(Validation.FILE_KEY, Validation.FILE);
+        messages.put(Validation.TRUE_KEY, Validation.TRUE);
+        messages.put(Validation.FALSE_KEY, Validation.FALSE);
+        messages.put(Validation.NULL_KEY, Validation.NULL);
+        messages.put(Validation.NOTNULL_KEY, Validation.NOTNULL);
     }
 
     private Default() {

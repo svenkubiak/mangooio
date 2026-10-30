@@ -814,6 +814,7 @@ class ValidatorTest {
 
         // Then
         assertTrue(validator.hasError(key));
+        assertEquals("agreement must be true", validator.getError(key));
     }
 
     @Test
@@ -851,6 +852,7 @@ class ValidatorTest {
 
         // Then
         assertTrue(validator.hasError(key));
+        assertEquals("disabled must be false", validator.getError(key));
     }
 
     @Test
@@ -888,6 +890,7 @@ class ValidatorTest {
 
         // Then
         assertTrue(validator.hasError(key));
+        assertEquals("object is a required value", validator.getError(key));
     }
 
     @Test
@@ -925,6 +928,7 @@ class ValidatorTest {
 
         // Then
         assertTrue(validator.hasError(key));
+        assertEquals("object must be empty", validator.getError(key));
     }
 
     @Test

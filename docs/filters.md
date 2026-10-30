@@ -8,7 +8,7 @@ Attach a filter with `@FilterWith` on a controller class or individual method:
 @FilterWith(MyFilter.class)
 ```
 
-For logic that must run on **every** controller request, implement `OncePerRequestFilter` and register it in `Bootstrap.initializeRoutes()` alongside your route bindings.
+For logic that must run on **every** controller request, implement `OncePerRequestFilter` and bind it in `app.Module`, see [Global filter](#global-filter).
 
 There are two kinds, depending on how broadly you need the filter applied:
 
@@ -52,7 +52,7 @@ Execution order for a request:
 2. Controller filters
 3. Method filters
 
-Only headers and content from the filter `Response` are merged into the controller response; everything else the filter sets is discarded.
+Only headers, cookies and, if the controller renders a template, content from the filter `Response` are merged into the controller response; everything else the filter sets is discarded.
 
 ## Writing a per-request filter
 
@@ -73,7 +73,7 @@ public class MyFilter implements PerRequestFilter {
 }
 ```
 
-Return `response.end()` (or any other finished `Response`) to short-circuit the request and skip the controller method entirely.
+Return a `Response` with `end()` called on it, e.g. `Response.unauthorized().end()`, to short-circuit the request and skip the controller method entirely.
 
 ## Built-in filters
 

@@ -1,14 +1,8 @@
 ## From 10.16.0 to 11.0.0
 
-Jackson is 3.2.4. `JsonUtils.getMapper()` returns `tools.jackson.databind.ObjectMapper`. Annotations such as `@JsonIgnore`, `@JsonInclude`, `@JsonProperty` and `@JsonCreator` stay in `com.fasterxml.jackson.annotation`. `java.util.Date` is written and read in `application.timezone`.
+With persistence enabled, MongoDB 4.2 or later is required.
 
-`application.admin.password` is an Argon2id PHC string, not the cleartext. Generate it with `CommonUtils.hashArgon2(password, CommonUtils.uuidV4())` and pass that value from outside the artifact, e.g. with `env{}`. A plaintext password no longer signs in. Use a random salt. Passing `application.secret` embeds that secret in the stored hash.
-
-### Vault removed
-
-The vault (`vault.p12`, `vault{}`, `io.mangoo.crypto.Vault`) is removed. Secrets come from `env{}`, `arg{}` or the new `file{}`, see [Secrets](secrets.md).
-
-1. Export the values of the old vault with the JDK alone. Start `jshell` with the vault password in `VAULT_SECRET` and paste:
+1. Export the values of the vault. Start `jshell` with the vault password in `VAULT_SECRET` (`application.vault.secret`, or `application.secret` if none was set) and paste:
 
     ```java
     var keyStore = java.security.KeyStore.getInstance("PKCS12");
@@ -22,63 +16,44 @@ The vault (`vault.p12`, `vault{}`, `io.mangoo.crypto.Vault`) is removed. Secrets
     }
     ```
 
-    Cookie secrets are listed as `<mode>.<key>`, e.g. `prod.session.cookie.secret`, values your application stored itself under their key.
-2. Provide the `prod.*` values as environment variables or secret files and replace every `vault{}` with `env{}` or `file{}`. A remaining `vault{}` fails the startup. Without the old cookie secrets all users are logged out once.
-3. HTTPS: extract the certificate into its own file and set `connector.https.keystore` and `connector.https.password` (the old vault password):
+    Cookie secrets are listed as `<mode>.<key>`, e.g. `prod.session.cookie.secret`. Without them all users are logged out once.
+2. Provide the `prod.*` values as environment variables or secret files and replace every `vault{}` with `env{}` or `file{}`, see [Secrets](secrets.md).
+3. HTTPS only: extract the certificate and set `connector.https.keystore` and `connector.https.password` (the destination password entered for keytool):
 
     ```shell
     keytool -importkeystore -srckeystore vault.p12 -srcstoretype PKCS12 -srcalias certificate -destkeystore https.p12 -deststoretype PKCS12
     ```
 
-    No self-signed certificate is generated any more.
-4. Remove `application.vault.enable`, `application.vault.path`, `application.vault.secret`, `APPLICATION_VAULT_PATH`, `APPLICATION_VAULT_SECRET` and the `vault.p12` volume. Code that injects `Vault` reads its values from `Config`; `new Config(vault)` becomes `new Config()`.
+    The connector accepts TLS 1.3 only; clients that need TLS 1.2 have to connect through a proxy that terminates TLS.
 
-### Placeholders and secrets
+4. Remove `application.vault.enable`, `application.vault.path`, `application.vault.secret`, `APPLICATION_VAULT_PATH`, `APPLICATION_VAULT_SECRET` and the `vault.p12` volume.
+5. Give every `env{}`, `arg{}` or `file{}` that may be empty a fallback, e.g. `arg{false}`, or write it as `env{?}`. Without either, a missing value fails the startup.
+6. Move every framework secret that is still literal in the `config.yaml` of the classpath to `env{}` or `file{}`; prod mode refuses to start otherwise, see [Secrets](secrets.md#secrets-in-prod).
+7. Replace `application.admin.password` with an Argon2id PHC string, generated inside a started application, e.g. in a test with `TestRunner`, with `CommonUtils.hashArgon2(password, CommonUtils.uuidV4())`, and pass it from outside the artifact.
+8. Change imports of `com.fasterxml.jackson.databind` to `tools.jackson.databind`; annotations stay in `com.fasterxml.jackson.annotation`. `java.util.Date` is now written and read in `application.timezone`.
+9. Replace the removed API:
 
-* An `env{}`, `arg{}` or `file{}` without a value and without a fallback fails the startup instead of leaving the key unset. Write optional values as `env{?}`, which leaves the key unset and keeps the default, or give them a fallback, e.g. `arg{false}`.
-* In prod mode `application.secret`, `application.admin.secret`, `application.api.key`, the cookie secrets and keys, `persistence.*mongo.password`, `smtp.password` and `connector.https.password` must not be literal in the `config.yaml` of the classpath, see [Secrets](secrets.md#secrets-in-prod).
+    | 10.x | 11.0 |
+    |---|---|
+    | `Vault`, `new Config(vault)` | `Config`, `new Config()` |
+    | `CommonUtils.blacklist(id)` / `isBlacklisted(id)` | injected `TokenBlacklist`: `revoke(jwtId, expiresAt)` / `isRevoked(jwtId, subject, issuedAt)`, all tokens of an account with `revokeSubject(subject)` |
+    | `Authentication.isValidSecondFactor(secret, totp)` | `isValidSecondFactor(subject, secret, totp)` |
+    | `JwtUtils.extractSubject(jwt, secret)` | `JwtUtils.parseJwt(jwt, jwtData).getSubject()` |
+    | `AuthenticationLock`, `CacheName.AUTH` | `Authentication.userHasLock` / `userHasSecondFactorLock` |
+    | `Cache.getAndIncrementCounter(key)` | `Cache.increment(key)`, returns `long` |
+    | `Cache.getAndDecrementCounter(key)` | `Cache.decrement(key)`, returns `long` |
+    | `Cache.getCounter(key)`, `null` without counter | `0` without counter |
+    | `Cache.resetCounter(key)` returning `AtomicInteger` | returns nothing |
 
-### Authentication state
-
-With persistence enabled, failed login budgets, used TOTP codes, the admin pre-authentication and token revocations are kept in MongoDB and shared by all instances; without persistence they stay in memory. MongoDB 4.2 or later is required.
-
-* `isValidSecondFactor(identifier, secret, totp)` accepts each code once per identifier. A test or flow that verifies the same code twice now gets `false` the second time.
-* `AuthenticationLock` and `CacheName.AUTH` are removed. Read a lock with `Authentication.userHasLock` / `userHasSecondFactorLock` or bind your own `AttemptStore`.
-* `TokenBlacklist` is bound by the framework and no longer has `@ImplementedBy`. An own binding in `app.Module` keeps working.
-
-### Server-sent events
-
-With persistence enabled, `ServerSentEventManager.send` reaches the connections on every instance through the new `MessageBroker` and the capped collection `mangooio_messages`. A collection of that name that is not capped fails the startup.
-
-### Cache counters
-
-The counter methods of `Cache` are atomic and return the new value as `long`, so a shared implementation can provide them:
-
-| 10.x | 11.0 |
-|---|---|
-| `getAndIncrementCounter(key)` returning `AtomicInteger` | `increment(key)` returning `long` |
-| `getAndDecrementCounter(key)` returning `AtomicInteger` | `decrement(key)` returning `long` |
-| `getCounter(key)`, `null` without counter | `getCounter(key)`, `0` without counter |
-| `resetCounter(key)` returning `AtomicInteger` | `resetCounter(key)` |
-
-An own `Cache` implementation has to implement the new methods.
-
-### OpenTelemetry
-
-`service.name` is `application.name` instead of `io.mangoo`; dashboards and alerts that filter on the old name need to be adapted. With `otlp.enable` the metric `http.server.request.duration` is exported in addition to the traces, to the same endpoint.
-
-### Bindings and shutdown
-
-* A binding in `app.Module` replaces the framework binding of the same type instead of failing as a duplicate.
-* `applicationStopped()` is called after open requests and running `@Run` tasks have finished, see [Graceful shutdown](operating.md#graceful-shutdown).
+    An own `Cache` implementation has to implement the new counter methods.
+10. Remove the `mangooio:minify` goal from the `pom.xml` and minify assets with your own build tooling.
+11. Tests that verify the same TOTP code twice with `isValidSecondFactor` get `false` the second time; use a new code or another identifier.
+12. Adapt dashboards and alerts that filter on the OpenTelemetry `service.name` `io.mangoo`; it is now `application.name`.
+13. Set `session.cookie.expires: true` if session cookies should survive a browser restart; by default they now end with the browser session.
 
 ## From 10.15.1 to 10.16.0
 
-Methods that were deprecated in earlier releases are removed:
-
-* `CommonUtils.blacklist(id)` and `CommonUtils.isBlacklisted(id)`. Revoke a token with `TokenBlacklist.revoke`, check it with `isRevoked`, and revoke every token of an account with `revokeSubject`.
-* `Authentication.isValidSecondFactor(secret, totp)`. Pass the subject as well: `isValidSecondFactor(subject, secret, totp)`.
-* `JwtUtils.extractSubject(jwt, secret)`. Parse the token with `JwtUtils.parseJwt` and read the subject from the claims.
+`freemarker-java8` is removed. `.format()` without a pattern prints `toString()`; format styles, `ISO_*` names, a zone argument, `toZonedDateTime`, `zoneId.format` and `clock.format` are no longer accepted, and `${zoneId}` prints the zone id.
 
 ## From 10.14.1 to 10.15.0
 

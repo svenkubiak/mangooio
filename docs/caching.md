@@ -61,4 +61,4 @@ public MyService(CacheProvider cacheProvider) {
 }
 ```
 
-Register extra caches with `cacheProvider.addCache(name, cache)`, and they show up on the [admin](administration.md) dashboard alongside the built-in ones.
+Register extra caches with `cacheProvider.addCache(name, cache)`; caches of type `CacheImpl` show up on the [admin](administration.md) dashboard alongside the application cache.

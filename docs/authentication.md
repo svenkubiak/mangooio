@@ -95,7 +95,7 @@ authentication.getSubject();   // logged-in subject, or null
 authentication.isValid();      // authentication is complete, use this for authorization
 authentication.hasSubject();   // a subject is present, second factor may still be pending
 authentication.logout();       // expire the cookie
-authentication.invalidate();   // drop the cookie immediately
+authentication.invalidate();   // expire the cookie
 authentication.update();       // refresh the cookie on this response
 authentication.rememberMe(true);
 authentication.twoFactorAuthentication(true);
@@ -110,7 +110,7 @@ This matters because an `Authentication` object is bound on every request, not o
 
 `userHasLock()` and `userHasSecondFactorLock()` are queries, not a step you have to perform. `isValidLogin()` and `isValidSecondFactor()` check the lock before doing any work and count the failed attempt afterwards, both on their own. Query the lock only where you want to show "this account is locked" instead of the same "login failed" that a wrong password produces.
 
-`logout()` and `invalidate()` sound similar but differ in timing: `logout()` marks the cookie to expire through the normal response cycle, while `invalidate()` drops it immediately, which matters if you need the effect to be visible before the method returns, for example before redirecting.
+`logout()` and `invalidate()` behave identically: both expire the authentication cookie with the current response and, with `authentication.blacklist`, revoke its token.
 
 ## Protecting routes
 
@@ -176,7 +176,7 @@ public Response doLogin(Form form, Authentication authentication, Flash flash) {
 }
 ```
 
-No `update()` here: no authentication cookie exists yet, so the response writes a fresh one on its own.
+No `update()` here: `login()` writes a fresh cookie on its own, even if the browser still sends a stale one.
 
 ### With two-factor
 
@@ -265,7 +265,7 @@ For machine clients that have no browser and therefore nowhere to keep a cookie,
 ```yaml
 application:
   api:
-    key: super-secret
+    key: env{}
 ```
 
 ```java
@@ -275,7 +275,7 @@ public Response export() {
 }
 ```
 
-The filter accepts `Authorization: Bearer super-secret`. This is a single shared key rather than per-client credentials, so treat it the way you would any other shared secret: rotate it if it leaks, and avoid handing the same key to more clients than you can comfortably revoke access from later.
+The filter accepts `Authorization: Bearer <key>`. This is a single shared key rather than per-client credentials, so treat it the way you would any other shared secret: rotate it if it leaks, and avoid handing the same key to more clients than you can comfortably revoke access from later.
 
 ## Blacklist
 

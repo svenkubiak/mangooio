@@ -35,7 +35,7 @@ session.hasContent();
 
 `clear()` and `invalidate()` both end up removing the session cookie, but `clear()` also wipes the in-memory values for the rest of the current request, which matters if your code checks `session.get(...)` again later in the same method after calling it.
 
-Keys and values must not contain spaces, `|`, `:`, or `&`. Those characters are used internally to encode the session as claims inside the JWT, so allowing them in your own values would make the encoding ambiguous to decode again.
+The keys `iss`, `aud`, `sub`, `iat`, `nbf`, `exp`, `jti` and `x-csrf-token` are reserved, since the session is stored as claims inside the JWT; `put()` rejects them with an `IllegalArgumentException`.
 
 ## Cookie settings
 

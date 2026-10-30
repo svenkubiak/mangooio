@@ -41,9 +41,9 @@ Emit the token in Freemarker:
 <@csrftoken/>
 ```
 
-`<@csrfform/>` writes a hidden input, ready to submit with a regular HTML form. `<@csrftoken/>` writes just the raw token value, meant for JavaScript to read and attach as a header on its own requests. Either directive relies on the session already existing, since that is where the token itself lives; if there is no session yet, there is nothing to validate against.
+`<@csrfform/>` writes a hidden input, ready to submit with a regular HTML form. `<@csrftoken/>` writes just the raw token value, meant for JavaScript to read and attach as a header on its own requests. Either directive stores the token in the session cookie, creating the cookie if there is none yet.
 
-Create the session when the user starts a flow that will need protecting later, for example when they load the login form, and clear it on logout so a stale token cannot be reused after the user has signed out:
+Clear the session on logout so a stale token cannot be reused after the user has signed out:
 
 ```java
 public Response logout(Session session) {

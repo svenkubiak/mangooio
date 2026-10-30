@@ -1,8 +1,8 @@
 # Working with JSON 📦
 
-REST and AJAX endpoints often need to return JSON instead of HTML. mangoo I/O uses [Jackson](https://github.com/FasterXML/jackson) with the Blackbird module for fast serialization, chosen specifically because Blackbird generates property accessors at startup instead of relying on reflection on every request, which matters once an endpoint is handling real traffic. Controller methods can return a POJO directly, use `Response.ok().bodyJson(...)`, or bind the request body to a type by declaring it as a parameter.
+REST and AJAX endpoints often need to return JSON instead of HTML. mangoo I/O uses [Jackson](https://github.com/FasterXML/jackson) with the Blackbird module for fast serialization, chosen specifically because Blackbird generates property accessors at startup instead of relying on reflection on every request, which matters once an endpoint is handling real traffic. Controller methods return `Response.ok().bodyJson(...)`, or bind the request body to a type by declaring it as a parameter.
 
-**PATCH** requests merge JSON into an existing object rather than replacing it wholesale, matching what `PATCH` means in HTTP: a partial update, not a full resource replacement. Invalid JSON or failed Bean Validation yields **422 Unprocessable Content** unless you enable passthrough mode in configuration (see [Controllers](controllers.md)). For error payloads shaped consistently for API clients, `bodyJsonError(...)` returns the same structure every time, so a frontend does not need a special case for each endpoint's error format.
+**PATCH** bodies are bound like `POST` and `PUT`: into a new instance, not merged into an existing object. Invalid JSON binds an empty instance created by the no-arg constructor (**422 Unprocessable Content** only if there is none). Failed Bean Validation yields **400**, as an HTML page or, with passthrough mode, as JSON (see [Controllers](controllers.md)). For error payloads shaped consistently for API clients, `bodyJsonError(...)` returns the same structure every time, so a frontend does not need a special case for each endpoint's error format.
 
 By default, `null` properties are omitted from output, which keeps payloads smaller and avoids leaking fields a client did not ask about. Use `@JsonInclude` to force a value out anyway (useful when a client genuinely needs to distinguish "explicitly null" from "field absent"), and `@JsonIgnore` to hide a field entirely, such as an internal comment that should never leave the server:
 
@@ -41,7 +41,7 @@ public class JsonController {
 }
 ```
 
-If deserialization fails, the parameter becomes `UnprocessableContent` and the framework returns **HTTP 422**, the same way a failed path or query parameter conversion does.
+If deserialization fails, the parameter is a new instance created by the no-arg constructor; only if the class has none does it become `UnprocessableContent` and the framework returns **HTTP 422**, the same way a failed path or query parameter conversion does.
 
 If you would rather not commit to a POJO, for example when the payload shape genuinely varies:
 
@@ -52,6 +52,8 @@ public Response parse(Request request) {
     return Response.ok();
 }
 ```
+
+`getBodyAsJsonMap()` returns an empty map for an empty body and `null` for invalid JSON.
 
 Or work with the raw body directly, useful when you need to verify a signature over the exact bytes before touching the content:
 
@@ -76,7 +78,7 @@ ObjectMapper mapper = JsonUtils.getMapper();
 
 `getMapper()` returns Jackson 3's `tools.jackson.databind.ObjectMapper`. `@JsonIgnore`, `@JsonInclude`, `@JsonProperty` and `@JsonCreator` stay in `com.fasterxml.jackson.annotation`. `java.util.Date` is formatted in `application.timezone`. `LocalDate` and `LocalDateTime` carry no zone.
 
-`toJson()`, `toPrettyJson()`, and `toObject()` return `null` if conversion fails rather than throwing, and do not log the underlying exception. That is a deliberate trade-off: it keeps a single malformed object from crashing an otherwise unrelated code path, but it also means you should check the return value yourself if a `null` here would be a real problem for you, rather than assuming a non-null object always comes back.
+`toJson()` and `toPrettyJson()` return an empty string and `toObject()` returns `null` if conversion fails rather than throwing, and do not log the underlying exception. That is a deliberate trade-off: it keeps a single malformed object from crashing an otherwise unrelated code path, but it also means you should check the return value yourself if a `null` here would be a real problem for you, rather than assuming a non-null object always comes back.
 
 ## JSON output
 

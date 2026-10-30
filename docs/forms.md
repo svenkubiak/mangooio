@@ -46,7 +46,7 @@ Call `form.discard()` to drop kept values once they are no longer needed.
 
     Budget in practice: the serialization carries only your submitted values and the validation errors, with a fixed overhead of well under 100 bytes, which leaves roughly 1800 bytes of actual form data within the 4096 byte cookie. That covers ordinary forms comfortably, but a form with many or very long fields can still be dropped, so watch the log for the warning rather than assuming a kept form always survives the redirect.
 
-Default upload limits, which are not configurable in `config.yaml`: 10 files, 5 MB per file, 1000 parameters, 10 000 characters per value. The HTTP body as a whole is separately limited by `undertow.maxentitysize` (4 MB by default).
+Default upload limits: 10 files, 1000 parameters, 10 000 characters per value (not configurable) and 5 MB per file (`form.maxfilesize`). The HTTP body as a whole is separately limited by `undertow.maxentitysize` (4 MB by default).
 
 ## Validation
 
@@ -130,6 +130,10 @@ validation.domainname={0} must be a valid domain name
 validation.mimetype={0} does not have an allowed MimeType
 validation.filesize={0} exceeds allowed filesize
 validation.file={0} must be a valid file
+validation.true={0} must be true
+validation.false={0} must be false
+validation.null={0} must be empty
+validation.notnull={0} is a required value
 ```
 
 Protect any state-changing form with [CSRF](csrf.md), and use [Flash](flash.md) for one-time messages after the redirect.

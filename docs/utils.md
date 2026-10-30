@@ -19,7 +19,7 @@ byte[] encoded = CommonUtils.encodeToBase64("payload");
 byte[] decoded = CommonUtils.decodeFromBase64(new String(encoded, StandardCharsets.UTF_8));
 ```
 
-`hashArgon2(cleartext)` hashes without an explicit salt. The number of Argon2 computations running at the same time is capped, see [Argon2 hashing](configuration.md#argon2-hashing); both `hashArgon2` and `matchArgon2` throw an unchecked `MangooHashingException` when no slot becomes available within `authentication.hashing.timeout`. `matchArgon2` deliberately does not report this as a mismatch, so that "wrong password" and "system overloaded" stay distinguishable. `bitLength` checks key material length. `registerSerializable` / `serializeToBase64` use Apache Fory under the hood; register your classes at startup, and only ever deserialize trusted data.
+`hashArgon2(cleartext)` uses `application.secret` as salt and embeds it in the stored hash; use the two-argument variant with a random salt per user. The number of Argon2 computations running at the same time is capped, see [Argon2 hashing](configuration.md#argon2-hashing); both `hashArgon2` and `matchArgon2` throw an unchecked `MangooHashingException` when no slot becomes available within `authentication.hashing.timeout`. `matchArgon2` deliberately does not report this as a mismatch, so that "wrong password" and "system overloaded" stay distinguishable. `bitLength` checks key material length. `registerSerializable` / `serializeToBase64` use Apache Fory under the hood; register your classes at startup, and only ever deserialize trusted data.
 
 ## JwtUtils
 
@@ -38,7 +38,7 @@ String jwt = JwtUtils.createJwt(data);
 JWTClaimsSet claims = JwtUtils.parseJwt(jwt, data);
 ```
 
-Signing and encryption keys must be long enough for HS512 / AES respectively; prefer pulling those values from `env{}` or `file{}` (see [Secrets](secrets.md)) rather than hardcoding them.
+The secret (`withSecret`) must be exactly 64 bytes and the key (`withKey`) at least 64 bytes, see [Secret and key length](secrets.md#secret-and-key-length); prefer pulling those values from `env{}` or `file{}` (see [Secrets](secrets.md)) rather than hardcoding them.
 
 ## TotpUtils
 
@@ -49,6 +49,8 @@ String secret = TotpUtils.createSecret();
 boolean valid = TotpUtils.verifyTotp(secret, code);
 String qr = TotpUtils.getQRCode("user@example.com", "My App", secret);
 ```
+
+`verifyTotp(secret, code)` accepts a code as often as it is valid; `verifyTotp(identifier, secret, code)` accepts each code only once per identifier.
 
 ## DateUtils
 

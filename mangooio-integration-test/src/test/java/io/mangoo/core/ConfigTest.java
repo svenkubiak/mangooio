@@ -666,21 +666,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetApplicationController() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        String controller = UUID.randomUUID().toString();
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.controller", controller);
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getApplicationController(), equalTo(controller));
-    }
-
-    @Test
     void testValueFromSystemPropertyInProfile() {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());

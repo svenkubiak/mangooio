@@ -2,7 +2,7 @@
 
 Integration-style HTTP tests are supported through the **`mangooio-test`** artifact. It starts the real application stack in **test** mode, with the same routing, config merge, and handlers as production, and exposes helpers to send requests against the configured HTTP connector.
 
-That approach catches issues unit tests miss entirely: wrong routes, filter ordering, cookie handling, and template rendering. The trade-off is speed, since each test class boots the app once via `TestRunner`, so keep individual tests focused and let them share that one running instance within a class rather than starting the app repeatedly.
+That approach catches issues unit tests miss entirely: wrong routes, filter ordering, cookie handling, and template rendering. The trade-off is speed, since the app is booted once via `TestRunner` and shared by all test classes of the JVM, so keep individual tests focused and do not rely on state another test class left behind.
 
 Add the dependency to your `pom.xml`:
 
@@ -10,7 +10,7 @@ Add the dependency to your `pom.xml`:
 <dependency>
     <groupId>io.mangoo</groupId>
     <artifactId>mangooio-test</artifactId>
-    <version>10.11.0</version>
+    <version>11.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -19,7 +19,7 @@ Use the latest published version rather than the placeholder shown above.
 
 ## Starting the application
 
-Extend your tests with `io.mangoo.test.TestRunner`, and it starts mangoo I/O in **test** mode once per test class:
+Extend your tests with `io.mangoo.test.TestRunner`, and it starts mangoo I/O in **test** mode once per JVM; all test classes share that instance:
 
 ```java
 import io.mangoo.test.TestRunner;
@@ -30,7 +30,7 @@ class ApplicationControllerTest {
 }
 ```
 
-Override `beforeStartup()` / `afterStartup()` if you need to set system properties before `Application.start(Mode.TEST)` runs.
+Override `beforeStartup()` / `afterStartup()` if you need to set system properties before `Application.start(Mode.TEST)` runs. Overrides take effect only if that runner starts the application first.
 
 ## HTTP requests
 
@@ -96,7 +96,7 @@ TestResponse account = browser.to("/authenticationrequired")
 
 ## Email and concurrency
 
-`io.mangoo.test.email.SmtpMock` starts GreenMail in dev/test using `smtp.host` and `smtp.port`. Call `start()` / `stop()` around your test and inspect captured messages through `getGreenMail()`.
+`io.mangoo.test.email.SmtpMock` starts GreenMail in dev/test using `smtp.host` and `smtp.port`. GreenMail speaks plain SMTP, so set `smtp.protocol: smtp` and an unprivileged `smtp.port` such as `3025` in the test environment, and obtain the mock with `Application.getInstance(SmtpMock.class)`. Call `start()` / `stop()` around your test and inspect captured messages through `getGreenMail()`.
 
 `io.mangoo.test.concurrent.ConcurrentRunner` is a Hamcrest matcher that runs a function across many virtual threads at once, useful for shaking out concurrency bugs a single-threaded test would never hit.
 

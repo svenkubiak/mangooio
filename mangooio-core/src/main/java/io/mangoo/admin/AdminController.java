@@ -18,7 +18,6 @@ import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
-import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.FileUtils;
 import io.mangoo.utils.TotpUtils;
@@ -125,7 +124,7 @@ public class AdminController {
         String qrCode = null;
 
         if (StringUtils.isBlank(secret)) {
-            secret = CommonUtils.randomString(64);
+            secret = TotpUtils.createSecret();
             qrCode = TotpUtils.getQRCode(
                     "mangoo_IO_Admin",
                     Const.NAME_PATTERN.matcher(config.getApplicationName()).replaceAll(""),

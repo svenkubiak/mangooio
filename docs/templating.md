@@ -20,7 +20,7 @@ location
 prettytime
 ```
 
-Do not pass a controller value with the same name; it overwrites the built-in silently, and rendering can then fail in confusing ways further down the template, usually somewhere that has nothing to do with the actual name collision.
+Do not pass a controller value with the same name; the built-in silently replaces your value, and rendering can then fail in confusing ways further down the template, usually somewhere that has nothing to do with the actual name collision.
 
 CSRF helpers (see [CSRF](csrf.md)):
 
@@ -54,7 +54,7 @@ ${prettytime(date)}
 <a href="${route("ApplicationController:show", "42")}">Show 42</a>
 ```
 
-If `show` is mapped to `/users/{id}`, the second example becomes `/users/42`. Building the URL this way, instead of writing `/users/42` directly in the template, means renaming a route in `Bootstrap.java` does not turn into a hunt through every template that happens to link to it.
+If `show` is mapped to `/users/{id}`, the second example becomes `/users/42`. Pass one argument per placeholder; a missing argument fails the rendering. Building the URL this way, instead of writing `/users/42` directly in the template, means renaming a route in `Bootstrap.java` does not turn into a hunt through every template that happens to link to it.
 
 ## Internationalization
 

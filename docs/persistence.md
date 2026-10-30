@@ -113,7 +113,7 @@ datastore
     .into(bookings);
 ```
 
-Index helpers cover `addIndex`, `dropIndex`, and `dropAllIndexes`. `saveAll` inserts an entire list at once, and `getMongoDatabase()` hands you the native driver handle for anything not covered above.
+Index helpers cover `addIndex`, `dropIndex`, and `dropAllIndexes`. `saveAll` calls `save` for each element of a list (no bulk write, not atomic), and `getMongoDatabase()` hands you the native driver handle for anything not covered above.
 
 ## Multiple connections
 

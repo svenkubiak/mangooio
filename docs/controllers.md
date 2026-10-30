@@ -1,6 +1,6 @@
 # Controllers 🎮
 
-Controllers are the entry point for application logic. Each public method that handles HTTP traffic returns an `io.mangoo.routing.Response` and lives in the package configured by `application.controller` (default `controllers.`). There is no framework base class to extend: your classes are plain Java types that Guice instantiates and injects, which means you can unit test a controller by just calling `new MyController(...)` with mocked dependencies, no servlet container or test harness required.
+Controllers are the entry point for application logic. Each public method that handles HTTP traffic returns an `io.mangoo.routing.Response`. There is no framework base class to extend: your classes are plain Java types that Guice instantiates and injects, which means you can unit test a controller by just calling `new MyController(...)` with mocked dependencies, no servlet container or test harness required.
 
 A controller method can declare only what it actually needs in its parameter list: path variables, query strings, JSON bodies, the raw `Request`, session data, forms, authentication state, or translation helpers. Anything you do not list simply is not there, which keeps method signatures honest about what a given endpoint actually reads from the request.
 
@@ -133,7 +133,7 @@ Supported parameter types:
 - `Boolean` / `boolean`
 - `LocalDate` (`ISO_LOCAL_DATE`, `yyyy-MM-dd`)
 - `LocalDateTime` (`ISO_LOCAL_DATE_TIME`)
-- `Optional` of the types above
+- `Optional<String>` (the value is always a `String`, other type arguments are not converted)
 
 Parameter names are case-sensitive and must match the path placeholder exactly. Decimal values are parsed with `.` as the separator even if the client's locale sends a `,`, since the framework parses numbers the same way regardless of where the request came from.
 

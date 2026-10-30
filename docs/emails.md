@@ -26,7 +26,7 @@ Mail.newMail()
     .send();
 ```
 
-The one-argument `from(String)` sets the address only; it does not parse a `Name <email>` string for you. Without `from()` the mail is sent with the default sender from `smtp.from` (`mangoo <noreply@mangoo.local>` unless configured), which may use the `Name <email>` format. Any failure while sending is logged, as sending runs on a virtual thread nobody waits for.
+The one-argument `from(String)` accepts a bare address or the `Name <email>` format. Without `from()` the mail is sent with the default sender from `smtp.from` (`mangoo <noreply@mangoo.local>` unless configured), which may use the `Name <email>` format. Any failure while sending is logged, as sending runs on a virtual thread nobody waits for.
 
 ## Templates
 
@@ -41,7 +41,7 @@ Mail.newMail()
     .send();
 ```
 
-`textMessage(template, content)` renders the same way, just as plain text. Session, Flash, and the other web template variables are **not** present in this context, since there is no request to draw them from, so pass everything the template needs in the map yourself.
+`textMessage(template, content)` renders the same way, just as plain text. Interpolations are HTML-escaped there as well; start a plain text template with `<#ftl output_format="plainText">` to avoid entities such as `&amp;`. Both template variants throw the checked `MangooTemplateEngineException` if the template is missing or fails to render. Session, Flash, and the other web template variables are **not** present in this context, since there is no request to draw them from, so pass everything the template needs in the map yourself.
 
 ## Other helpers
 

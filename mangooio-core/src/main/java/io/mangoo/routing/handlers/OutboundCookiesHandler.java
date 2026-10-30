@@ -96,12 +96,14 @@ public class OutboundCookiesHandler implements HttpHandler {
                 var cookie = new CookieImpl(config.getSessionCookieName())
                         .setValue(jwt)
                         .setSameSiteMode(config.getSessionCookieSameSiteMode())
-                        .setExpires(Date.from(
-                                expires.atZone(config.getApplicationTimeZone()).toInstant()
-                        ))
                         .setHttpOnly(true)
                         .setPath("/")
                         .setSecure(config.isSessionCookieSecure());
+
+                // Without an expiry the cookie lives as long as the browser session, the token expires regardless
+                if (Boolean.TRUE.equals(config.isSessionCookieExpires())) {
+                    cookie.setExpires(Date.from(expires.atZone(config.getApplicationTimeZone()).toInstant()));
+                }
 
                 exchange.setResponseCookie(cookie);
             } catch (Exception e) {

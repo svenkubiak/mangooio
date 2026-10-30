@@ -5,7 +5,7 @@ The bootstrap class is the main extension point for application wiring: it is wh
 You use it for three kinds of work:
 
 1. **Routes.** `initializeRoutes()` registers every URL before the server starts accepting traffic, so by the time the first request can possibly arrive, the whole route table already exists.
-2. **Startup and shutdown.** Optional hooks run after configuration is loaded, after connectors are listening, and when the JVM shuts down, giving you three distinct moments to plug into instead of one big "app started" event.
+2. **Startup and shutdown.** Hooks (all four must be implemented, but may stay empty) run after configuration is loaded, after connectors are listening, and when the JVM shuts down, giving you three distinct moments to plug into instead of one big "app started" event.
 3. **Cross-cutting setup.** For example, global security headers via `Server.header(...)` at the start of `initializeRoutes()`, which then apply to every response the application sends.
 
 Because `Bootstrap` is a normal Guice-managed type, you can inject services (a `Datastore`, a cache, your own service class) and use them in `applicationStarted()` to seed data or warm caches, exactly the way the archetype's sample app seeds a few `Person` records.
@@ -42,7 +42,7 @@ public class Bootstrap implements MangooBootstrap {
 }
 ```
 
-The four methods run in the order they appear above, which matters if you are deciding where to put something: `applicationInitialized()` runs too early to register anything that depends on routes existing, and `applicationStarted()` runs too late to influence routing, since by then the server is already serving traffic.
+The four methods run in this order: `applicationInitialized()`, `initializeRoutes()`, `applicationStarted()`, `applicationStopped()`, which matters if you are deciding where to put something: `applicationInitialized()` runs too early to register anything that depends on routes existing, and `applicationStarted()` runs too late to influence routing, since by then the server is already serving traffic.
 
 The class name is arbitrary; it only has to implement `MangooBootstrap` and be bound in `app.Module`:
 

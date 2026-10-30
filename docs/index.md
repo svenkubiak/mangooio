@@ -13,7 +13,7 @@ Compared with servlet-only stacks or the larger "batteries included" platforms, 
 At a high level, every HTTP request passes through Undertow, then any filters you have registered, then a controller method you mapped in `app.Bootstrap`:
 
 1. **Routing.** `Bootstrap.initializeRoutes()` registers URLs. A route points to a controller class and a method name, nothing more indirect than that.
-2. **Bindings.** The framework injects path parameters, query values, JSON bodies, and objects such as `Request`, `Session`, `Form`, or `Authentication` directly into the method signature, based on the parameter types and annotations you declare.
+2. **Bindings.** The framework injects path parameters, query values, JSON bodies, and objects such as `Request`, `Session`, `Form`, or `Authentication` directly into the method signature, based on the parameter types and names you declare.
 3. **Response.** The method returns `Response.ok()`, `Response.redirect(...)`, or similar. You choose whether to render a template, send JSON, or just return a status.
 
 A minimal example ties these three steps together:
@@ -64,7 +64,7 @@ Each release is validated against a large [SonarQube](http://www.sonarqube.org/)
 ### Development
 
 - **Convention over configuration.** Controller package, template paths, and translation bundles follow fixed conventions, so you spend less time on boilerplate and more time writing the parts unique to your app.
-- **Hot compile in dev mode.** `mvn mangooio:run` watches your sources and recompiles changes quickly, usually within about a second, so the edit-save-refresh loop stays fast.
+- **Hot compile in dev mode.** `mvn mangooio:run` restarts the application when the compiled classes change, usually within about a second, so the edit-save-refresh loop stays fast.
 - **Programmatic routing.** All routes live in `Bootstrap.java`. There is no separate routes file that can drift out of sync with the code that actually handles the request.
 - **Maven archetype.** Generates a working app with generated dev and test secrets, sample persistence, and a first test already in place.
 
@@ -79,8 +79,8 @@ Each release is validated against a large [SonarQube](http://www.sonarqube.org/)
 ### Data and background work
 
 - **MongoDB datastore.** Inject `Datastore`, map entities with `@Collection`, and query using the native driver API rather than a framework-specific abstraction on top of it.
-- **Built-in cache.** Named Caffeine caches cover application data, authentication lockout, and optional blacklist entries out of the box.
-- **`@Run` scheduler.** Fixed-rate (`Every 5m`) or cron-style jobs on ordinary classes, discovered automatically through a classpath scan at startup.
+- **Built-in cache.** A Caffeine-based application cache out of the box; authentication lockout and blacklist are kept in MongoDB, so all instances share them.
+- **`@Run` scheduler.** Fixed-delay (`Every 5m`) or cron-style jobs on ordinary classes, discovered automatically through a classpath scan at startup.
 - **EventBus.** Publish events to `Subscriber` implementations that run on virtual threads, so a slow subscriber does not block the publisher.
 - **Asynchronous email.** Jakarta Mail integration where `Mail.send()` does not block the request thread, so sending a confirmation email never adds latency to the response the user is waiting on.
 

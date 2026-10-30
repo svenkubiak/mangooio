@@ -1,6 +1,6 @@
 # Logging
 
-Application code uses **Log4j2** through the standard API, nothing framework-specific to learn. The framework and Undertow log through the same pipeline, so one `log4j2.xml` (or YAML) controls verbosity for both your controllers and the HTTP stack underneath them.
+Application code uses **Log4j2** through the standard API, nothing framework-specific to learn. The framework and Undertow log through the same pipeline, so one `log4j2.xml` controls verbosity for both your controllers and the HTTP stack underneath them. A `log4j2.yaml` or `log4j2.json` is ignored, as Log4j needs Jackson 2 for these formats and mangoo I/O ships Jackson 3.
 
 Use a **static logger per class**. It is cheap to create and easy to filter selectively in configuration once you have more than a couple of classes. Avoid logging secrets, full session cookies, or raw passwords, even at debug level, since debug logging has a way of ending up enabled in production during an incident.
 

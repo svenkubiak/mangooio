@@ -11,6 +11,7 @@ public final class Validation {
     public static final String FILE_KEY = "validation.file";
     public static final String FILE_SIZE = "{0} exceeds allowed filesize";
     public static final String FILE_SIZE_KEY = "validation.filesize";
+    public static final String FALSE = "{0} must be false";
     public static final String FALSE_KEY = "validation.false";
     public static final String IPV4 = "{0} must be a valid IPv4 address";
     public static final String IPV4_KEY = "validation.ipv4";
@@ -28,7 +29,9 @@ public final class Validation {
     public static final String MIN_LENGTH_KEY = "validation.min.length";
     public static final String MIN_VALUE = "{0} must be a value not less than {1}";
     public static final String MIN_VALUE_KEY = "validation.min.value";
+    public static final String NOTNULL = "{0} is a required value";
     public static final String NOTNULL_KEY = "validation.notnull";
+    public static final String NULL = "{0} must be empty";
     public static final String NULL_KEY = "validation.null";
     public static final String NUMERIC = "{0} must be a numeric value";
     public static final String NUMERIC_KEY = "validation.numeric";
@@ -42,6 +45,7 @@ public final class Validation {
     public static final String REGEX_KEY = "validation.regex";
     public static final String REQUIRED = "{0} is a required value";
     public static final String REQUIRED_KEY = "validation.required";
+    public static final String TRUE = "{0} must be true";
     public static final String TRUE_KEY = "validation.true";
     public static final String URL = "{0} must be a valid URL";
     public static final String URL_KEY = "validation.url";

@@ -2,7 +2,7 @@
 
 Browsers block JavaScript on one origin from reading responses from another unless the server explicitly opts in with CORS headers. That is a browser-enforced restriction, not something the server can see or refuse on its own, so the only way to make cross-origin calls work is to tell the browser, through headers, exactly which origins and methods are allowed. Enable CORS when your **API** is consumed by a single-page app or mobile web app hosted on a different domain than the mangoo I/O backend.
 
-mangoo I/O adds these headers only when the request URL matches **`cors.urlpattern`** and the origin matches **`cors.alloworigin`** (both regular expressions). That keeps accidental wide-open CORS off by default: nothing gets a CORS header at all until you configure both patterns explicitly, so enabling CORS for your `/api/` paths cannot accidentally also expose an internal admin route you forgot was on the same domain.
+mangoo I/O adds these headers only when the request URL matches **`cors.urlpattern`** and the origin matches **`cors.alloworigin`** (both regular expressions). That keeps accidental wide-open CORS off by default: nothing gets a CORS header at all until you set `cors.enable: true`; set both patterns explicitly then, as their defaults only fit the example domains, so enabling CORS for your `/api/` paths cannot accidentally also expose an internal admin route you forgot was on the same domain.
 
 ```yaml
 cors:
@@ -46,6 +46,8 @@ Two things work in your favour here. The pattern is applied with `Matcher.matche
 What remains is deciding which hosts to trust. Prefer listing them explicitly, as in `^https://(app|admin)\.example\.com$`, over a blanket subdomain wildcard like `^https://[a-z0-9-]+\.example\.com$`. A wildcard makes every current and future subdomain part of your trust boundary, so a forgotten marketing subdomain with an XSS flaw, or a dangling DNS record someone else can claim, becomes a way to read credentialed responses from your API.
 
 Every response to a URL matching `urlpattern` also carries **`Vary: Origin`**, including responses whose origin did *not* match `alloworigin` and therefore received no CORS headers at all. This tells shared caches and CDNs that the response depends on the request's `Origin`. Without it, a cache could store the header-less response produced for a rejected origin and later hand it to an allowed origin, which would then be blocked by the browser until the entry expires. If a controller sets its own `Vary` header, mangoo I/O leaves it untouched.
+
+Preflight requests are only answered for URLs that have an `On.options()` route; bind one (without `withAuthentication()`, as preflights carry no cookies) for every API path that needs a preflight, otherwise the browser receives a 404 without CORS headers.
 
 `headers.maxage` is worth a second look: it tells the browser how long it may cache the result of a preflight `OPTIONS` request before asking again. A higher value means fewer preflight round trips (better for latency), but also means a change to your CORS policy takes longer to reach clients that already cached the old answer.
 

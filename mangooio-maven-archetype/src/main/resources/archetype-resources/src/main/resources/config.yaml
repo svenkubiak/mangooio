@@ -33,7 +33,8 @@ default:
       # memory: 32768
       # iterations: 3
       # parallelism: 1
-    redirect: /login
+    redirect:
+      login: /login
     cookie:
       name: ${application-name}-authentication
       secure: true

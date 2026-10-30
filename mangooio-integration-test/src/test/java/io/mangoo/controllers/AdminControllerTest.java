@@ -23,6 +23,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.reflect.Proxy;
 import java.net.HttpCookie;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -266,6 +268,19 @@ class AdminControllerTest {
             MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_PASSWORD);
             MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_SECOND_FACTOR);
         }
+    }
+
+    @Test
+    void testSecurityProposesABase32Secret() {
+        //when
+        TestResponse response = login().to("/@admin/security")
+                .withHTTPMethod(Methods.GET.toString())
+                .execute();
+
+        //then
+        Matcher matcher = Pattern.compile("id=\"secret\">([^<]*)</textarea>").matcher(response.getContent());
+        assertThat(matcher.find(), equalTo(true));
+        assertThat(matcher.group(1), matchesPattern("[A-Z2-7]{64}"));
     }
 
     private TestResponse authenticate() {

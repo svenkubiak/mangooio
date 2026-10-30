@@ -36,7 +36,7 @@ Bind.controller(UserController.class).withRoutes(
 ```
 
 ```java
-public Response show(@Param("id") long id) {
+public Response show(long id) {
     return Response.ok().render("id", id);
 }
 ```
@@ -140,4 +140,4 @@ WebSocket routes use an Undertow `WebSocketConnectionCallback` directly, rather 
 Bind.webSocket().to("/ws").withHandler(MyWebSocketHandler.class);
 ```
 
-There is no dedicated test helper for WebSockets, unlike SSE or regular controller routes, and the authentication caveat above applies here as well. Treat this as an available, working API rather than a fully documented, polished product feature: it gets you access to Undertow's WebSocket support without extra plumbing, but you are closer to the underlying library here than anywhere else in the framework. If your handler needs to know who is connecting, it has to read and verify the authentication cookie off the handshake itself, since nothing upstream has done that for you.
+There is no dedicated test helper for WebSockets (nor for SSE), unlike regular controller routes, and the authentication caveat above applies here as well. Treat this as an available, working API rather than a fully documented, polished product feature: it gets you access to Undertow's WebSocket support without extra plumbing, but you are closer to the underlying library here than anywhere else in the framework. If your handler needs to know who is connecting, it has to read and verify the authentication cookie off the handshake itself, since nothing upstream has done that for you.
