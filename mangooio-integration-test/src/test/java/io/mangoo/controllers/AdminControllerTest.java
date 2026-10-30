@@ -148,6 +148,19 @@ class AdminControllerTest {
     }
 
     @Test
+    void testDashboardShowsApplicationName() {
+        //given
+        TestResponse response = login().to("/@admin")
+                .withHTTPMethod(Methods.GET.toString())
+                .execute();
+
+        //then the application name replaces the framework name in brand and title, the footer keeps the framework
+        assertThat(response.getContent(), containsString("<title>Dashboard · namefromarg Admin</title>"));
+        assertThat(response.getContent(), containsString("<span class=\"brand-mark\" aria-hidden=\"true\">n</span><span class=\"brand-name\" title=\"namefromarg\">namefromarg</span>"));
+        assertThat(response.getContent(), containsString("<small>mangoo I/O "));
+    }
+
+    @Test
     void testDashboardShowsSystemAndStatusCodes() {
         //given
         Application.getInstance(Metrics.class).addStatusCode(StatusCodes.NOT_FOUND);
@@ -178,6 +191,8 @@ class AdminControllerTest {
         assertThat(response.getContent(), containsString("Failed events"));
         assertThat(response.getContent(), containsString("subscribers.FailingEvent"));
         assertThat(response.getContent(), containsString("Admin two factor"));
+        assertThat(response.getContent(), containsString("<h3>Persistence</h3>"));
+        assertThat(response.getContent(), containsString("<span class=\"feature-label\">Dedicated cookie secrets</span><span class=\"feature-value\" title=\"Not Session\">Not Session</span>"));
     }
 
     @Test
@@ -380,6 +395,7 @@ class AdminControllerTest {
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), containsString("login"));
+        assertThat(response.getContent(), containsString("· namefromarg Admin</title>"));
     }
     
     @Test

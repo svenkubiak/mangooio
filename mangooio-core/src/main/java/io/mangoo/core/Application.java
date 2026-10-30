@@ -19,6 +19,7 @@ import io.github.classgraph.MethodInfo;
 import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminActions;
 import io.mangoo.admin.AdminController;
+import io.mangoo.admin.AdminStream;
 import io.mangoo.admin.InstanceHeartbeat;
 import io.mangoo.async.EventBus;
 import io.mangoo.async.Subscriber;
@@ -222,6 +223,7 @@ public final class Application {
         if (getInstance(Config.class).isApplicationAdminEnable()) {
             getInstance(AdminActions.class);
             getInstance(InstanceHeartbeat.class).start();
+            getInstance(AdminStream.class).start();
         }
     }
 
@@ -779,6 +781,10 @@ public final class Application {
                         new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER + pathRoute.getUrl())))
         );
 
+        if (getInstance(Config.class).isApplicationAdminEnable()) {
+            pathHandler.addExactPath("/@admin/stream", getInstance(AdminStream.class).handler());
+        }
+
         pathHandler.addPrefixPath("/@admin/assets/",
                 new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "templates/@admin/assets/")));
     }
@@ -1063,6 +1069,9 @@ public final class Application {
 
     static void closeServerSentEvents() {
         closeServerSentEvents(List.copyOf(SERVER_SENT_EVENT_HANDLERS.values()));
+        if (getInstance(Config.class).isApplicationAdminEnable()) {
+            getInstance(AdminStream.class).stop();
+        }
     }
 
     static void closeServerSentEvents(List<io.undertow.server.handlers.sse.ServerSentEventHandler> handlers) {

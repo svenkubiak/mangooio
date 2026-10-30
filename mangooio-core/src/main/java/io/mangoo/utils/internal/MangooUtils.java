@@ -263,7 +263,12 @@ public final class MangooUtils {
         Objects.requireNonNull(request, Required.REQUEST);
 
         var cookie = request.getCookie(getAdminCookieName());
-        if (cookie == null || StringUtils.isBlank(cookie.getValue())) {
+        return parseAdminCookie(cookie == null ? null : cookie.getValue());
+    }
+
+    /** Parses the value of the admin cookie, e.g. of a request that is not dispatched to a controller. */
+    public static Optional<JWTClaimsSet> parseAdminCookie(String value) {
+        if (StringUtils.isBlank(value)) {
             return Optional.empty();
         }
 
@@ -276,7 +281,7 @@ public final class MangooUtils {
                 .withTtlSeconds(ADMIN_COOKIE_TTL);
 
         try {
-            return Optional.of(JwtUtils.parseJwt(cookie.getValue(), jwtData));
+            return Optional.of(JwtUtils.parseJwt(value, jwtData));
         } catch (MangooJwtException e) {
             LOG.error("Failed to parse admin cookie -> {}", e.getCause(), e);
             return Optional.empty();

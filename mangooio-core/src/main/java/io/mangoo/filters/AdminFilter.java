@@ -1,5 +1,6 @@
 package io.mangoo.filters;
 
+import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.interfaces.filters.PerRequestFilter;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.Strings;
 
 public class AdminFilter implements PerRequestFilter {
     private static final String VERSION_TAG = MangooUtils.getVersion();
+    private static final String FRAMEWORK_NAME = "mangoo I/O";
     private static final String ADMIN_INDEX = "/@admin";
     private static final String ADMIN_LOGIN = "/@admin/login";
     private static final String ADMIN_TWO_FACTOR = "/@admin/twofactor";
@@ -26,6 +28,7 @@ public class AdminFilter implements PerRequestFilter {
     public Response execute(Request request, Response response) {
         var config = Application.getInstance(Config.class);
         response.render("mangooioAdminLocale", config.getApplicationAdminLocale());
+        response.render("mangooioAdminName", getName(config.getApplicationName()));
 
         var uri = request.getURI();
         if (StringUtils.isBlank(uri)) {
@@ -60,5 +63,10 @@ public class AdminFilter implements PerRequestFilter {
         response.render("mode", Application.getMode());
         response.render("instance", Application.getInstanceId());
         return response;
+    }
+
+    // Without an application.name of its own the default would be shown, the framework name reads better
+    static String getName(String name) {
+        return StringUtils.isBlank(name) || Default.APPLICATION_NAME.equals(name) ? FRAMEWORK_NAME : name;
     }
 }

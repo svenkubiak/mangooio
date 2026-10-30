@@ -13,9 +13,6 @@ import io.mangoo.exceptions.MangooHashingException;
 import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.filters.AdminFilter;
 import io.mangoo.filters.CsrfFilter;
-import io.mangoo.interfaces.InstanceRegistry;
-import io.mangoo.models.InstanceStatus;
-import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
 import io.mangoo.routing.bindings.Flash;
@@ -25,20 +22,15 @@ import io.mangoo.routing.routes.FileRoute;
 import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.scheduler.Scheduler;
-import io.mangoo.utils.DateUtils;
-import io.mangoo.utils.FileUtils;
 import io.mangoo.utils.TotpUtils;
 import io.mangoo.utils.internal.MangooUtils;
 import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -48,166 +40,176 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @FilterWith(AdminFilter.class)
 public class AdminController {
     private static final Logger LOG = LogManager.getLogger(AdminController.class);
-    private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
     private static final String ADMIN_LOGIN = "/@admin/login";
     private static final String ADMIN_CACHE = "/@admin/cache";
     private static final String ADMIN_TWO_FACTOR = "/@admin/twofactor";
-    private static final String METRICS = "metrics";
-    private static final double HUNDRED_PERCENT = 100.0;
-    private static final long STALE_SECONDS = 30;
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
     private final CacheProvider cacheProvider;
     private final AdminActions adminActions;
-    private final InstanceHeartbeat instanceHeartbeat;
-    private final InstanceRegistry instanceRegistry;
+    private final Dashboard dashboard;
     private final Cache cache;
     private final Config config;
 
     @Inject
-    public AdminController(Config config, CacheProvider cacheProvider, AdminActions adminActions, InstanceHeartbeat instanceHeartbeat, InstanceRegistry instanceRegistry) {
+    public AdminController(Config config, CacheProvider cacheProvider, AdminActions adminActions, Dashboard dashboard) {
         this.config = Objects.requireNonNull(config, Required.CONFIG);
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
         this.cacheProvider = Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER);
         this.adminActions = Objects.requireNonNull(adminActions, "adminActions can not be null");
-        this.instanceHeartbeat = Objects.requireNonNull(instanceHeartbeat, "instanceHeartbeat can not be null");
-        this.instanceRegistry = Objects.requireNonNull(instanceRegistry, "instanceRegistry can not be null");
+        this.dashboard = Objects.requireNonNull(dashboard, "dashboard can not be null");
     }
 
     public Response index() {
-        var stream = Application.getInstance(EventBus.class);
-        InstanceStatus current = instanceHeartbeat.current();
-        List<Map<String, Object>> instances = getInstances(current);
-        var response = Response.ok()
-                .render(ENABLED, config.isMetricsEnable())
-                .render("uptime", DateUtils.getPrettyTime(Application.getStart()))
-                .render("events", stream.getHandledEvents())
-                .render("failedEvents", stream.getFailedEvents())
-                .render("queues", stream.getSubscribers())
-                .render("connections", current.connections())
-                .render("instances", instances)
-                .render("instanceTotals", getTotals(instances))
-                .render("shared", config.isPersistenceEnabled())
+        return Response.ok()
+                .render(dashboard.getContent())
+                .render("queues", Application.getInstance(EventBus.class).getSubscribers())
                 .render("otlp", config.isOtlpEnable())
                 .render("warnings", cache.get(Key.MANGOOIO_WARNINGS))
-                .render("system", getSystem())
-                .render("features", getFeatures())
+                .render("features", getFeatures(Application.inProdMode()))
                 .render("scope", getScope())
                 .template(Template.adminPath());
-
-        if (config.isMetricsEnable()) {
-            var metrics = Application.getInstance(Metrics.class);
-            Map<String, Long> statusCodes = new TreeMap<>();
-            Map<String, Long> statusClasses = new TreeMap<>(Map.of("2xx", 0L, "3xx", 0L, "4xx", 0L, "5xx", 0L));
-            for (Entry<Integer, LongAdder> entry : metrics.getResponseMetrics().entrySet()) {
-                long count = entry.getValue().longValue();
-                statusCodes.put(String.valueOf(entry.getKey()), count);
-                statusClasses.merge(entry.getKey() / 100 + "xx", count, Long::sum);
-            }
-
-            long totalRequests = statusCodes.values().stream().mapToLong(Long::longValue).sum();
-            long errorRequests = statusClasses.get("5xx");
-
-            double errorRate = 0;
-            if (errorRequests > 0) {
-                errorRate = (HUNDRED_PERCENT / totalRequests) * errorRequests;
-            }
-
-            response.render(METRICS, statusCodes)
-                    .render("statusClasses", statusClasses)
-                    .render("totalRequests", totalRequests)
-                    .render("avgRequestTime", metrics.getAvgRequestTime())
-                    .render("maxRequestTime", metrics.getMaxRequestTime())
-                    .render("errorRate", errorRate);
-
-            Metrics.Window window = metrics.getWindow();
-            response.render("recentRequests", window.requests())
-                    .render("recentErrorRate", window.requests() == 0 ? 0 : (HUNDRED_PERCENT / window.requests()) * window.errors())
-                    .render("recentAvgRequestTime", window.requests() == 0 ? -1 : window.avgRequestTime())
-                    .render("recentMaxRequestTime", window.maxRequestTime());
-        }
-
-        return response;
     }
 
-    private Map<String, Object> getSystem() {
-        var runtime = Runtime.getRuntime();
-        long heapUsed = runtime.totalMemory() - runtime.freeMemory();
-        long heapMax = runtime.maxMemory() == Long.MAX_VALUE ? runtime.totalMemory() : runtime.maxMemory();
-
-        Map<String, Object> system = new HashMap<>();
-        system.put("started", Application.getStart().format(DATE_TIME_FORMATTER));
-        system.put("java", Runtime.version().toString());
-        system.put("heapUsed", heapUsed);
-        system.put("heapMax", heapMax);
-        system.put("heapUsedReadable", FileUtils.readableFileSize(heapUsed));
-        system.put("heapMaxReadable", FileUtils.readableFileSize(heapMax));
-
-        return system;
-    }
-
-    // The status of this instance is always the current one, the others are those of their last heartbeat
-    private List<Map<String, Object>> getInstances(InstanceStatus current) {
-        Map<String, InstanceStatus> statuses = new TreeMap<>();
-        instanceRegistry.getInstances().forEach(status -> statuses.put(status.id(), status));
-        statuses.put(current.id(), current);
-
-        var now = Instant.now();
-        List<Map<String, Object>> instances = new ArrayList<>();
-        for (InstanceStatus status : statuses.values()) {
-            long seen = Math.max(0, Duration.between(status.seen(), now).toSeconds());
-            Map<String, Object> instance = new HashMap<>();
-            instance.put("id", status.id());
-            instance.put("current", status.id().equals(current.id()));
-            instance.put("version", status.version());
-            instance.put("started", DateUtils.getPrettyTime(LocalDateTime.ofInstant(status.started(), ZoneId.systemDefault())));
-            instance.put("seen", seen);
-            instance.put("stale", seen > STALE_SECONDS);
-            instance.put("heap", FileUtils.readableFileSize(status.heapUsed()) + " / " + FileUtils.readableFileSize(status.heapMax()));
-            instance.put("connections", status.connections());
-            instance.put("requests", status.requests());
-            instance.put("errors", status.errors());
-            instance.put("avgRequestTime", status.requests() == 0 ? -1 : status.avgRequestTime());
-            instance.put("failedEvents", status.failedEvents());
-            instances.add(instance);
-        }
-
-        return instances;
-    }
-
-    private static Map<String, Long> getTotals(List<Map<String, Object>> instances) {
-        Map<String, Long> totals = new HashMap<>();
-        for (String key : List.of("connections", "requests", "errors", "failedEvents")) {
-            totals.put(key, instances.stream().mapToLong(instance -> ((Number) instance.get(key)).longValue()).sum());
-        }
-
-        return totals;
-    }
-
-    private Map<String, Boolean> getFeatures() {
-        Map<String, Boolean> features = new LinkedHashMap<>();
-        features.put("Metrics", config.isMetricsEnable());
-        features.put("Scheduler", config.isSchedulerEnabled());
-        features.put("Persistence", config.isPersistenceEnabled());
-        features.put("Embedded MongoDB", config.isPersistenceEnabled() && Boolean.TRUE.equals(config.isMongoEmbedded(Default.PERSISTENCE_PREFIX)));
-        features.put("CORS", config.isCorsEnable());
-        features.put("OpenTelemetry", config.isOtlpEnable());
-        features.put("Proxy headers", config.isConnectorProxy());
-        features.put("Token blacklist", config.isAuthenticationBlacklist());
-        features.put("Strict parameters", config.isParameterStrict());
-        features.put("Secure session cookie", config.isSessionCookieSecure());
-        features.put("Secure authentication cookie", config.isAuthenticationCookieSecure());
-        features.put("Admin two factor", StringUtils.isNotBlank(config.getApplicationAdminSecret()));
+    // Groups of label, value and tone (on, off, value, warn); warn marks a risky setting in prod mode only
+    Map<String, List<Map<String, String>>> getFeatures(boolean prod) {
+        Map<String, List<Map<String, String>>> features = new LinkedHashMap<>();
+        features.put("Security", getSecurityFeatures(prod));
+        features.put("Persistence", getPersistenceFeatures(prod));
+        features.put("Connectivity", getConnectivityFeatures());
+        features.put("Operations", List.of(
+                toggle("Metrics", config.isMetricsEnable(), false),
+                toggle("Scheduler", config.isSchedulerEnabled(), false),
+                toggle("OpenTelemetry", config.isOtlpEnable(), false),
+                value("Shutdown timeout", duration(config.getApplicationShutdownTimeout()), false),
+                value("Timezone", config.getApplicationTimezone(), false),
+                value("Language", config.getApplicationLanguage(), false)));
 
         return features;
+    }
+
+    private List<Map<String, String>> getSecurityFeatures(boolean prod) {
+        Map<String, Boolean> secure = new LinkedHashMap<>();
+        secure.put("Session", config.isSessionCookieSecure());
+        secure.put("Authentication", config.isAuthenticationCookieSecure());
+        secure.put("Flash", config.isFlashCookieSecure());
+
+        // A cookie is dedicated if neither secret nor key falls back to application.secret, as the startup warning checks it
+        var applicationSecret = config.getApplicationSecret().getBytes(StandardCharsets.UTF_8);
+        Map<String, Boolean> dedicated = new LinkedHashMap<>();
+        dedicated.put("Session", !Arrays.equals(config.getSessionCookieSecret(), applicationSecret) && !Arrays.equals(config.getSessionCookieKey(), applicationSecret));
+        dedicated.put("Authentication", !Arrays.equals(config.getAuthenticationCookieSecret(), applicationSecret) && !Arrays.equals(config.getAuthenticationCookieKey(), applicationSecret));
+        dedicated.put("Flash", !Arrays.equals(config.getFlashCookieSecret(), applicationSecret) && !Arrays.equals(config.getFlashCookieKey(), applicationSecret));
+
+        var sessionSameSite = config.getSessionCookieSameSiteMode();
+        var authenticationSameSite = config.getAuthenticationCookieSameSiteMode();
+        var session = Boolean.TRUE.equals(config.isSessionCookieExpires())
+                ? "Expires after " + duration(config.getSessionCookieTokenExpires())
+                : "Browser session";
+
+        return List.of(
+                toggle("Admin two factor", StringUtils.isNotBlank(config.getApplicationAdminSecret()), prod),
+                value("Secure cookies", count(secure), prod && secure.containsValue(false)),
+                value("Dedicated cookie secrets", count(dedicated), prod && dedicated.containsValue(false)),
+                value("SameSite session / auth", sessionSameSite + " / " + authenticationSameSite,
+                        prod && Strings.CI.equalsAny("None", sessionSameSite, authenticationSameSite)),
+                value("Session cookie", session, false),
+                value("Authentication token", duration(config.getAuthenticationCookieTokenExpires()), false),
+                value("Login lock", config.getAuthenticationLock() + " attempts, " + config.getAuthenticationLockDuration() + " min", false),
+                toggle("Token blacklist", config.isAuthenticationBlacklist(), false),
+                toggle("Strict parameters", config.isParameterStrict(), false),
+                toggle("API key", StringUtils.isNotBlank(config.getString(Key.APPLICATION_API_KEY)), false));
+    }
+
+    private List<Map<String, String>> getPersistenceFeatures(boolean prod) {
+        if (!config.isPersistenceEnabled()) {
+            return List.of(toggle("MongoDB", false, false));
+        }
+
+        boolean embedded = Boolean.TRUE.equals(config.isMongoEmbedded(Default.PERSISTENCE_PREFIX));
+        String mongo;
+        if (embedded) {
+            mongo = "Embedded";
+        } else if (StringUtils.isNotBlank(config.getMongoUrl(Default.PERSISTENCE_PREFIX))) {
+            // The connection string is not shown, it names the hosts of the cluster
+            mongo = "Connection string";
+        } else {
+            mongo = config.getMongoHost(Default.PERSISTENCE_PREFIX) + ":" + config.getMongoPort(Default.PERSISTENCE_PREFIX);
+        }
+
+        List<Map<String, String>> features = new ArrayList<>();
+        features.add(value("MongoDB", mongo, prod && embedded));
+        features.add(value("Database", config.getMongoDbName(Default.PERSISTENCE_PREFIX), false));
+        if (!embedded) {
+            features.add(toggle("Authentication", Boolean.TRUE.equals(config.isMongoAuth(Default.PERSISTENCE_PREFIX)), prod));
+        }
+        features.add(value("Schema", config.getMongoSchema(), false));
+
+        return features;
+    }
+
+    private List<Map<String, String>> getConnectivityFeatures() {
+        var smtp = config.getSmtpHost() + ":" + config.getSmtpPort() + " · " + config.getSmtpProtocol()
+                + (config.isSmtpAuthentication() ? " · auth" : "");
+
+        return List.of(
+                value("HTTP", connector(config.getConnectorHttpHost(), config.getConnectorHttpPort()), false),
+                value("HTTPS", connector(config.getConnectorHttpsHost(), config.getConnectorHttpsPort()), false),
+                toggle("Proxy headers", config.isConnectorProxy(), false),
+                config.isCorsEnable() ? value("CORS", config.getCorsAllowOrigin().pattern(), false) : toggle("CORS", false, false),
+                value("SMTP", smtp, false));
+    }
+
+    private static Map<String, String> toggle(String label, boolean active, boolean warnIfOff) {
+        String tone = active ? "on" : "off";
+        return feature(label, active ? "On" : "Off", !active && warnIfOff ? "warn" : tone);
+    }
+
+    private static Map<String, String> value(String label, String value, boolean warn) {
+        return feature(label, value, warn ? "warn" : "value");
+    }
+
+    private static Map<String, String> feature(String label, String value, String tone) {
+        Map<String, String> feature = new LinkedHashMap<>();
+        feature.put("label", label);
+        feature.put("value", value);
+        feature.put("tone", tone);
+
+        return feature;
+    }
+
+    // "All", "None" or the missing ones: "Not Session, Flash"
+    static String count(Map<String, Boolean> values) {
+        var missing = values.entrySet().stream()
+                .filter(entry -> !entry.getValue())
+                .map(Entry::getKey)
+                .toList();
+
+        if (missing.isEmpty()) {
+            return "All";
+        }
+
+        return missing.size() == values.size() ? "None" : "Not " + String.join(", ", missing);
+    }
+
+    static String connector(String host, int port) {
+        return StringUtils.isBlank(host) || port <= 0 ? "Off" : host + ":" + port;
+    }
+
+    static String duration(long seconds) {
+        if (seconds > 0 && seconds % 3600 == 0) {
+            return seconds / 3600 + " h";
+        }
+        if (seconds > 0 && seconds % 60 == 0) {
+            return seconds / 60 + " min";
+        }
+
+        return seconds + " s";
     }
 
     public Response routes() {

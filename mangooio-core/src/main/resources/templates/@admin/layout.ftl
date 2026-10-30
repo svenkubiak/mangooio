@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <meta name="robots" content="noindex, nofollow">
-    <title>${title} · mangoo I/O Admin</title>
+    <title>${title} · ${mangooioAdminName!"mangoo I/O"} Admin</title>
     <link rel="apple-touch-icon" sizes="180x180" href="/@admin/assets/favicons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/@admin/assets/favicons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/@admin/assets/favicons/favicon-16x16.png">
@@ -26,14 +26,15 @@
 </#macro>
 
 <#macro brand>
-<span class="brand"><span class="brand-mark" aria-hidden="true">m</span><span class="brand-name">mangoo I/O</span></span>
+<#assign name = mangooioAdminName!"mangoo I/O">
+<span class="brand"><span class="brand-mark" aria-hidden="true">${name[0]}</span><span class="brand-name" title="${name}">${name}</span></span>
 </#macro>
 
 <#macro item label href key active>
 <li><a href="${href}"<#if key == active> aria-current="page"</#if>><@icon key/>${label}</a></li>
 </#macro>
 
-<#macro page title active subtitle="">
+<#macro page title active subtitle="" live=false>
 <#setting number_format=",##0">
 <#setting locale="en_US">
 <@document title=title class="app">
@@ -57,7 +58,7 @@
 </header>
 <main class="container">
     <hgroup class="page-header">
-        <h1>${title}</h1>
+        <h1>${title}<#if live> <span class="badge live-indicator" data-live-indicator hidden>Live</span></#if></h1>
         <#if subtitle?has_content><p>${subtitle}</p></#if>
     </hgroup>
     <#if (flash.success)?has_content><div class="alert alert-success" role="status"><@icon "verified"/><span>${flash.success}</span></div></#if>

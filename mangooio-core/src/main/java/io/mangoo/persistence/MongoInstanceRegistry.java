@@ -86,7 +86,8 @@ public class MongoInstanceRegistry extends MongoStore implements InstanceRegistr
         try {
             collection().deleteOne(Filters.eq(ID, instanceId));
         } catch (MongoException | IllegalStateException e) {
-            LOG.error("Failed to remove instance '{}'", instanceId, e);
+            // Removing is called on shutdown only, without it the entry expires a minute after the last heartbeat
+            LOG.warn("Failed to remove instance '{}', it expires a minute after the last heartbeat: {}", instanceId, e.getMessage());
         }
     }
 

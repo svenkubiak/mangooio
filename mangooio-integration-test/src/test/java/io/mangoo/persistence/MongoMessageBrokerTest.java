@@ -14,6 +14,12 @@ import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.utils.CommonUtils;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.Undertow;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -27,6 +33,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -288,6 +295,60 @@ class MongoMessageBrokerTest {
             undertow.stop();
             first.stop();
             second.stop();
+        }
+    }
+
+    @Test
+    void testStopDuringTheRetryPauseDoesNotPrepareAgain() throws Exception {
+        //given a broker waiting to retry, as its collection was dropped
+        String collection = collection();
+        var broker = broker(collection, "first");
+        var appender = new CapturingAppender();
+        appender.start();
+        var context = (LoggerContext) LogManager.getContext(false);
+        var loggerConfig = context.getConfiguration().getLoggerConfig(MongoMessageBroker.class.getName());
+        loggerConfig.addAppender(appender, Level.WARN, null);
+        context.updateLoggers();
+
+        try {
+            datastore().getMongoDatabase().getCollection(collection).drop();
+            Thread thread = tailingThread(broker);
+            await().atMost(TIMEOUT).pollInterval(Duration.ofMillis(10)).until(() -> isPausing(thread));
+
+            //when
+            broker.stop();
+
+            //then the interrupted thread does not try to prepare the collection again
+            assertThat(appender.messages, not(hasItem(containsString("Failed to prepare " + collection))));
+        } finally {
+            broker.stop();
+            loggerConfig.removeAppender(appender.getName());
+            context.updateLoggers();
+            appender.stop();
+        }
+    }
+
+    private static Thread tailingThread(MongoMessageBroker broker) throws ReflectiveOperationException {
+        var field = MongoMessageBroker.class.getDeclaredField("thread");
+        field.setAccessible(true);
+        return (Thread) field.get(broker);
+    }
+
+    private static boolean isPausing(Thread thread) {
+        return Arrays.stream(thread.getStackTrace())
+                .anyMatch(frame -> MongoMessageBroker.class.getName().equals(frame.getClassName()) && "pause".equals(frame.getMethodName()));
+    }
+
+    private static final class CapturingAppender extends AbstractAppender {
+        private final List<String> messages = new CopyOnWriteArrayList<>();
+
+        private CapturingAppender() {
+            super("message-broker-test-capture", null, null, true, Property.EMPTY_ARRAY);
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            messages.add(event.getMessage().getFormattedMessage());
         }
     }
 

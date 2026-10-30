@@ -218,6 +218,9 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
             if (running) {
                 pause(backoff);
                 backoff = Math.min(backoff * 2, MAX_BACKOFF);
+            }
+            // A stop during the pause interrupts this thread, preparing would then fail on the interrupt
+            if (running) {
                 reprepare();
             }
         }

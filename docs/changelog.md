@@ -24,8 +24,11 @@ Unreleased
 * Redesigned the admin dashboard with Blades CSS instead of Bulma, with dark mode and mobile layout (svenkubiak)
 * Added responses by status code, Java version and heap, cache clearing and metrics reset to the admin dashboard; with persistence cache clearing and metrics reset run on all instances (svenkubiak)
 * Added a routes page, open connections, event queues, failed events and active features to the admin dashboard (svenkubiak)
+* Added application.name to the brand and page title of the admin dashboard (svenkubiak)
+* Grouped the features of the admin dashboard into security, persistence, connectivity and operations with their values, risky settings are marked in prod mode (svenkubiak)
 * Added EventBus.getFailedEvents, EventBus.getSubscribers, Application.getServerSentEventConnections and Application.getWebSocketConnections (svenkubiak)
 * Added a list of all instances with heartbeat, version and the requests and errors of the last five minutes to the admin dashboard, shared through mangooio_instances with persistence (svenkubiak)
+* Added live updates of the admin dashboard every five seconds through the server sent event stream /@admin/stream, which requires the admin cookie (svenkubiak)
 * Added the request metrics of the last five minutes with Metrics.getWindow (svenkubiak)
 * Added health endpoints /@health/live and /@health/ready (svenkubiak)
 * Added connector.proxy to take client address and scheme from X-Forwarded-* headers (svenkubiak)
@@ -62,6 +65,7 @@ Unreleased
 * Fixed the instance id system property being application.instance.id instead of mangooio.instance.id (svenkubiak)
 * Fixed TestRequest.withBasicAuthentication not sending the credentials (svenkubiak)
 * Fixed the archetype importing Datastore from its old package and setting authentication.redirect instead of authentication.redirect.login (svenkubiak)
+* Fixed the MessageBroker preparing its collection again after a stop and logging a failed instance removal on shutdown as error (svenkubiak)
 
 ## Version 10.16.0
 

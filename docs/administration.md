@@ -43,6 +43,10 @@ The dashboard starts with the list of all instances: id, version, last heartbeat
 
 Clearing a cache and resetting the metrics are sent through the `MessageBroker` and run on every instance. Everything below the list of instances, as well as the pages for routes, scheduler and cache, shows the instance that served the page; its id is marked in the list and shown in the footer.
 
+## Live updates
+
+While the dashboard is open, it connects to `/@admin/stream` and replaces the list of instances, this instance, the requests, the responses by status and the events every five seconds; a badge next to the title shows the open stream. The stream is a server sent event connection that is only opened for a valid admin cookie and is closed once the cookie expires, the page then shows the login. A dashboard in a background tab closes the stream and opens it again when it becomes visible. The connection stays with one instance, so the figures of this instance do not change between instances behind a load balancer; after a restart of the instance the page connects to another one.
+
 ## Metrics
 
 Request counts and timings are off by default, so enable them explicitly:
