@@ -209,6 +209,23 @@ class AdminControllerTest {
     }
 
     @Test
+    void testDashboardShowsFailedRoutesAndServerErrors() {
+        //given a server error, the request to /error throws a NullPointerException
+        TestRequest.get("/error").execute();
+
+        //when
+        TestResponse response = login().to("/@admin")
+                .withHTTPMethod(Methods.GET.toString())
+                .execute();
+
+        //then
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), containsString("Failed requests by route since start"));
+        assertThat(response.getContent(), containsString("Recent server errors"));
+        assertThat(response.getContent(), containsString("Clients connected to your server sent event and WebSocket routes"));
+    }
+
+    @Test
     void testRoutesAuthorized() {
         //when
         TestResponse response = login().to("/@admin/routes")

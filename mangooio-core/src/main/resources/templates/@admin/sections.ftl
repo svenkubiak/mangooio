@@ -63,7 +63,7 @@
 <div class="stats">
     <@stat label="Application started" value=uptime hint=system.started/>
     <@stat "Java" system.java/>
-    <@stat "Open connections" connections/>
+    <@stat label="Open connections" value=connections hint="Clients connected to your server sent event and WebSocket routes"/>
 </div>
 <article class="meter">
     <div class="meter-label">
@@ -102,4 +102,60 @@
     <@stat "Handled events" events/>
     <@stat label="Failed events" value=failedEvents tone=(failedEvents gt 0)?then("stat-danger", "")/>
 </div>
+</#macro>
+<#macro routesSection>
+<#if failedRoutes?has_content>
+<div class="overflow-auto">
+    <table class="striped">
+        <thead>
+        <tr>
+            <th scope="col">Route</th>
+            <th scope="col" class="num">Requests</th>
+            <th scope="col" class="num">4xx</th>
+            <th scope="col" class="num">5xx</th>
+            <th scope="col">Status codes</th>
+        </tr>
+        </thead>
+        <tbody>
+        <#list failedRoutes as route>
+            <tr>
+                <td><code>${route.route}</code></td>
+                <td class="num">${route.requests}</td>
+                <td class="num">${route.clientErrors}</td>
+                <td class="num<#if route.serverErrors gt 0> danger</#if>">${route.serverErrors}</td>
+                <td><#list route.codes as code, count><span class="badge status-${code?substring(0, 1)}xx">${code} · ${count}</span><#sep> </#sep></#list></td>
+            </tr>
+        </#list>
+        </tbody>
+    </table>
+</div>
+<#else>
+<p class="empty">No failed requests since start</p>
+</#if>
+</#macro>
+<#macro failuresSection>
+<#if failures?has_content>
+<div class="overflow-auto">
+    <table class="striped">
+        <thead>
+        <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Route</th>
+            <th scope="col" class="num">Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <#list failures as failure>
+            <tr>
+                <td>${failure.time}</td>
+                <td><code>${failure.method} ${failure.route}</code></td>
+                <td class="num danger">${failure.status?c}</td>
+            </tr>
+        </#list>
+        </tbody>
+    </table>
+</div>
+<#else>
+<p class="empty">No server errors since start</p>
+</#if>
 </#macro>

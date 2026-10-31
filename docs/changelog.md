@@ -29,6 +29,7 @@ Unreleased
 * Added EventBus.getFailedEvents, EventBus.getSubscribers, Application.getServerSentEventConnections and Application.getWebSocketConnections (svenkubiak)
 * Added a list of all instances with heartbeat, version and the requests and errors of the last five minutes to the admin dashboard, shared through mangooio_instances with persistence (svenkubiak)
 * Added live updates of the admin dashboard every five seconds through the server sent event stream /@admin/stream, which requires the admin cookie (svenkubiak)
+* Added the failed requests per route and the last 50 server errors to the admin dashboard (svenkubiak)
 * Added the request metrics of the last five minutes with Metrics.getWindow (svenkubiak)
 * Added health endpoints /@health/live and /@health/ready (svenkubiak)
 * Added connector.proxy to take client address and scheme from X-Forwarded-* headers (svenkubiak)

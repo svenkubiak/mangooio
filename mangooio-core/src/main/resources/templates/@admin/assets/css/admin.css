@@ -771,10 +771,12 @@ article.meter {
     list-style: none;
 }
 
+/* A long value wraps below its label instead of being cut off */
 .features li {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: .625rem;
+    gap: .125rem .625rem;
     margin: 0;
     padding: .4375rem 0;
     border-bottom: 1px solid var(--admin-border);
@@ -794,17 +796,16 @@ article.meter {
 }
 
 .features .feature-label {
-    flex: 1;
-    min-width: 0;
+    flex: 1 1 auto;
 }
 
 .features .feature-value {
-    max-width: 60%;
-    overflow: hidden;
+    max-width: 100%;
+    margin-left: auto;
     color: var(--pico-muted-color);
     font-variant-numeric: tabular-nums;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    text-align: end;
+    overflow-wrap: anywhere;
 }
 
 .features .tone-on .dot {
@@ -918,4 +919,12 @@ article.meter {
     .live-indicator::before {
         animation: none;
     }
+}
+
+/* Failures */
+.table-card p.empty {
+    margin: 0;
+    padding: 2rem 1.25rem;
+    color: var(--pico-muted-color);
+    text-align: center;
 }

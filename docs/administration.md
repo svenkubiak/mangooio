@@ -45,7 +45,7 @@ Clearing a cache and resetting the metrics are sent through the `MessageBroker` 
 
 ## Live updates
 
-While the dashboard is open, it connects to `/@admin/stream` and replaces the list of instances, this instance, the requests, the responses by status and the events every five seconds; a badge next to the title shows the open stream. The stream is a server sent event connection that is only opened for a valid admin cookie and is closed once the cookie expires, the page then shows the login. A dashboard in a background tab closes the stream and opens it again when it becomes visible. The connection stays with one instance, so the figures of this instance do not change between instances behind a load balancer; after a restart of the instance the page connects to another one.
+While the dashboard is open, it connects to `/@admin/stream` and replaces the list of instances, this instance, the requests, the responses by status, the failed routes, the recent server errors and the events every five seconds; a badge next to the title shows the open stream. The stream is a server sent event connection that is only opened for a valid admin cookie and is closed once the cookie expires, the page then shows the login. A dashboard in a background tab closes the stream and opens it again when it becomes visible. The connection stays with one instance, so the figures of this instance do not change between instances behind a load balancer; after a restart of the instance the page connects to another one.
 
 ## Metrics
 
@@ -56,6 +56,6 @@ metrics:
   enable: true
 ```
 
-Once enabled, they appear on the dashboard itself: requests, error rate and processing times of the last five minutes with the values since the start below, and the responses grouped by status code since the start. They are collected per instance, and the dashboard footer names the instance that served the page. For load balancer probes use `/@health/live` and `/@health/ready`, see [Operating](operating.md#health-checks).
+Once enabled, they appear on the dashboard itself: requests, error rate and processing times of the last five minutes with the values since the start below, the responses grouped by status code since the start, the routes with the most client and server errors, and the last 50 server errors with time, route and status. Both show the route template, e.g. `GET /user/{id}`, never the requested path, and no exceptions, so no data of a request appears on the dashboard; requests without a route are shown as `(no route)`. The exceptions are in the log. They are collected per instance, and the dashboard footer names the instance that served the page. For load balancer probes use `/@health/live` and `/@health/ready`, see [Operating](operating.md#health-checks).
 
 See [Observability](observability.md) for OpenTelemetry.

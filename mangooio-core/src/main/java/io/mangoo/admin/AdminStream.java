@@ -43,7 +43,7 @@ public class AdminStream {
     private static final Logger LOG = LogManager.getLogger(AdminStream.class);
     private static final AttachmentKey<Instant> EXPIRES = AttachmentKey.create(Instant.class);
     private static final List<String> SECTIONS = List.of("instances", "instance", "events");
-    private static final List<String> METRIC_SECTIONS = List.of("requests", "status");
+    private static final List<String> METRIC_SECTIONS = List.of("requests", "status", "routes", "failures");
     private static final Pattern LINE_BREAKS = Pattern.compile("\\s*\\R\\s*");
     private static final String TEMPLATE = "@admin/stream.ftl";
     private static final long INTERVAL_SECONDS = 5;

@@ -112,7 +112,7 @@ class AdminStreamTest {
         Map<String, String> sections = Application.getInstance(AdminStream.class).render();
 
         //then
-        assertThat(sections.keySet(), contains("instances", "instance", "events", "requests", "status"));
+        assertThat(sections.keySet(), contains("instances", "instance", "events", "requests", "status", "routes", "failures"));
         assertThat(sections.get("instances"), containsString(Application.getInstanceId()));
         assertThat(sections.values(), everyItem(not(containsString("\n"))));
     }

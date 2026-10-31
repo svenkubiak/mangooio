@@ -7,4 +7,6 @@
 <#case "requests"><@sections.requestsSection/><#break>
 <#case "status"><@sections.statusSection/><#break>
 <#case "events"><@sections.eventsSection/><#break>
+<#case "routes"><@sections.routesSection/><#break>
+<#case "failures"><@sections.failuresSection/><#break>
 </#switch>

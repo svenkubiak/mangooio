@@ -170,6 +170,72 @@ class MetricsTest {
         assertThat(metrics.getWindow(), equalTo(new Metrics.Window(0, 0, 0, -1)));
     }
 
+    @Test
+    void testResponsesAreCountedPerRoute() {
+        //given
+        Metrics metrics = new Metrics(new AdjustableClock());
+
+        //when
+        metrics.addRouteResponse("GET /user/{id}", 200);
+        metrics.addRouteResponse("GET /user/{id}", 500);
+        metrics.addRouteResponse("GET /user/{id}", 500);
+        metrics.addRouteResponse("POST /user", 400);
+
+        //then
+        assertThat(metrics.getRouteResponses().get("GET /user/{id}").get(500).longValue(), equalTo(2L));
+        assertThat(metrics.getRouteResponses().get("GET /user/{id}").get(200).longValue(), equalTo(1L));
+        assertThat(metrics.getRouteResponses().get("POST /user").get(400).longValue(), equalTo(1L));
+    }
+
+    @Test
+    void testRoutesBeyondTheLimitAreCountedTogether() {
+        //given
+        Metrics metrics = new Metrics(new AdjustableClock());
+        for (var i = 0; i < 1000; i++) {
+            metrics.addRouteResponse("GET /route" + i, 200);
+        }
+
+        //when
+        metrics.addRouteResponse("GET /one-more", 500);
+        metrics.addRouteResponse("GET /route0", 200);
+
+        //then
+        assertThat(metrics.getRouteResponses().size(), equalTo(1001));
+        assertThat(metrics.getRouteResponses().get("Other routes").get(500).longValue(), equalTo(1L));
+        assertThat(metrics.getRouteResponses().get("GET /route0").get(200).longValue(), equalTo(2L));
+    }
+
+    @Test
+    void testOnlyTheLastFiftyFailuresAreKeptNewestFirst() {
+        //given
+        Metrics metrics = new Metrics(new AdjustableClock());
+
+        //when
+        for (var i = 0; i < 60; i++) {
+            metrics.addFailure(new Metrics.Failure(Instant.EPOCH, "GET", "/route" + i, 500));
+        }
+
+        //then
+        assertThat(metrics.getFailures().size(), equalTo(50));
+        assertThat(metrics.getFailures().getFirst().route(), equalTo("/route59"));
+        assertThat(metrics.getFailures().getLast().route(), equalTo("/route10"));
+    }
+
+    @Test
+    void testResetClearsRoutesAndFailures() {
+        //given
+        Metrics metrics = new Metrics(new AdjustableClock());
+        metrics.addRouteResponse("GET /", 500);
+        metrics.addFailure(new Metrics.Failure(Instant.EPOCH, "GET", "/", 500));
+
+        //when
+        metrics.reset();
+
+        //then
+        assertThat(metrics.getRouteResponses().isEmpty(), equalTo(true));
+        assertThat(metrics.getFailures().isEmpty(), equalTo(true));
+    }
+
     private static final class AdjustableClock extends Clock {
         private Instant instant = Instant.parse("2026-01-01T10:00:30Z");
 

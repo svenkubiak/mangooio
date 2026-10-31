@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,9 @@ import java.util.concurrent.atomic.LongAdder;
 public class Dashboard {
     private static final double HUNDRED_PERCENT = 100.0;
     private static final long STALE_SECONDS = 30;
+    private static final int CLIENT_ERROR = 400;
+    private static final int SERVER_ERROR = 500;
+    private static final int MAX_FAILED_ROUTES = 10;
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
     private final Config config;
     private final InstanceHeartbeat instanceHeartbeat;
@@ -91,8 +95,66 @@ public class Dashboard {
         content.put("recentErrorRate", window.requests() == 0 ? 0 : (HUNDRED_PERCENT / window.requests()) * window.errors());
         content.put("recentAvgRequestTime", window.requests() == 0 ? -1 : window.avgRequestTime());
         content.put("recentMaxRequestTime", window.maxRequestTime());
+        content.put("failedRoutes", getFailedRoutes());
+        content.put("failures", getFailures());
 
         return content;
+    }
+
+    // The routes with the most server errors first, then client errors; routes without errors are left out
+    private List<Map<String, Object>> getFailedRoutes() {
+        List<Map<String, Object>> routes = new ArrayList<>();
+        for (Entry<String, Map<Integer, LongAdder>> entry : metrics.getRouteResponses().entrySet()) {
+            Map<Integer, Long> codes = new TreeMap<>();
+            entry.getValue().forEach((code, count) -> codes.put(code, count.longValue()));
+
+            long clientErrors = sum(codes, CLIENT_ERROR, SERVER_ERROR);
+            long serverErrors = sum(codes, SERVER_ERROR, Integer.MAX_VALUE);
+            if (clientErrors + serverErrors == 0) {
+                continue;
+            }
+
+            Map<String, Object> route = new HashMap<>();
+            route.put("route", entry.getKey());
+            route.put("requests", codes.values().stream().mapToLong(Long::longValue).sum());
+            route.put("clientErrors", clientErrors);
+            route.put("serverErrors", serverErrors);
+            Map<String, Long> errors = new TreeMap<>();
+            codes.forEach((code, count) -> {
+                if (code >= CLIENT_ERROR) {
+                    errors.put(String.valueOf(code), count);
+                }
+            });
+            route.put("codes", errors);
+            routes.add(route);
+        }
+
+        routes.sort(Comparator.<Map<String, Object>>comparingLong(route -> (long) route.get("serverErrors"))
+                .thenComparingLong(route -> (long) route.get("clientErrors"))
+                .reversed());
+
+        return routes.size() > MAX_FAILED_ROUTES ? routes.subList(0, MAX_FAILED_ROUTES) : routes;
+    }
+
+    private static long sum(Map<Integer, Long> codes, int from, int to) {
+        return codes.entrySet().stream()
+                .filter(entry -> entry.getKey() >= from && entry.getKey() < to)
+                .mapToLong(Entry::getValue)
+                .sum();
+    }
+
+    private List<Map<String, Object>> getFailures() {
+        List<Map<String, Object>> failures = new ArrayList<>();
+        for (Metrics.Failure failure : metrics.getFailures()) {
+            Map<String, Object> entry = new HashMap<>();
+            entry.put("time", LocalDateTime.ofInstant(failure.time(), ZoneId.systemDefault()).format(DATE_TIME_FORMATTER));
+            entry.put("method", failure.method());
+            entry.put("route", failure.route());
+            entry.put("status", failure.status());
+            failures.add(entry);
+        }
+
+        return failures;
     }
 
     private static Map<String, Object> getSystem(InstanceStatus current) {

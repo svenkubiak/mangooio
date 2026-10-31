@@ -42,6 +42,19 @@
         <@sections.statusSection/>
     </article>
 </section>
+<section>
+    <h2 class="section-title">Failed requests by route since start</h2>
+    <article class="table-card" data-live="routes">
+        <@sections.routesSection/>
+    </article>
+</section>
+<section>
+    <h2 class="section-title">Recent server errors</h2>
+    <article class="table-card" data-live="failures">
+        <@sections.failuresSection/>
+    </article>
+    <p class="section-note">The last 50 responses with a status of 500 or above on this instance, the exceptions are in the log.</p>
+</section>
 <#else>
 <div class="alert alert-info" role="status"><@layout.icon "info"/><span>Request metrics are disabled. Set <code>metrics.enable: true</code> in your configuration to collect them.</span></div>
 </#if>
