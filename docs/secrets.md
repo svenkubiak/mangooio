@@ -91,6 +91,8 @@ This reads `/run/secrets/session.cookie.secret`. The directory is `/run/secrets`
 - Symbolic links are followed, as Kubernetes mounts secrets through them.
 - One trailing line break (`\n` or `\r\n`) is removed, as files written with `echo` end with one. Everything else is kept byte for byte.
 - Files larger than 64 KiB are rejected.
+- A file that exists but can not be read fails the startup with the key and the reason, e.g. missing permissions.
+- `file{}` reads the same directory in every mode. On a development machine there is usually no `/run/secrets`, so use `file{}` in the prod section only, or set `APPLICATION_SECRETS_PATH` in the run configuration of the IDE to a local directory.
 
 Kubernetes:
 
@@ -207,6 +209,44 @@ sudo chown -R 10001:10001 secrets
 The application refuses to start as root in prod mode, so a permission problem can not be solved by running the container as root.
 
 Without Compose, mount the directory the same way, `docker run -v "$PWD/secrets:/run/secrets:ro" myapp`, or point `APPLICATION_SECRETS_PATH` to another directory.
+
+## Without Docker
+
+`file{}` works the same without a container, the files and their names do not change. Outside a container `/run` is a tmpfs that is emptied on every reboot, so keep the files in a permanent directory and point `APPLICATION_SECRETS_PATH` to it:
+
+```shell
+sudo mkdir -p /etc/myapp/secrets
+```
+
+Create the files as described in [Creating the secret files](#creating-the-secret-files), then hand them to the user the application runs as. Change the permissions first, after the `chown` your own user can no longer list the directory:
+
+```shell
+sudo chmod 0400 /etc/myapp/secrets/*
+sudo chmod 0500 /etc/myapp/secrets
+sudo chown -R myapp:myapp /etc/myapp/secrets
+```
+
+systemd:
+
+```ini
+[Service]
+User=myapp
+Environment=APPLICATION_SECRETS_PATH=/etc/myapp/secrets
+ExecStart=/usr/bin/java -Dapplication.mode=prod -jar /opt/myapp/myapp.jar
+```
+
+With `LoadCredential=` the files can stay readable by root only. systemd copies them on start into a directory of the service that only the service user can read, `%d` is that directory:
+
+```ini
+[Service]
+User=myapp
+LoadCredential=application.secret:/etc/myapp/secrets/application.secret
+LoadCredential=persistence.mongo.password:/etc/myapp/secrets/persistence.mongo.password
+Environment=APPLICATION_SECRETS_PATH=%d
+ExecStart=/usr/bin/java -Dapplication.mode=prod -jar /opt/myapp/myapp.jar
+```
+
+For supervisord set `APPLICATION_SECRETS_PATH` in `environment=`, see [Operating](operating.md#supervisord).
 
 ## External configuration
 
