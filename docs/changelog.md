@@ -67,6 +67,7 @@ Unreleased
 * Fixed TestRequest.withBasicAuthentication not sending the credentials (svenkubiak)
 * Fixed the archetype importing Datastore from its old package and setting authentication.redirect instead of authentication.redirect.login (svenkubiak)
 * Fixed the MessageBroker preparing its collection again after a stop and logging a failed instance removal on shutdown as error (svenkubiak)
+* Fixed an unreadable or expired session cookie never being replaced, which failed every CSRF check until the cookie was deleted (svenkubiak)
 
 ## Version 10.16.0
 

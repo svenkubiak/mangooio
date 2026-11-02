@@ -81,7 +81,8 @@ public class InboundCookiesHandler implements HttpHandler {
                 session = Session.create()
                         .withContent(CommonUtils.toStringMap(JwtUtils.extractCustomClaims(jwtClaimsSet).getClaims()))
                         .withCsrf(jwtClaimsSet.getClaimAsString(Const.CSRF_TOKEN))
-                        .withExpires(expires);
+                        .withExpires(expires)
+                        .withRestored();
             } catch (ParseException | MangooJwtException e) {
                 LOG.warn("Failed to parse session cookie", e);
             }

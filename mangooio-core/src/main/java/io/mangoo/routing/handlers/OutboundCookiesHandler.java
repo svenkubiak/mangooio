@@ -70,8 +70,8 @@ public class OutboundCookiesHandler implements HttpHandler {
             return;
         }
 
-        var requestCookie = exchange.getRequestCookie(config.getSessionCookieName());
-        if (session.hasChanged() || (requestCookie == null && session.isKept())) {
+        // An unreadable request cookie counts as missing, otherwise it is never replaced and every CSRF check fails
+        if (session.hasChanged() || (!session.isRestored() && session.isKept())) {
             try {
                 Map<String, String> claims = session.getValues();
                 claims.put(Const.CSRF_TOKEN, session.getCsrf());
