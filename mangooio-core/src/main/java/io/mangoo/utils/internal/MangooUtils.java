@@ -57,7 +57,6 @@ import static io.mangoo.core.Application.getInstance;
 
 public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
-    /** Budget of the admin password step, separate from the second factor, so a successful password login does not reset it. */
     public static final String ADMIN_PASSWORD = "admin:pwd";
     public static final String ADMIN_SECOND_FACTOR = "admin:2fa";
     private static final String ADMIN_IDENTIFIER = "admin";
@@ -194,10 +193,10 @@ public final class MangooUtils {
         boolean usernameMatch = MessageDigest.isEqual(
                 username.getBytes(StandardCharsets.UTF_8),
                 StringUtils.defaultString(form.get("username")).getBytes(StandardCharsets.UTF_8));
+        // Hashed before the return, so a wrong username still pays the Argon2 cost
         boolean passwordMatch = adminPasswordMatches(StringUtils.defaultString(form.get("password")), stored);
 
-        // Non-short-circuiting '&' so a wrong username still pays the Argon2 cost
-        return usernameMatch & passwordMatch;
+        return usernameMatch && passwordMatch;
     }
 
     /**
@@ -213,7 +212,7 @@ public final class MangooUtils {
         }
 
         try {
-            String salt = new String(Argon2Hash.parse(stored).salt(), StandardCharsets.UTF_8);
+            var salt = new String(Argon2Hash.parse(stored).salt(), StandardCharsets.UTF_8);
             return CommonUtils.matchArgon2(submitted, salt, stored);
         } catch (IllegalArgumentException e) {
             LOG.warn("application.admin.password is not a valid Argon2id hash, admin login is rejected");

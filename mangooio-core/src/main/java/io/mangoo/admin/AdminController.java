@@ -328,7 +328,7 @@ public class AdminController {
         
         // The attempt is reserved before the password is verified, so concurrent attempts can not exceed the budget
         if (form.isValid() && MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD)) {
-            boolean valid = false;
+            var valid = false;
             try {
                 valid = MangooUtils.isValidAuthentication(form);
             } catch (MangooHashingException e) {

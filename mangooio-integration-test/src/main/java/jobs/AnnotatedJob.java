@@ -10,7 +10,7 @@ public class AnnotatedJob {
         // Nothing to do here
     }
 
-    @Deprecated
+    @Deprecated //NOSONAR
     @Label("helper")
     public void helper() {
         // Nothing to do here

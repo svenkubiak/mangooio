@@ -176,14 +176,14 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
     private void tail() {
         long backoff = MIN_BACKOFF;
         while (running) {
-            boolean delivered = false;
+            var delivered = false;
             try (MongoCursor<Document> cursor = collection().find()
                     .cursorType(CursorType.TailableAwait)
                     .maxAwaitTime(1, TimeUnit.SECONDS)
                     .iterator()) {
                 boolean positioned = !markerExists();
                 while (running) {
-                    Document document = cursor.tryNext();
+                    var document = cursor.tryNext();
                     if (document == null) {
                         if (!positioned) {
                             LOG.warn("Last seen message of {} was overwritten while tailing, messages may have been lost", name);

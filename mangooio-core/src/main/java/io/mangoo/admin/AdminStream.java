@@ -70,7 +70,7 @@ public class AdminStream {
         HttpHandler stream = ServerSentEventHandler.withHeaders(events);
 
         return exchange -> {
-            Cookie cookie = exchange.getRequestCookie(MangooUtils.getAdminCookieName());
+            var cookie = exchange.getRequestCookie(MangooUtils.getAdminCookieName());
             if (expiresAt(cookie == null ? null : cookie.getValue()).isEmpty()) {
                 exchange.setStatusCode(StatusCodes.UNAUTHORIZED);
                 exchange.endExchange();

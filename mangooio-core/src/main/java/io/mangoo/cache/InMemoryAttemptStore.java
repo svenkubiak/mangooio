@@ -55,7 +55,7 @@ public class InMemoryAttemptStore implements AttemptStore {
 
         var granted = new boolean[1];
         states.asMap().compute(key, (k, state) -> {
-            Instant now = clock.instant();
+            var now = clock.instant();
             int attempts = state == null ? 0 : state.attempts();
             Instant lockedUntil = state == null ? null : state.lockedUntil();
 
@@ -106,17 +106,17 @@ public class InMemoryAttemptStore implements AttemptStore {
     public boolean isLocked(String key) {
         Argument.requireNonBlank(key, Required.KEY);
 
-        State state = states.getIfPresent(key);
+        var state = states.getIfPresent(key);
         return state != null && state.isLocked(clock.instant());
     }
 
     int getAttempts(String key) {
-        State state = states.getIfPresent(key);
+        var state = states.getIfPresent(key);
         return state == null ? 0 : state.attempts();
     }
 
     Instant getLockedUntil(String key) {
-        State state = states.getIfPresent(key);
+        var state = states.getIfPresent(key);
         return state == null ? null : state.lockedUntil();
     }
 

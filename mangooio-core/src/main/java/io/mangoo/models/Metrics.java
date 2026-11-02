@@ -71,7 +71,7 @@ public class Metrics {
                 .computeIfAbsent(responseCode, key -> new LongAdder())
                 .increment();
 
-        Bucket bucket = bucket();
+        var bucket = bucket();
         bucket.requests.increment();
         if (responseCode >= SERVER_ERROR) {
             bucket.errors.increment();
@@ -79,7 +79,7 @@ public class Metrics {
     }
 
     public void update(final int requestTime) {
-        Bucket bucket = bucket();
+        var bucket = bucket();
         bucket.requestTime.add(requestTime);
         bucket.maxRequestTime.updateAndGet(current -> Math.max(current, requestTime));
 
@@ -153,7 +153,7 @@ public class Metrics {
         long requestTime = 0;
         int max = -1;
         for (var i = 0; i < buckets.length(); i++) {
-            Bucket bucket = buckets.get(i);
+            var bucket = buckets.get(i);
             if (bucket != null && current - bucket.minute < WINDOW_MINUTES) {
                 requests += bucket.requests.sum();
                 errors += bucket.errors.sum();
@@ -169,7 +169,7 @@ public class Metrics {
         long minute = minute();
         var index = (int) (minute % buckets.length());
         while (true) {
-            Bucket bucket = buckets.get(index);
+            var bucket = buckets.get(index);
             if (bucket != null && bucket.minute == minute) {
                 return bucket;
             }

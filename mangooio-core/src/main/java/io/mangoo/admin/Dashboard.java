@@ -75,14 +75,14 @@ public class Dashboard {
         Map<String, Long> statusCodes = new TreeMap<>();
         Map<String, Long> statusClasses = new TreeMap<>(Map.of("2xx", 0L, "3xx", 0L, "4xx", 0L, "5xx", 0L));
         for (Entry<Integer, LongAdder> entry : metrics.getResponseMetrics().entrySet()) {
-            long count = entry.getValue().longValue();
+            var count = entry.getValue().longValue();
             statusCodes.put(String.valueOf(entry.getKey()), count);
             statusClasses.merge(entry.getKey() / 100 + "xx", count, Long::sum);
         }
 
         long totalRequests = statusCodes.values().stream().mapToLong(Long::longValue).sum();
         long errorRequests = statusClasses.get("5xx");
-        Metrics.Window window = metrics.getWindow();
+        var window = metrics.getWindow();
 
         Map<String, Object> content = new HashMap<>();
         content.put("metrics", statusCodes);

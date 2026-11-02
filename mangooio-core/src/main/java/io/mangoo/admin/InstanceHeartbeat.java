@@ -76,7 +76,7 @@ public class InstanceHeartbeat {
                         Application.getWebSocketConnections().values().stream())
                 .mapToInt(Integer::intValue)
                 .sum();
-        Metrics.Window window = metrics.getWindow();
+        var window = metrics.getWindow();
 
         return new InstanceStatus(
                 Application.getInstanceId(),

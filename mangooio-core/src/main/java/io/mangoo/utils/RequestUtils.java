@@ -86,7 +86,7 @@ public final class RequestUtils {
     public static boolean hasMultipleParameterValues(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
-        String queryString = exchange.getQueryString();
+        var queryString = exchange.getQueryString();
         if (StringUtils.isBlank(queryString)) {
             return false;
         }

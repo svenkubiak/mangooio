@@ -59,15 +59,15 @@ public class Validator implements Serializable {
     // ASCII digits only, optional sign and decimal point; rejects Unicode digits, exponents, hex, NaN and Infinity
     private static boolean isNumber(String value) {
         int length = value.length();
-        int index = 0;
+        var index = 0;
         if (length > 0 && (value.charAt(0) == '+' || value.charAt(0) == '-')) {
             index++;
         }
 
-        boolean digit = false;
-        boolean dot = false;
+        var digit = false;
+        var dot = false;
         for (; index < length; index++) {
-            char current = value.charAt(index);
+            var current = value.charAt(index);
             if (current >= '0' && current <= '9') {
                 digit = true;
             } else if (current == '.' && !dot) {
