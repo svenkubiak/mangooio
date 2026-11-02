@@ -27,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -183,7 +182,7 @@ public class ApplicationTest {
     @Test
     void testClasspathScanDoesNotRejectApplicationPackages() {
         //given
-        var rejected = Arrays.asList(Const.SCAN_REJECTED_PACKAGES);
+        var rejected = Const.SCAN_REJECTED_PACKAGES;
 
         //then
         for (String broad : new String[] {"io", "io.mangoo", "com", "com.github", "org", "de", "de.svenkubiak", "net", "app", "controllers"}) {

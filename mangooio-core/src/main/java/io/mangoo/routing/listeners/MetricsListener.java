@@ -35,7 +35,7 @@ public class MetricsListener implements ExchangeCompletionListener {
             
             var metrics = Application.getInstance(Metrics.class);
             int status = exchange.getStatusCode();
-            String method = exchange.getRequestMethod().toString();
+            var method = exchange.getRequestMethod().toString();
             metrics.update(processTime);
             metrics.addStatusCode(status);
 

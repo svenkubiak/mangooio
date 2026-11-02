@@ -1,5 +1,6 @@
 package io.mangoo.constants;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 public final class Const {
@@ -9,7 +10,7 @@ public final class Const {
     public static final String FRAMEWORK = "io.mangoo";
     public static final String CSRF_TOKEN = "x-csrf-token";
     public static final String CONFIG_FILE = "config.yaml";
-    public static final String[] SCAN_REJECTED_PACKAGES = {
+    public static final List<String> SCAN_REJECTED_PACKAGES = List.of(
             "com.bastiaanjansen", "com.cronutils", "com.fasterxml", "com.github.benmanes", "com.google", "com.icegreen",
             "com.launchdarkly", "com.mongodb", "com.nimbusds", "com.sun", "de.flapdoodle",
             "de.svenkubiak.embeddedmongodb", "edu.umd", "freemarker", "io.github.classgraph", "io.micrometer",
@@ -21,7 +22,7 @@ public final class Const {
             "org.jheaps", "org.jspecify", "org.junit", "org.jvnet", "org.llorllale", "org.mockito", "org.objenesis",
             "org.ocpsoft", "org.opentest4j", "org.reactivestreams", "org.reflections", "org.slf4j", "org.wildfly",
             "org.xnio", "org.yaml"
-    };
+    );
 
     private Const() {}
 }

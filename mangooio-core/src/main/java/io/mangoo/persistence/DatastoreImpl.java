@@ -223,7 +223,7 @@ public class DatastoreImpl implements Datastore {
         for (String part : url.substring(queryStart + 1).split("&", -1)) {
             var separator = part.indexOf('=');
             var key = separator < 0 ? part : part.substring(0, separator);
-            if (!"authsource".equalsIgnoreCase(URLDecoder.decode(key, StandardCharsets.UTF_8))) {
+            if (!("authsource").equalsIgnoreCase(URLDecoder.decode(key, StandardCharsets.UTF_8))) {
                 continue;
             }
             found = separator < 0 ? "" : URLDecoder.decode(part.substring(separator + 1), StandardCharsets.UTF_8);
@@ -236,7 +236,7 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(clazz, Required.CLASS);
         Objects.requireNonNull(query, Required.KEY);
 
-        return (T) query(clazz)
+        return query(clazz)
                 .find(query)
                 .first();
     }
@@ -246,7 +246,7 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(clazz, Required.CLASS);
         Objects.requireNonNull(sort, Required.SORT);
 
-        return (T) query(clazz)
+        return query(clazz)
                 .find()
                 .sort(sort)
                 .limit(1)

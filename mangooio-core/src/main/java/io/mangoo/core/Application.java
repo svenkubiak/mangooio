@@ -197,8 +197,8 @@ public final class Application {
     private static void logCheck() {
         LOG4J_LISTENER.validateAndCollect();
         if (!LOG4J_LISTENER.getEvents().isEmpty()) {
-            System.out.println("Log4j configuration failed with errors:");
-            System.out.println("\t" + LOG4J_LISTENER.getEvents().toString());
+            System.out.println("Log4j configuration failed with errors:"); //NOSONAR
+            System.out.println("\t" + LOG4J_LISTENER.getEvents().toString()); //NOSONAR
             failsafe();
         }
     }
@@ -1143,7 +1143,7 @@ public final class Application {
                 .ignoreMethodVisibility()
                 .ignoreFieldVisibility()
                 .acceptPackages(ALL_PACKAGES)
-                .rejectPackages(Const.SCAN_REJECTED_PACKAGES)
+                .rejectPackages(Const.SCAN_REJECTED_PACKAGES.toArray(String[]::new))
                 .scan();
 
         LOG.info("Scanned {} classes in {} ms, known library packages are excluded", scanResult.getAllClasses().size(), System.currentTimeMillis() - start);

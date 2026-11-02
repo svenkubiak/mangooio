@@ -135,7 +135,7 @@ public class Config {
             values.put(key, resolved);
             external.add(key);
         } else {
-            String fallback = StringUtils.substringBetween(value, tag, "}");
+            var fallback = StringUtils.substringBetween(value, tag, "}");
             if (OPTIONAL.equals(fallback)) {
                 return;
             }
