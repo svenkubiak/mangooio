@@ -55,9 +55,9 @@ class TelemetryTest {
             var metrics = new RequestMetrics(provider.get("test"));
 
             //when
-            metrics.record("GET", 200, 120_000_000L, "text/html");
-            metrics.record("GET", 200, 30_000_000L, "text/html");
-            metrics.record("POST", 500, 2_000_000_000L, null);
+            metrics.recordRequest("GET", 200, 120_000_000L, "text/html");
+            metrics.recordRequest("GET", 200, 30_000_000L, "text/html");
+            metrics.recordRequest("POST", 500, 2_000_000_000L, null);
 
             //then
             MetricData metric = reader.collect().stream()
@@ -87,7 +87,7 @@ class TelemetryTest {
             var metrics = new RequestMetrics(provider.get("test"));
 
             //when
-            metrics.record("GET", 200, 60_000_000_000L, "text/event-stream; charset=UTF-8");
+            metrics.recordRequest("GET", 200, 60_000_000_000L, "text/event-stream; charset=UTF-8");
 
             //then
             assertThat(reader.collect(), empty());

@@ -7,15 +7,24 @@ import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 
 import java.util.Deque;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /** Rejects connections without a client query parameter and holds accepted ones under that parameter instead of the request URI, so an event can be sent to a single client. */
 public class ClientServerSentEventHandler implements ServerSentEventConnectionCallback {
     public static final String PARAMETER = "client";
-    public static volatile long keepAliveTime; //NOSONAR
+    private static final AtomicLong KEEP_ALIVE_TIME = new AtomicLong();
+
+    public static long keepAliveTime() {
+        return KEEP_ALIVE_TIME.get();
+    }
+
+    public static void resetKeepAliveTime() {
+        KEEP_ALIVE_TIME.set(0);
+    }
 
     @Override
     public void connected(ServerSentEventConnection connection, String lastEventId) {
-        keepAliveTime = connection.getKeepAliveTime();
+        KEEP_ALIVE_TIME.set(connection.getKeepAliveTime());
         String client = firstValue(connection.getQueryParameters(), PARAMETER);
 
         if (client == null) {

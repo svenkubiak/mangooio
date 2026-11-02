@@ -193,13 +193,13 @@ class ServerSentEventRouteHandlerTest {
     void testCustomHandlerGetsKeepAlive() {
         //given
         var eventHandler = new RecordingEventHandler();
-        ClientServerSentEventHandler.keepAliveTime = 0;
+        ClientServerSentEventHandler.resetKeepAliveTime();
 
         //when
         try (BackgroundEventSource eventSource = connect(clientUrl(UUID.randomUUID().toString()), eventHandler)) {
 
             //then
-            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(ClientServerSentEventHandler.keepAliveTime, equalTo(Default.SERVER_SENT_EVENT_KEEP_ALIVE)));
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(ClientServerSentEventHandler.keepAliveTime(), equalTo(Default.SERVER_SENT_EVENT_KEEP_ALIVE)));
         }
     }
 

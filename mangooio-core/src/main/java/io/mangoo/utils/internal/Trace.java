@@ -145,7 +145,7 @@ public final class Trace {
         if (!ready() || requestMetrics == null) {return;}
 
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
-        requestMetrics.record(exchange.getRequestMethod().toString(), exchange.getStatusCode(), nanos,
+        requestMetrics.recordRequest(exchange.getRequestMethod().toString(), exchange.getStatusCode(), nanos,
                 exchange.getResponseHeaders().getFirst(Headers.CONTENT_TYPE));
     }
 

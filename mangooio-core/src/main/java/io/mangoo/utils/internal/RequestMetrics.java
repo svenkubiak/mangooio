@@ -26,7 +26,7 @@ final class RequestMetrics {
     }
 
     // A server sent event stream lasts as long as the connection and would distort the request durations
-    void record(String method, int status, long nanos, String contentType) {
+    void recordRequest(String method, int status, long nanos, String contentType) {
         if (Strings.CI.startsWith(contentType, "text/event-stream")) {
             return;
         }
