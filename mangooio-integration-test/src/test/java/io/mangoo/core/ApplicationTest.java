@@ -245,6 +245,16 @@ public class ApplicationTest {
     }
 
     @Test
+    void testHostnameFromRuntimeName() {
+        //then
+        assertThat(Application.hostnameFromRuntimeName("12345@web-1"), equalTo("web-1"));
+        assertThat(Application.hostnameFromRuntimeName("12345@web@1"), equalTo("web@1"));
+        assertThat(Application.hostnameFromRuntimeName("12345"), nullValue());
+        assertThat(Application.hostnameFromRuntimeName("12345@"), nullValue());
+        assertThat(Application.hostnameFromRuntimeName(null), nullValue());
+    }
+
+    @Test
     void testIsReadyAfterStartup() {
         //then
         assertThat(Application.isReady(), equalTo(true));

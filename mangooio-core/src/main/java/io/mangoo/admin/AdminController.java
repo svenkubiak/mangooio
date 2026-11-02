@@ -87,7 +87,7 @@ public class AdminController {
                 toggle("Scheduler", config.isSchedulerEnabled(), false),
                 toggle("OpenTelemetry", config.isOtlpEnable(), false),
                 value("Shutdown timeout", duration(config.getApplicationShutdownTimeout()), false),
-                value("Timezone", config.getApplicationTimezone(), false),
+                value("Timezone", config.getApplicationTimeZone(), false),
                 value("Language", config.getApplicationLanguage(), false)));
 
         return features;
@@ -114,8 +114,8 @@ public class AdminController {
 
         return List.of(
                 toggle("Admin two factor", StringUtils.isNotBlank(config.getApplicationAdminSecret()), prod),
-                value("Secure cookies", count(secure), prod && secure.containsValue(false)),
-                value("Dedicated cookie secrets", count(dedicated), prod && dedicated.containsValue(false)),
+                value("Secure cookies", count(secure), prod && secure.containsValue(Boolean.FALSE)),
+                value("Dedicated cookie secrets", count(dedicated), prod && dedicated.containsValue(Boolean.FALSE)),
                 value("SameSite session / auth", sessionSameSite + " / " + authenticationSameSite,
                         prod && Strings.CI.equalsAny("None", sessionSameSite, authenticationSameSite)),
                 value("Session cookie", session, false),

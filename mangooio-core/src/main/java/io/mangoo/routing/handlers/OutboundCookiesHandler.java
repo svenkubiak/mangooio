@@ -102,7 +102,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                 // Without an expiry the cookie lives as long as the browser session, the token expires regardless
                 if (Boolean.TRUE.equals(config.isSessionCookieExpires())) {
-                    cookie.setExpires(Date.from(expires.atZone(config.getApplicationTimeZone()).toInstant()));
+                    cookie.setExpires(Date.from(expires.atZone(config.getApplicationTimeZoneId()).toInstant()));
                 }
 
                 exchange.setResponseCookie(cookie);
@@ -118,7 +118,7 @@ public class OutboundCookiesHandler implements HttpHandler {
         if (authentication.isInvalid() || authentication.isLogout()) {
             String id = authentication.getId();
             if (config.isAuthenticationBlacklist() && StringUtils.isNotBlank(id)) {
-                tokenBlacklist.revoke(id, authentication.getExpires().atZone(config.getApplicationTimeZone()).toInstant());
+                tokenBlacklist.revoke(id, authentication.getExpires().atZone(config.getApplicationTimeZoneId()).toInstant());
             }
 
             var cookie = new CookieImpl(config.getAuthenticationCookieName())

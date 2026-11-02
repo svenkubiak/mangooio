@@ -640,7 +640,7 @@ public class Config {
         return getBoolean(Key.APPLICATION_VALIDATION_PASSTHROUGH, Default.APPLICATION_VALIDATION_PASSTHROUGH);
     }
 
-    public String getApplicationTimezone() {
+    public String getApplicationTimeZone() {
         var timezone = getString(Key.APPLICATION_TIMEZONE);
         if (MangooUtils.isValidTimeZone(timezone)) {
             return timezone;
@@ -649,7 +649,7 @@ public class Config {
         return Default.APPLICATION_TIMEZONE;
     }
 
-    public ZoneId getApplicationTimeZone() {
-        return ZoneId.of(getApplicationTimezone());
+    public ZoneId getApplicationTimeZoneId() {
+        return ZoneId.of(getApplicationTimeZone());
     }
 }

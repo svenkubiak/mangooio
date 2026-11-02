@@ -44,7 +44,7 @@ public final class MongoSchema {
     public static String createIndexCommand(String collection, Bson keys, IndexOptions options) {
         var document = new Document();
         if (options.isUnique()) {
-            document.append("unique", true);
+            document.append("unique", Boolean.TRUE);
         }
         if (options.getCollation() != null) {
             document.append("collation", new Document("locale", options.getCollation().getLocale())

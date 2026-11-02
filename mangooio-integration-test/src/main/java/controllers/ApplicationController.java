@@ -95,7 +95,7 @@ public class ApplicationController {
     
     // Fixed distances in the application time zone, so the rendered text does not depend on the time of day
     public Response prettytime() {
-        ZoneId zone = Application.getInstance(Config.class).getApplicationTimeZone();
+        ZoneId zone = Application.getInstance(Config.class).getApplicationTimeZoneId();
         var localDateTime = ZonedDateTime.now(zone).minusHours(3).toLocalDateTime();
         var localDate = LocalDate.now(zone).minusDays(3);
         Date date = new Date(System.currentTimeMillis() - Duration.ofHours(5).toMillis()); //NOSONAR

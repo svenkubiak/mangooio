@@ -80,9 +80,8 @@ import javax.net.ssl.SSLContext;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -99,8 +98,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class Application {
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final String INSTANCE_ID = instanceId(hostname());
-    private static final String TLS_PROTOCOL = "TLSv1.3";
     static {
         System.setProperty("log4j2.shutdownHookEnabled", "false");
         System.setProperty(Key.INSTANCE_ID, INSTANCE_ID);
@@ -114,6 +113,7 @@ public final class Application {
     private static final Map<String, WebSocketProtocolHandshakeHandler> WEB_SOCKET_HANDLERS = new ConcurrentHashMap<>();
     private static final Map<String, io.undertow.server.handlers.sse.ServerSentEventHandler> SERVER_SENT_EVENT_HANDLERS = new ConcurrentHashMap<>();
     private static final int SECRET_BIT_LENGTH = 512;
+    private static final String TLS_PROTOCOL = "TLSv1.3";
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
     private static final String SCHEDULER = "io.mangoo.annotations.Run";
@@ -528,7 +528,7 @@ public final class Application {
     }
 
     static boolean isRootForbidden(String uid, Mode mode) {
-        return "0".equals(StringUtils.trim(uid)) && mode == Mode.PROD;
+        return mode == Mode.PROD && "0".equals(StringUtils.trim(uid));
     }
 
     public static boolean inProdMode() {
@@ -564,7 +564,7 @@ public final class Application {
 
         return LocalDateTime.ofInstant(
                 Instant.ofEpochMilli(START),
-                config.getApplicationTimeZone()
+                config.getApplicationTimeZoneId()
         );
     }
 
@@ -984,7 +984,7 @@ public final class Application {
             keyManagerFactory.init(selected, password);
 
             var sslContext = SSLContext.getInstance(TLS_PROTOCOL);
-            sslContext.init(keyManagerFactory.getKeyManagers(), null, new SecureRandom());
+            sslContext.init(keyManagerFactory.getKeyManagers(), null, SECURE_RANDOM);
 
             return sslContext;
         } catch (IOException | GeneralSecurityException e) {
@@ -1021,22 +1021,33 @@ public final class Application {
 
     static String instanceId(String hostname) {
         var bytes = new byte[3];
-        new SecureRandom().nextBytes(bytes);
+        SECURE_RANDOM.nextBytes(bytes);
 
         return StringUtils.defaultIfBlank(StringUtils.trim(hostname), "mangooio") + "-" + HexFormat.of().formatHex(bytes);
     }
 
+    // HOSTNAME is set in containers. Otherwise the JVM name is pid@hostname from gethostname.
+    // InetAddress.getLocalHost() would resolve that name through DNS and can hang while the class initializes.
     private static String hostname() {
         var hostname = System.getenv("HOSTNAME");
-        if (StringUtils.isBlank(hostname)) {
-            try {
-                hostname = InetAddress.getLocalHost().getHostName();
-            } catch (UnknownHostException e) {
-                hostname = null;
-            }
+        if (StringUtils.isNotBlank(hostname)) {
+            return hostname;
         }
 
-        return hostname;
+        return hostnameFromRuntimeName(ManagementFactory.getRuntimeMXBean().getName());
+    }
+
+    static String hostnameFromRuntimeName(String runtimeName) {
+        if (runtimeName == null) {
+            return null;
+        }
+
+        int separator = runtimeName.indexOf('@');
+        if (separator < 0 || separator == runtimeName.length() - 1) {
+            return null;
+        }
+
+        return runtimeName.substring(separator + 1);
     }
 
     public static String getInstanceId() {

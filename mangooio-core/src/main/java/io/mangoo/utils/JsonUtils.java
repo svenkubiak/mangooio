@@ -156,7 +156,7 @@ public final class JsonUtils {
     private static TimeZone applicationTimeZone() {
         var injector = Application.getInjector();
         if (injector != null) {
-            return TimeZone.getTimeZone(injector.getInstance(Config.class).getApplicationTimeZone());
+            return TimeZone.getTimeZone(injector.getInstance(Config.class).getApplicationTimeZoneId());
         }
         return TimeZone.getDefault();
     }

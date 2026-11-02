@@ -1129,7 +1129,7 @@ class ValidatorTest {
 
     @Test
     void testExpectNumericFormat() {
-        for (String value : new String[] {"-1", "0.5", "42", "+3", ".5"}) {
+        for (String value : new String[] {"-1", "0.5", "42", "+3", ".5", "1.", "+.5"}) {
             // Given
             Validator numeric = new Validator();
             numeric.addValue("number", value);
@@ -1141,7 +1141,7 @@ class ValidatorTest {
             assertFalse(numeric.hasError("number"), "Expected no error for " + value);
         }
 
-        for (String value : new String[] {"abc", "\u0661\u0668", "1e3", "NaN", "Infinity", " 5", ""}) {
+        for (String value : new String[] {"abc", "\u0661\u0668", "1e3", "NaN", "Infinity", " 5", "", ".", "+", "1.2.3"}) {
             // Given
             Validator numeric = new Validator();
             numeric.addValue("number", value);

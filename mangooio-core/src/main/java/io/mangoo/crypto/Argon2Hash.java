@@ -44,7 +44,7 @@ public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
 
     /** Throws IllegalArgumentException if the value is not a well-formed Argon2id PHC string. */
     public static Argon2Hash parse(String value) {
-        String phc = Argument.requireNonBlank(value, Required.HASH);
+        String phc = Objects.requireNonNull(Argument.requireNonBlank(value, Required.HASH));
         Argument.check(isPhcFormat(phc), "Not an " + ALGORITHM + " hash in PHC format");
 
         String[] segments = phc.split("\\$", -1);

@@ -8,11 +8,7 @@ import io.mangoo.async.InMemoryMessageBroker;
 import io.mangoo.cache.*;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.interfaces.AttemptStore;
-import io.mangoo.interfaces.InstanceRegistry;
-import io.mangoo.interfaces.MessageBroker;
-import io.mangoo.interfaces.OneTimeStore;
-import io.mangoo.interfaces.TokenBlacklist;
+import io.mangoo.interfaces.*;
 import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.persistence.*;
 import org.apache.commons.lang3.StringUtils;
@@ -24,8 +20,8 @@ public class Module extends AbstractModule {
     private EmbeddedMongoDB embeddedMongoDB;
 
     public Module() {
-        System.setProperty("user.timezone", config.getApplicationTimezone());
-        TimeZone.setDefault(TimeZone.getTimeZone(config.getApplicationTimezone()));
+        System.setProperty("user.timezone", config.getApplicationTimeZone());
+        TimeZone.setDefault(TimeZone.getTimeZone(config.getApplicationTimeZone()));
 
         var prefix = Default.PERSISTENCE_PREFIX;
         if (config.isPersistenceEnabled() && Boolean.TRUE.equals(config.isMongoEmbedded(prefix))) {

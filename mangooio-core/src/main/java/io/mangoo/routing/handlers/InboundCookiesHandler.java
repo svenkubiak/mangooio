@@ -75,7 +75,7 @@ public class InboundCookiesHandler implements HttpHandler {
 
                 LocalDateTime expires = LocalDateTime.ofInstant(
                         jwtClaimsSet.getExpirationTime().toInstant(),
-                        config.getApplicationTimeZone()
+                        config.getApplicationTimeZoneId()
                 ).withNano(0);
 
                 session = Session.create()
@@ -118,7 +118,7 @@ public class InboundCookiesHandler implements HttpHandler {
                             .twoFactorAuthentication(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.TWO_FACTOR)))
                             .withExpires(LocalDateTime.ofInstant(
                                     jwtClaimsSet.getExpirationTime().toInstant(),
-                                    config.getApplicationTimeZone()
+                                    config.getApplicationTimeZoneId()
                             ));
                 }
             } catch (ParseException | MangooJwtException e) {

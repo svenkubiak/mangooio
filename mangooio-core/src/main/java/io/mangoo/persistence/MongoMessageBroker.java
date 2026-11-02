@@ -254,7 +254,8 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
         }
     }
 
-    boolean isRunning() {
+    // thread is assigned under this lock in start() and cleared in stop()
+    synchronized boolean isRunning() {
         return running && thread != null && thread.isAlive();
     }
 }

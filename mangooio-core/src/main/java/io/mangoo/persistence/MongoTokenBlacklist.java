@@ -107,7 +107,7 @@ public class MongoTokenBlacklist extends MongoStore implements TokenBlacklist {
 
                 // iat has second precision, so a token issued within the second of the revocation (e.g. a new login) stays valid
                 Date since = document.getDate(SINCE);
-                if (since != null && issuedAt.isBefore(since.toInstant().truncatedTo(ChronoUnit.SECONDS))) {
+                if (issuedAt != null && since != null && issuedAt.isBefore(since.toInstant().truncatedTo(ChronoUnit.SECONDS))) {
                     return true;
                 }
             }
