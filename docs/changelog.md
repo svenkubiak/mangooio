@@ -1,6 +1,6 @@
 ## Version 10.16.0
 
-Unreleased
+Released at 02.11.2026
 
 * MongoDB commands are traced again when otlp.enable is true (svenkubiak)
 * **Behaviour change** Removed freemarker-java8. .format() without a pattern prints toString(), format styles, ISO_* names, a zone argument, toZonedDateTime, zoneId.format and clock.format are no longer accepted, and ${zoneId} prints the zone id (svenkubiak)
@@ -10,6 +10,7 @@ Unreleased
   * mongo-driver-sync 5.13.0 -&gt; 5.14.0
   * classgraph 6.0.0 -&gt; 6.0.1
   * tika-core 5.0.1 -&gt; 5.0.2
+  * hibernate-validator 9.1.5.Final -&gt; 9.1.6.Final
 
 ## Version 10.15.1
 
