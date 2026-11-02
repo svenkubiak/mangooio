@@ -8,6 +8,8 @@ import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.internal.MangooUtils;
+import io.undertow.UndertowOptions;
+import io.undertow.server.CookieStore;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
@@ -19,6 +21,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.xnio.OptionMap;
 
 import java.time.Instant;
 import java.util.Date;
@@ -95,9 +98,13 @@ public class AdminStream {
 
     // The handshake was checked by the handler; the expiry is kept to close the stream with the cookie
     private void connected(ServerSentEventConnection connection, String lastEventId) {
-        Map<String, Cookie> cookies = Cookies.parseRequestCookies(MAX_COOKIES, false, connection.getRequestHeaders().get(Headers.COOKIE));
-        Cookie cookie = cookies.get(MangooUtils.getAdminCookieName());
-        Optional<Instant> expires = expiresAt(cookie == null ? null : cookie.getValue());
+        var cookies = new CookieStore();
+        Cookies.parseRequestCookies(connection.getRequestHeaders().get(Headers.COOKIE), cookies, OptionMap.builder()
+                .set(UndertowOptions.MAX_COOKIES, MAX_COOKIES)
+                .set(UndertowOptions.ENABLE_RFC6265_COOKIE_VALIDATION, false)
+                .getMap());
+        List<Cookie> adminCookies = cookies.get(MangooUtils.getAdminCookieName());
+        Optional<Instant> expires = expiresAt(adminCookies.isEmpty() ? null : adminCookies.getFirst().getValue());
         if (expires.isEmpty()) {
             connection.shutdown();
             return;
@@ -144,7 +151,7 @@ public class AdminStream {
                 ? Stream.concat(SECTIONS.stream(), METRIC_SECTIONS.stream()).toList()
                 : SECTIONS;
 
-        Map<String, String> sections = new LinkedHashMap<>();
+        Map<String, String> sections = LinkedHashMap.newLinkedHashMap(names.size());
         for (String name : names) {
             content.put("section", name);
             String html = templateEngine.renderTemplate(new TemplateContext(content).withTemplatePath(TEMPLATE));

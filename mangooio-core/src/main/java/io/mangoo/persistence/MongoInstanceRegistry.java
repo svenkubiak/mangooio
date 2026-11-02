@@ -75,7 +75,7 @@ public class MongoInstanceRegistry extends MongoStore implements InstanceRegistr
         try {
             collection().replaceOne(Filters.eq(ID, status.id()), document, new ReplaceOptions().upsert(true));
         } catch (MongoException | IllegalStateException e) {
-            LOG.error("Failed to report the status of instance '{}'", status.id(), e);
+            LOG.atError().withThrowable(e).log("Failed to report the status of instance '{}'", status.id());
         }
     }
 

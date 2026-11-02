@@ -1,6 +1,7 @@
 package io.mangoo.scheduler;
 
 import com.google.common.base.Preconditions;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import org.apache.logging.log4j.LogManager;
@@ -8,15 +9,17 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FixedDelayTask implements Runnable {
     private static final Logger LOG = LogManager.getLogger(FixedDelayTask.class);
     private final Runnable task;
     private final String name;
     private final long delaySeconds;
+    @SuppressFBWarnings(value = "HES_EXECUTOR_NEVER_SHUTDOWN", justification = "Shared application scheduler, shut down by Shutdown")
     private final ScheduledExecutorService scheduler;
     private final Executor executor;
-    private volatile ScheduledFuture<?> scheduledFuture;
+    private final AtomicReference<ScheduledFuture<?>> scheduledFuture = new AtomicReference<>();
 
     public FixedDelayTask(Class<?> clazz, String methodName, long delaySeconds) {
         this(new Task(Objects.requireNonNull(clazz, Required.CLASS), Objects.requireNonNull(methodName, Required.METHOD)),
@@ -57,7 +60,7 @@ public class FixedDelayTask implements Runnable {
     public ScheduledFuture<?> schedule() {
         try {
             var future = scheduler.schedule(this, delaySeconds, TimeUnit.SECONDS);
-            scheduledFuture = future;
+            scheduledFuture.set(future);
             return future;
         } catch (RejectedExecutionException e) {
             LOG.debug("Scheduler rejected task '{}', stopping", name);
@@ -67,6 +70,6 @@ public class FixedDelayTask implements Runnable {
 
     @SuppressWarnings("java:S1452")
     public ScheduledFuture<?> getScheduledFuture() {
-        return scheduledFuture;
+        return scheduledFuture.get();
     }
 }

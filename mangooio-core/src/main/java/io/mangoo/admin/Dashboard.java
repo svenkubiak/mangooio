@@ -103,8 +103,9 @@ public class Dashboard {
 
     // The routes with the most server errors first, then client errors; routes without errors are left out
     private List<Map<String, Object>> getFailedRoutes() {
-        List<Map<String, Object>> routes = new ArrayList<>();
-        for (Entry<String, Map<Integer, LongAdder>> entry : metrics.getRouteResponses().entrySet()) {
+        Map<String, Map<Integer, LongAdder>> responses = metrics.getRouteResponses();
+        List<Map<String, Object>> routes = new ArrayList<>(responses.size());
+        for (Entry<String, Map<Integer, LongAdder>> entry : responses.entrySet()) {
             Map<Integer, Long> codes = new TreeMap<>();
             entry.getValue().forEach((code, count) -> codes.put(code, count.longValue()));
 
@@ -144,8 +145,9 @@ public class Dashboard {
     }
 
     private List<Map<String, Object>> getFailures() {
-        List<Map<String, Object>> failures = new ArrayList<>();
-        for (Metrics.Failure failure : metrics.getFailures()) {
+        List<Metrics.Failure> recorded = metrics.getFailures();
+        List<Map<String, Object>> failures = new ArrayList<>(recorded.size());
+        for (Metrics.Failure failure : recorded) {
             Map<String, Object> entry = new HashMap<>();
             entry.put("time", LocalDateTime.ofInstant(failure.time(), ZoneId.systemDefault()).format(DATE_TIME_FORMATTER));
             entry.put("method", failure.method());
@@ -176,7 +178,7 @@ public class Dashboard {
         statuses.put(current.id(), current);
 
         var now = Instant.now();
-        List<Map<String, Object>> instances = new ArrayList<>();
+        List<Map<String, Object>> instances = new ArrayList<>(statuses.size());
         for (InstanceStatus status : statuses.values()) {
             long seen = Math.max(0, Duration.between(status.seen(), now).toSeconds());
             Map<String, Object> instance = new HashMap<>();
@@ -199,8 +201,9 @@ public class Dashboard {
     }
 
     private static Map<String, Long> getTotals(List<Map<String, Object>> instances) {
-        Map<String, Long> totals = new HashMap<>();
-        for (String key : List.of("connections", "requests", "errors", "failedEvents")) {
+        List<String> keys = List.of("connections", "requests", "errors", "failedEvents");
+        Map<String, Long> totals = HashMap.newHashMap(keys.size());
+        for (String key : keys) {
             totals.put(key, instances.stream().mapToLong(instance -> ((Number) instance.get(key)).longValue()).sum());
         }
 

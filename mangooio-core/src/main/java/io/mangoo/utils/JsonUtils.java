@@ -5,8 +5,6 @@ import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.routing.bindings.UnprocessableContent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;
@@ -23,9 +21,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public final class JsonUtils {
-    private static final Logger LOG = LogManager.getLogger(JsonUtils.class);
-    private static volatile ObjectMapper mapper;
-
     private JsonUtils(){
     }
 
@@ -123,16 +118,12 @@ public final class JsonUtils {
     }
 
     private static ObjectMapper mapper() {
-        var current = mapper;
-        if (current == null) {
-            synchronized (JsonUtils.class) {
-                current = mapper;
-                if (current == null) {
-                    mapper = current = buildMapper();
-                }
-            }
-        }
-        return current;
+        return MapperHolder.MAPPER;
+    }
+
+    // Initialized on first use, after Module has applied application.timezone
+    private static final class MapperHolder {
+        private static final ObjectMapper MAPPER = buildMapper();
     }
 
     /**

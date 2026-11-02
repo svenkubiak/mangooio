@@ -4,6 +4,7 @@ import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import org.apache.logging.log4j.LogManager;
@@ -14,17 +15,19 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CronTask implements Runnable {
     private static final Logger LOG = LogManager.getLogger(CronTask.class);
     private final Runnable task;
     private final String name;
     private final ExecutionTime executionTime;
+    @SuppressFBWarnings(value = "HES_EXECUTOR_NEVER_SHUTDOWN", justification = "Shared application scheduler, shut down by Shutdown")
     private final ScheduledExecutorService scheduler;
     private final Executor executor;
     private final Clock clock;
     private ZonedDateTime lastSlot;
-    private volatile ScheduledFuture<?> scheduledFuture;
+    private final AtomicReference<ScheduledFuture<?>> scheduledFuture = new AtomicReference<>();
 
     public CronTask(Class<?> clazz, String methodName, String cron) {
         this(new Task(Objects.requireNonNull(clazz, Required.CLASS), Objects.requireNonNull(methodName, Required.METHOD)),
@@ -79,7 +82,7 @@ public class CronTask implements Runnable {
         lastSlot = next.orElseThrow();
         try {
             var future = scheduler.schedule(this, Duration.between(now, lastSlot).toMillis(), TimeUnit.MILLISECONDS);
-            scheduledFuture = future;
+            scheduledFuture.set(future);
             return future;
         } catch (RejectedExecutionException e) {
             LOG.debug("Scheduler rejected cron task '{}', stopping", name);
@@ -89,6 +92,6 @@ public class CronTask implements Runnable {
 
     @SuppressWarnings("java:S1452")
     public ScheduledFuture<?> getScheduledFuture() {
-        return scheduledFuture;
+        return scheduledFuture.get();
     }
 }

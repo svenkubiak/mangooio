@@ -98,10 +98,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class Application {
+    static {
+        // Also set in log4j2.system.properties, so a logger created before this class still sees it
+        System.setProperty("log4j2.shutdownHookEnabled", "false");
+    }
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final String INSTANCE_ID = instanceId(hostname());
     static {
-        System.setProperty("log4j2.shutdownHookEnabled", "false");
         System.setProperty(Key.INSTANCE_ID, INSTANCE_ID);
     }
     private static final Log4jListener LOG4J_LISTENER = new Log4jListener();

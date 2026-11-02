@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -52,7 +53,7 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
     private final String instanceId;
     private final boolean create;
     private volatile boolean running;
-    private volatile Object marker;
+    private final AtomicReference<Object> marker = new AtomicReference<>();
     private Thread thread;
 
     @Inject
@@ -81,7 +82,7 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
         try {
             collection().insertOne(new Document(TOPIC, topic).append(MESSAGE, message).append(INSTANCE, instanceId));
         } catch (MongoException | IllegalStateException e) {
-            LOG.error("Failed to publish a message of topic '{}', only the subscribers of this instance received it", topic, e);
+            LOG.atError().withThrowable(e).log("Failed to publish a message of topic '{}', only the subscribers of this instance received it", topic);
         }
     }
 
@@ -151,7 +152,7 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
 
         seed();
         Document last = collection().find().sort(new Document("$natural", -1)).limit(1).first();
-        marker = last == null ? null : last.get(ID);
+        marker.set(last == null ? null : last.get(ID));
         running = true;
         thread = Thread.ofPlatform().daemon().name("mangooio-message-broker").start(this::tail);
     }
@@ -196,11 +197,11 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
 
                     Object id = document.get(ID);
                     if (!positioned) {
-                        positioned = id.equals(marker);
+                        positioned = id.equals(marker.get());
                         continue;
                     }
 
-                    marker = id;
+                    marker.set(id);
                     delivered = true;
                     if (!instanceId.equals(document.getString(INSTANCE)) && !SEED.equals(document.getString(TOPIC))) {
                         InMemoryMessageBroker.deliver(subscribers, document.getString(TOPIC), document.getString(MESSAGE));
@@ -227,7 +228,8 @@ public class MongoMessageBroker extends MongoStore implements MessageBroker {
     }
 
     private boolean markerExists() {
-        return marker != null && collection().find(Filters.eq(ID, marker)).first() != null;
+        Object current = marker.get();
+        return current != null && collection().find(Filters.eq(ID, current)).first() != null;
     }
 
     // With persistence.mongo.schema validate a dropped collection is not created again, tailing retries until it exists
