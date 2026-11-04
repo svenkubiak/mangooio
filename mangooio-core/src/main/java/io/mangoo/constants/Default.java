@@ -75,6 +75,10 @@ public final class Default {
     public static final String SMTP_HOST = "localhost";
     public static final int SMTP_PORT = 25;
     public static final String SMTP_PROTOCOL = "smtps";
+    public static final String SMTP_PROTOCOL_STARTTLS = "smtptls";
+    public static final String SMTP_PROTOCOL_CLEAR = "smtp";
+    public static final int SMTP_CONNECTION_TIMEOUT = 10000;
+    public static final int SMTP_READ_TIMEOUT = 30000;
     public static final long UNDERTOW_MAX_ENTITY_SIZE = 4194304L;
     public static final int UNDERTOW_MAX_HEADER_SIZE = 8192;
     public static final int UNDERTOW_MAX_PARAMETERS = 1000;

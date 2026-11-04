@@ -81,12 +81,14 @@ public final class Key {
     public static final String SESSION_COOKIE_TOKEN_EXPIRES = "session.cookie.token.expires";
     public static final String SESSION_COOKIE_SAME_SITE_MODE = "session.cookie.samesitemode";
     public static final String SMTP_AUTHENTICATION = "smtp.authentication";
+    public static final String SMTP_CONNECTION_TIMEOUT = "smtp.connection.timeout";
     public static final String SMTP_DEBUG = "smtp.debug";
     public static final String SMTP_FROM = "smtp.from";
     public static final String SMTP_HOST = "smtp.host";
     public static final String SMTP_PASSWORD = "smtp.password";
     public static final String SMTP_PORT = "smtp.port";
     public static final String SMTP_PROTOCOL = "smtp.protocol";
+    public static final String SMTP_READ_TIMEOUT = "smtp.read.timeout";
     public static final String SMTP_USERNAME = "smtp.username";
     public static final String UNDERTOW_MAX_ENTITY_SIZE = "undertow.maxentitysize";
     public static final String OTLP_ENABLE = "otlp.enable";

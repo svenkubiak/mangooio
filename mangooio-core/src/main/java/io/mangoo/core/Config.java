@@ -183,6 +183,29 @@ public class Config {
         return value;
     }
 
+    // smtps and smtptls are encrypted. smtp is cleartext and exists for the test server, so production refuses it.
+    static String smtpProtocolFailure(String protocol, Mode mode) {
+        String normalized = protocol == null ? "" : protocol.trim().toLowerCase(Locale.ENGLISH);
+        if (Default.SMTP_PROTOCOL.equals(normalized) || Default.SMTP_PROTOCOL_STARTTLS.equals(normalized)) {
+            return null;
+        }
+        if (Default.SMTP_PROTOCOL_CLEAR.equals(normalized)) {
+            if (mode == Mode.PROD) {
+                return "smtp.protocol smtp sends mail in cleartext and is only allowed in dev and test";
+            }
+            return null;
+        }
+
+        return "smtp.protocol must be smtps, smtptls or smtp";
+    }
+
+    // A socket timeout of 0 waits forever, so the configured limits have to stay positive.
+    private void addSmtpTimeoutFailure(String key, int timeout) {
+        if (timeout <= 0) {
+            errors.add(key + " must be greater than 0 milliseconds, but is " + timeout);
+        }
+    }
+
     static boolean isSecret(String key) {
         return SECRETS.contains(key) || (key.startsWith(Default.PERSISTENCE_PREFIX) && key.endsWith("." + Key.PERSISTENCE_MONGO_PASSWORD));
     }
@@ -193,8 +216,15 @@ public class Config {
                 .trim();
     }
 
-    /** Fails for unresolved placeholders and, in prod mode, for secrets written literally into the config.yaml of the classpath. */
+    /** Fails for unresolved placeholders, an unsupported SMTP protocol and, in prod mode, for secrets written literally into the config.yaml of the classpath. */
     public void validate() {
+        String smtpProtocolFailure = smtpProtocolFailure(getSmtpProtocol(), Application.getMode());
+        if (smtpProtocolFailure != null) {
+            errors.add(smtpProtocolFailure);
+        }
+        addSmtpTimeoutFailure(Key.SMTP_CONNECTION_TIMEOUT, getSmtpConnectionTimeout());
+        addSmtpTimeoutFailure(Key.SMTP_READ_TIMEOUT, getSmtpReadTimeout());
+
         Set<String> failures = new TreeSet<>(errors);
         if (Application.getMode() == Mode.PROD && !externalConfig) {
             getLiteralSecrets().forEach(key -> failures.add(key + " is a secret and must not be set literally in prod, use env{}, arg{} or file{}"));
@@ -364,6 +394,14 @@ public class Config {
 
     public int getSmtpPort() {
         return getInt(Key.SMTP_PORT, Default.SMTP_PORT);
+    }
+
+    public int getSmtpConnectionTimeout() {
+        return getInt(Key.SMTP_CONNECTION_TIMEOUT, Default.SMTP_CONNECTION_TIMEOUT);
+    }
+
+    public int getSmtpReadTimeout() {
+        return getInt(Key.SMTP_READ_TIMEOUT, Default.SMTP_READ_TIMEOUT);
     }
 
     public String getSmtpUsername() {

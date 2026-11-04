@@ -1177,6 +1177,78 @@ class ConfigTest {
     }
 
     @Test
+    void testUnknownSmtpProtocolFailsValidation() {
+        // when
+        createTempConfig(ImmutableMap.of("smtp.protocol", "starttls"));
+        Config config = new Config();
+        config.validate();
+
+        // then
+        assertThat(config.getErrors(), hasItem("smtp.protocol must be smtps, smtptls or smtp"));
+        assertThat(config.isValid(), equalTo(false));
+    }
+
+    @Test
+    void testCleartextSmtpPassesValidationInTest() {
+        // when
+        createTempConfig(ImmutableMap.of("smtp.protocol", "smtp"));
+        Config config = new Config();
+        config.validate();
+
+        // then
+        assertThat(config.isValid(), equalTo(true));
+        assertThat(config.getErrors(), empty());
+    }
+
+    @Test
+    void testCleartextSmtpIsAllowedInTestAndRefusedInProd() {
+        // then
+        assertThat(Config.smtpProtocolFailure("smtp", Mode.TEST), nullValue());
+        assertThat(Config.smtpProtocolFailure("smtp", Mode.DEV), nullValue());
+        assertThat(Config.smtpProtocolFailure("SMTP", Mode.PROD), equalTo("smtp.protocol smtp sends mail in cleartext and is only allowed in dev and test"));
+        assertThat(Config.smtpProtocolFailure("smtps", Mode.PROD), nullValue());
+        assertThat(Config.smtpProtocolFailure("SMTPTLS", Mode.PROD), nullValue());
+        assertThat(Config.smtpProtocolFailure("starttls", Mode.DEV), equalTo("smtp.protocol must be smtps, smtptls or smtp"));
+    }
+
+    @Test
+    void testSmtpTimeoutsUseTheDefaults() {
+        // when
+        createTempConfig(ImmutableMap.of("smtp.host", "localhost"));
+        Config config = new Config();
+
+        // then
+        assertThat(config.getSmtpConnectionTimeout(), equalTo(Default.SMTP_CONNECTION_TIMEOUT));
+        assertThat(config.getSmtpReadTimeout(), equalTo(Default.SMTP_READ_TIMEOUT));
+    }
+
+    @Test
+    void testSmtpTimeoutsAreConfigurable() {
+        // when
+        createTempConfig(ImmutableMap.of("smtp.connection.timeout", "2500", "smtp.read.timeout", "4000"));
+        Config config = new Config();
+        config.validate();
+
+        // then
+        assertThat(config.getSmtpConnectionTimeout(), equalTo(2500));
+        assertThat(config.getSmtpReadTimeout(), equalTo(4000));
+        assertThat(config.isValid(), equalTo(true));
+    }
+
+    @Test
+    void testSmtpTimeoutOfZeroFailsValidation() {
+        // when
+        createTempConfig(ImmutableMap.of("smtp.connection.timeout", "0", "smtp.read.timeout", "-1"));
+        Config config = new Config();
+        config.validate();
+
+        // then
+        assertThat(config.getErrors(), hasItem("smtp.connection.timeout must be greater than 0 milliseconds, but is 0"));
+        assertThat(config.getErrors(), hasItem("smtp.read.timeout must be greater than 0 milliseconds, but is -1"));
+        assertThat(config.isValid(), equalTo(false));
+    }
+
+    @Test
     void testGetMongoAuthDB() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());

@@ -61,4 +61,4 @@ Mail.newMail()
 
 Priority ranges from 1 (highest) to 5 (lowest), and encoding is always UTF-8.
 
-SMTP settings live under `smtp.*` in [Configuration](configuration.md). For tests, reach for `io.mangoo.test.email.SmtpMock` from `mangooio-test` instead of a real SMTP server.
+SMTP settings live under `smtp.*` in [Configuration](configuration.md). `smtp.protocol: smtps` opens TLS before any SMTP command, and `smtptls` aborts the delivery when the server does not complete STARTTLS. `smtp` is cleartext and is accepted only in dev and test, which is what `SmtpMock` needs. A connection or a read that exceeds `smtp.connection.timeout` or `smtp.read.timeout` (10 seconds and 30 seconds by default) is aborted and logged with the configured limits. For tests, reach for `io.mangoo.test.email.SmtpMock` from `mangooio-test` instead of a real SMTP server.

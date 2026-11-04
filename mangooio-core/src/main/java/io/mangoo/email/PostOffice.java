@@ -1,5 +1,6 @@
 package io.mangoo.email;
 
+import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
 import jakarta.activation.DataHandler;
@@ -17,8 +18,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
@@ -28,23 +33,22 @@ public class PostOffice {
     private static final Logger LOG = LogManager.getLogger(PostOffice.class);
     private final Session session;
     private final String defaultFrom;
+    private final int connectionTimeout;
+    private final int readTimeout;
 
     @Inject
     public PostOffice(Config config) {
         Objects.requireNonNull(config, Required.CONFIG);
         this.defaultFrom = config.getSmtpFrom();
+        this.connectionTimeout = config.getSmtpConnectionTimeout();
+        this.readTimeout = config.getSmtpReadTimeout();
 
         var properties = new Properties();
         properties.put("mail.smtp.host", config.getSmtpHost());
         properties.put("mail.smtp.port", String.valueOf(config.getSmtpPort()));
         properties.put("mail.from", config.getSmtpFrom());
         properties.put("mail.debug", String.valueOf(config.isSmtpDebug()));
-
-        if (("smtps").equalsIgnoreCase(config.getSmtpProtocol())) {
-            properties.put("mail.smtp.ssl.enable", "true");
-        } else if (("smtptls").equalsIgnoreCase(config.getSmtpProtocol())) {
-            properties.put("mail.smtp.starttls.enable", "true");
-        }
+        applyTransport(properties, config.getSmtpProtocol(), connectionTimeout, readTimeout);
 
         Authenticator authenticator = null;
         if (config.isSmtpAuthentication()) {
@@ -81,8 +85,64 @@ public class PostOffice {
 
             Transport.send(mimeMessage);
         } catch (IOException | MessagingException | RuntimeException e) {
-            LOG.error("Failed to send mail", e);
+            logSendFailure(e, connectionTimeout, readTimeout);
         }
+    }
+
+    // smtps starts TLS immediately. smtptls must upgrade or the send fails before AUTH. smtp stays cleartext for the test server.
+    static void applyTransport(Properties properties, String protocol, int connectionTimeout, int readTimeout) {
+        String normalized = protocol == null ? "" : protocol.trim().toLowerCase(Locale.ENGLISH);
+        switch (normalized) {
+            case Default.SMTP_PROTOCOL -> {
+                properties.put("mail.smtp.ssl.enable", "true");
+                properties.put("mail.smtp.ssl.checkserveridentity", "true");
+            }
+            case Default.SMTP_PROTOCOL_STARTTLS -> {
+                properties.put("mail.smtp.starttls.enable", "true");
+                properties.put("mail.smtp.starttls.required", "true");
+                properties.put("mail.smtp.ssl.checkserveridentity", "true");
+            }
+            case Default.SMTP_PROTOCOL_CLEAR -> {
+                // accepted in dev and test only; Config.validate rejects it in prod
+            }
+            default -> throw new IllegalArgumentException("smtp.protocol must be smtps, smtptls or smtp");
+        }
+
+        properties.put("mail.smtp.connectiontimeout", Integer.toString(connectionTimeout));
+        properties.put("mail.smtp.timeout", Integer.toString(readTimeout));
+        LOG.info("SMTP connection timeout is {} ms and read timeout is {} ms", connectionTimeout, readTimeout);
+    }
+
+    static void logSendFailure(Throwable throwable, int connectionTimeout, int readTimeout) {
+        if (causedByTimeout(throwable)) {
+            LOG.error("SMTP connection or read timed out (connection timeout {} ms, read timeout {} ms)",
+                    connectionTimeout, readTimeout, throwable);
+        } else {
+            LOG.error("Failed to send mail", throwable);
+        }
+    }
+
+    static boolean causedByTimeout(Throwable throwable) {
+        var seen = new HashSet<Throwable>();
+        var pending = new ArrayDeque<Throwable>();
+        pending.add(throwable);
+        while (!pending.isEmpty()) {
+            Throwable current = pending.remove();
+            if (current == null || !seen.add(current)) {
+                continue;
+            }
+            if (current instanceof SocketTimeoutException) {
+                return true;
+            }
+            if (current.getCause() != null) {
+                pending.add(current.getCause());
+            }
+            if (current instanceof MessagingException messagingException && messagingException.getNextException() != null) {
+                pending.add(messagingException.getNextException());
+            }
+        }
+
+        return false;
     }
 
     private void setAttachments(Mail mail, Part part) throws MessagingException {

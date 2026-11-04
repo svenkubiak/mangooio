@@ -207,14 +207,18 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `session.cookie.secure` | Secure cookie flag (also used for flash) | `false` |
 | `session.cookie.token.expires` | Session token lifetime in **seconds** | `3600` |
 | `smtp.authentication` | Enable SMTP authentication | `false` |
+| `smtp.connection.timeout` | Time in **milliseconds** to wait for the SMTP connection. `0` waits forever and is rejected | `10000` |
 | `smtp.debug` | Enable SMTP debug output | `false` |
 | `smtp.from` | Default From address | `mangoo <noreply@mangoo.local>` |
 | `smtp.host` | SMTP host | `localhost` |
 | `smtp.password` | SMTP password | *(none)* |
 | `smtp.port` | SMTP port | `25` |
-| `smtp.protocol` | SMTP protocol | `smtps` |
+| `smtp.protocol` | `smtps` opens TLS immediately, `smtptls` requires STARTTLS, `smtp` is cleartext and only allowed in dev and test | `smtps` |
+| `smtp.read.timeout` | Time in **milliseconds** to wait for an SMTP read. `0` waits forever and is rejected | `30000` |
 | `smtp.username` | SMTP username | *(none)* |
 | `undertow.maxentitysize` | Maximum HTTP entity size in bytes | `4194304` |
+
+`smtps` and `smtptls` are the two encrypted ways to reach a mail server, and they are not interchangeable: `smtps` starts the TLS handshake before any SMTP command, which is what port 465 expects, while `smtptls` connects in cleartext and then requires STARTTLS, which is what port 587 expects. If the server does not upgrade the connection, the delivery is aborted before authentication or the message is sent. `smtp` leaves the connection in cleartext and the application refuses to start with it in prod mode; dev and test accept it because the local test server speaks plain SMTP. Every delivery gives up after `smtp.connection.timeout` milliseconds without a connection and after `smtp.read.timeout` milliseconds without a read. The defaults are 10 seconds and 30 seconds. Both configured values are written to the log when the mail session is created, and a delivery that hits either limit is logged again with the same values. A value of `0` or below is rejected at startup.
 
 A couple of these are worth calling out by name. `authentication.cookie.samesitemode` and `session.cookie.samesitemode` both default to `Strict`, which is the safest choice against CSRF but also means the cookie will not be sent on cross-site navigations at all (a link from another domain, for instance); loosen it to `Lax` if your login flow depends on that. `undertow.maxentitysize` caps request body size at 4 MiB by default, mostly to stop an accidental (or malicious) huge upload from eating memory before your controller even gets a chance to reject it; raise it deliberately if your application genuinely needs larger uploads. That raise alone is only half the story, though: `form.maxfilesize` caps every single uploaded file at 5 MiB on top of it, for the same reason. The two limits sit behind each other, and an upload has to pass both — plus whatever a reverse proxy in front of the application allows, such as nginx's `client_max_body_size`. Raising only one of them moves the failure to another layer instead of removing it. A form that trips `form.maxfilesize` is rejected before any controller runs; the `FormHandler` logs the reason on WARN and the request is answered with a `400`.
 
