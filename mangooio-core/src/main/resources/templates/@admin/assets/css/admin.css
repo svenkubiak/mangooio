@@ -87,8 +87,16 @@
     --admin-info-bg: rgba(59, 130, 246, .14);
 }
 
+/* Blades 3.1 dropped the full-height column, which centered the auth card and pinned the footer */
 body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
     background: var(--admin-bg);
+}
+
+body > main {
+    flex-grow: 1;
 }
 
 article {
@@ -548,6 +556,7 @@ body.auth > main {
 
 .auth-card hgroup {
     margin-bottom: 1.5rem;
+    text-align: center;
 }
 
 .auth-card h1 {
@@ -572,12 +581,37 @@ body.auth > main {
     margin-bottom: 0;
 }
 
-.auth-card input.otp {
+.auth-card .otp {
+    margin-bottom: 0;
+    border: 0;
+    padding: 0;
+}
+
+.auth-card .otp legend {
+    margin-bottom: .375rem;
+    font-size: .875rem;
+    font-weight: 500;
+}
+
+.otp-digits {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: .5rem;
+}
+
+.auth-card .otp-digit {
+    width: 100%;
+    height: 3rem;
+    margin: 0;
+    padding: 0;
     font-family: var(--pico-font-family-monospace);
-    font-size: 1.5rem;
-    letter-spacing: .5em;
+    font-size: 1.25rem;
     text-align: center;
-    text-indent: .5em;
+}
+
+.auth-card .otp-digit[aria-invalid] {
+    padding-inline: 0 !important;
+    background-image: none;
 }
 
 .auth-cancel {

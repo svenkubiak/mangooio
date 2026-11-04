@@ -1,5 +1,78 @@
 const form = document.getElementById('login-form');
 if (form) {
+    const digits = [...form.querySelectorAll('.otp-digit')];
+    const code = document.getElementById('code');
+
+    if (digits.length > 0 && code) {
+        let submitting = false;
+
+        const sync = () => {
+            code.value = digits.map(digit => digit.value).join('');
+        };
+
+        const submitCode = () => {
+            if (submitting || !digits.every(digit => /^[0-9]$/.test(digit.value))) {
+                return;
+            }
+            submitting = true;
+            sync();
+            form.requestSubmit();
+        };
+
+        const write = (start, text) => {
+            const chars = [...text.replace(/\D/g, '')].slice(0, digits.length - start);
+            if (chars.length === 0) {
+                digits[start].value = '';
+                sync();
+                return;
+            }
+            chars.forEach((char, offset) => {
+                digits[start + offset].value = char;
+            });
+            const focusAt = Math.min(start + chars.length, digits.length - 1);
+            digits[focusAt].focus();
+            digits[focusAt].select();
+            sync();
+            submitCode();
+        };
+
+        let pasted = false;
+        digits.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                if (pasted) {
+                    pasted = false;
+                    return;
+                }
+                write(index, input.value);
+            });
+
+            input.addEventListener('keydown', event => {
+                if (event.key === 'Backspace' && input.value === '' && index > 0) {
+                    digits[index - 1].value = '';
+                    digits[index - 1].focus();
+                    sync();
+                    event.preventDefault();
+                } else if (event.key === 'ArrowLeft' && index > 0) {
+                    digits[index - 1].focus();
+                    event.preventDefault();
+                } else if (event.key === 'ArrowRight' && index < digits.length - 1) {
+                    digits[index + 1].focus();
+                    event.preventDefault();
+                }
+            });
+
+            input.addEventListener('paste', event => {
+                event.preventDefault();
+                pasted = true;
+                write(index, event.clipboardData.getData('text'));
+            });
+
+            input.addEventListener('focus', () => input.select());
+        });
+
+        form.addEventListener('submit', sync, true);
+    }
+
     form.addEventListener('submit', () => {
         const button = document.getElementById('login');
         button.setAttribute('aria-busy', 'true');
