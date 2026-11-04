@@ -20,13 +20,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
 import java.nio.file.Path;
-import java.util.ArrayDeque;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Locale;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Properties;
 
 @Singleton
 public class PostOffice {
@@ -89,8 +84,7 @@ public class PostOffice {
         }
     }
 
-    // smtps starts TLS immediately. smtptls must upgrade or the send fails before AUTH. smtp stays cleartext for the test server.
-    static void applyTransport(Properties properties, String protocol, int connectionTimeout, int readTimeout) {
+    private void applyTransport(Properties properties, String protocol, int connectionTimeout, int readTimeout) {
         String normalized = protocol == null ? "" : protocol.trim().toLowerCase(Locale.ENGLISH);
         switch (normalized) {
             case Default.SMTP_PROTOCOL -> {
@@ -102,9 +96,7 @@ public class PostOffice {
                 properties.put("mail.smtp.starttls.required", "true");
                 properties.put("mail.smtp.ssl.checkserveridentity", "true");
             }
-            case Default.SMTP_PROTOCOL_CLEAR -> {
-                // accepted in dev and test only; Config.validate rejects it in prod
-            }
+            case Default.SMTP_PROTOCOL_CLEAR -> {} // accepted in dev and test only; Config.validate rejects it in prod
             default -> throw new IllegalArgumentException("smtp.protocol must be smtps, smtptls or smtp");
         }
 
@@ -113,7 +105,7 @@ public class PostOffice {
         LOG.info("SMTP connection timeout is {} ms and read timeout is {} ms", connectionTimeout, readTimeout);
     }
 
-    static void logSendFailure(Throwable throwable, int connectionTimeout, int readTimeout) {
+    private void logSendFailure(Throwable throwable, int connectionTimeout, int readTimeout) {
         if (causedByTimeout(throwable)) {
             LOG.error("SMTP connection or read timed out (connection timeout {} ms, read timeout {} ms)",
                     connectionTimeout, readTimeout, throwable);
@@ -122,13 +114,13 @@ public class PostOffice {
         }
     }
 
-    static boolean causedByTimeout(Throwable throwable) {
+    private boolean causedByTimeout(Throwable throwable) {
         var seen = new HashSet<Throwable>();
         var pending = new ArrayDeque<Throwable>();
         pending.add(throwable);
         while (!pending.isEmpty()) {
             Throwable current = pending.remove();
-            if (current == null || !seen.add(current)) {
+            if (!seen.add(current)) {
                 continue;
             }
             if (current instanceof SocketTimeoutException) {
