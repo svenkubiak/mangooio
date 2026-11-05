@@ -4,7 +4,7 @@ Background jobs run inside the same JVM as your web app, no separate Quartz XML 
 
 Use fixed-delay expressions such as `Every 3m` or `Every 1d` for recurring work like cleanup tasks, cache warming, or report generation. Jobs share Guice injection with the rest of the application, so you can inject services and `Datastore` exactly like you would in a controller.
 
-## Fixed rate
+## Fixed delay
 
 ```java
 import io.mangoo.annotations.Run;
@@ -26,7 +26,7 @@ Units after `Every`:
 
 The `Every` prefix is case-insensitive, so `every` and `Every` both work.
 
-The interval is a delay between the end of one run and the start of the next, so runs of the same job never overlap. A run that takes longer than the interval simply delays the next one. Cron jobs behave the same way: the next run is scheduled once the current one has finished.
+The interval is the delay between the end of one run and the start of the next. Runs of the same job do not overlap, and the first run waits for the full interval. It does not fire at startup. Cron jobs follow the same rule: the next slot is scheduled after the current run finishes. Cron uses the JVM default zone. `application.timezone` is applied when the Guice module is constructed, so read the zone after that, not from a static initializer that ran earlier.
 
 ## Cron
 
@@ -43,7 +43,7 @@ public class NightlyJob {
 
 This is not Quartz cron; notably, there is no seconds field.
 
-Jobs run on a platform thread pool. Disable scheduling entirely with:
+Each run is submitted to a new platform thread. The timer that waits out the delay is a single thread. There is no bounded pool. Disable scheduling entirely with:
 
 ```yaml
 scheduler:

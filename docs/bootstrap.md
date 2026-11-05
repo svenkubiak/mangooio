@@ -6,7 +6,7 @@ You use it for three kinds of work:
 
 1. **Routes.** `initializeRoutes()` registers every URL before the server starts accepting traffic, so by the time the first request can possibly arrive, the whole route table already exists.
 2. **Startup and shutdown.** Hooks (all four must be implemented, but may stay empty) run after configuration is loaded, after connectors are listening, and when the JVM shuts down, giving you three distinct moments to plug into instead of one big "app started" event.
-3. **Cross-cutting setup.** For example, global security headers via `Server.header(...)` at the start of `initializeRoutes()`, which then apply to every response the application sends.
+3. **Cross-cutting setup.** For example, global security headers via `Server.header(...)` at the start of `initializeRoutes()`. They are copied onto controller responses, the 404 page, error pages, and authentication redirects. They are not applied to SSE, WebSocket handshakes, static files, or the early 400 for a bad query string. A blank value is not sent, which is why the built-in `Content-Security-Policy` stays absent until you set one.
 
 Because `Bootstrap` is a normal Guice-managed type, you can inject services (a `Datastore`, a cache, your own service class) and use them in `applicationStarted()` to seed data or warm caches, exactly the way the archetype's sample app seeds a few `Person` records.
 
@@ -42,9 +42,9 @@ public class Bootstrap implements MangooBootstrap {
 }
 ```
 
-The four methods run in this order: `applicationInitialized()`, `initializeRoutes()`, `applicationStarted()`, `applicationStopped()`, which matters if you are deciding where to put something: `applicationInitialized()` runs too early to register anything that depends on routes existing, and `applicationStarted()` runs too late to influence routing, since by then the server is already serving traffic.
+The four methods run in this order: `applicationInitialized()`, `initializeRoutes()`, `applicationStarted()`, `applicationStopped()`. `applicationInitialized()` runs before config validation and before any route exists. `applicationStarted()` runs after the connectors are listening, and too late to change the route table. `applicationStopped()` runs after Undertow has stopped, while the MongoDB clients are still open. The full sequence, including the classpath scan that overlaps `initializeRoutes()`, is in [Getting started](getting-started.md#what-happens-on-startup).
 
-The class name is arbitrary; it only has to implement `MangooBootstrap` and be bound in `app.Module`:
+The bootstrap class name is arbitrary. It has to implement `MangooBootstrap` and be bound in `app.Module`. The module class itself is not arbitrary: the framework loads `app.Module` by name.
 
 ```java
 package app;
@@ -69,4 +69,4 @@ Server.header(Header.CONTENT_SECURITY_POLICY, "default-src 'self'");
 Server.header(Header.X_FRAME_OPTIONS, "DENY");
 ```
 
-Headers set this way apply to every response the application sends, so they are a good fit for security headers you want on every page, rather than something you would want to repeat in every controller method.
+Use this for headers you want on ordinary pages. SSE, static files, and WebSocket handshakes do not pick them up. See [Operating](operating.md#global-response-headers) for the headers the framework already sends.

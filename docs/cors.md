@@ -2,7 +2,7 @@
 
 Browsers block JavaScript on one origin from reading responses from another unless the server explicitly opts in with CORS headers. That is a browser-enforced restriction, not something the server can see or refuse on its own, so the only way to make cross-origin calls work is to tell the browser, through headers, exactly which origins and methods are allowed. Enable CORS when your **API** is consumed by a single-page app or mobile web app hosted on a different domain than the mangoo I/O backend.
 
-mangoo I/O adds these headers only when the request URL matches **`cors.urlpattern`** and the origin matches **`cors.alloworigin`** (both regular expressions). That keeps accidental wide-open CORS off by default: nothing gets a CORS header at all until you set `cors.enable: true`; set both patterns explicitly then, as their defaults only fit the example domains, so enabling CORS for your `/api/` paths cannot accidentally also expose an internal admin route you forgot was on the same domain.
+mangoo I/O adds these headers only when the request URL matches **`cors.urlpattern`** and the origin matches **`cors.alloworigin`** (both regular expressions). Nothing is sent until `cors.enable` is `true`, and that default is `false`. The default origin pattern matches `example.com` and `example.org`, not your application host. The default URL pattern matches any host whose absolute URL contains `/api`. The default `maxage` is `864000` seconds, not the `86400` in the sample below. Set both patterns before you turn CORS on.
 
 ```yaml
 cors:
@@ -41,7 +41,7 @@ alloworigin: ^https://app\.example\.com$
 
 The first pattern also accepts `https://appxexample.com` — a domain an attacker can simply register. Escape every literal dot.
 
-Two things work in your favour here. The pattern is applied with `Matcher.matches()`, so it must match the *entire* `Origin` value; a pattern cannot accidentally match just a prefix or suffix. And browsers send only the serialized origin (scheme, host, optional port), never a path, so there is no path component to smuggle a match through.
+The pattern is applied with `Matcher.matches()`, so it has to match the whole `Origin`. Browsers send scheme, host, and an optional port, not a path.
 
 What remains is deciding which hosts to trust. Prefer listing them explicitly, as in `^https://(app|admin)\.example\.com$`, over a blanket subdomain wildcard like `^https://[a-z0-9-]+\.example\.com$`. A wildcard makes every current and future subdomain part of your trust boundary, so a forgotten marketing subdomain with an XSS flaw, or a dangling DNS record someone else can claim, becomes a way to read credentialed responses from your API.
 

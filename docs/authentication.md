@@ -81,12 +81,14 @@ The same budget applies to the second factor, see [Two-factor authentication](#t
 
 With persistence enabled the budget is kept in MongoDB (`mangooio_attempts`), so several instances behind a load balancer share one budget per identifier and a restart does not reset it. The lock time is computed by the database, clock differences between the instances do not shift it. If MongoDB is unavailable, the attempt is refused and the identifier counts as locked. Without persistence the budget is kept in memory per process. Bind your own `io.mangoo.interfaces.AttemptStore` in `app.Module` to keep it elsewhere. See [Framework collections](persistence.md#framework-collections) for all collections the framework creates.
 
-Then, once logged in, you can adjust the cookie further:
+`rememberMe()` and `twoFactorAuthentication(boolean)` only set fields. The cookie is written when `login()` or `update()` has marked it for this response. Call them in the same request, before the method returns:
 
 ```java
-authentication.rememberMe();                 // longer cookie lifetime
-authentication.twoFactorAuthentication(true); // require TOTP next
+authentication.login(username);
+authentication.rememberMe();
 ```
+
+`twoFactorAuthentication(true)` is the same kind of flag. Set it in that same request, before the method returns. On a later request, either call alone does not rewrite a cookie that is already valid. Call `update()` as well.
 
 ## Methods
 
@@ -120,7 +122,7 @@ Bind.controller(AccountController.class).withRoutes(
 );
 ```
 
-You can also call `withAuthentication()` on the controller binder so every route on it requires a cookie, see [Routing](routing.md). Missing authentication redirects to `authentication.redirect.login`, or returns HTTP 403 if that key is unset, so an API-only application without a login page still fails safely instead of redirecting somewhere that does not exist. When two-factor is enabled on the cookie, the user is sent to `authentication.redirect.mfa` instead (or the login redirect if `mfa` is not configured). Set `authentication.origin` to append `?origin=<request-uri>` on those redirects, which is what lets a login page send the user back to whatever page they originally asked for. The value contains the request URI including its query string, is URL encoded, and always begins with exactly one slash, so it can neither inject extra parameters into the redirect nor arrive as a protocol-relative URL such as `//evil.com` pointing at a foreign host.
+You can also call `withAuthentication()` on the controller binder so every route on it requires a cookie, see [Routing](routing.md). Missing authentication redirects to `authentication.redirect.login` (the archetype sets `/login`), or returns HTTP 403 if that key is unset. When two-factor is still pending, the user is sent to `authentication.redirect.mfa`, or to the login redirect if `mfa` is not set. Set `authentication.origin` to append the request URI. The separator is `?` when the redirect has no query string and `&` when it already has one. The value is URL-encoded and always starts with one slash, which encoding turns into `%2F`, so it cannot arrive as `//evil.com`.
 
 That last point still leaves the final decision to you: `origin` is a value a visitor chose, and it is only guaranteed to be a path on your own host, not a path that visitor is allowed to reach. Before redirecting to it after a successful login, check it against the routes your application actually serves rather than passing it straight to a redirect.
 
@@ -275,7 +277,9 @@ public Response export() {
 }
 ```
 
-The filter accepts `Authorization: Bearer <key>`. This is a single shared key rather than per-client credentials, so treat it the way you would any other shared secret: rotate it if it leaks, and avoid handing the same key to more clients than you can comfortably revoke access from later.
+The filter reads `Authorization`, strips the literal substring `Bearer` (case-sensitive), and compares the remainder to `application.api.key`. `Authorization: Bearer <key>` and `Authorization: <key>` both match. A missing or wrong key is HTTP 401 with an empty body. If the key is set, startup requires at least 64 bytes.
+
+This is one shared key, not a credential per client. Rotate it if it leaks. There is no per-caller revocation.
 
 ## Blacklist
 

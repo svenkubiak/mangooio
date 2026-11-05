@@ -30,7 +30,7 @@ class ApplicationControllerTest {
 }
 ```
 
-Override `beforeStartup()` / `afterStartup()` if you need to set system properties before `Application.start(Mode.TEST)` runs. Overrides take effect only if that runner starts the application first.
+Override `beforeStartup()` / `afterStartup()` if you need to set system properties before `Application.start(Mode.TEST)` runs. The application starts once per JVM. Only the extension instance that wins that start runs the hooks, so a subclass used as `@ExtendWith` is what makes an override reliable. `-Dapplication.mode` still wins over `Mode.TEST`. `close()` does nothing. The runner does not shut the JVM down.
 
 ## HTTP requests
 
@@ -69,7 +69,11 @@ TestRequest.post("/save")
     .execute();
 ```
 
-`withForm(Multimap)` sends the body as `application/x-www-form-urlencoded`, as a POST.
+`withForm(Multimap)` forces POST and sends `application/x-www-form-urlencoded`.
+
+`execute()` always calls `http://{connector.http.host}:{connector.http.port}`. An HTTPS-only application is not what this client talks to. Redirects are followed unless `withDisabledRedirects()` is set. The request timeout defaults to 5 seconds, and the connect timeout is 5 seconds. `withBasicAuthentication` installs a JDK `Authenticator`. It does not set an `Authorization` header itself.
+
+There is no helper for WebSocket or SSE connections. See [Routing](routing.md#websockets).
 
 ## Browser sessions
 
@@ -96,8 +100,8 @@ TestResponse account = browser.to("/authenticationrequired")
 
 ## Email and concurrency
 
-`io.mangoo.test.email.SmtpMock` starts GreenMail in dev/test using `smtp.host` and `smtp.port`. GreenMail speaks plain SMTP, so set `smtp.protocol: smtp` and an unprivileged `smtp.port` such as `3025` in the test environment, and obtain the mock with `Application.getInstance(SmtpMock.class)`. Call `start()` / `stop()` around your test and inspect captured messages through `getGreenMail()`.
+`io.mangoo.test.email.SmtpMock` binds GreenMail to `smtp.host` and `smtp.port`. `start()` does nothing outside dev and test, and it does not change `smtp.protocol`. GreenMail speaks plain SMTP, so set `smtp.protocol: smtp` and an unprivileged port such as `3025` in the test environment. Obtain the mock with `Application.getInstance(SmtpMock.class)`. Call `start()` / `stop()` around the test and read captured messages from `getGreenMail()`.
 
-`io.mangoo.test.concurrent.ConcurrentRunner` is a Hamcrest matcher that runs a function across many virtual threads at once, useful for shaking out concurrency bugs a single-threaded test would never hit.
+`io.mangoo.test.concurrent.ConcurrentRunner` runs a Cactoos `Func` on many virtual threads. The default count is `availableProcessors() << 4`. It is a Hamcrest matcher, not a `java.util.function` type.
 
 `io.mangoo.test.hamcrest.RegexMatcher.matches(regex)` lets you assert on response bodies with a regular expression instead of an exact string match.

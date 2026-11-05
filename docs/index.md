@@ -1,12 +1,10 @@
 # Home 👋
 
-**mangoo I/O** is a lean, opinionated full-stack Java web framework for MongoDB that scales out securely, no assembly required. It builds HTTP applications, everything from server-rendered HTML sites to JSON APIs, on [Undertow](http://undertow.io/) and follows a classic MVC style: you map URLs to controller methods, return a `Response`, and optionally render Freemarker templates or send JSON.
+**mangoo I/O** is a lean, opinionated full-stack Java web framework that scales out securely, no assembly required. It builds HTTP applications, everything from server-rendered HTML sites to JSON APIs, on [Undertow](http://undertow.io/) and follows a classic MVC style: you map URLs to controller methods, return a `Response`, and optionally render Freemarker templates or send JSON.
 
-The framework favors **convention over configuration**. Controllers live in a package you configure once, templates follow a predictable path, and cross-cutting concerns like sessions, flash messages, CSRF tokens, and locale are just available as method parameters, no extra wiring required. At the same time, mangoo I/O tries hard not to be "magic": routes are plain Java code, configuration is a single YAML file you can read top to bottom, and dependency injection is just [Google Guice](https://github.com/google/guice), not a custom container reinventing what Guice already does well.
+Controllers live in a package you configure once, templates follow a predictable path, and sessions, flash, CSRF, and locale are method parameters. Routes are Java code in `app.Bootstrap`. Configuration is one YAML file. Dependency injection is [Google Guice](https://github.com/google/guice). The application module has to be named `app.Module`.
 
-If you are new to the project, start with [Getting started](getting-started.md). It walks you through the Maven archetype, the default project layout, and your first request.
-
-Compared with servlet-only stacks or the larger "batteries included" platforms, mangoo I/O is aimed at teams that want routing they can `grep` for, one configuration file instead of a dozen annotations spread across the codebase, and as little ceremony as possible for the web tasks that come up every day, without giving up mainstream, well-maintained libraries underneath. You stay close to the HTTP model: one method per URL, a return type you can actually read, and filters short enough to understand in an afternoon.
+If you are new to the project, start with [Getting started](getting-started.md). It walks through the Maven archetype, the project layout, and the first request. The libraries underneath are Undertow, Guice, Freemarker, Jackson, the MongoDB driver, Caffeine, and Log4j2.
 
 ## How a request flows
 
@@ -28,7 +26,7 @@ Templates, cookies, and security headers are handled by the framework once you r
 
 ## What you get out of the box
 
-mangoo I/O ships as a single Maven dependency (`mangooio-core`) plus optional modules for testing and the Maven plugin. You do not need to assemble a servlet container, wire a template engine, or pick a JSON library yourself. The defaults are already chosen and already wired together, which matters most in the first week of a new project, when you would otherwise be comparing four templating libraries before writing a single line of business logic.
+mangoo I/O ships as `mangooio-core`, plus `mangooio-test` and the Maven plugin. Undertow, Freemarker, and Jackson are already wired. You can replace a binding in `app.Module`, including `Datastore`, when the default is the wrong one.
 
 | Area | Built-in support |
 |---|---|
@@ -40,14 +38,14 @@ mangoo I/O ships as a single Maven dependency (`mangooio-core`) plus optional mo
 | DI | Google Guice |
 | Logging | Log4j2 |
 | Scheduling | `@Run` on plain Java methods |
-| Real-time | Server-Sent Events (SSE) |
-| Security | Signed cookies, CSRF, CORS, optional TOTP |
+| Real-time | Server-Sent Events; local WebSocket routes |
+| Security | Encrypted cookies, CSRF, CORS, optional TOTP |
 
-You can replace or extend pieces where it matters: custom filters, extra Guice bindings, even your own persistence layer if you decide not to use MongoDB. But most applications run comfortably on the defaults, and that is very much the point.
+Custom filters and extra Guice bindings are the normal way to extend this. Most applications stay on the defaults above.
 
 ## Stack and quality
 
-The runtime stack is deliberately small and built entirely on widely used, independently maintained libraries, so you are never debugging framework-specific reinventions of problems the Java ecosystem already solved:
+The runtime stack is small and built on libraries that are maintained outside this project:
 
 - **Undertow** for non-blocking I/O and low overhead
 - **Google Guice** for constructor injection and testability
@@ -64,14 +62,14 @@ Each release is validated against a large [SonarQube](http://www.sonarqube.org/)
 ### Development
 
 - **Convention over configuration.** Controller package, template paths, and translation bundles follow fixed conventions, so you spend less time on boilerplate and more time writing the parts unique to your app.
-- **Hot compile in dev mode.** `mvn mangooio:run` restarts the application when the compiled classes change, usually within about a second, so the edit-save-refresh loop stays fast.
+- **Restart on compile in dev mode.** `mvn mangooio:run` does not compile. It restarts the process after `target/classes` changes, once the writes have settled (500 ms by default). The JVM start is on top of that. Templates reload without a restart.
 - **Programmatic routing.** All routes live in `Bootstrap.java`. There is no separate routes file that can drift out of sync with the code that actually handles the request.
 - **Maven archetype.** Generates a working app with generated dev and test secrets, sample persistence, and a first test already in place.
 
 ### HTTP and security
 
 - **Fluent `Response` API.** Status codes, headers, cookies, redirects, HTML, JSON, and binary bodies all share one builder-style API, so you are not switching mental models depending on what you are returning.
-- **Client-side sessions and flash.** Session and flash data live in signed JWT cookies, which fits a share-nothing deployment model where any instance can serve any request without sticky sessions or a shared store.
+- **Client-side sessions and flash.** Session and flash data live in encrypted and signed JWT cookies. Any instance with the same secrets, cookie names, and `application.name` can serve the next request. There is no sticky session and no shared session store.
 - **Form validation.** The `Form` object uses the same validation helpers as regular request handling, with messages sourced from `messages.properties` so error text stays translatable.
 - **CSRF and origin checks.** Filters for token validation and allowed `Origin` headers integrate directly with Freemarker directives, so protecting a form is a template tag, not a manual token dance.
 - **Cookie authentication.** You verify credentials however you like; the framework issues and validates the auth cookie for you. Optional TOTP is available for two-factor login.
@@ -79,16 +77,17 @@ Each release is validated against a large [SonarQube](http://www.sonarqube.org/)
 ### Data and background work
 
 - **MongoDB datastore.** Inject `Datastore`, map entities with `@Collection`, and query using the native driver API rather than a framework-specific abstraction on top of it.
-- **Built-in cache.** A Caffeine-based application cache out of the box; authentication lockout and blacklist are kept in MongoDB, so all instances share them.
+- **Built-in cache.** A Caffeine cache in the process. Login lockouts are kept in MongoDB when persistence is on, so instances share them. Token revocation is separate and off until `authentication.blacklist` is true.
 - **`@Run` scheduler.** Fixed-delay (`Every 5m`) or cron-style jobs on ordinary classes, discovered automatically through a classpath scan at startup.
-- **EventBus.** Publish events to `Subscriber` implementations that run on virtual threads, so a slow subscriber does not block the publisher.
+- **EventBus.** `publish` returns immediately. Subscribers for that payload then run one after another on a virtual thread, on the instance that published. Cross-instance delivery is the `MessageBroker`, used by SSE.
 - **Asynchronous email.** Jakarta Mail integration where `Mail.send()` does not block the request thread, so sending a confirmation email never adds latency to the response the user is waiting on.
 
 ### Operations
 
-- **Admin dashboard.** An optional `/@admin` UI for cache stats, scheduler overview, and a few security helpers, useful when you need a quick answer without opening a debugger.
-- **Metrics and tracing.** Request metrics feed the dashboard, and optional OpenTelemetry export over OTLP hooks into whatever observability stack you already run.
-- **Fat-JAR deployment.** The shade plugin produces a single runnable JAR; see [Operating](operating.md) for supervisord and Docker examples.
+- **Admin dashboard.** An optional `/@admin` UI for cache stats, the scheduler, and a few security helpers. In prod the cookie requires HTTPS.
+- **Health and shutdown.** `/@health/live` and `/@health/ready` are always on. Shutdown starts with readiness going to `503` and waits up to `application.shutdown.timeout` (20 seconds).
+- **Metrics and tracing.** Dashboard metrics are off until `metrics.enable`. OpenTelemetry export is off until `otlp.enable`.
+- **Fat-JAR deployment.** The shade plugin produces a single runnable JAR. [Operating](operating.md) covers supervisord, Docker, probes, cookies, and the request-size limits.
 
 ## Documentation map
 

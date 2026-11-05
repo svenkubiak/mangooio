@@ -64,7 +64,7 @@ public class Person extends Entity {
 
 `Entity` stores `_id` as a BSON `ObjectId`. Extending it is optional as long as you implement `BaseEntity` yourself instead.
 
-`@Indexed` is applied at startup, and it understands the `sort`, `unique`, and `caseSensitive` attributes.
+`@Indexed` is applied at startup. It understands `sort`, `unique`, and `caseSensitive`. `caseSensitive = false` builds an index with an English collation at secondary strength (`locale "en"`), not a generic case-insensitive index. The index key is the Java field name. Embedded MongoDB 7.0 starts only for the default `persistence.` prefix, in the module constructor. `DatastoreProvider.getDatastore(String)` does not start an embedded server for a named prefix. `persistence.mongo.url` together with embedded MongoDB fails startup.
 
 ## Datastore
 
@@ -83,6 +83,8 @@ public class PersonService {
 ```
 
 ```java
+import static com.mongodb.client.model.Filters.eq;
+
 String id = datastore.save(person);
 Person found = datastore.find(Person.class, eq("_id", new ObjectId(id)));
 List<Person> all = datastore.findAll(Person.class);
@@ -91,6 +93,8 @@ datastore.delete(person);
 datastore.dropCollection(Person.class);
 datastore.isHealthy();
 ```
+
+`countAll` returns `-1` when the count fails. `saveAll` calls `save` once per element. It is not a bulk write. `getMongoClient()` and `getMongoDatabase()` hand you the driver. `query(String)` and `query(String, Class)` do the same for a collection. `dropDatabase()` drops the database of this datastore.
 
 `save` inserts an object without an id and replaces the document of an object with an id. An object whose id was set by the application, e.g. to reference it before it is stored, is inserted under that id if no document exists yet. The generated id of an inserted object is returned, but not written back to the object, so load it again before changing and saving it a second time.
 
@@ -152,7 +156,9 @@ With persistence enabled, the framework keeps the state that all instances have 
 | `mangooio_messages` | `MessageBroker` | Server sent events and admin actions for the other instances, capped at 16 MB |
 | `mangooio_instances` | `InstanceRegistry` | Heartbeat of every instance for the admin dashboard |
 
-The startup creates them: a TTL index on `expireAt` for `mangooio_attempts`, `mangooio_claims`, `mangooio_revocations` and `mangooio_instances`, which removes expired entries, and the capped collection `mangooio_messages`. A `mangooio_messages` that exists but is not capped fails the startup. After the database was dropped, e.g. in tests, the indexes are created again on the next start. The database user needs the built-in role `readWrite` on `dbname`, which covers creating collections and indexes, see [Schema](#schema) for a user without that right. MongoDB 4.2 or later is required. Reads go to the primary and writes are acknowledged by the majority, whatever `url` sets; if MongoDB is unavailable, the first three fail closed and refuse logins, second factors and authenticated requests, see [Operating](operating.md#running-several-instances).
+The startup creates them: a TTL index on `expireAt` for `mangooio_attempts`, `mangooio_claims`, `mangooio_revocations` and `mangooio_instances`, which removes expired entries, and the capped collection `mangooio_messages`. A `mangooio_messages` that exists but is not capped fails the startup. After the database was dropped, for example in tests, the indexes are created again on the next start. The database user needs the built-in role `readWrite` on `dbname`, which covers creating collections and indexes. See [Schema](#schema) for a user without that right. MongoDB 4.2 or later is required. Reads go to the primary and writes are acknowledged by the majority, whatever `url` sets.
+
+If MongoDB is unavailable, `AttemptStore` and `OneTimeStore` fail closed: a login or a second factor is refused. `TokenBlacklist.isRevoked` is consulted only when `authentication.blacklist` is true. With the default `false`, an existing authentication cookie keeps working during an outage. When the blacklist is on, a MongoDB error counts the cookie as revoked. See [Operating](operating.md#running-several-instances).
 
 Without persistence the same state is kept in memory per process. It is lost on a restart, so a revoked cookie that has not yet expired is accepted again, and a lock or used TOTP code is forgotten. This is fine for a single instance that can accept it; several instances always need persistence. `persistence.enable` switches the datastore and the framework state together, there is no separate switch: an application that does not use the `Datastore` itself still gets the shared state with persistence enabled. To keep the state elsewhere, bind your own implementation of the store in `app.Module`.
 

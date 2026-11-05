@@ -107,7 +107,7 @@ As a rule of thumb: cookie secrets and keys, database and SMTP credentials shoul
 
 ## Connectors
 
-At least one HTTP or HTTPS connector must be configured, otherwise the application refuses to start. There is no implicit default port, on purpose: a web framework that silently picks a port for you is more surprising than one that asks you to say so once. A connector is only started if both `host` and `port` are set.
+At least one HTTP or HTTPS connector must be configured, otherwise the application refuses to start. There is no implicit port. A connector starts only when both `host` and `port` are set. HTTPS accepts TLS 1.3 only.
 
 ```yaml
 default:
@@ -142,7 +142,7 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `application.named` | Example named Guice binding | *(none)* |
 | `application.parameter.strict` | Reject requests whose query parameter collides with a route parameter with a `400` | `false` |
 | `application.secret` | Application secret, **required**; fallback for cookie secrets and keys (exactly 64 bytes) | *(none)* |
-| `application.shutdown.timeout` | Time in **seconds** the shutdown waits in total for open requests and running scheduled tasks, see [Graceful shutdown](operating.md#graceful-shutdown) | `20` |
+| `application.shutdown.timeout` | Seconds from the start of shutdown, including the heartbeat stop and closing SSE and WebSocket connections, see [Graceful shutdown](operating.md#graceful-shutdown) | `20` |
 | `application.timezone` | Application timezone | `UTC` |
 | `application.validation.passthrough` | Return Bean Validation errors as JSON instead of a rendered form | `false` |
 | `authentication.blacklist` | Enable revocation of authentication cookies, see [Blacklist](authentication.md#blacklist) | `false` |
@@ -220,15 +220,21 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 
 `smtps` and `smtptls` are the two encrypted ways to reach a mail server, and they are not interchangeable: `smtps` starts the TLS handshake before any SMTP command, which is what port 465 expects, while `smtptls` connects in cleartext and then requires STARTTLS, which is what port 587 expects. If the server does not upgrade the connection, the delivery is aborted before authentication or the message is sent. `smtp` leaves the connection in cleartext and the application refuses to start with it in prod mode; dev and test accept it because the local test server speaks plain SMTP. Every delivery gives up after `smtp.connection.timeout` milliseconds without a connection and after `smtp.read.timeout` milliseconds without a read. The defaults are 10 seconds and 30 seconds. Both configured values are written to the log when the mail session is created, and a delivery that hits either limit is logged again with the same values. A value of `0` or below is rejected at startup.
 
-A couple of these are worth calling out by name. `authentication.cookie.samesitemode` and `session.cookie.samesitemode` both default to `Strict`, which is the safest choice against CSRF but also means the cookie will not be sent on cross-site navigations at all (a link from another domain, for instance); loosen it to `Lax` if your login flow depends on that. `undertow.maxentitysize` caps request body size at 4 MiB by default, mostly to stop an accidental (or malicious) huge upload from eating memory before your controller even gets a chance to reject it; raise it deliberately if your application genuinely needs larger uploads. That raise alone is only half the story, though: `form.maxfilesize` caps every single uploaded file at 5 MiB on top of it, for the same reason. The two limits sit behind each other, and an upload has to pass both — plus whatever a reverse proxy in front of the application allows, such as nginx's `client_max_body_size`. Raising only one of them moves the failure to another layer instead of removing it. A form that trips `form.maxfilesize` is rejected before any controller runs; the `FormHandler` logs the reason on WARN and the request is answered with a `400`.
+`authentication.cookie.samesitemode` and `session.cookie.samesitemode` default to `Strict`. `Lax` is the only other accepted value. Anything else, including `None`, fails startup. Flash and the locale cookie are always `Strict`. `Strict` is not sent on a cross-site navigation, such as a link from another domain. Use `Lax` when a login flow depends on that.
+
+`undertow.maxentitysize` caps the body at 4 MiB. `form.maxfilesize` caps each uploaded file at 5 MiB, and the body limit is checked first, so a 5 MiB file needs a larger `maxentitysize` and a matching limit on the reverse proxy (`client_max_body_size` in nginx). A form that trips `form.maxfilesize` is rejected before the controller runs, logged at WARN, and answered with HTTP 400. Undertow's parameter limit (1000) and header size (8192 bytes) are not configurable. Worker and I/O thread counts are Undertow's defaults. The framework does not set them.
+
+`application.mode` and `application.config` are JVM system properties, not YAML keys. `application.secrets.path` defaults to `/run/secrets` and is a system property or the environment variable `APPLICATION_SECRETS_PATH`. It cannot be set inside `config.yaml`. See [Secrets](secrets.md).
+
+`authentication.cookie.token.expires` has to stay at or below `authentication.cookie.remember.expires`. Inbound cookies are accepted only up to the remember-me lifetime. A normal login cookie whose TTL is longer than that fails to parse. The defaults, 3600 and 2592000, do not hit this.
 
 ### Argon2 hashing
 
-`CommonUtils.hashArgon2` and `CommonUtils.matchArgon2` compute Argon2id, and a single computation holds `authentication.hashing.memory` KiB of heap for its entire duration — 32 MB with the default of 32768 KiB. Undertow starts with eight worker threads per core, so without a limit a few dozen concurrent logins can request several gigabytes at once and take the JVM down with an OutOfMemoryError.
+`CommonUtils.hashArgon2` and `CommonUtils.matchArgon2` compute Argon2id, and a single computation holds `authentication.hashing.memory` KiB of heap for its entire duration, 32 MiB with the default of 32768 KiB. Concurrent logins multiply that. The framework does not set Undertow's worker count, so the cap below is what keeps a burst of logins from allocating that memory without a bound.
 
 The framework therefore caps how many hashes run at the same time. A call that finds every slot taken waits up to `authentication.hashing.timeout` milliseconds and is then rejected with a `MangooHashingException`, which is unchecked and does not change any signature. `Authentication#isValidLogin` catches it, logs it and returns `false` without counting a failed attempt, so an overload situation cannot lock a user out. Every other caller sees the exception and ends up in the `ExceptionHandler`, which answers it with a `503` rather than a silent "wrong password".
 
-The default `authentication.hashing.concurrency: 0` derives the number of slots from the configured memory cost and half of the heap the JVM may use, clamped to a range of 2 to 8. The effective value is logged on INFO at startup. Set an explicit value to override the heuristic; a high value effectively switches the gate off.
+The default `authentication.hashing.concurrency: 0` derives the slot count as `floor((0.5 * maxMemory) / (memoryKiB * 1024 * 1.2))`, clamped to 2..8. A configured value greater than 0 is used as is. The effective value is logged at INFO during startup. A high explicit value is close to having no gate.
 
 The defaults `m=32768`, `t=3`, `p=1` sit above the OWASP minimum of 19 MiB and two iterations and below RFC 9106's low-memory profile. `p=1` is deliberate: BouncyCastle's `Argon2BytesGenerator` computes the lanes sequentially, so a higher parallelism does not shorten a single hash, it only spreads the same memory over more lanes. A server gets its parallelism from concurrent requests, not from lanes inside one hash.
 

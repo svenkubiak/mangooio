@@ -2,7 +2,7 @@
 
 This guide takes you from an empty machine to a running mangoo I/O application. You will generate a project with the official Maven archetype, start it in development mode, and get a tour of the files the archetype creates and why they look the way they do.
 
-mangoo I/O bundles the things almost every web application eventually needs: routing, templating, sessions, authentication, a scheduler, i18n, and a way to keep secrets out of your config file. The archetype wires all of that up for you in a working skeleton, so instead of starting from a blank `main()` method you start from a small app that already renders a page, talks to a database, and passes a test. The idea is that you can explore routing, persistence, and testing right away, without writing scaffolding first.
+The archetype generates a small application that already renders a page, talks to MongoDB, and has one test. Routing, templating, sessions, authentication, the scheduler, i18n, and secret placeholders are wired up. You can change them from there.
 
 ## Prerequisites
 
@@ -51,14 +51,16 @@ mvn clean package
 mvn mangooio:run
 ```
 
-`mvn mangooio:run` does more than just launch a JVM. It forks your application as a separate process (so your terminal stays usable and you can attach a debugger to it), sets the system property that puts the app into **dev mode**, and starts a file watcher on your build output directory (`target/classes`). When the compiled classes change, for example because your IDE builds automatically or you run `mvn compile`, the watcher notices the change, waits briefly for other saves to settle, and restarts the forked process automatically. That is the whole "save and refresh the browser" workflow: there is no separate build step you need to run by hand.
+`mvn mangooio:run` does not compile. It forks a child JVM in **dev** mode and watches `target/classes`. When the compiled classes change, because the IDE built them or you ran `mvn compile`, the watcher waits for the writes to settle (500 ms by default) and restarts the process. A debugger port is opened only when `-Dmangoo.jpdaPort` is greater than 0.
 
 On first start you should see something like:
 
 ```
-HTTP connector listening @127.0.0.1:9090
-mangoo I/O application started in 9051 ms in dev mode. Enjoy.
+HTTP connector listening @localhost:9090
+mangoo I/O application started in 9051 ms in dev mode as instance 'localhost-a1b2c3'. Enjoy.
 ```
+
+The host in that line is `connector.http.host` from `config.yaml`. The archetype sets `localhost`, not `127.0.0.1`. The instance id is the hostname plus six hex characters.
 
 Open [http://localhost:9090](http://localhost:9090). The sample page renders "Hello World!" from a Freemarker template. Visit `/persons` to see MongoDB persistence in action: the archetype seeds three `Person` documents into an embedded MongoDB instance on startup, and the `/persons` route lists them straight from the database.
 
@@ -68,18 +70,19 @@ Import the project into your IDE as a normal Maven module. Run tests with `mvn t
 
 ## What happens on startup
 
-Understanding the boot sequence helps once you start adding your own initialization code, because it tells you exactly which hook to use and in what order things become available:
+The order matters once you add your own startup code:
 
-1. **Mode** is decided first: `dev` (set by the Maven plugin), `test` (set by `TestRunner`), or `prod` (the default when you run the packaged JAR directly with `java -jar`).
-2. **Config** loads next. `config.yaml` is parsed, and the `environments.<mode>` block is merged on top of `default`, key by key, so values you do not override in an environment simply fall back to the default.
-   Placeholders such as `env{}`, `arg{}` and `file{}` are resolved in the same step, so secrets never have to sit in `config.yaml` as plain text in prod.
-4. **Guice** builds the injector. Your `app.Module` class runs and binds `MangooBootstrap` to your `Bootstrap` implementation, plus whatever other services you have added.
-5. **`applicationInitialized()`** is called on your bootstrap class. At this point config and dependency injection are ready, but no routes exist yet and the server is not listening.
-6. **Routes** are registered by your bootstrap's `initializeRoutes()` method: controllers, static files, and any SSE or WebSocket endpoints.
-7. **Classpath scan** picks up annotated classes: persistence entities (`@Collection`), scheduled jobs (`@Run`), and event subscribers.
-8. **Connectors** start listening (HTTP, and HTTPS if you configured it).
-9. **`applicationStarted()`** is called once the server is actually accepting connections. This is the right place to seed data, warm caches, or kick off background work, exactly what the archetype's `Bootstrap` does when it saves the sample `Person` records.
-10. On shutdown, **`applicationStopped()`** runs, giving you a hook to close resources cleanly.
+1. **Mode.** `dev` when the Maven plugin sets `-Dapplication.mode=dev`, `test` when `TestRunner` calls `Application.start(Mode.TEST)` and that property is unset, otherwise `prod`. `java -jar` calls `main()`, which starts prod. Any mode value other than `dev` or `test` is prod.
+2. **Injector.** Building the core Guice module constructs `Config`, which parses `config.yaml`, merges `environments.<mode>` over `default`, and resolves `env{}`, `arg{}`, and `file{}`. Then `app.Module` is loaded by that exact class name. It needs a public no-arg constructor. Bindings in `app.Module` override the core bindings.
+3. **`applicationInitialized()`.** Config values can be read and injection works. Validation has not run yet, and there are no routes. A bad secret still reaches this hook. The process aborts in the next step, and the later hooks do not run.
+4. **Validation.** Secret lengths, SameSite, SMTP in prod, and the other startup checks.
+5. **Classpath scan**, started on a virtual thread: `@Collection`, `@Run`, and `Subscriber` types.
+6. **`initializeRoutes()`**, while that scan is still running.
+7. Routes are installed, the scan is joined, the message broker starts, and the connectors start listening.
+8. **Datastore health check.** A failed ping aborts startup. The port may already be open. Readiness is still `503`.
+9. **`applicationStarted()`.** Seed data and cache warming go here, which is what the archetype does with the sample `Person` rows. The port is open before this method returns, so a client that does not wait for readiness can arrive early.
+10. The startup log line is written, and `/@health/ready` starts returning `200`.
+11. On shutdown, after open requests are drained, **`applicationStopped()`** runs while the MongoDB clients are still open. See [Operating](operating.md#graceful-shutdown).
 
 See [Bootstrap](bootstrap.md) for details on each hook.
 
@@ -159,14 +162,19 @@ public class Bootstrap implements MangooBootstrap {
     }
 
     @Override
+    public void applicationInitialized() {
+    }
+
+    @Override
     public void applicationStarted() {
         datastore.save(new Person("Richard M.", "Whittaker", 33));
         datastore.save(new Person("Kitty D.", "Glenn", 45));
         datastore.save(new Person("Raul E.", "Kuhn", 46));
     }
 
-    // applicationInitialized() and applicationStopped() are left empty,
-    // ready for you to fill in
+    @Override
+    public void applicationStopped() {
+    }
 }
 ```
 

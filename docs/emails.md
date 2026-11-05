@@ -30,18 +30,22 @@ The one-argument `from(String)` accepts a bare address or the `Name <email>` for
 
 ## Templates
 
-Render Freemarker by passing a template path and a content map instead of a literal string. Template messages are sent as HTML when you call `htmlMessage`:
+Render Freemarker by passing a template path and a content map. Both template methods throw the checked `MangooTemplateEngineException`. `send()` itself only logs SMTP failures.
 
 ```java
-Mail.newMail()
-    .from("noreply@example.com")
-    .to("user@example.com")
-    .subject("Welcome")
-    .htmlMessage("emails/welcome.ftl", Map.of("name", "Ada"))
-    .send();
+try {
+    Mail.newMail()
+        .from("noreply@example.com")
+        .to("user@example.com")
+        .subject("Welcome")
+        .htmlMessage("emails/welcome.ftl", Map.of("name", "Ada"))
+        .send();
+} catch (MangooTemplateEngineException e) {
+    // template missing or the render failed
+}
 ```
 
-`textMessage(template, content)` renders the same way, just as plain text. Interpolations are HTML-escaped there as well; start a plain text template with `<#ftl output_format="plainText">` to avoid entities such as `&amp;`. Both template variants throw the checked `MangooTemplateEngineException` if the template is missing or fails to render. Session, Flash, and the other web template variables are **not** present in this context, since there is no request to draw them from, so pass everything the template needs in the map yourself.
+`textMessage(template, content)` renders the same way. The template engine's output format is HTML, so interpolations are escaped unless the template starts with `<#ftl output_format="plainText">`. Templates are loaded from the classpath under `/templates/`. Session, flash, and the other web variables are not in this context. Pass everything the template needs in the map.
 
 ## Other helpers
 
@@ -59,6 +63,8 @@ Mail.newMail()
     .send();
 ```
 
-Priority ranges from 1 (highest) to 5 (lowest), and encoding is always UTF-8.
+Priority ranges from 1 (highest) to 5 (lowest) and is sent as `X-Priority`. An attachment whose length is 0 throws `IllegalArgumentException`. `attachments(List<Path>)` adds several files.
+
+HTML parts are `text/html; charset=utf-8`. A plain-text part uses JavaMail's default charset. Template source and output encoding are UTF-8, which is separate from that MIME charset.
 
 SMTP settings live under `smtp.*` in [Configuration](configuration.md). `smtp.protocol: smtps` opens TLS before any SMTP command, and `smtptls` aborts the delivery when the server does not complete STARTTLS. `smtp` is cleartext and is accepted only in dev and test, which is what `SmtpMock` needs. A connection or a read that exceeds `smtp.connection.timeout` or `smtp.read.timeout` (10 seconds and 30 seconds by default) is aborted and logged with the configured limits. For tests, reach for `io.mangoo.test.email.SmtpMock` from `mangooio-test` instead of a real SMTP server.

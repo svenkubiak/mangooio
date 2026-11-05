@@ -38,4 +38,4 @@ ${flash.error!}
 ${flash.foo!}
 ```
 
-Cookie name, key, and secret are configured under `flash.cookie.*`. The Secure flag follows `session.cookie.secure` rather than having its own setting. See [Configuration](configuration.md).
+Cookie name, key, and secret are `flash.cookie.*`. The cookie is `HttpOnly`, `SameSite=Strict`, and lives for 60 seconds. After a successful read it is discarded on the response, so it covers one request and at most those 60 seconds. `Secure` follows `session.cookie.secure`. There is no `flash.cookie.secure` key. The archetype writes one, and it is ignored. See [Configuration](configuration.md).

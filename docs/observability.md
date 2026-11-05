@@ -13,7 +13,7 @@ metrics:
   enable: true
 ```
 
-Admin UI traffic is excluded from the counters.
+Requests whose URI contains `@admin` are excluded. Health probes never reach the counter, because they are handled before it. User SSE and WebSocket routes have no route template and are stored as `(no route)` for the whole connection lifetime. At most 1000 route templates are kept. The rest are `Other routes`. Errors are status codes of 500 and above. Times on the dashboard are milliseconds.
 
 ## OpenTelemetry
 
@@ -34,6 +34,8 @@ When enabled, spans and metrics go out with these resource attributes:
 | `framework.name`, `framework.version` | `io.mangoo` and its version |
 | `framework.environment` | the application mode |
 
-Every request is recorded in the histogram `http.server.request.duration` (seconds, attributes `http.request.method` and `http.response.status_code`) as defined by the OpenTelemetry semantic conventions; health probes and server sent event streams are not. Metrics are exported every 60 seconds and once more on shutdown. Leave `otlp.enable` false unless you actually run a collector to receive them.
+Every request is recorded in the histogram `http.server.request.duration` (seconds, attributes `http.request.method` and `http.response.status_code`). Buckets run from 0.005 to 10 seconds. Health probes are outside the telemetry handler. A response whose `Content-Type` starts with `text/event-stream` is skipped. WebSocket exchanges are not. The span name is the raw request path, plus a child span `Invoke controller`. When `otlp.enable` is true, MongoDB commands are traced as well.
+
+`service.name` is `application.name` (default `mangooio-application`). `framework.environment` is `PROD`, `DEV`, or `TEST`. Export uses the SDK default interval of the periodic reader, 60 seconds in the OpenTelemetry Java version this build uses, and once more on shutdown. Leave `otlp.enable` false unless a collector is listening. The endpoint is gRPC, for example `http://127.0.0.1:4317`.
 
 For load balancer and orchestrator probes use `/@health/live` and `/@health/ready`, see [Operating](operating.md#health-checks). If you need a MongoDB ping for your own checks, call `Datastore.isHealthy()` directly.

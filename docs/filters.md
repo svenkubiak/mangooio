@@ -81,7 +81,7 @@ Return a `Response` with `end()` called on it, e.g. `Response.unauthorized().end
 |---|---|
 | `CsrfFilter` | Requires a valid CSRF token. See [CSRF](csrf.md). |
 | `OriginFilter` | Requires `Origin` to match `application.allowedOrigins`. |
-| `ApiKeyFilter` | Requires `Authorization: Bearer <application.api.key>`. |
+| `ApiKeyFilter` | Requires `Authorization` equal to `application.api.key`. The literal `Bearer` prefix is stripped. A mismatch is HTTP 401 with an empty body. |
 | `AdminFilter` | Protects `/@admin` (used internally). |
 
 ```java

@@ -87,12 +87,6 @@ Person person = new Person("Peter", "Parker", 24);
 return Response.ok().bodyJson(person);
 ```
 
-```json
-{
-  "firstname": "Peter",
-  "lastname": "Parker",
-  "age": 24
-}
-```
+The body on the wire is compact, from `JsonUtils.toJson`. Null properties are omitted. The object above is the data, not the bytes. `toPrettyJson` is the pretty printer. A failed `toJson` inside `bodyJson` sends an empty body and the status you set.
 
-`Response.badRequest().bodyJsonError("Invalid payload")` sends a small, consistent JSON error object, so clients can parse errors the same way regardless of which endpoint produced them.
+`Response.badRequest().bodyJsonError("Invalid payload")` sends `io.mangoo.models.Error`: a `timestamp` without a zone, `status`, and `message`.

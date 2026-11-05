@@ -2,90 +2,49 @@
 ![SemVer](https://img.shields.io/badge/SemVer-2.0.0-green)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-%F0%9F%8D%BA-yellow)](https://buymeacoffee.com/svenkubiak)
 
-# mangoo I/O – A Lean, Opinionated Java Web Framework for MongoDB
+# mangoo I/O
 
-**mangoo I/O** is a **lean, opinionated** full-stack Java web framework for MongoDB that **scales out securely, no assembly required**.
+mangoo I/O is a Java web framework. It runs on [Undertow](http://undertow.io/), keeps shared state in MongoDB, and stores sessions and authentication in encrypted cookies. Lockouts, a second factor, form limits, and Argon2 hashing are part of the framework. Token revocation across instances is there too, and it stays off until `authentication.blacklist` is set.
 
-## Built on a Robust Foundation
+Applications are MVC: a route in `app.Bootstrap` points at a controller method, the method returns a `Response`, and Freemarker or JSON does the rest. Configuration is one YAML file. Injection is Google Guice. The application module has to be named `app.Module`.
 
-At its core, **mangoo I/O** follows the **classic MVC architecture**, powered by the highly efficient [Undertow web server](http://undertow.io/) from JBoss. Instead of reinventing the wheel, it leverages **standard, production-ready Java libraries**, ensuring reliability, maintainability, and top-tier performance—without any unnecessary complexity or "magic."
+Each build is checked with [SonarQube](http://www.sonarqube.org/), about 1,300 rules.
 
-## Performance & Code Quality
+## Features
 
-To maintain **code quality and performance**, each build undergoes rigorous testing:
-
-- **Static Code Analysis** – Continuously validated against [SonarQube](http://www.sonarqube.org/) with a comprehensive **rule set of 1,300+ checks**.
-
-## Developer-Friendly & Easy to Learn
-
-**mangoo I/O** is designed with developers in mind, offering:
-
-✅ A **fluent and intuitive** API  
-✅ A **minimal learning curve** for Java developers  
-✅ A **lightweight** yet powerful feature set
-
-With **mangoo I/O**, you get a framework that prioritizes **developer experience, efficiency, and high performance**—making it an excellent choice for modern Java web development.
-
-## Key Features
-
-**mangoo I/O** offers a rich set of features designed for simplicity, scalability, and high performance:
-
-### 🚀 **Developer Productivity**
-- **Convention-over-configuration** for intuitive development
-- **Hot-compiling development mode** for instant feedback
-- **MongoDB as first-class database** with a thin layer over the official driver
-- **Easy-to-use template engine** for dynamic content rendering
-
-### ⚡ **High Performance & Scalability**
-- **Runs on one instance or many**, with shared security state out of the box
-- **Built-in caching** for optimized performance
-- **Asynchronous email handling** for efficient processing
-- **Event-driven architecture** with a **built-in EventBus**
-
-### 🔒 **Security & Reliability**
-- **Strong cryptography** with enforced security practices
-- **Built-in authentication** for user access control
-- **Simplified form handling & validation** with clear APIs
-- **Flexible request filtering** (global or per-request)
-
-### 🌐 **Modern Web & API Support**
-- **First-class JSON handling** for seamless API integration
-- **Server-Sent Events (SSE)** support for real-time communication
-- **Programmatic routing configuration** for flexibility
-
-### 🛠 **Tooling & Deployment**
-- **Built-in scheduling** for recurring tasks
-- **Flexible testing tools** for robust applications
-- **Simple deployment & CI/CD integration**
-- **Administrative interface** for app monitoring and management
-- **i18N internationalization** for multilingual support
-
-And much more... 🚀
+- Routes, controllers, and filters are ordinary Java. `mvn mangooio:run` restarts the process when compiled classes change. It does not compile them.
+- MongoDB through the official driver, with a small `Datastore` on top. Freemarker for HTML. Jackson for JSON.
+- One instance or many. Login lockouts, used TOTP codes, and (when enabled) revoked tokens are shared through MongoDB. The application cache and the `EventBus` stay on the instance that owns them.
+- Cookie authentication, optional TOTP, CSRF, CORS, and Argon2id. Sessions and flash are encrypted JWT cookies, so there is no sticky session.
+- Server-Sent Events, including delivery to other instances through MongoDB. WebSocket routes are Undertow handlers on the local instance. There is no fan-out.
+- `@Run` for fixed-delay and cron jobs, on every instance. Mail is sent on a virtual thread.
+- An admin UI, health probes, optional OpenTelemetry, and a fat JAR. See the [operating guide](https://svenkubiak.github.io/mangooio/operating/).
+- Message bundles under `translations/`, cookie `i18n.cookie.name`.
 
 ## Libraries
 
 Here are some used libraries and their purpose in mangoo I/O.
 
-* [Maven](https://maven.apache.org/) – Dependency management, built-system, packaging
-* [Undertow](http://undertow.io/) – Web Server
-* [MongoDB](https://www.mongodb.com/) – Persistence
-* [Google Guice](https://github.com/google/guice) – Dependency injection
-* [Classgraph](https://github.com/classgraph/classgraph) – Classpath scanning
-* [Caffeine](https://github.com/ben-manes/caffeine) – Caching
-* [Log4j](http://logging.apache.org/log4j/2.x/) – Logging
-* [Freemarker](http://freemarker.org/) – Template engine
-* [Jackson](https://github.com/FasterXML/jackson) – JSON handling
-* [JUnit](http://junit.org/junit4/), [Mockito](http://site.mockito.org/) – Testing
-* [Bouncy Castle](https://www.bouncycastle.org/) – Strong hashing and cryptography
+* [Maven](https://maven.apache.org/): Dependency management, build system, packaging
+* [Undertow](http://undertow.io/): Web Server
+* [MongoDB](https://www.mongodb.com/): Persistence
+* [Google Guice](https://github.com/google/guice): Dependency injection
+* [Classgraph](https://github.com/classgraph/classgraph): Classpath scanning
+* [Caffeine](https://github.com/ben-manes/caffeine): Caching
+* [Log4j](http://logging.apache.org/log4j/2.x/): Logging
+* [Freemarker](http://freemarker.org/): Template engine
+* [Jackson](https://github.com/FasterXML/jackson): JSON handling
+* [JUnit](https://junit.org/), [Mockito](https://site.mockito.org/): Testing
+* [Bouncy Castle](https://www.bouncycastle.org/): Strong hashing and cryptography
 * And many more …
 
 ## By the numbers
 
-* 1.394 Sonar rules
-* 9.499 Lines of core code
-* 5.500+ Commits
-* 1.000+ Unit tests
-* 10+ years development maturity
+* 1,394 Sonar rules
+* 10,000+ lines of core code
+* 5,500+ commits
+* 1,000+ unit tests
+* 11+ years development maturity
 * 223 cups of coffee (estimated)
 
 ## Resources
@@ -103,7 +62,4 @@ Here are some used libraries and their purpose in mangoo I/O.
 [https://svenkubiak.github.io/mangooio/migrations/](https://svenkubiak.github.io/mangooio/migrations/)
 
 **Support**   
-[https://github.com/svenkubiak/mangooio/issues](https://github.com/svenkubiak/mangooio/issues)  
-
-**Contact**  
-Security, Support, etc.: sk@svenkubiak.de
+[https://github.com/svenkubiak/mangooio/issues](https://github.com/svenkubiak/mangooio/issues)

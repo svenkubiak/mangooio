@@ -1,8 +1,8 @@
 # Async
 
-Long-running or fire-and-forget work should not block the HTTP thread. The **`EventBus`** publishes payloads to **`Subscriber`** implementations, and delivery runs on **virtual threads**, so you can write straightforward blocking code inside a subscriber without starving Undertow's worker pool.
+The **`EventBus`** publishes payloads to **`Subscriber`** implementations. `publish` returns immediately. Delivery of one event runs on a single virtual thread, and the subscribers for that payload are called one after another. A slow subscriber delays the next subscriber of the same event. It does not block the publisher, and it does not run on an Undertow thread.
 
-Subscribers are discovered at startup through a classpath scan. Each subscriber type is tied to a **queue name equal to the binary name of the payload class** (`Class#getName()`). There is no `unregister` method, so if you need multiple handlers for the same payload type, register additional subscribers by class instead.
+Subscribers are discovered at startup. The queue name is `payload.getClass().getName()`. A subclass does not reach a subscriber registered for a parent type. A raw `Subscriber` or `Subscriber<Object>` is skipped and logged. There is no `unregister`. Register another class when you need a second handler for the same payload.
 
 ## Subscribers
 
@@ -34,7 +34,16 @@ public void notify(String message) {
 }
 ```
 
-`publish` looks up subscribers for `payload.getClass().getName()`, and again, there is no `unregister`. You can also call `eventBus.register("java.lang.String", AuditSubscriber.class)` yourself, though classpath scanning already does that for you for any `Subscriber` type.
+`publish` looks up subscribers for `payload.getClass().getName()`. You can also call `eventBus.register("java.lang.String", AuditSubscriber.class)`. Classpath scanning already does that for any `Subscriber` it finds. `getHandledEvents()`, `getFailedEvents()`, `getSubscribers()`, and `getNumberOfSubscribers()` are what the admin dashboard reads.
+
+`EventBus` stays on the publishing JVM. Cross-instance messages go through `io.mangoo.interfaces.MessageBroker`:
+
+```java
+void publish(String topic, String message);
+void subscribe(String topic, Consumer<String> consumer);
+```
+
+With persistence that is the capped collection `mangooio_messages`. Without it, subscribers on this JVM only. A message published while the tail is disconnected is not replayed. SSE and the admin cache-clear action use this broker. See [Operating](operating.md#running-several-instances).
 
 Use a dedicated payload class if you need separate queues:
 
