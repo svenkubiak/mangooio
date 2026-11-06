@@ -79,6 +79,8 @@ Released at 06.11.2026
   * opentelemetry-semconv 1.44.0 -&gt; 1.45.0
   * classgraph 6.0.1 -&gt; 6.0.2
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.16.0...10.16.1)
+
 ## Version 10.16.0
 
 Released at 02.11.2026
