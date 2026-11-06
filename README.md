@@ -4,22 +4,81 @@
 
 # mangoo I/O
 
-mangoo I/O is a Java web framework. It runs on [Undertow](http://undertow.io/), keeps shared state in MongoDB, and stores sessions and authentication in encrypted cookies. Lockouts, a second factor, form limits, and Argon2 hashing are part of the framework. Token revocation across instances is there too, and it stays off until `authentication.blacklist` is set.
+**mangoo I/O** is a lean, opinionated full-stack Java web framework that scales out securely, no assembly required. It builds HTTP applications, everything from server-rendered HTML sites to JSON APIs, on [Undertow](http://undertow.io/) and follows a classic MVC style: you map URLs to controller methods, return a `Response`, and optionally render Freemarker templates or send JSON.
 
-Applications are MVC: a route in `app.Bootstrap` points at a controller method, the method returns a `Response`, and Freemarker or JSON does the rest. Configuration is one YAML file. Injection is Google Guice. The application module has to be named `app.Module`.
+Controllers live in a package you configure once, templates follow a predictable path, and sessions, flash, CSRF, and locale are method parameters. Routes are Java code in `app.Bootstrap`. Configuration is one YAML file. Dependency injection is [Google Guice](https://github.com/google/guice). The application module has to be named `app.Module`.
 
-Each build is checked with [SonarQube](http://www.sonarqube.org/), about 1,300 rules.
+If you are new to the project, start with [Getting started](https://svenkubiak.github.io/mangooio/getting-started/). It walks through the Maven archetype, the project layout, and the first request.
+
+Each release is validated against a large [SonarQube](http://www.sonarqube.org/) rule set. The core module stays compact: test support (`mangooio-test`) and tooling (`mangooio-maven-plugin`) live in their own artifacts.
+
+## How a request flows
+
+Every HTTP request passes through Undertow, then any filters you have registered, then a controller method you mapped in `app.Bootstrap`:
+
+1. **Routing.** `Bootstrap.initializeRoutes()` registers URLs. A route points to a controller class and a method name.
+2. **Bindings.** The framework injects path parameters, query values, JSON bodies, and objects such as `Request`, `Session`, `Form`, or `Authentication` into the method signature, based on the parameter types and names you declare.
+3. **Response.** The method returns `Response.ok()`, `Response.redirect(...)`, or similar. You choose whether to render a template, send JSON, or just return a status.
+
+```java
+public Response index(Request request, Session session) {
+    return Response.ok().render("username", session.get("username"));
+}
+```
+
+Templates, cookies, and security headers are handled by the framework once you return the response.
+
+## What you get out of the box
+
+mangoo I/O ships as `mangooio-core`, plus `mangooio-test` and the Maven plugin. Undertow, Freemarker, and Jackson are already wired. You can replace a binding in `app.Module`, including `Datastore`, when the default is the wrong one.
+
+| Area | Built-in support |
+|---|---|
+| HTTP server | Undertow (HTTP and optional HTTPS) |
+| Templates | Freemarker |
+| JSON | Jackson |
+| Persistence | MongoDB (Java sync driver) |
+| Cache | Caffeine |
+| DI | Google Guice |
+| Logging | Log4j2 |
+| Scheduling | `@Run` on plain Java methods |
+| Real-time | Server-Sent Events; local WebSocket routes |
+| Security | Encrypted cookies, CSRF, CORS, optional TOTP |
+
+Custom filters and extra Guice bindings are the normal way to extend this. Most applications stay on the defaults above.
 
 ## Features
 
-- Routes, controllers, and filters are ordinary Java. `mvn mangooio:run` restarts the process when compiled classes change. It does not compile them.
-- MongoDB through the official driver, with a small `Datastore` on top. Freemarker for HTML. Jackson for JSON.
-- One instance or many. Login lockouts, used TOTP codes, and (when enabled) revoked tokens are shared through MongoDB. The application cache and the `EventBus` stay on the instance that owns them.
-- Cookie authentication, optional TOTP, CSRF, CORS, and Argon2id. Sessions and flash are encrypted JWT cookies, so there is no sticky session.
-- Server-Sent Events, including delivery to other instances through MongoDB. WebSocket routes are Undertow handlers on the local instance. There is no fan-out.
-- `@Run` for fixed-delay and cron jobs, on every instance. Mail is sent on a virtual thread.
-- An admin UI, health probes, optional OpenTelemetry, and a fat JAR. See the [operating guide](https://svenkubiak.github.io/mangooio/operating/).
-- Message bundles under `translations/`, cookie `i18n.cookie.name`.
+### Development
+
+- **Convention over configuration.** Controller package, template paths, and translation bundles follow fixed conventions.
+- **Restart on compile in dev mode.** `mvn mangooio:run` does not compile. It restarts the process after `target/classes` changes, once the writes have settled (500 ms by default). Templates reload without a restart.
+- **Programmatic routing.** All routes live in `Bootstrap.java`. There is no separate routes file.
+- **Maven archetype.** Generates a working app with generated dev and test secrets, sample persistence, and a first test already in place.
+
+### HTTP and security
+
+- **Fluent `Response` API.** Status codes, headers, cookies, redirects, HTML, JSON, and binary bodies share one builder-style API.
+- **Client-side sessions and flash.** Session and flash data live in encrypted and signed JWT cookies. Any instance with the same secrets, cookie names, and `application.name` can serve the next request. There is no sticky session and no shared session store.
+- **Form validation.** The `Form` object uses the same validation helpers as regular request handling, with messages sourced from `messages.properties`.
+- **CSRF and origin checks.** Filters for token validation and allowed `Origin` headers integrate with Freemarker directives.
+- **Cookie authentication.** You verify credentials however you like; the framework issues and validates the auth cookie. Optional TOTP is available for two-factor login. Lockouts, a second factor, form limits, and Argon2 hashing are part of the framework. Token revocation across instances stays off until `authentication.blacklist` is set.
+
+### Data and background work
+
+- **MongoDB datastore.** Inject `Datastore`, map entities with `@Collection`, and query using the native driver API.
+- **Built-in cache.** A Caffeine cache in the process. Login lockouts are kept in MongoDB when persistence is on, so instances share them.
+- **`@Run` scheduler.** Fixed-delay (`Every 5m`) or cron-style jobs on ordinary classes, discovered through a classpath scan at startup, on every instance.
+- **EventBus.** `publish` returns immediately. Subscribers for that payload then run one after another on a virtual thread, on the instance that published. Cross-instance delivery is the `MessageBroker`, used by SSE.
+- **Asynchronous email.** `Mail.send()` does not block the request thread. Mail is sent on a virtual thread.
+
+### Operations
+
+- **Admin dashboard.** An optional `/@admin` UI for cache stats, the scheduler, and a few security helpers. In prod the cookie requires HTTPS.
+- **Health and shutdown.** `/@health/live` and `/@health/ready` are always on. Shutdown starts with readiness going to `503` and waits up to `application.shutdown.timeout` (20 seconds).
+- **Metrics and tracing.** Dashboard metrics are off until `metrics.enable`. OpenTelemetry export is off until `otlp.enable`.
+- **Server-Sent Events** reach clients on other instances through MongoDB. WebSocket routes are Undertow handlers on the local instance.
+- **Fat-JAR deployment.** The shade plugin produces a single runnable JAR. The [operating guide](https://svenkubiak.github.io/mangooio/operating/) covers supervisord, Docker, probes, cookies, and the request-size limits.
 
 ## Libraries
 
