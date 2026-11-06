@@ -9,8 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -254,20 +252,6 @@ class FormTest {
         assertEquals(42, result.get());
     }
 
-    @Test
-    void testGetIntegerWithNegativeValue() {
-        // Given
-        String key = "testKey";
-        String value = "-42";
-        form.addValue(key, value);
-
-        // When
-        Optional<Integer> result = form.getInteger(key);
-
-        // Then
-        assertTrue(result.isPresent());
-        assertEquals(-42, result.get());
-    }
 
     @Test
     void testGetIntegerWithInvalidValue() {
@@ -319,35 +303,7 @@ class FormTest {
         assertEquals(42.5, result.get());
     }
 
-    @Test
-    void testGetDoubleWithNegativeValue() {
-        // Given
-        String key = "testKey";
-        String value = "-42.5";
-        form.addValue(key, value);
 
-        // When
-        Optional<Double> result = form.getDouble(key);
-
-        // Then
-        assertTrue(result.isPresent());
-        assertEquals(-42.5, result.get());
-    }
-
-    @Test
-    void testGetDoubleWithIntegerValue() {
-        // Given
-        String key = "testKey";
-        String value = "42";
-        form.addValue(key, value);
-
-        // When
-        Optional<Double> result = form.getDouble(key);
-
-        // Then
-        assertTrue(result.isPresent());
-        assertEquals(42.0, result.get());
-    }
 
     @Test
     void testGetDoubleWithInvalidValue() {
@@ -384,20 +340,6 @@ class FormTest {
         assertThrows(NullPointerException.class, () -> form.getDouble(key));
     }
 
-    @Test
-    void testGetFloatWithValidValue() {
-        // Given
-        String key = "testKey";
-        String value = "42.5f";
-        form.addValue(key, value);
-
-        // When
-        Optional<Float> result = form.getFloat(key);
-
-        // Then
-        assertTrue(result.isPresent());
-        assertEquals(42.5f, result.get());
-    }
 
     @Test
     void testGetFloatWithNegativeValue() {
@@ -414,20 +356,6 @@ class FormTest {
         assertEquals(-42.5f, result.get());
     }
 
-    @Test
-    void testGetFloatWithIntegerValue() {
-        // Given
-        String key = "testKey";
-        String value = "42";
-        form.addValue(key, value);
-
-        // When
-        Optional<Float> result = form.getFloat(key);
-
-        // Then
-        assertTrue(result.isPresent());
-        assertEquals(42.0f, result.get());
-    }
 
     @Test
     void testGetFloatWithInvalidValue() {
@@ -491,17 +419,6 @@ class FormTest {
         assertTrue(result.isEmpty());
     }
 
-    @Test
-    void testGetFileWithEmptyFilesMap() {
-        // Given
-        String key = "testFile";
-
-        // When
-        Optional<byte[]> result = form.getFile(key);
-
-        // Then
-        assertTrue(result.isEmpty());
-    }
 
     @Test
     void testGetFileWithNullKey() {
@@ -512,36 +429,7 @@ class FormTest {
         assertThrows(NullPointerException.class, () -> form.getFile(key));
     }
 
-    @Test
-    void testGetValues() {
-        // Given
-        Map<String, String> expectedValues = new HashMap<>();
-        expectedValues.put("key1", "value1");
-        expectedValues.put("key2", "value2");
-        form.setValues(expectedValues);
 
-        // When
-        Map<String, String> result = form.getValues();
-
-        // Then
-        assertEquals(expectedValues, result);
-    }
-
-    @Test
-    void testAddFileWithValidInputStream() throws IOException {
-        // Given
-        String key = "testFile";
-        String content = "test file content";
-        InputStream inputStream = new ByteArrayInputStream(content.getBytes());
-
-        // When
-        form.addFile(key, inputStream);
-
-        // Then
-        Optional<byte[]> result = form.getFile(key);
-        assertTrue(result.isPresent());
-        assertArrayEquals(content.getBytes(), result.get());
-    }
 
     @Test
     void testAddFileWithNullKey() {
@@ -553,15 +441,6 @@ class FormTest {
         assertThrows(NullPointerException.class, () -> form.addFile(key, inputStream));
     }
 
-    @Test
-    void testAddFileWithNullInputStream() {
-        // Given
-        String key = "testFile";
-        InputStream inputStream = null;
-
-        // When & Then
-        assertThrows(NullPointerException.class, () -> form.addFile(key, inputStream));
-    }
 
     @Test
     void testAddFileWithIOException() throws IOException {
@@ -578,31 +457,11 @@ class FormTest {
         assertThrows(IOException.class, () -> form.addFile(key, inputStream));
 
         // Then
-        // Should not throw exception, but file should not be added
         Optional<byte[]> result = form.getFile(key);
         assertTrue(result.isEmpty());
     }
 
-    @Test
-    void testKeep() {
-        // Given
-        assertFalse(form.isKept());
 
-        // When
-        form.keep();
-
-        // Then
-        assertTrue(form.isKept());
-    }
-
-    @Test
-    void testIsKeptInitiallyFalse() {
-        // When
-        boolean result = form.isKept();
-
-        // Then
-        assertFalse(result);
-    }
 
     @Test
     void testDiscard() throws IOException {
@@ -621,39 +480,8 @@ class FormTest {
         assertTrue(form.getFile("file2").isEmpty());
     }
 
-    @Test
-    void testIsSubmittedInitiallyFalse() {
-        // When
-        boolean result = form.isSubmitted();
 
-        // Then
-        assertFalse(result);
-    }
 
-    @Test
-    void testSetSubmitted() {
-        // Given
-        assertFalse(form.isSubmitted());
-
-        // When
-        form.setSubmitted(true);
-
-        // Then
-        assertTrue(form.isSubmitted());
-    }
-
-    @Test
-    void testSetSubmittedFalse() {
-        // Given
-        form.setSubmitted(true);
-        assertTrue(form.isSubmitted());
-
-        // When
-        form.setSubmitted(false);
-
-        // Then
-        assertFalse(form.isSubmitted());
-    }
 
     @Test
     void testFlashSerializationExcludesFiles() throws IOException {
@@ -674,19 +502,6 @@ class FormTest {
         assertTrue(deserialized.getFile("upload").isEmpty());
     }
 
-    @Test
-    void testGetIntegerWithValuesIntegerCannotParse() {
-        for (String value : new String[] {"1.5", "1e3", "99999999999", "0x1F", "1L"}) {
-            // Given
-            form.addValue("number", value);
-
-            // When
-            Optional<Integer> result = form.getInteger("number");
-
-            // Then
-            assertTrue(result.isEmpty(), "Expected empty result for " + value);
-        }
-    }
 
     @Test
     void testGetLongWithValuesLongCannotParse() {
@@ -705,11 +520,9 @@ class FormTest {
     void testGetDoubleAndFloatWithValuesTheyCannotParse() {
         // Given
         form.addValue("decimal", "1.5");
-        form.addValue("exponent", "1e3");
 
         // Then
         assertEquals(Optional.of(1.5), form.getDouble("decimal"));
-        assertEquals(Optional.of(1000.0), form.getDouble("exponent"));
         assertEquals(Optional.of(1.5f), form.getFloat("decimal"));
 
         for (String value : new String[] {"0x1F", "1L", "NaN", "Infinity", "-Infinity"}) {

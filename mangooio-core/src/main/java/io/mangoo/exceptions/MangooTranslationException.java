@@ -9,8 +9,4 @@ public class MangooTranslationException extends Exception {
     public MangooTranslationException(Exception e) {
         super(e);
     }
-
-    public MangooTranslationException(String message) {
-        super(message);
-    }
 }

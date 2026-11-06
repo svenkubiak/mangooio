@@ -7,10 +7,11 @@ public final class Default {
     public static final String APPLICATION_ADMIN_COOKIE_NAME = "mangooio-admin";
     public static final Boolean APPLICATION_ADMIN_ENABLE = Boolean.FALSE;
     public static final String APPLICATION_ADMIN_LOCALE = "en_EN";
-    public static final String APPLICATION_CONTROLLER = "controllers.";
     public static final String APPLICATION_LANGUAGE = "en";
     public static final String APPLICATION_NAME = "mangooio-application";
     public static final Boolean APPLICATION_PARAMETER_STRICT = Boolean.FALSE;
+    public static final String APPLICATION_SECRETS_PATH = "/run/secrets";
+    public static final long APPLICATION_SHUTDOWN_TIMEOUT = 20;
     public static final String APPLICATION_TIMEZONE = "UTC";
     public static final Boolean APPLICATION_VALIDATION_PASSTHROUGH = Boolean.FALSE;
     public static final Boolean AUTHENTICATION_BLACKLIST = Boolean.FALSE;
@@ -28,7 +29,7 @@ public final class Default {
     public static final int AUTHENTICATION_LOCK_DURATION = 60;
     public static final Boolean AUTHENTICATION_ORIGIN = Boolean.FALSE;
     public static final String BUNDLE_NAME = "translations/messages";
-    public static final String CONNECTOR_HTTPS_CERTIFICATE_ALIAS = "certificate";
+    public static final Boolean CONNECTOR_PROXY = Boolean.FALSE;
     public static final String CORS_ALLOW_ORIGIN = "^http(s)?://(www\\.)?example\\.(com|org)$";
     public static final Boolean CORS_ENABLE = Boolean.FALSE;
     public static final Boolean CORS_HEADERS_ALLOW_CREDENTIALS = Boolean.TRUE;
@@ -44,8 +45,11 @@ public final class Default {
     public static final long FORM_MAX_FILE_SIZE = 5L * 1024 * 1024;
     public static final int FORM_MAX_PARAMETERS = 1000;
     public static final int FORM_MAX_VALUE_LENGTH = 10_000;
+    public static final String HEALTH_LIVE = "/@health/live";
+    public static final String HEALTH_READY = "/@health/ready";
     public static final String I18N_COOKIE_NAME = "mangooio-i18n";
-    public static final String JAVASCRIPT_FOLDER = "javascript";
+    // Tolerated clock difference in seconds when validating a JWT; everything protecting a token has to outlive exp by it
+    public static final long JWT_CLOCK_SKEW = 30;
     public static final String LANGUAGE = "en";
     public static final Boolean METRICS_ENABLE = Boolean.FALSE;
     public static final Boolean OTLP_ENABLE = Boolean.FALSE;
@@ -56,6 +60,7 @@ public final class Default {
     public static final String PERSISTENCE_MONGO_HOST = "localhost";
     public static final int PERSISTENCE_MONGO_PORT = 27017;
     public static final String PERSISTENCE_PREFIX = "persistence.";
+    public static final String PERSISTENCE_MONGO_SCHEMA = "create";
     public static final Boolean SCHEDULER_ENABLE = Boolean.TRUE;
     // Below the 60 second proxy_read_timeout of nginx and the idle timeout of common load balancers
     public static final long SERVER_SENT_EVENT_KEEP_ALIVE = 30000;
@@ -70,7 +75,10 @@ public final class Default {
     public static final String SMTP_HOST = "localhost";
     public static final int SMTP_PORT = 25;
     public static final String SMTP_PROTOCOL = "smtps";
-    public static final String STYLESHEET_FOLDER = "stylesheet";
+    public static final String SMTP_PROTOCOL_STARTTLS = "smtptls";
+    public static final String SMTP_PROTOCOL_CLEAR = "smtp";
+    public static final int SMTP_CONNECTION_TIMEOUT = 10000;
+    public static final int SMTP_READ_TIMEOUT = 30000;
     public static final long UNDERTOW_MAX_ENTITY_SIZE = 4194304L;
     public static final int UNDERTOW_MAX_HEADER_SIZE = 8192;
     public static final int UNDERTOW_MAX_PARAMETERS = 1000;
@@ -98,6 +106,10 @@ public final class Default {
         messages.put(Validation.MIME_TYPE_KEY, Validation.MIME_TYPE);
         messages.put(Validation.FILE_SIZE_KEY, Validation.FILE_SIZE);
         messages.put(Validation.FILE_KEY, Validation.FILE);
+        messages.put(Validation.TRUE_KEY, Validation.TRUE);
+        messages.put(Validation.FALSE_KEY, Validation.FALSE);
+        messages.put(Validation.NULL_KEY, Validation.NULL);
+        messages.put(Validation.NOTNULL_KEY, Validation.NOTNULL);
     }
 
     private Default() {

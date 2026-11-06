@@ -24,7 +24,6 @@ class ServerTest {
                 .stream()
                 .filter(entry -> entry.getKey() == Header.FEATURE_POLICY).collect(Collectors.toList());
         
-        assertThat(collect, not(nullValue()));
         assertThat(collect.getFirst().getValue(), equalTo("myFeaturePolicy"));
     }
 }

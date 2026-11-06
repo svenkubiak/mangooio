@@ -138,6 +138,7 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/unauthorized").respondeWith("unauthorized"),
                 On.get().to("/header").respondeWith("header").withNonBlocking(),
                 On.get().to("/request").respondeWith("request"),
+                On.get().to("/basicauth").respondeWith("basicauth"),
                 On.post().to("/post").respondeWith("post"),
                 On.put().to("/post").respondeWith("put"),
                 On.post().to("/jsonboonpost").respondeWith("jsonBoonPost"),

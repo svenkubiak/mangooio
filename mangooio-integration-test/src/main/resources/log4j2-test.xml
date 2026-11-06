@@ -15,7 +15,6 @@
 		<Logger name="org.xnio" level="warn" />
 
 		<!-- Logged once per injector, which the test run creates hundreds of times -->
-		<Logger name="io.mangoo.crypto.Vault" level="warn" />
 
 		<!-- AuthenticationTest feeds malformed hashes on purpose -->
 		<Logger name="io.mangoo.crypto.PasswordHasher" level="error" />

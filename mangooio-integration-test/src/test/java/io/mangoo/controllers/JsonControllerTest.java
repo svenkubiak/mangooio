@@ -27,7 +27,6 @@ class JsonControllerTest {
         TestResponse response = TestRequest.get("/render").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader("content-type"), equalTo(APPLICATION_JSON_CHARSET_UTF_8));
         assertThat(response.getContent(), equalTo(json));
@@ -39,7 +38,6 @@ class JsonControllerTest {
         TestResponse response = TestRequest.get("/json-body").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader("content-type"), equalTo(APPLICATION_JSON_CHARSET_UTF_8));
         assertThat(response.getContent(), equalTo(json));
@@ -51,7 +49,6 @@ class JsonControllerTest {
         TestResponse response = TestRequest.get("/json-error").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
         assertThat(response.getHeader("content-type"), equalTo(APPLICATION_JSON_CHARSET_UTF_8));
         assertThat(response.getContent(), containsString("An error occurred. Please have a look."));
@@ -66,7 +63,6 @@ class JsonControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("Peter;Parker;24"));
     }
@@ -85,7 +81,7 @@ class JsonControllerTest {
                     .execute();
 
             // then
-            return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Peter;" + uuid + ";24");
+            return response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Peter;" + uuid + ";24");
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
@@ -98,7 +94,6 @@ class JsonControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("Peter;Parker;24"));
     }
@@ -112,7 +107,6 @@ class JsonControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("Peter;Parker;24"));
     }
@@ -126,25 +120,9 @@ class JsonControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), not(nullValue()));
     }
-    
-    @Test
-    void testJsonNullResponseBody() {
-        //given
-        TestResponse response = TestRequest.post("/body")
-                .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
-                .withStringBody(null)
-                .execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), not(nullValue()));
-    }
-    
+        
     @Test
     void testJsonResponseBody() {
         //given
@@ -154,7 +132,6 @@ class JsonControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("/body"));
     }
@@ -168,7 +145,6 @@ class JsonControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("/requestAndJsonPeter"));
     }

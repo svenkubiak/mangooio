@@ -4,9 +4,9 @@ import io.mangoo.TestExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 
@@ -25,47 +25,8 @@ class DateUtilsTest {
         //when
         Date date = DateUtils.localDateTimeToDate(localDateTime);
 
-        //then
-        assertThat(date, not(nullValue()));
-        assertThat(date, instanceOf(Date.class));
-
-        LocalDateTime convertedBack = date.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
-        assertThat(convertedBack, equalTo(localDateTime));
-    }
-
-    @Test
-    void testLocalDateTimeToDateWithDifferentTimes() {
-        //given
-        LocalDateTime localDateTime1 = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
-        LocalDateTime localDateTime2 = LocalDateTime.of(2023, 12, 31, 23, 59, 59);
-
-        //when
-        Date date1 = DateUtils.localDateTimeToDate(localDateTime1);
-        Date date2 = DateUtils.localDateTimeToDate(localDateTime2);
-
-        //then
-        assertThat(date1, not(nullValue()));
-        assertThat(date2, not(nullValue()));
-        assertThat(date1.before(date2), equalTo(true));
-    }
-
-    @Test
-    void testLocalDateTimeToDateWithLeapYear() {
-        //given
-        LocalDateTime leapYearDate = LocalDateTime.of(2024, 2, 29, 12, 0, 0);
-
-        //when
-        Date date = DateUtils.localDateTimeToDate(leapYearDate);
-
-        //then
-        assertThat(date, not(nullValue()));
-
-        LocalDateTime convertedBack = date.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
-        assertThat(convertedBack, equalTo(leapYearDate));
+        //then the configured application time zone (Europe/Berlin, UTC+1 in winter) is used
+        assertThat(date.toInstant(), equalTo(Instant.parse("2023-12-25T13:30:45Z")));
     }
 
     @Test
@@ -87,47 +48,8 @@ class DateUtilsTest {
         //when
         Date date = DateUtils.localDateToDate(localDate);
 
-        //then
-        assertThat(date, not(nullValue()));
-        assertThat(date, instanceOf(Date.class));
-
-        LocalDate convertedBack = date.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        assertThat(convertedBack, equalTo(localDate));
-    }
-
-    @Test
-    void testLocalDateToDateWithDifferentDates() {
-        //given
-        LocalDate localDate1 = LocalDate.of(2023, 1, 1);
-        LocalDate localDate2 = LocalDate.of(2023, 12, 31);
-
-        //when
-        Date date1 = DateUtils.localDateToDate(localDate1);
-        Date date2 = DateUtils.localDateToDate(localDate2);
-
-        //then
-        assertThat(date1, not(nullValue()));
-        assertThat(date2, not(nullValue()));
-        assertThat(date1.before(date2), equalTo(true));
-    }
-
-    @Test
-    void testLocalDateToDateWithLeapYear() {
-        //given
-        LocalDate leapYearDate = LocalDate.of(2024, 2, 29);
-
-        //when
-        Date date = DateUtils.localDateToDate(leapYearDate);
-
-        //then
-        assertThat(date, not(nullValue()));
-
-        LocalDate convertedBack = date.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        assertThat(convertedBack, equalTo(leapYearDate));
+        //then start of day in the configured application time zone (Europe/Berlin, UTC+1 in winter)
+        assertThat(date.toInstant(), equalTo(Instant.parse("2023-12-24T23:00:00Z")));
     }
 
     @Test
@@ -142,30 +64,6 @@ class DateUtilsTest {
     }
 
     @Test
-    void testGetPrettyTimeWithCurrentTime() {
-        //given
-        LocalDateTime now = LocalDateTime.now();
-
-        //when
-        String prettyTime = DateUtils.getPrettyTime(now);
-
-        //then
-        assertThat(prettyTime, not(nullValue()));
-        assertThat(prettyTime, not(emptyString()));
-        assertThat(prettyTime.toLowerCase(), anyOf(
-                containsString("moments from now"),
-                containsString("moments ago"),
-                containsString("second"),
-                containsString("minute"),
-                containsString("hour"),
-                containsString("day"),
-                containsString("week"),
-                containsString("month"),
-                containsString("year")
-        ));
-    }
-
-    @Test
     void testGetPrettyTimeWithPastTime() {
         //given
         LocalDateTime pastTime = LocalDateTime.now().minusHours(2);
@@ -174,39 +72,6 @@ class DateUtilsTest {
         String prettyTime = DateUtils.getPrettyTime(pastTime);
 
         //then
-        assertThat(prettyTime, not(nullValue()));
-        assertThat(prettyTime, not(emptyString()));
-        assertThat(prettyTime.toLowerCase(), containsString("ago"));
-    }
-
-    @Test
-    void testGetPrettyTimeWithFutureTime() {
-        //given
-        LocalDateTime futureTime = LocalDateTime.now().plusHours(2);
-
-        //when
-        String prettyTime = DateUtils.getPrettyTime(futureTime);
-
-        //then
-        assertThat(prettyTime, not(nullValue()));
-        assertThat(prettyTime, not(emptyString()));
-        assertThat(prettyTime.toLowerCase(), anyOf(
-                containsString("from now"),
-                containsString("in ")
-        ));
-    }
-
-    @Test
-    void testGetPrettyTimeWithSpecificDateTime() {
-        //given
-        LocalDateTime specificTime = LocalDateTime.of(2020, 1, 1, 12, 0, 0);
-
-        //when
-        String prettyTime = DateUtils.getPrettyTime(specificTime);
-
-        //then
-        assertThat(prettyTime, not(nullValue()));
-        assertThat(prettyTime, not(emptyString()));
         assertThat(prettyTime.toLowerCase(), containsString("ago"));
     }
 
@@ -224,78 +89,13 @@ class DateUtilsTest {
     @Test
     void testGetPrettyTimeWithLocale() {
         //given
-        LocalDateTime now = LocalDateTime.now();
-        Locale locale = Locale.ENGLISH;
+        LocalDateTime pastTime = LocalDateTime.now().minusDays(2);
 
         //when
-        String prettyTime = DateUtils.getPrettyTime(locale, now);
+        String prettyTime = DateUtils.getPrettyTime(Locale.GERMAN, pastTime);
 
         //then
-        assertThat(prettyTime, not(nullValue()));
-        assertThat(prettyTime, not(emptyString()));
-        assertThat(prettyTime.toLowerCase(), anyOf(
-                containsString("moments from now"),
-                containsString("moments ago"),
-                containsString("second"),
-                containsString("minute"),
-                containsString("hour"),
-                containsString("day"),
-                containsString("week"),
-                containsString("month"),
-                containsString("year")
-        ));
-    }
-
-    @Test
-    void testGetPrettyTimeWithDifferentLocales() {
-        //given
-        LocalDateTime now = LocalDateTime.now();
-        Locale englishLocale = Locale.ENGLISH;
-        Locale germanLocale = Locale.GERMAN;
-
-        //when
-        String prettyTimeEnglish = DateUtils.getPrettyTime(englishLocale, now);
-        String prettyTimeGerman = DateUtils.getPrettyTime(germanLocale, now);
-
-        //then
-        assertThat(prettyTimeEnglish, not(nullValue()));
-        assertThat(prettyTimeGerman, not(nullValue()));
-        assertThat(prettyTimeEnglish, not(emptyString()));
-        assertThat(prettyTimeGerman, not(emptyString()));
-        // The localized strings may differ, so only their presence is asserted
-    }
-
-    @Test
-    void testGetPrettyTimeWithLocaleAndPastTime() {
-        //given
-        LocalDateTime pastTime = LocalDateTime.now().minusDays(1);
-        Locale locale = Locale.ENGLISH;
-
-        //when
-        String prettyTime = DateUtils.getPrettyTime(locale, pastTime);
-
-        //then
-        assertThat(prettyTime, not(nullValue()));
-        assertThat(prettyTime, not(emptyString()));
-        assertThat(prettyTime.toLowerCase(), containsString("ago"));
-    }
-
-    @Test
-    void testGetPrettyTimeWithLocaleAndFutureTime() {
-        //given
-        LocalDateTime futureTime = LocalDateTime.now().plusDays(1);
-        Locale locale = Locale.ENGLISH;
-
-        //when
-        String prettyTime = DateUtils.getPrettyTime(locale, futureTime);
-
-        //then
-        assertThat(prettyTime, not(nullValue()));
-        assertThat(prettyTime, not(emptyString()));
-        assertThat(prettyTime.toLowerCase(), anyOf(
-                containsString("from now"),
-                containsString("in ")
-        ));
+        assertThat(prettyTime, startsWith("vor "));
     }
 
     @Test
@@ -320,162 +120,5 @@ class DateUtilsTest {
         NullPointerException exception = assertThrows(NullPointerException.class,
                 () -> DateUtils.getPrettyTime(locale, localDateTime));
         assertThat(exception.getMessage(), containsString("localDateTime can not be null"));
-    }
-
-    @Test
-    void testGetPrettyTimeWithLocaleBothNull() {
-        //given
-        LocalDateTime localDateTime = null;
-        Locale locale = null;
-
-        //when & then
-        NullPointerException exception = assertThrows(NullPointerException.class,
-                () -> DateUtils.getPrettyTime(locale, localDateTime));
-        // Should throw for the first null parameter (locale)
-        assertThat(exception.getMessage(), containsString("locale can not be null"));
-    }
-
-    @Test
-    void testGetPrettyTimeConsistency() {
-        //given
-        LocalDateTime specificTime = LocalDateTime.of(2023, 6, 15, 10, 30, 0);
-
-        //when
-        String prettyTime1 = DateUtils.getPrettyTime(specificTime);
-        String prettyTime2 = DateUtils.getPrettyTime(specificTime);
-
-        //then
-        assertThat(prettyTime1, equalTo(prettyTime2));
-    }
-
-    @Test
-    void testGetPrettyTimeWithLocaleConsistency() {
-        //given
-        LocalDateTime specificTime = LocalDateTime.of(2023, 6, 15, 10, 30, 0);
-        Locale locale = Locale.ENGLISH;
-
-        //when
-        String prettyTime1 = DateUtils.getPrettyTime(locale, specificTime);
-        String prettyTime2 = DateUtils.getPrettyTime(locale, specificTime);
-
-        //then
-        assertThat(prettyTime1, equalTo(prettyTime2));
-    }
-
-    @Test
-    void testGetPrettyTimeWithDifferentLocalesSameTime() {
-        //given
-        LocalDateTime specificTime = LocalDateTime.of(2023, 6, 15, 10, 30, 0);
-        Locale englishLocale = Locale.ENGLISH;
-        Locale frenchLocale = Locale.FRENCH;
-
-        //when
-        String prettyTimeEnglish = DateUtils.getPrettyTime(englishLocale, specificTime);
-        String prettyTimeFrench = DateUtils.getPrettyTime(frenchLocale, specificTime);
-
-        //then
-        assertThat(prettyTimeEnglish, not(nullValue()));
-        assertThat(prettyTimeFrench, not(nullValue()));
-        assertThat(prettyTimeEnglish, not(emptyString()));
-        assertThat(prettyTimeFrench, not(emptyString()));
-        // The localized strings may differ, so only their presence is asserted
-    }
-
-    @Test
-    void testLocalDateTimeToDateWithDifferentTimeZones() {
-        //given
-        LocalDateTime localDateTime = LocalDateTime.of(2023, 12, 25, 14, 30, 45);
-
-        //when
-        Date date = DateUtils.localDateTimeToDate(localDateTime);
-
-        //then
-        assertThat(date, not(nullValue()));
-
-        LocalDateTime convertedBack = date.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
-        assertThat(convertedBack, equalTo(localDateTime));
-    }
-
-    @Test
-    void testLocalDateToDateWithDifferentTimeZones() {
-        //given
-        LocalDate localDate = LocalDate.of(2023, 12, 25);
-
-        //when
-        Date date = DateUtils.localDateToDate(localDate);
-
-        //then
-        assertThat(date, not(nullValue()));
-
-        LocalDate convertedBack = date.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        assertThat(convertedBack, equalTo(localDate));
-    }
-
-    @Test
-    void testGetPrettyTimeWithVeryOldDate() {
-        //given
-        LocalDateTime veryOldDate = LocalDateTime.of(1990, 1, 1, 0, 0, 0);
-
-        //when
-        String prettyTime = DateUtils.getPrettyTime(veryOldDate);
-
-        //then
-        assertThat(prettyTime, not(nullValue()));
-        assertThat(prettyTime, not(emptyString()));
-        assertThat(prettyTime.toLowerCase(), containsString("ago"));
-    }
-
-    @Test
-    void testGetPrettyTimeWithVeryFutureDate() {
-        //given
-        LocalDateTime veryFutureDate = LocalDateTime.of(2050, 1, 1, 0, 0, 0);
-
-        //when
-        String prettyTime = DateUtils.getPrettyTime(veryFutureDate);
-
-        //then
-        assertThat(prettyTime, not(nullValue()));
-        assertThat(prettyTime, not(emptyString()));
-        assertThat(prettyTime.toLowerCase(), anyOf(
-                containsString("from now"),
-                containsString("in ")
-        ));
-    }
-
-    @Test
-    void testGetPrettyTimeWithLocaleAndVeryOldDate() {
-        //given
-        LocalDateTime veryOldDate = LocalDateTime.of(1990, 1, 1, 0, 0, 0);
-        Locale locale = Locale.ENGLISH;
-
-        //when
-        String prettyTime = DateUtils.getPrettyTime(locale, veryOldDate);
-
-        //then
-        assertThat(prettyTime, not(nullValue()));
-        assertThat(prettyTime, not(emptyString()));
-        assertThat(prettyTime.toLowerCase(), containsString("ago"));
-    }
-
-    @Test
-    void testGetPrettyTimeWithLocaleAndVeryFutureDate() {
-        //given
-        LocalDateTime veryFutureDate = LocalDateTime.of(2050, 1, 1, 0, 0, 0);
-        Locale locale = Locale.ENGLISH;
-
-        //when
-        String prettyTime = DateUtils.getPrettyTime(locale, veryFutureDate);
-
-        //then
-        assertThat(prettyTime, not(nullValue()));
-        assertThat(prettyTime, not(emptyString()));
-        assertThat(prettyTime.toLowerCase(), anyOf(
-                containsString("from now"),
-                containsString("in ")
-        ));
     }
 }

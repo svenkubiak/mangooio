@@ -36,7 +36,7 @@ Bind.controller(UserController.class).withRoutes(
 ```
 
 ```java
-public Response show(@Param("id") long id) {
+public Response show(long id) {
     return Response.ok().render("id", id);
 }
 ```
@@ -58,7 +58,7 @@ On.anyOf(Http.PUT, Http.PATCH, Http.DELETE)
 
 ## Long-running requests
 
-Undertow handles I/O without blocking by default, which is great for throughput but means every controller method normally runs on a small pool of I/O threads shared by all requests. If a controller method does blocking work (a JDBC call, a slow outbound HTTP request, heavy computation), mark the route so it runs on a separate thread pool instead:
+`POST`, `PUT`, and `PATCH` already leave Undertow's I/O thread before the controller runs, body and all. `GET`, `HEAD`, `DELETE`, and `OPTIONS` stay on the I/O thread unless you mark the route. A slow read on that thread holds up other requests on the same thread. `withNonBlocking()` dispatches those verbs onto Undertow's worker threads. The name describes the I/O threads you are keeping free, not the work inside the method:
 
 ```java
 Bind.controller(ApplicationController.class).withRoutes(
@@ -74,7 +74,7 @@ Bind.controller(ExportController.class).withNonBlocking().withRoutes(
 );
 ```
 
-Despite the name, `withNonBlocking()` marks the route as containing **blocking work**. The name describes the effect on the rest of the application, not the route itself: it keeps mangoo I/O's non-blocking I/O threads free by moving your (blocking) code off of them. If you forget to set this on a route that does something slow, you will not see an error, you will just see every other request on the same I/O thread queue up behind it, which tends to show up as an odd, hard-to-explain latency spike under load rather than a crash.
+Calling it on `On.post()`, `On.put()`, or `On.patch()` changes nothing. Those verbs are dispatched either way. A slow `GET` without it does not fail. Other requests on that I/O thread wait behind it.
 
 ## Authentication
 
@@ -109,7 +109,7 @@ src/main/resources/files/assets/
 src/main/resources/files/robots.txt
 ```
 
-`pathResource()` serves an entire directory tree under a URL prefix, while `fileResource()` maps a single file to a single URL. Nothing under `files/` is served unless you bind it, which avoids accidentally exposing a directory just because a file happened to land there.
+`pathResource()` serves a directory tree. The prefix is forced to start and end with `/`, and the files are read from the classpath directory `files` plus that prefix. `fileResource()` maps one file and is registered as `GET` only. Nothing under `files/` is served unless you bind it. These routes skip authentication, filters, CSRF, and `Server.header(...)`.
 
 ## Server-Sent Events
 
@@ -130,7 +130,7 @@ See [Server-Sent Events](sse.md) for how to push data to connected clients after
 !!! warning "SSE and WebSocket routes are not authenticated"
     Both are registered directly on Undertow's path handler, which means they never pass through the handler chain described above. `withAuthentication()` does not exist on them, and no filter, authentication check, or CSRF protection applies. Anyone who knows the URL can connect.
 
-    This is a known limitation rather than something you can configure away: the handler chain is built around a controller method and a single request/response cycle, neither of which fits a long-lived streaming connection. What both route types do offer is a connection callback of your own, which is the one place where the handshake is still in reach: a custom handler can read and verify a token or cookie itself and refuse the connection. Without that, assume anything you send over SSE or WebSockets is public, and keep user-specific or otherwise sensitive data on regular controller routes.
+    A custom connection handler is the place to check a token and refuse the handshake. Without that, anything you send is public. Keep user-specific data on a controller route.
 
 ## WebSockets
 
@@ -140,4 +140,4 @@ WebSocket routes use an Undertow `WebSocketConnectionCallback` directly, rather 
 Bind.webSocket().to("/ws").withHandler(MyWebSocketHandler.class);
 ```
 
-There is no dedicated test helper for WebSockets, unlike SSE or regular controller routes, and the authentication caveat above applies here as well. Treat this as an available, working API rather than a fully documented, polished product feature: it gets you access to Undertow's WebSocket support without extra plumbing, but you are closer to the underlying library here than anywhere else in the framework. If your handler needs to know who is connecting, it has to read and verify the authentication cookie off the handshake itself, since nothing upstream has done that for you.
+`withHandler` is required. The handler class is created by Guice, and a missing handler fails startup. There is no test helper for WebSockets or SSE. The handler has to read the authentication cookie off the handshake itself. Connections are tracked and closed on shutdown. There is no cross-instance fan-out. If a message has to reach clients on other instances, publish it on `MessageBroker` and forward it from the subscriber on each instance. See [Operating](operating.md#running-several-instances).

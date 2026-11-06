@@ -20,7 +20,6 @@ class ExceptionHandlerTest {
         TestResponse response = TestRequest.post("/error").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
         assertThat(response.getContentType(), equalTo("text/html"));
         assertThat(response.getContent(), containsString("The server encountered something it didn't expect and was unable to complete the request."));
@@ -34,7 +33,6 @@ class ExceptionHandlerTest {
         TestResponse response = TestRequest.post("/illegal-argument").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
         assertThat(response.getHeader("X-Frame-Options"), equalTo("DENY"));
     }
@@ -48,7 +46,6 @@ class ExceptionHandlerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
         assertThat(response.getContentType(), equalTo("application/json"));
         assertThat(response.getContent(), equalTo("{\"error\":\"Internal Server Error\"}"));

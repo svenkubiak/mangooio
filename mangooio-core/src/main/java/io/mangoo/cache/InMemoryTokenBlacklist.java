@@ -2,6 +2,7 @@ package io.mangoo.cache;
 
 import com.github.benmanes.caffeine.cache.*;
 import com.github.benmanes.caffeine.cache.Cache;
+import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
 import io.mangoo.interfaces.TokenBlacklist;
@@ -18,10 +19,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-/**
- * Default TokenBlacklist; every entry lives as long as the revoked token could still be valid, so no revocation expires early.
- * Revocations are local to the running instance and do not survive a restart.
- */
 @Singleton
 public class InMemoryTokenBlacklist implements TokenBlacklist {
     private static final Logger LOG = LogManager.getLogger(InMemoryTokenBlacklist.class);
@@ -38,30 +35,30 @@ public class InMemoryTokenBlacklist implements TokenBlacklist {
 
     InMemoryTokenBlacklist(Duration maxTokenLifetime, Ticker ticker, Clock clock) {
         this.maxTokenLifetime = Objects.requireNonNull(maxTokenLifetime, "maxTokenLifetime can not be null");
-        this.clock = Objects.requireNonNull(clock, "clock can not be null");
-        Objects.requireNonNull(ticker, "ticker can not be null");
+        this.clock = Objects.requireNonNull(clock, Required.CLOCK);
+        Objects.requireNonNull(ticker, Required.TICKER);
 
         this.tokens = Caffeine.newBuilder()
                 .maximumSize(MAXIMUM_SIZE)
                 .ticker(ticker)
-                .expireAfter(Expiry.writing((String jwtId, Instant expiresAt) -> remaining(expiresAt)))
-                .evictionListener((String jwtId, Instant expiresAt, RemovalCause cause) -> warnOnSizeEviction(cause))
+                .expireAfter(Expiry.writing((String _, Instant expiresAt) -> remaining(withSkew(expiresAt))))
+                .evictionListener((String _, Instant _, RemovalCause cause) -> warnOnSizeEviction(cause))
                 .build();
 
         this.subjects = Caffeine.newBuilder()
                 .maximumSize(MAXIMUM_SIZE)
                 .ticker(ticker)
-                .expireAfter(Expiry.writing((String subject, Instant since) -> remaining(since.plus(this.maxTokenLifetime))))
-                .evictionListener((String subject, Instant since, RemovalCause cause) -> warnOnSizeEviction(cause))
+                .expireAfter(Expiry.writing((String _, Instant since) -> remaining(withSkew(since.plus(this.maxTokenLifetime)))))
+                .evictionListener((String _, Instant _, RemovalCause cause) -> warnOnSizeEviction(cause))
                 .build();
     }
 
     @Override
     public void revoke(String jwtId, Instant expiresAt) {
         Argument.requireNonBlank(jwtId, Required.ID);
-        Objects.requireNonNull(expiresAt, "expiresAt can not be null");
+        Objects.requireNonNull(expiresAt, Required.EXPIRES);
 
-        if (expiresAt.isAfter(clock.instant())) {
+        if (withSkew(expiresAt).isAfter(clock.instant())) {
             tokens.put(jwtId, expiresAt);
         }
     }
@@ -69,9 +66,11 @@ public class InMemoryTokenBlacklist implements TokenBlacklist {
     @Override
     public void revokeSubject(String subject, Instant since) {
         Argument.requireNonBlank(subject, Required.SUBJECT);
-        Objects.requireNonNull(since, "since can not be null");
+        Objects.requireNonNull(since, Required.SINCE);
 
-        subjects.asMap().merge(subject, since, (current, update) -> update.isAfter(current) ? update : current);
+        subjects
+                .asMap()
+                .merge(subject, since, (current, update) -> update.isAfter(current) ? update : current);
     }
 
     @Override
@@ -88,6 +87,10 @@ public class InMemoryTokenBlacklist implements TokenBlacklist {
         }
 
         return false;
+    }
+
+    private static Instant withSkew(Instant instant) {
+        return instant.plusSeconds(Default.JWT_CLOCK_SKEW);
     }
 
     private Duration remaining(Instant until) {

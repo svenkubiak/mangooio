@@ -11,13 +11,17 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.context.Context;
+import io.opentelemetry.exporter.otlp.metrics.OtlpGrpcMetricExporter;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.metrics.SdkMeterProvider;
+import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
 import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.AttachmentKey;
+import io.undertow.util.Headers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,13 +29,18 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 public final class Trace {
     private static final Logger LOG = LogManager.getLogger(Trace.class);
     private static final AttachmentKey<TraceState> TRACE_STATE = AttachmentKey.create(TraceState.class);
+    private static final AtomicLong STARTED_SPANS = new AtomicLong();
+    private static final AtomicLong ENDED_SPANS = new AtomicLong();
     private static volatile boolean initialized;
     private static boolean enabled;
     private static SdkTracerProvider tracerProvider;
+    private static SdkMeterProvider meterProvider;
+    private static RequestMetrics requestMetrics;
     private static OpenTelemetry openTelemetry;
 
     private Trace() {}
@@ -64,14 +73,7 @@ public final class Trace {
             Objects.requireNonNull(config, Required.CONFIG);
             enabled = config.isOtlpEnable();
             if (enabled) {
-                var resource = Resource.getDefault().merge(
-                        Resource.create(
-                                Attributes.of(
-                                        AttributeKey.stringKey("service.name"), Const.FRAMEWORK,
-                                        AttributeKey.stringKey("framework.name"), Const.FRAMEWORK,
-                                        AttributeKey.stringKey("framework.version"), MangooUtils.getVersion(),
-                                        AttributeKey.stringKey("framework.environment"), Application.getMode().name()
-                                )));
+                var resource = resource(config.getApplicationName(), Application.getInstanceId(), MangooUtils.getVersion(), String.valueOf(Application.getMode()));
 
                 var otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder()
                         .setEndpoint(config.getOtlpEndpoint())
@@ -82,16 +84,40 @@ public final class Trace {
                         .addSpanProcessor(BatchSpanProcessor.builder(otlpGrpcSpanExporter).build())
                         .build();
 
-                openTelemetry = OpenTelemetrySdk.builder()
-                        .setTracerProvider(tracerProvider)
+                var otlpGrpcMetricExporter = OtlpGrpcMetricExporter.builder()
+                        .setEndpoint(config.getOtlpEndpoint())
                         .build();
 
-                LOG.info("OpenTelemetry tracing enabled with endpoint {}", config.getOtlpEndpoint());
+                meterProvider = SdkMeterProvider.builder()
+                        .setResource(resource)
+                        .registerMetricReader(PeriodicMetricReader.builder(otlpGrpcMetricExporter).build())
+                        .build();
+
+                openTelemetry = OpenTelemetrySdk.builder()
+                        .setTracerProvider(tracerProvider)
+                        .setMeterProvider(meterProvider)
+                        .build();
+                requestMetrics = new RequestMetrics(openTelemetry.getMeter(Const.FRAMEWORK));
+
+                LOG.info("OpenTelemetry tracing and metrics enabled with endpoint {}", config.getOtlpEndpoint());
             } else {
-                LOG.info("OpenTelemetry tracing disabled");
+                LOG.info("OpenTelemetry tracing and metrics disabled");
             }
             initialized = true;
         }
+    }
+
+    // service.name identifies the application, so several applications built with mangoo I/O stay apart in one backend
+    static Resource resource(String applicationName, String instanceId, String version, String mode) {
+        return Resource.getDefault().merge(
+                Resource.create(
+                        Attributes.of(
+                                AttributeKey.stringKey("service.name"), applicationName,
+                                AttributeKey.stringKey("service.instance.id"), instanceId,
+                                AttributeKey.stringKey("framework.name"), Const.FRAMEWORK,
+                                AttributeKey.stringKey("framework.version"), version,
+                                AttributeKey.stringKey("framework.environment"), mode
+                        )));
     }
 
     public static void shutdown() {
@@ -104,6 +130,23 @@ public final class Trace {
                 LOG.error("Failed to shutdown tracer provider cleanly", e);
             }
         }
+        if (meterProvider != null) {
+            try {
+                meterProvider.forceFlush().join(5, TimeUnit.SECONDS);
+                meterProvider.shutdown().join(5, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                LOG.error("Failed to shutdown meter provider cleanly", e);
+            }
+        }
+    }
+
+    /** Records the duration of a completed request; does nothing unless otlp.enable is true. */
+    public static void recordRequest(HttpServerExchange exchange, long nanos) {
+        if (!ready() || requestMetrics == null) {return;}
+
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
+        requestMetrics.recordRequest(exchange.getRequestMethod().toString(), exchange.getStatusCode(), nanos,
+                exchange.getResponseHeaders().getFirst(Headers.CONTENT_TYPE));
     }
 
     // A completion listener ends every span of the exchange, even if the handler chain aborts before end() is reached
@@ -176,17 +219,30 @@ public final class Trace {
         }
     }
 
+    /** Number of spans started since startup; equals getEndedSpans() once all exchanges are complete. */
+    public static long getStartedSpans() {
+        return STARTED_SPANS.get();
+    }
+
+    public static long getEndedSpans() {
+        return ENDED_SPANS.get();
+    }
+
     private static Span createSpan(String process, Context parent) {
-        return openTelemetry.getTracer(Const.FRAMEWORK)
+        var span = openTelemetry.getTracer(Const.FRAMEWORK)
                 .spanBuilder(process)
                 .setSpanKind(SpanKind.INTERNAL)
                 .setParent(parent)
                 .startSpan();
+        STARTED_SPANS.incrementAndGet();
+
+        return span;
     }
 
     private static void endSpan(Span span) {
         try {
             span.end();
+            ENDED_SPANS.incrementAndGet();
         } catch (Exception e) {
             LOG.error("Failed to end span", e);
         }

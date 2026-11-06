@@ -1,6 +1,6 @@
 # Cross-Site Request Forgery (CSRF) 🛡️
 
-CSRF attacks trick a logged-in browser into submitting a request the user did not intend, for example a hidden form on another site that quietly posts to your `/transfer` endpoint while the victim thinks they are just browsing. The browser happily attaches the user's cookies to that request, since cookies are sent per origin regardless of which page triggered the request, which is exactly the gap mangoo I/O closes here. It mitigates this by requiring a **secret token** that only your pages know, stored in the [session](sessions.md) and submitted alongside state-changing requests. An attacker's page can trigger the request, but it cannot read your session cookie to get the token out, so it has no way to attach a valid one.
+A CSRF attack submits a request from another site while the browser attaches your cookies. mangoo I/O requires a token that only your pages can read, stored in the [session](sessions.md) and sent back with the request. The other site can trigger the request. It cannot read the session cookie.
 
 Protection is layered: **`OriginFilter`** can reject requests whose `Origin` header is not on your allow list before anything else runs; **`CsrfFilter`** then validates the `x-csrf-token` field (or header) against the session value. HTML forms should use the Freemarker `<@csrfform/>` or `<@csrftoken/>` directives from [Templating](templating.md) rather than wiring the token in by hand.
 
@@ -22,7 +22,7 @@ public class AccountController {
 }
 ```
 
-A missing or unknown origin returns HTTP 403.
+A missing or unknown origin returns HTTP 403 with an empty body.
 
 ## CSRF token
 
@@ -32,7 +32,7 @@ Protect a class or method:
 @FilterWith(CsrfFilter.class)
 ```
 
-The filter accepts the token in the `x-csrf-token` HTTP header or as a form field named `x-csrf-token`, so it works equally well for a classic form submission and for an AJAX call from your own frontend JavaScript. Invalid tokens return HTTP 403.
+The filter accepts the token in the `x-csrf-token` header or in a form field of the same name. The header wins when both are present. The comparison is constant-time. A mismatch returns HTTP 403 and the built-in HTML page.
 
 Emit the token in Freemarker:
 
@@ -41,9 +41,9 @@ Emit the token in Freemarker:
 <@csrftoken/>
 ```
 
-`<@csrfform/>` writes a hidden input, ready to submit with a regular HTML form. `<@csrftoken/>` writes just the raw token value, meant for JavaScript to read and attach as a header on its own requests. Either directive relies on the session already existing, since that is where the token itself lives; if there is no session yet, there is nothing to validate against.
+`<@csrfform/>` writes a hidden input. `<@csrftoken/>` writes the raw token, for a script that sends it as a header. The token itself is created earlier, for every request that does not restore a valid session cookie: 32 random characters. The directives call `session.keep()`, which writes that cookie when the session was not restored from an existing one.
 
-Create the session when the user starts a flow that will need protecting later, for example when they load the login form, and clear it on logout so a stale token cannot be reused after the user has signed out:
+Clear the session on logout so a stale token cannot be reused after the user has signed out:
 
 ```java
 public Response logout(Session session) {

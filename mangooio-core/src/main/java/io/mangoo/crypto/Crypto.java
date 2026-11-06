@@ -120,7 +120,7 @@ public class Crypto {
     
     public byte[] encrypt(byte[] text, PublicKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.PLAIN_TEXT);
-        Objects.requireNonNull(text, Required.PUBLIC_KEY);
+        Objects.requireNonNull(key, Required.PUBLIC_KEY);
         
         byte[] encrypt = null;
         try {
@@ -137,7 +137,7 @@ public class Crypto {
     /** Returns the ciphertext Base64 encoded. */
     public String encrypt(String text, PublicKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.PLAIN_TEXT);
-        Objects.requireNonNull(text, Required.PUBLIC_KEY);
+        Objects.requireNonNull(key, Required.PUBLIC_KEY);
         
         var encrypt = "";
         try {
@@ -152,7 +152,7 @@ public class Crypto {
 
     public byte[] decrypt(byte[] text, PrivateKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT);
-        Objects.requireNonNull(text, Required.PRIVATE_KEY);
+        Objects.requireNonNull(key, Required.PRIVATE_KEY);
 
         byte[] decrypt = null;
         try {
@@ -169,7 +169,7 @@ public class Crypto {
     /** Expects the ciphertext Base64 encoded. */
     public String decrypt(String text, PrivateKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT);
-        Objects.requireNonNull(text, Required.PRIVATE_KEY);
+        Objects.requireNonNull(key, Required.PRIVATE_KEY);
         
         var decrypt = "";
         try {

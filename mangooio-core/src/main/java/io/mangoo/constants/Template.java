@@ -11,6 +11,7 @@ public final class Template {
     private static final String FORBIDDEN_TEMPLATE_PATH = "defaults/403.html";
     private static final String XXX_TEMPLATE_PATH = "defaults/xxx.html";
     private static final String SCHEDULER_TEMPLATE_PATH = "@admin/scheduler.ftl";
+    private static final String ROUTES_TEMPLATE_PATH = "@admin/routes.ftl";
     private static final String LOGIN_TEMPLATE_PATH = "@admin/login.ftl";
     private static final String NOT_FOUND_TEMPLATE_PATH = "defaults/404.html";
     private static final String TWO_FACTOR_TEMPLATE_PATH = "@admin/twoFactor.ftl";
@@ -47,6 +48,10 @@ public final class Template {
 
     public static String schedulerPath() {
         return SCHEDULER_TEMPLATE_PATH;
+    }
+
+    public static String routesPath() {
+        return ROUTES_TEMPLATE_PATH;
     }
 
     public static String twoFactorPath() {

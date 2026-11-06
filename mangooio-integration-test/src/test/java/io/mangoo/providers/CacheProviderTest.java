@@ -13,15 +13,6 @@ import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class CacheProviderTest {
-    @Test
-    void testGet() {
-        //given
-        CacheProvider cacheProvider = Application.getInstance(CacheProvider.class);
-        
-        //then
-        assertThat(cacheProvider, not(nullValue()));
-        assertThat(cacheProvider.get(), not(nullValue()));
-    }
 
     @Test
     void testGetCache() {

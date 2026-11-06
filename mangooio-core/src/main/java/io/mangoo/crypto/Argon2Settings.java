@@ -6,8 +6,6 @@ public record Argon2Settings(int memoryKb, int iterations, int parallelism) {
     public static final int MIN_MEMORY_KB = 8192;
     public static final int MIN_ITERATIONS = 2;
     public static final int MIN_PARALLELISM = 1;
-
-    /** Parameters used before hashes carried their own; applied to stored hashes that are not in PHC format. */
     public static final Argon2Settings LEGACY = new Argon2Settings(80000, 6, 2);
 
     /**

@@ -161,15 +161,15 @@ public class TestResponse {
         final String host = config.getConnectorHttpHost();
         final int port =  config.getConnectorHttpPort();
         
+        if (this.authenticator != null) {
+            this.httpClient.authenticator(this.authenticator);
+        }
+
         try (var client = this.httpClient.build()) {
             this.url = "http://" + host + ":" + port;
             this.httpRequest
                 .uri(new URI(this.url + this.uri))
                 .method(this.method, this.body);
-            
-            if (this.authenticator != null ) {
-                this.httpClient.authenticator(this.authenticator);
-            }
 
             this.httpResponse = client.send(this.httpRequest.build(), HttpResponse.BodyHandlers.ofString());
         } catch (URISyntaxException | IOException | InterruptedException e) {

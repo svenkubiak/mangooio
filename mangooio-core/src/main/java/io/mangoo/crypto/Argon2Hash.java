@@ -6,10 +6,6 @@ import org.bouncycastle.util.Arrays;
 
 import java.util.*;
 
-/**
- * An Argon2id hash with its salt and parameters, encoded in PHC string format: $argon2id$v=19$m=...,t=...,p=...$salt$hash.
- * Salt and hash are copied on the way in and out, so a caller can not change a hash after handing it over.
- */
 public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
     private static final Base64.Encoder BASE64_ENCODER = Base64.getEncoder().withoutPadding();
     private static final Base64.Decoder BASE64_DECODER = Base64.getDecoder();
@@ -48,7 +44,7 @@ public record Argon2Hash(Argon2Settings settings, byte[] salt, byte[] hash) {
 
     /** Throws IllegalArgumentException if the value is not a well-formed Argon2id PHC string. */
     public static Argon2Hash parse(String value) {
-        String phc = Argument.requireNonBlank(value, Required.HASH);
+        String phc = Objects.requireNonNull(Argument.requireNonBlank(value, Required.HASH));
         Argument.check(isPhcFormat(phc), "Not an " + ALGORITHM + " hash in PHC format");
 
         String[] segments = phc.split("\\$", -1);

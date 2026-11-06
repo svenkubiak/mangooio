@@ -18,7 +18,6 @@ class SubControllerTest {
         TestResponse response = TestRequest.get("/subcontroller").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo(""));
     }

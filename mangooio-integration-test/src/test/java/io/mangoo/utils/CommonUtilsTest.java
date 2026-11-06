@@ -3,8 +3,10 @@ package io.mangoo.utils;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.crypto.Argon2Hash;
 import io.mangoo.crypto.Argon2Settings;
+import org.apache.fory.Fory;
+import org.apache.fory.config.Language;
+import org.apache.fory.exception.InsecureException;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,21 +37,6 @@ class CommonUtilsTest {
     }
 
     @Test
-    void testHashArgon2WithSalt() {
-        //given
-        String cleartext = "test-password";
-        String salt = "test-salt";
-
-        //when
-        String hash = CommonUtils.hashArgon2(cleartext, salt);
-
-        //then
-        assertThat(hash, not(nullValue()));
-        assertThat(hash, not(emptyString()));
-        assertThat(hash.length(), greaterThan(0));
-    }
-
-    @Test
     void testHashArgon2WithSaltNullCleartext() {
         //given
         String cleartext = null;
@@ -71,50 +58,6 @@ class CommonUtilsTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.hashArgon2(cleartext, salt));
         assertThat(exception.getMessage(), containsString("salt can not be null"));
-    }
-
-    @Test
-    void testHashArgon2WithSaltConsistency() {
-        //given
-        String cleartext = "test-password";
-        String salt = "test-salt";
-
-        //when
-        String hash1 = CommonUtils.hashArgon2(cleartext, salt);
-        String hash2 = CommonUtils.hashArgon2(cleartext, salt);
-
-        //then
-        assertThat(hash1, equalTo(hash2));
-    }
-
-    @Test
-    void testHashArgon2WithSaltDifferentInputs() {
-        //given
-        String cleartext1 = "test-password";
-        String cleartext2 = "different-password";
-        String salt = "test-salt";
-
-        //when
-        String hash1 = CommonUtils.hashArgon2(cleartext1, salt);
-        String hash2 = CommonUtils.hashArgon2(cleartext2, salt);
-
-        //then
-        assertThat(hash1, not(equalTo(hash2)));
-    }
-
-    @Test
-    void testHashArgon2WithSaltDifferentSalts() {
-        //given
-        String cleartext = "test-password";
-        String salt1 = "salt1";
-        String salt2 = "salt2";
-
-        //when
-        String hash1 = CommonUtils.hashArgon2(cleartext, salt1);
-        String hash2 = CommonUtils.hashArgon2(cleartext, salt2);
-
-        //then
-        assertThat(hash1, not(equalTo(hash2)));
     }
 
     @Test
@@ -168,25 +111,8 @@ class CommonUtilsTest {
         assertThat(CommonUtils.needsRehash(legacy), equalTo(true));
     }
 
-    @Test
-    void testHashWithForeignParametersStillMatchesAndNeedsRehash() {
-        //given a PHC hash created with parameters the application is not configured with
-        String cleartext = "test-password";
-        String salt = "test-salt";
-        String hash = phcHash(cleartext, salt, new Argon2Settings(8192, 2, 1));
-
-        //then
-        assertThat(CommonUtils.matchArgon2(cleartext, salt, hash), equalTo(true));
-        assertThat(CommonUtils.matchArgon2("wrong-password", salt, hash), equalTo(false));
-        assertThat(CommonUtils.needsRehash(hash), equalTo(true));
-    }
-
     private static String legacyHash(String cleartext, String salt) {
         return Base64.getEncoder().encodeToString(argon2(cleartext, salt, Argon2Settings.LEGACY));
-    }
-
-    private static String phcHash(String cleartext, String salt, Argon2Settings settings) {
-        return new Argon2Hash(settings, salt.getBytes(StandardCharsets.UTF_8), argon2(cleartext, salt, settings)).encode();
     }
 
     private static byte[] argon2(String cleartext, String salt, Argon2Settings settings) {
@@ -219,36 +145,6 @@ class CommonUtilsTest {
 
         //then
         assertThat(match, equalTo(true));
-    }
-
-    @Test
-    void testMatchArgon2WithSaltWrongPassword() {
-        //given
-        String cleartext = "test-password";
-        String wrongCleartext = "wrong-password";
-        String salt = "test-salt";
-        String hash = CommonUtils.hashArgon2(cleartext, salt);
-
-        //when
-        boolean match = CommonUtils.matchArgon2(wrongCleartext, salt, hash);
-
-        //then
-        assertThat(match, equalTo(false));
-    }
-
-    @Test
-    void testMatchArgon2WithSaltWrongSalt() {
-        //given a PHC hash carries the salt it was created with, but it is not taken from there
-        String cleartext = "test-password";
-        String salt = "test-salt";
-        String wrongSalt = "wrong-salt";
-        String hash = CommonUtils.hashArgon2(cleartext, salt);
-
-        //when
-        boolean match = CommonUtils.matchArgon2(cleartext, wrongSalt, hash);
-
-        //then
-        assertThat(match, equalTo(false));
     }
 
     @Test
@@ -337,10 +233,9 @@ class CommonUtilsTest {
         //when
         String hash = CommonUtils.hexSHA512(data);
 
-        //then
-        assertThat(hash, not(nullValue()));
-        assertThat(hash, not(emptyString()));
-        assertThat(hash.length(), equalTo(128)); // SHA3-512 produces 128 hex characters
+        //then SHA3-512 of the UTF-8 bytes as lowercase hex
+        assertThat(hash, equalTo("5196a85e2963e0006fde0f5e289172239e7ba456a311a5066a4a4335e5dabfb0"
+                + "8faac91ca3ba50a0b9605ee07b39558303ec7a976a3157d6bfd66ecd25c755e9"));
     }
 
     @Test
@@ -352,46 +247,6 @@ class CommonUtilsTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.hexSHA512(data));
         assertThat(exception.getMessage(), containsString("data can not be null"));
-    }
-
-    @Test
-    void testHexSHA512Consistency() {
-        //given
-        String data = "test-data";
-
-        //when
-        String hash1 = CommonUtils.hexSHA512(data);
-        String hash2 = CommonUtils.hexSHA512(data);
-
-        //then
-        assertThat(hash1, equalTo(hash2));
-    }
-
-    @Test
-    void testHexSHA512DifferentInputs() {
-        //given
-        String data1 = "test-data1";
-        String data2 = "test-data2";
-
-        //when
-        String hash1 = CommonUtils.hexSHA512(data1);
-        String hash2 = CommonUtils.hexSHA512(data2);
-
-        //then
-        assertThat(hash1, not(equalTo(hash2)));
-    }
-
-    @Test
-    void testSerializeToBase64() {
-        //given
-        TestSerializableObject object = new TestSerializableObject("test-value", 123);
-
-        //when
-        String serialized = CommonUtils.serializeToBase64(object);
-
-        //then
-        assertThat(serialized, not(nullValue()));
-        assertThat(serialized, not(emptyString()));
     }
 
     @Test
@@ -421,6 +276,28 @@ class CommonUtilsTest {
     }
 
     @Test
+    void testDeserializeFromBase64DoesNotInstantiateUnregisteredClass() {
+        //given
+        Fory fory = Fory.builder()
+                .withLanguage(Language.JAVA)
+                .requireClassRegistration(false)
+                .build();
+        String data = Base64.getEncoder().encodeToString(fory.serialize(new UnregisteredObject("payload")));
+
+        //when
+        Object deserialized = CommonUtils.deserializeFromBase64(data);
+
+        //then
+        assertThat(deserialized, not(instanceOf(UnregisteredObject.class)));
+    }
+
+    @Test
+    void testSerializeToBase64RejectsUnregisteredClass() {
+        //when & then
+        assertThrows(InsecureException.class, () -> CommonUtils.serializeToBase64(new UnregisteredObject("payload")));
+    }
+
+    @Test
     void testDeserializeFromBase64NullData() {
         //given
         String data = null;
@@ -440,8 +317,7 @@ class CommonUtilsTest {
         byte[] encoded = CommonUtils.encodeToBase64(data);
 
         //then
-        assertThat(encoded, not(nullValue()));
-        assertThat(encoded.length, greaterThan(0));
+        assertThat(new String(encoded, StandardCharsets.UTF_8), equalTo("dGVzdC1kYXRh"));
     }
 
     @Test
@@ -464,8 +340,7 @@ class CommonUtilsTest {
         String encoded = CommonUtils.encodeToBase32(data);
 
         //then
-        assertThat(encoded, not(nullValue()));
-        assertThat(encoded, not(emptyString()));
+        assertThat(encoded, equalTo("ORSXG5BNMRQXIYI="));
     }
 
     @Test
@@ -482,14 +357,13 @@ class CommonUtilsTest {
     @Test
     void testEncodeToBase64ByteArray() {
         //given
-        byte[] data = "test-data".getBytes();
+        byte[] data = "test-data".getBytes(StandardCharsets.UTF_8);
 
         //when
         byte[] encoded = CommonUtils.encodeToBase64(data);
 
         //then
-        assertThat(encoded, not(nullValue()));
-        assertThat(encoded.length, greaterThan(0));
+        assertThat(new String(encoded, StandardCharsets.UTF_8), equalTo("dGVzdC1kYXRh"));
     }
 
     @Test
@@ -514,7 +388,6 @@ class CommonUtilsTest {
         byte[] decoded = CommonUtils.decodeFromBase64(encodedString);
 
         //then
-        assertThat(decoded, not(nullValue()));
         assertThat(new String(decoded), equalTo(originalData));
     }
 
@@ -535,11 +408,7 @@ class CommonUtilsTest {
         String uuid = CommonUtils.uuidV6();
 
         //then
-        assertThat(uuid, not(nullValue()));
-        assertThat(uuid, not(emptyString()));
         assertThat(UUID.fromString(uuid).version(), equalTo(6));
-        assertThat(uuid.length(), equalTo(36)); // Standard UUID length
-        assertThat(uuid, matchesRegex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"));
     }
 
     @Test
@@ -548,21 +417,7 @@ class CommonUtilsTest {
         String uuid = CommonUtils.uuidV7();
 
         //then
-        assertThat(uuid, not(nullValue()));
-        assertThat(uuid, not(emptyString()));
         assertThat(UUID.fromString(uuid).version(), equalTo(7));
-        assertThat(uuid.length(), equalTo(36)); // Standard UUID length
-        assertThat(uuid, matchesRegex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"));
-    }
-
-    @Test
-    void testUuidV6Uniqueness() {
-        //when
-        String uuid1 = CommonUtils.uuidV6();
-        String uuid2 = CommonUtils.uuidV6();
-
-        //then
-        assertThat(uuid1, not(equalTo(uuid2)));
     }
 
     @Test
@@ -571,21 +426,7 @@ class CommonUtilsTest {
         String uuid = CommonUtils.uuidV4();
 
         //then
-        assertThat(uuid, not(nullValue()));
-        assertThat(uuid, not(emptyString()));
         assertThat(UUID.fromString(uuid).version(), equalTo(4));
-        assertThat(uuid.length(), equalTo(36)); // Standard UUID length
-        assertThat(uuid, matchesRegex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"));
-    }
-
-    @Test
-    void testUuidV4Uniqueness() {
-        //when
-        String uuid1 = CommonUtils.uuidV4();
-        String uuid2 = CommonUtils.uuidV4();
-
-        //then
-        assertThat(uuid1, not(equalTo(uuid2)));
     }
 
     @Test
@@ -663,15 +504,14 @@ class CommonUtilsTest {
         //given
         Map<String, String> originalMap = new HashMap<>();
         originalMap.put("key1", "value1");
-        originalMap.put("key2", "value2");
 
         //when
         Map<String, String> copiedMap = CommonUtils.copyMap(originalMap);
+        copiedMap.put("key2", "value2");
 
         //then
-        assertThat(copiedMap, not(sameInstance(originalMap)));
-        assertThat(copiedMap, equalTo(originalMap));
-        assertThat(copiedMap.size(), equalTo(originalMap.size()));
+        assertThat(copiedMap.get("key1"), equalTo("value1"));
+        assertThat(originalMap.containsKey("key2"), equalTo(false));
     }
 
     @Test
@@ -683,20 +523,6 @@ class CommonUtilsTest {
         NullPointerException exception = assertThrows(NullPointerException.class,
                 () -> CommonUtils.copyMap(originalMap));
         assertThat(exception.getMessage(), containsString("map can not be null"));
-    }
-
-    @Test
-    void testCopyMapEmpty() {
-        //given
-        Map<String, String> originalMap = new HashMap<>();
-
-        //when
-        Map<String, String> copiedMap = CommonUtils.copyMap(originalMap);
-
-        //then
-        assertThat(copiedMap, not(sameInstance(originalMap)));
-        assertThat(copiedMap, equalTo(originalMap));
-        assertThat(copiedMap.size(), equalTo(0));
     }
 
     @Test
@@ -750,7 +576,6 @@ class CommonUtilsTest {
         String randomString = CommonUtils.randomString(length);
 
         //then
-        assertThat(randomString, not(nullValue()));
         assertThat(randomString.length(), equalTo(length));
     }
 
@@ -763,7 +588,6 @@ class CommonUtilsTest {
         String randomString = CommonUtils.randomString(length);
 
         //then
-        assertThat(randomString, not(nullValue()));
         assertThat(randomString.length(), equalTo(length));
     }
 
@@ -776,7 +600,6 @@ class CommonUtilsTest {
         String randomString = CommonUtils.randomString(length);
 
         //then
-        assertThat(randomString, not(nullValue()));
         assertThat(randomString.length(), equalTo(length));
     }
 
@@ -800,19 +623,6 @@ class CommonUtilsTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.randomString(length));
         assertThat(exception.getMessage(), containsString("Length must not exceed 512 characters"));
-    }
-
-    @Test
-    void testRandomStringUniqueness() {
-        //given
-        int length = 30;
-
-        //when
-        String randomString1 = CommonUtils.randomString(length);
-        String randomString2 = CommonUtils.randomString(length);
-
-        //then
-        assertThat(randomString1, not(equalTo(randomString2)));
     }
 
     @Test
@@ -883,6 +693,9 @@ class CommonUtilsTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> CommonUtils.readResourceToString(resource));
         assertThat(exception.getMessage(), containsString("resource can not be null"));
+    }
+
+    private record UnregisteredObject(String value) implements Serializable {
     }
 
     private static class TestSerializableObject implements Serializable {

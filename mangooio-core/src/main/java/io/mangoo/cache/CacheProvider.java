@@ -15,11 +15,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 @Singleton
 public class CacheProvider implements Provider<Cache> {
-    private static final long SIXTY = 60;
     private static final long THIRTY = 30;
     private static final long FIFTY_THOUSAND = 50000;
     private final Map<String, Cache> caches = new HashMap<>();
@@ -31,7 +29,6 @@ public class CacheProvider implements Provider<Cache> {
         Objects.requireNonNull(config, Required.CONFIG);
 
         initApplicationCache();
-        initAuthenticationCache(config);
         setDefaultApplicationCache();
     }
 
@@ -45,19 +42,6 @@ public class CacheProvider implements Provider<Cache> {
         caches.put(CacheName.APPLICATION, applicationCache);
     }
 
-    private void initAuthenticationCache(Config config) {
-        // Must never evict an entry before its lock is released, otherwise a locked identifier would be unlocked early
-        long minutes = Math.max(SIXTY, config.getAuthenticationLockDuration());
-
-        Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
-                .maximumSize(FIFTY_THOUSAND)
-                .expireAfterWrite(Duration.of(minutes, ChronoUnit.MINUTES))
-                .recordStats()
-                .build());
-
-        caches.put(CacheName.AUTH, authenticationCache);
-    }
-
     private void setDefaultApplicationCache() {
         cache = getCache(CacheName.APPLICATION);
     }
@@ -68,14 +52,13 @@ public class CacheProvider implements Provider<Cache> {
     }
 
     /**
-     * Makes the cache available to the admin dashboard; the built-in application and auth cache names cannot be replaced.
+     * Makes the cache available to the admin dashboard; the built-in application cache name cannot be replaced.
      */
     public void addCache(String name, Cache cache) {
         Argument.requireNonBlank(name, Required.NAME);
         Objects.requireNonNull(cache, Required.CACHE);
 
-        if (Stream.of(CacheName.APPLICATION, CacheName.AUTH)
-                .noneMatch(s -> s.equalsIgnoreCase(name))) {
+        if (!CacheName.APPLICATION.equalsIgnoreCase(name)) {
             caches.put(name, cache);
         }
     }

@@ -7,13 +7,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith({TestExtension.class})
 class CacheTest {
@@ -31,7 +37,6 @@ class CacheTest {
         cache.put(key, value);
 
         //then
-        assertThat(cache.get(key), not(nullValue()));
         assertThat(cache.get(key), equalTo(value));
     }
 
@@ -46,7 +51,6 @@ class CacheTest {
         cache.put(key, value, LocalDateTime.now().plusMinutes(5));
 
         //then
-        assertThat(cache.get(key), not(nullValue()));
         assertThat(cache.get(key), equalTo(value));
     }
 
@@ -61,7 +65,6 @@ class CacheTest {
         cache.put(key, value, 5, ChronoUnit.MINUTES);
 
         //then
-        assertThat(cache.get(key), not(nullValue()));
         assertThat(cache.get(key), equalTo(value));
     }
 
@@ -78,20 +81,6 @@ class CacheTest {
 
         //then
         assertThat(cache.get(key), equalTo(null));
-    }
-
-    @Test
-    void testCast() {
-        //given
-        String key = UUID.randomUUID().toString();
-        String value = UUID.randomUUID().toString();
-        Cache cache = Application.getInstance(Cache.class);
-        
-        //when
-    	cache.put(key, value);
-
-    	//then
-        assertThat(cache.get(key), equalTo(value));
     }
     
     @Test
@@ -147,7 +136,6 @@ class CacheTest {
         cache.put(key2, value2);
         
         //then
-        assertThat(cache.getAll(key1, key2), not(equalTo(null)));
         assertThat(cache.getAll(key1, key2).get(key1), equalTo(value1));
         assertThat(cache.getAll(key1, key2).get(key2), equalTo(value2));
     }
@@ -156,36 +144,102 @@ class CacheTest {
     void testIncrement() {
         //given
         Cache cache = Application.getInstance(Cache.class);
-        
-        //when
-        AtomicInteger increment = cache.getAndIncrementCounter("increment");
-        
+        String key = UUID.randomUUID().toString();
+
         //then
-        assertThat(increment.get(), equalTo(1));
-        
-        //when
-        increment = cache.getAndIncrementCounter("increment");
-        
-        //then
-        assertThat(increment.get(), equalTo(2));
+        assertThat(cache.increment(key), equalTo(1L));
+        assertThat(cache.increment(key), equalTo(2L));
+        assertThat(cache.getCounter(key), equalTo(2L));
     }
-    
+
     @Test
     void testDecrement() {
         //given
         Cache cache = Application.getInstance(Cache.class);
-        
-        //when
-        AtomicInteger decrement = cache.getAndDecrementCounter("decrement");
-        
+        String key = UUID.randomUUID().toString();
+
         //then
-        assertThat(decrement.get(), equalTo(-1));
-        
-        //when
-        decrement = cache.getAndDecrementCounter("decrement");
-        
+        assertThat(cache.decrement(key), equalTo(-1L));
+        assertThat(cache.decrement(key), equalTo(-2L));
+        assertThat(cache.increment(key), equalTo(-1L));
+    }
+
+    @Test
+    void testMissingCounterIsZero() {
+        //given
+        Cache cache = Application.getInstance(Cache.class);
+
         //then
-        assertThat(decrement.get(), equalTo(-2));
+        assertThat(cache.getCounter(UUID.randomUUID().toString()), equalTo(0L));
+    }
+
+    @Test
+    void testResetCounter() {
+        //given
+        Cache cache = Application.getInstance(Cache.class);
+        String key = UUID.randomUUID().toString();
+        cache.increment(key);
+        cache.increment(key);
+
+        //when
+        cache.resetCounter(key);
+
+        //then
+        assertThat(cache.getCounter(key), equalTo(0L));
+        assertThat(cache.increment(key), equalTo(1L));
+    }
+
+    @Test
+    void testConcurrentIncrementsOfANewCounterAreNotLost() throws Exception {
+        //given
+        Cache cache = Application.getInstance(Cache.class);
+        String key = UUID.randomUUID().toString();
+        var start = new CountDownLatch(1);
+
+        //when
+        try (var executor = Executors.newFixedThreadPool(50)) {
+            List<Future<?>> futures = new ArrayList<>();
+            for (var i = 0; i < 50; i++) {
+                futures.add(executor.submit(() -> {
+                    start.await();
+                    for (var j = 0; j < 100; j++) {
+                        cache.increment(key);
+                    }
+                    return null;
+                }));
+            }
+            start.countDown();
+            for (Future<?> future : futures) {
+                future.get();
+            }
+        }
+
+        //then
+        assertThat(cache.getCounter(key), equalTo(5000L));
+    }
+
+    @Test
+    void testExpiredCounterStartsAgain() {
+        //given
+        Cache cache = Application.getInstance(Cache.class);
+        String key = UUID.randomUUID().toString();
+        cache.put(key, 5L, LocalDateTime.now().minusSeconds(1));
+
+        //then
+        assertThat(cache.increment(key), equalTo(1L));
+    }
+
+    @Test
+    void testIncrementOfAValueThatIsNotACounterFails() {
+        //given
+        Cache cache = Application.getInstance(Cache.class);
+        String key = UUID.randomUUID().toString();
+        cache.put(key, "text");
+
+        //then
+        assertThrows(IllegalStateException.class, () -> cache.increment(key));
+        assertThrows(IllegalStateException.class, () -> cache.getCounter(key));
+        assertThat(cache.get(key), equalTo("text"));
     }
 
     private String fallback() {

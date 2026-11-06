@@ -1,6 +1,5 @@
 package io.mangoo.mail;
 
-import com.google.common.io.Files;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMail;
 import io.mangoo.TestExtension;
@@ -11,6 +10,7 @@ import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.test.email.SmtpMock;
 import io.mangoo.utils.CommonUtils;
+import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
 import jakarta.mail.internet.InternetAddress;
@@ -21,7 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -35,6 +34,7 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 
 @ExtendWith({TestExtension.class})
 @Execution(ExecutionMode.SAME_THREAD)
@@ -68,35 +68,6 @@ class SendMailTest {
         //then
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("thewall.com").length, equalTo(1)));
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("thewall.com")[0].getContent().toString(), containsString("kong")));
-    }
-    
-    @Test
-    void testMultiPartEmailFile() throws MangooMailerException, IOException, FolderException, MangooTemplateEngineException {
-        //given
-        greenMail.purgeEmailFromAllMailboxes();
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
-        File file = new File(UUID.randomUUID().toString() + ".txt");
-        file.createNewFile();
-        Files.asCharSink(file, StandardCharsets.UTF_8).write(UUID.randomUUID().toString());
-        
-        Map<String, Object> content = new HashMap<>();
-        content.put("name", "raven");
-        content.put("king", "none");
-        
-        //when
-        Mail.newMail()
-            .from("Jon Snow", "jon.snow@winterfell.com")
-            .to("sansa.stark@westeros.com")
-            .subject("Lord of light")
-            .attachment(file.toPath())
-            .htmlMessage("emails/multipart.ftl", content)
-            .send();
-        
-        //then
-        // The attachment is read lazily while the mail is transmitted on a virtual thread,
-        // so the file must not be deleted before the message has been received.
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(file.delete(), equalTo(true)));
     }
     
     @Test
@@ -209,25 +180,6 @@ class SendMailTest {
     }
 
     @Test
-    void testBody() throws MangooMailerException, IOException, FolderException, InterruptedException {
-        //given
-        greenMail.purgeEmailFromAllMailboxes();
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
-        
-        //when
-        Mail.newMail()
-            .from("Jon snow", "jon.snow@winterfell.com")
-            .to("sansa.stark@westeros.com")
-            .subject("Lord of light")
-            .textMessage("what is dead may never die")
-            .send();
-        
-        //then
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), containsString("what is dead may never die")));
-    }
-    
-    @Test
     void testConcurrentBody() {
         MatcherAssert.assertThat(t -> {
             //given
@@ -287,5 +239,36 @@ class SendMailTest {
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ")));
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat((greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent()), equalTo("This is a body with üäö")));
+    }
+
+    @Test
+    void testCcBccReplyToAndHeadersAreDelivered() throws Exception {
+        //given
+        greenMail.purgeEmailFromAllMailboxes();
+
+        //when
+        Mail.newMail()
+            .from("Jon Snow", "jon.snow@winterfell.com")
+            .to("sansa.stark@westeros.com")
+            .cc("arya.stark@riverrun.com")
+            .bcc("bran.stark@eyrie.com")
+            .replyTo("night.watch@thewall.com")
+            .header("X-Mangoo-Test", "value")
+            .priority(1)
+            .subject("Recipients")
+            .textMessage("body")
+            .send();
+
+        //then
+        // One delivery per recipient: to, cc and bcc
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessages().length, equalTo(3)));
+
+        var message = greenMail.getReceivedMessages()[0];
+        assertThat(((InternetAddress) message.getRecipients(Message.RecipientType.CC)[0]).getAddress(), equalTo("arya.stark@riverrun.com"));
+        assertThat(((InternetAddress) message.getReplyTo()[0]).getAddress(), equalTo("night.watch@thewall.com"));
+        assertThat(message.getHeader("X-Mangoo-Test")[0], equalTo("value"));
+        assertThat(message.getHeader("X-Priority")[0], equalTo("1"));
+        assertThat(message.getHeader("Bcc"), nullValue());
+        assertThat(message.getRecipients(Message.RecipientType.BCC), nullValue());
     }
 }

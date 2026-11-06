@@ -1,6 +1,6 @@
 # Dependency injection
 
-mangoo I/O uses [Google Guice](https://github.com/google/guice) for dependency injection, plain and unmodified. Controllers, filters, bootstrap classes, subscribers, and your own services are all created by the injector. You register your own bindings in `app.Module`, while the framework module already wires core types such as `Config`, `Vault`, `Cache`, and `Datastore` for you.
+mangoo I/O uses [Google Guice](https://github.com/google/guice). Controllers, filters, the bootstrap class, subscribers, scheduled jobs, and your own services are created by the injector. The framework loads `app.Module` by that class name. It needs a public no-arg constructor. A binding of the same type replaces the core binding. The core module already provides `Config`, `Cache`, `Datastore`, `AttemptStore`, `OneTimeStore`, `TokenBlacklist`, `MessageBroker`, and `InstanceRegistry`.
 
 Every flattened key from `config.yaml` is also available as a `@Named("dotted.key")` string binding, which comes in handy for feature flags or URLs you don't want to wrap in a dedicated class.
 

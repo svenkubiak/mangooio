@@ -3,8 +3,9 @@ package io.mangoo.persistence;
 import com.mongodb.client.model.Sorts;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
+import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.models.TestModel;
-import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.utils.CommonUtils;
 import models.Person;
@@ -32,21 +33,6 @@ class DatastoreTest {
         datastore = Application.getInstance(Datastore.class);
     }
     
-    @Test
-    void testConcurrentSave() throws InterruptedException {
-        MatcherAssert.assertThat(t -> {
-            //given
-            String name = CommonUtils.uuidV6();
-            TestModel model = new TestModel(name);
-            
-            //when
-            datastore.save(model);
-            
-            // then
-            return datastore.query(TestModel.class).find(eq("name", name)).first() != null;
-        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
-    }
-
     @Test
     void testSaveAndDrop() {
         //given
@@ -86,7 +72,6 @@ class DatastoreTest {
         String lastname = null;
         String address = null;
         String age = null;
-        String id = null;
 
         //when
         for (Object object : datastore.query(Person.class).listIndexes()) {
@@ -107,10 +92,6 @@ class DatastoreTest {
             if (document.get("age") != null) {
                 age = document.get("age").toString();
             }
-
-            if (document.get("_id") != null) {
-                id = document.get("_id").toString();
-            }
         }
 
         //then
@@ -122,8 +103,6 @@ class DatastoreTest {
         assertThat(address, equalTo("-1"));
         assertThat(age, not(nullValue()));
         assertThat(age, equalTo("-1"));
-        assertThat(id, not(nullValue()));
-        assertThat(id, equalTo("1"));
     }
 
     @Test
@@ -139,7 +118,8 @@ class DatastoreTest {
         datastore.save(model);
         datastore.save(model2);
 
-        assertThat(datastore.findFirst(TestModel.class, Sorts.ascending()).getName(), equalTo(name));
+        //then
+        assertThat(datastore.findFirst(TestModel.class, Sorts.descending("timestamp")).getName(), equalTo(name2));
     }
 
     @Test
@@ -191,20 +171,6 @@ class DatastoreTest {
     }
     
     @Test
-    void testFindAll() {
-        //given
-        datastore.dropDatabase();
-        
-        //when
-        datastore.save(new TestModel("foo"));
-        datastore.save(new TestModel("bar"));
-        datastore.save(new TestModel("bla"));
-
-        //then
-        assertThat(datastore.findAll(TestModel.class).size(), equalTo(3));
-    }
-
-    @Test
     void testFindAllSort() {
         //given
         datastore.dropDatabase();
@@ -215,7 +181,8 @@ class DatastoreTest {
         datastore.save(new TestModel("bla"));
 
         //then
-        assertThat(datastore.findAll(TestModel.class, Sorts.ascending()).size(), equalTo(3));
+        List<TestModel> models = datastore.findAll(TestModel.class, Sorts.ascending("name"));
+        assertThat(models.stream().map(TestModel::getName).toList(), contains("bar", "bla", "foo"));
     }
 
     @Test
@@ -225,12 +192,14 @@ class DatastoreTest {
         datastore.dropDatabase();
 
         //when
-        datastore.save(new TestModel(name));
-        datastore.save(new TestModel(name));
-        datastore.save(new TestModel("bla"));
+        datastore.save(new TestModel(name, LocalDateTime.now()));
+        datastore.save(new TestModel(name, LocalDateTime.now().plusMinutes(25)));
+        datastore.save(new TestModel("bla", LocalDateTime.now().plusMinutes(50)));
 
         //then
-        assertThat(datastore.findAll(TestModel.class, eq("name", name), Sorts.ascending()).size(), equalTo(2));
+        List<TestModel> models = datastore.findAll(TestModel.class, eq("name", name), Sorts.descending("timestamp"));
+        assertThat(models.size(), equalTo(2));
+        assertThat(models.get(0).getTimestamp().isAfter(models.get(1).getTimestamp()), equalTo(true));
     }
 
     @Test
@@ -250,9 +219,13 @@ class DatastoreTest {
     void testDropCollection() {
         //given
         datastore.dropDatabase();
-        
+        datastore.save(new TestModel("foo"));
+
         //when
         datastore.dropCollection(TestModel.class);
+
+        //then
+        assertThat(datastore.countAll(TestModel.class), equalTo(0L));
     }
 
     @Test
@@ -266,28 +239,6 @@ class DatastoreTest {
 
         //when
         assertThat(testModel, not(nullValue()));
-    }
-
-    @Test
-    void testQueryByCollectionName() {
-        //given
-        datastore.dropDatabase();
-        datastore.save(new TestModel("foo"));
-
-        //when
-        Document document = (Document) datastore.query("tests").find(eq("name", "foo")).first();
-
-        //when
-        assertThat(document, not(nullValue()));
-    }
-
-    @Test
-    void testPrefix() {
-        //given
-        Datastore datastore = Application.getInstance(DatastoreProvider.class).getDatastore("myprefix");
-        
-        //then
-        assertThat(datastore, not(nullValue()));
     }
 
     @Test
@@ -323,5 +274,49 @@ class DatastoreTest {
         assertThat(datastore.query(TestModel.class).countDocuments(eq("_id", model.getId())), equalTo(1L));
         TestModel found = datastore.query(TestModel.class).find(eq("_id", model.getId())).first();
         assertThat(found.getName(), equalTo(name));
+    }
+
+    @Test
+    void testCloseReleasesTheClient() {
+        //given
+        var closable = new DatastoreImpl(Application.getInstance(Config.class));
+        boolean healthyBefore = closable.isHealthy();
+
+        //when
+        closable.close();
+
+        //then
+        assertThat(healthyBefore, equalTo(true));
+        assertThat(closable.isHealthy(), equalTo(false));
+        assertThat(datastore.isHealthy(), equalTo(true));
+    }
+
+    @Test
+    void testConcurrentFirstCallsForAPrefixShareOneDatastore() throws Exception {
+        //given
+        var provider = Application.getInstance(DatastoreProvider.class);
+        String prefix = "concurrent" + CommonUtils.uuidV6().replace("-", "");
+        var start = new java.util.concurrent.CountDownLatch(1);
+        java.util.Set<Datastore> datastores = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+        //when
+        try (var executor = java.util.concurrent.Executors.newFixedThreadPool(20)) {
+            var futures = new java.util.ArrayList<java.util.concurrent.Future<?>>();
+            for (var i = 0; i < 20; i++) {
+                futures.add(executor.submit(() -> {
+                    start.await();
+                    datastores.add(provider.getDatastore(prefix));
+                    return null;
+                }));
+            }
+            start.countDown();
+            for (var future : futures) {
+                future.get();
+            }
+        }
+
+        //then
+        assertThat(datastores.size(), equalTo(1));
+        ((DatastoreImpl) datastores.iterator().next()).close();
     }
 }

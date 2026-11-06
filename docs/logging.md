@@ -1,6 +1,6 @@
 # Logging
 
-Application code uses **Log4j2** through the standard API, nothing framework-specific to learn. The framework and Undertow log through the same pipeline, so one `log4j2.xml` (or YAML) controls verbosity for both your controllers and the HTTP stack underneath them.
+Application code uses **Log4j2** through the standard API, nothing framework-specific to learn. The framework and Undertow log through the same pipeline, so one `log4j2.xml` controls verbosity for both your controllers and the HTTP stack underneath them. A `log4j2.yaml` or `log4j2.json` is ignored, as Log4j needs Jackson 2 for these formats and mangoo I/O ships Jackson 3.
 
 Use a **static logger per class**. It is cheap to create and easy to filter selectively in configuration once you have more than a couple of classes. Avoid logging secrets, full session cookies, or raw passwords, even at debug level, since debug logging has a way of ending up enabled in production during an incident.
 
@@ -33,5 +33,13 @@ Keep `log4j2-test.xml` out of the fat JAR, or you risk shipping test-level verbo
     </configuration>
 </plugin>
 ```
+
+With several instances, add the instance id to the pattern, so a central log shows which instance wrote a line. It is available as the system property `mangooio.instance.id` before Log4j reads its configuration:
+
+```xml
+<PatternLayout pattern="%d{HH:mm:ss.SSS} [${sys:mangooio.instance.id}] [%t] %-5level %logger{36} - %msg%n" />
+```
+
+mangoo I/O stops Log4j itself as the last step of the [graceful shutdown](operating.md#graceful-shutdown), so the shutdown is logged completely; Log4j's own shutdown hook is disabled.
 
 On startup, mangoo I/O checks that every appender referenced by a logger actually exists and has started. Warnings from that check are treated as configuration errors rather than ignored, so a broken logging config fails loudly instead of silently dropping log lines.

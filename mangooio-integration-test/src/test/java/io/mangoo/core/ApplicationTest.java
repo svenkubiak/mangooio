@@ -1,18 +1,90 @@
 package io.mangoo.core;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.launchdarkly.eventsource.EventSource;
+import com.launchdarkly.eventsource.MessageEvent;
+import com.launchdarkly.eventsource.background.BackgroundEventHandler;
+import com.launchdarkly.eventsource.background.BackgroundEventSource;
 import io.mangoo.TestExtension;
+import io.mangoo.admin.InstanceHeartbeat;
+import io.mangoo.constants.Const;
 import io.mangoo.enums.Mode;
+import io.mangoo.interfaces.InstanceRegistry;
+import io.mangoo.models.InstanceStatus;
+import io.undertow.Undertow;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.net.ServerSocket;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
-import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith({TestExtension.class})
 public class ApplicationTest {
+    @Test
+    void testHeartbeatReportsThisInstance() {
+        //given
+        var registry = Application.getInstance(InstanceRegistry.class);
+
+        //then
+        await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> assertThat(registry.getInstances().stream().map(InstanceStatus::id).toList(), hasItem(Application.getInstanceId())));
+    }
+
+    @Test
+    void testStoppedHeartbeatRemovesThisInstance() {
+        //given
+        var registry = Application.getInstance(InstanceRegistry.class);
+        var heartbeat = Application.getInstance(InstanceHeartbeat.class);
+
+        try {
+            //when
+            heartbeat.stop();
+
+            //then
+            assertThat(registry.getInstances().stream().map(InstanceStatus::id).toList(), not(hasItem(Application.getInstanceId())));
+        } finally {
+            heartbeat.start();
+        }
+    }
+
+    @Test
+    void testServerSentEventConnectionsAreCountedByRoute() {
+        //given
+        Config config = Application.getInstance(Config.class);
+        String url = "http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse";
+        BackgroundEventSource.Builder builder = new BackgroundEventSource.Builder(new BackgroundEventHandler() {
+            @Override public void onOpen() {}
+            @Override public void onClosed() {}
+            @Override public void onMessage(String event, MessageEvent messageEvent) {}
+            @Override public void onComment(String comment) {}
+            @Override public void onError(Throwable throwable) {}
+        }, new EventSource.Builder(URI.create(url)));
+
+        //when
+        try (BackgroundEventSource eventSource = builder.build()) {
+            eventSource.start();
+
+            //then
+            await().atMost(Duration.ofSeconds(3)).untilAsserted(() -> assertThat(Application.getServerSentEventConnections().get("/sse"), greaterThanOrEqualTo(1)));
+        }
+    }
+
     @Test
     void testIsStarted() {
         //given
@@ -110,12 +182,242 @@ public class ApplicationTest {
     @Test
     void testClasspathScanDoesNotRejectApplicationPackages() {
         //given
-        var rejected = Arrays.asList(Application.SCAN_REJECTED_PACKAGES);
+        var rejected = Const.SCAN_REJECTED_PACKAGES;
 
         //then
         for (String broad : new String[] {"io", "io.mangoo", "com", "com.github", "org", "de", "de.svenkubiak", "net", "app", "controllers"}) {
             assertThat(rejected, not(hasItem(broad)));
         }
         rejected.forEach(pkg -> assertThat("io.mangoo".startsWith(pkg), equalTo(false)));
+    }
+
+    interface Greeting {
+        String greet();
+    }
+
+    private static AbstractModule binding(String greeting) {
+        return new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(Greeting.class).toInstance(() -> greeting);
+            }
+        };
+    }
+
+    @Test
+    void testApplicationBindingOverridesCoreBinding() {
+        //given
+        var core = binding("core");
+        var application = binding("application");
+
+        //when
+        var injector = Guice.createInjector(Application.override(core, application));
+
+        //then
+        assertThat(injector.getInstance(Greeting.class).greet(), equalTo("application"));
+    }
+
+    @Test
+    void testCoreBindingIsKeptWithoutApplicationBinding() {
+        //given
+        var core = binding("core");
+        var application = new AbstractModule() {};
+
+        //when
+        var injector = Guice.createInjector(Application.override(core, application));
+
+        //then
+        assertThat(injector.getInstance(Greeting.class).greet(), equalTo("core"));
+    }
+
+    @Test
+    void testInstanceId() {
+        //given
+        String first = Application.instanceId("web-1");
+        String second = Application.instanceId("web-1");
+
+        //then
+        assertThat(first, matchesPattern("web-1-[0-9a-f]{6}"));
+        assertThat(first, not(equalTo(second)));
+        assertThat(Application.instanceId(" "), matchesPattern("mangooio-[0-9a-f]{6}"));
+        assertThat(Application.instanceId(null), matchesPattern("mangooio-[0-9a-f]{6}"));
+    }
+
+    @Test
+    void testHostnameFromRuntimeName() {
+        //then
+        assertThat(Application.hostnameFromRuntimeName("12345@web-1"), equalTo("web-1"));
+        assertThat(Application.hostnameFromRuntimeName("12345@web@1"), equalTo("web@1"));
+        assertThat(Application.hostnameFromRuntimeName("12345"), nullValue());
+        assertThat(Application.hostnameFromRuntimeName("12345@"), nullValue());
+        assertThat(Application.hostnameFromRuntimeName(null), nullValue());
+    }
+
+    @Test
+    void testIsReadyAfterStartup() {
+        //then
+        assertThat(Application.isReady(), equalTo(true));
+    }
+
+    @Test
+    void testEmbeddedMongoDBIsOnlyWarnedInProdMode() {
+        //then
+        assertThat(Application.isEmbeddedInProd(Mode.PROD, true, Boolean.TRUE), equalTo(true));
+        assertThat(Application.isEmbeddedInProd(Mode.PROD, true, Boolean.FALSE), equalTo(false));
+        assertThat(Application.isEmbeddedInProd(Mode.PROD, false, Boolean.TRUE), equalTo(false));
+        assertThat(Application.isEmbeddedInProd(Mode.PROD, true, null), equalTo(false));
+        assertThat(Application.isEmbeddedInProd(Mode.TEST, true, Boolean.TRUE), equalTo(false));
+        assertThat(Application.isEmbeddedInProd(Mode.DEV, true, Boolean.TRUE), equalTo(false));
+    }
+
+    private static final char[] KEYSTORE_PASSWORD = "keystore-password".toCharArray();
+
+    private static Path keystore(String... aliases) throws Exception {
+        Path directory = Files.createTempDirectory("https-keystore");
+        Path keystore = directory.resolve("https.p12");
+        var keytool = Path.of(System.getProperty("java.home"), "bin", "keytool").toString();
+
+        for (String alias : aliases) {
+            var process = new ProcessBuilder(List.of(keytool, "-genkeypair", "-alias", alias, "-keyalg", "EC",
+                    "-dname", "CN=localhost", "-validity", "1", "-storetype", "PKCS12", "-keystore", keystore.toString(),
+                    "-storepass", new String(KEYSTORE_PASSWORD), "-keypass", new String(KEYSTORE_PASSWORD)))
+                    .redirectErrorStream(true)
+                    .start();
+            process.getInputStream().readAllBytes();
+            assertThat(process.waitFor(60, TimeUnit.SECONDS) && process.exitValue() == 0, equalTo(true));
+        }
+
+        return keystore;
+    }
+
+    @Test
+    void testSslContextWithAlias() throws Exception {
+        //given
+        Path keystore = keystore("certificate", "other");
+
+        //when
+        var sslContext = Application.sslContext(keystore, KEYSTORE_PASSWORD, "certificate");
+
+        //then
+        assertThat(sslContext.getProtocol(), equalTo("TLSv1.3"));
+    }
+
+    @Test
+    void testHttpsListenerAcceptsOnlyTls13() throws Exception {
+        //given
+        var sslContext = Application.sslContext(keystore("certificate"), KEYSTORE_PASSWORD, "certificate");
+        int port;
+        try (var socket = new ServerSocket(0)) {
+            port = socket.getLocalPort();
+        }
+        Undertow undertow = Application.addHttpsListener(Undertow.builder(), port, "localhost", sslContext)
+                .setHandler(exchange -> exchange.getResponseSender().send("ok"))
+                .build();
+        undertow.start();
+
+        try {
+            //then
+            assertThat(handshake(port, "TLSv1.3"), equalTo("TLSv1.3"));
+            assertThrows(SSLHandshakeException.class, () -> handshake(port, "TLSv1.2"));
+        } finally {
+            undertow.stop();
+        }
+    }
+
+    private static String handshake(int port, String protocol) throws Exception {
+        var client = SSLContext.getInstance("TLS");
+        client.init(null, new TrustManager[] {new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) {
+                // trusts the self-signed test certificate
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                // trusts the self-signed test certificate
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        }}, null);
+
+        try (var socket = (SSLSocket) client.getSocketFactory().createSocket("localhost", port)) {
+            socket.setEnabledProtocols(new String[] {protocol});
+            socket.startHandshake();
+            return socket.getSession().getProtocol();
+        }
+    }
+
+    @Test
+    void testSslContextWithoutAliasUsesTheOnlyKeyEntry() throws Exception {
+        //given
+        Path keystore = keystore("certificate");
+
+        //then
+        assertThat(Application.sslContext(keystore, KEYSTORE_PASSWORD, null), not(nullValue()));
+    }
+
+    @Test
+    void testSslContextWithoutAliasFailsForSeveralKeyEntries() throws Exception {
+        //given
+        Path keystore = keystore("certificate", "other");
+
+        //when
+        var exception = assertThrows(IllegalStateException.class, () -> Application.sslContext(keystore, KEYSTORE_PASSWORD, ""));
+
+        //then
+        assertThat(exception.getMessage(), containsString("holds 2 key entries"));
+    }
+
+    @Test
+    void testSslContextWithUnknownAlias() throws Exception {
+        //given
+        Path keystore = keystore("certificate");
+
+        //when
+        var exception = assertThrows(IllegalStateException.class, () -> Application.sslContext(keystore, KEYSTORE_PASSWORD, "unknown"));
+
+        //then
+        assertThat(exception.getMessage(), containsString("'unknown'"));
+    }
+
+    @Test
+    void testSslContextWithWrongPassword() throws Exception {
+        //given
+        Path keystore = keystore("certificate");
+
+        //then
+        assertThrows(IllegalStateException.class, () -> Application.sslContext(keystore, "wrong".toCharArray(), "certificate"));
+    }
+
+    @Test
+    void testSslContextWithMissingFile() {
+        //then
+        assertThrows(IllegalStateException.class, () -> Application.sslContext(Path.of("does-not-exist.p12"), KEYSTORE_PASSWORD, null));
+    }
+
+    @Test
+    void testSupportedMongoVersion() {
+        //then
+        assertThat(Application.isSupportedMongoVersion(List.of(4, 2, 0, 0)), equalTo(true));
+        assertThat(Application.isSupportedMongoVersion(List.of(7, 0, 14, 0)), equalTo(true));
+        assertThat(Application.isSupportedMongoVersion(List.of(4, 0, 28, 0)), equalTo(false));
+        assertThat(Application.isSupportedMongoVersion(List.of(3, 6)), equalTo(false));
+        assertThat(Application.isSupportedMongoVersion(null), equalTo(false));
+    }
+
+    @Test
+    void testLog4jDoesNotStopInItsOwnShutdownHook() {
+        //then the shutdown can still log its steps, Shutdown stops Log4j as its last step
+        var factory = (org.apache.logging.log4j.core.impl.Log4jContextFactory) org.apache.logging.log4j.LogManager.getFactory();
+        assertThat(factory.isShutdownHookEnabled(), equalTo(false));
+    }
+
+    @Test
+    void testInstanceIdIsAvailableToLogPatterns() {
+        //then
+        assertThat(System.getProperty("mangooio.instance.id"), equalTo(Application.getInstanceId()));
     }
 }

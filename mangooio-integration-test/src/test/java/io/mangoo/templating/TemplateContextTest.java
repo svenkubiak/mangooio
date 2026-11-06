@@ -8,6 +8,7 @@ import io.mangoo.routing.bindings.Session;
 import io.mangoo.templating.methods.I18nMethod;
 import io.mangoo.templating.methods.LocationMethod;
 import io.mangoo.templating.methods.PrettyTimeMethod;
+import io.mangoo.templating.methods.RouteMethod;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -54,5 +55,31 @@ class TemplateContextTest {
         assertThat(templateContext.getContent().get("i18n"), instanceOf(I18nMethod.class));
         assertThat(templateContext.getContent().get("location"), instanceOf(LocationMethod.class));
         assertThat(templateContext.getContent().get("prettytime"), instanceOf(PrettyTimeMethod.class));
+    }
+
+    @Test
+    void testContentOfTheCallerIsNotModified() {
+        //given
+        Map<String, Object> content = new HashMap<>();
+        content.put("foo", "bar");
+
+        //when
+        TemplateContext templateContext = new TemplateContext(content)
+                .withForm(Mockito.mock(Form.class));
+
+        //then
+        assertThat(templateContext.getContent().get("foo"), equalTo("bar"));
+        assertThat(content, equalTo(Map.of("foo", "bar")));
+    }
+
+    @Test
+    void testImmutableContentIsAccepted() {
+        //when
+        TemplateContext templateContext = new TemplateContext(Map.of("foo", "bar"))
+                .withForm(Mockito.mock(Form.class));
+
+        //then
+        assertThat(templateContext.getContent().get("foo"), equalTo("bar"));
+        assertThat(templateContext.getContent().get("route"), instanceOf(RouteMethod.class));
     }
 }

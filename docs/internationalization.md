@@ -6,35 +6,41 @@ Templates call `${i18n("key")}`, with arguments if you need them. Controllers ta
 
 ## Locale order
 
-1. **`lang` request parameter** (query or path). A path parameter must be mapped:
-
-    ```java
-    On.get().to("/page/{lang}").respondeWith("page")
-    ```
-
-    Examples: `/page?lang=en`, `/page/en`
+1. **`lang` query parameter**, e.g. `/page?lang=en`. A route parameter named `lang` is not evaluated.
 
 2. **i18n cookie** (`i18n.cookie.name`, default `mangooio-i18n`)
 
-3. **`Accept-Language` header**
+3. **`Accept-Language`**, the first header value only, lowercased. There is no q-value negotiation.
 
-4. **`application.language`** in `config.yaml` (default `en`)
-
-5. Hardcoded fallback `en`
+4. **`application.language`** in `config.yaml` (default `en`). An invalid tag becomes a best-effort locale or `Locale.ROOT`. The configured language is always a string, so there is no further fallback after this step.
 
 ## Setting the cookie
 
+Use the configured cookie name. `LocaleHandler` reads `i18n.cookie.name`, which defaults to `mangooio-i18n` but can be changed. A cookie written under the default name is ignored once you change the key.
+
 ```java
-import io.mangoo.constants.Default;
+import io.mangoo.core.Config;
 import io.mangoo.routing.Response;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
+import jakarta.inject.Inject;
 
-public Response localize() {
-    Cookie cookie = new CookieImpl(Default.I18N_COOKIE_NAME, "en");
-    return Response.ok().cookie(cookie).render();
+public class LocaleController {
+    private final Config config;
+
+    @Inject
+    public LocaleController(Config config) {
+        this.config = config;
+    }
+
+    public Response localize() {
+        Cookie cookie = new CookieImpl(config.getI18nCookieName(), "en");
+        return Response.ok().cookie(cookie).render();
+    }
 }
 ```
+
+The locale cookie is `HttpOnly`, `Path=/`, and `SameSite=Strict`.
 
 ## Messages in Java
 
@@ -60,7 +66,7 @@ welcome=Welcome
 hello=Hello {0}
 ```
 
-`{0}` is replaced with the extra argument, and further placeholders follow the same pattern for additional arguments.
+`get(key, arguments)` uses `MessageFormat`. An apostrophe in a pattern that takes arguments is a quote, so write `''` for a literal apostrophe. `get(key)` does not. A missing key is logged once per locale. After 1000 distinct `locale:key` pairs, further missing keys are silent.
 
 > Do not inject `Messages` as a field to translate a request. An injected `Messages` is an application-wide singleton bound to the JVM default locale, not to the locale of the current request. Only the method parameter carries the request locale.
 

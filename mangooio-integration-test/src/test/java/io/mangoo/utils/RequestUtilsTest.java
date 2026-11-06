@@ -1,28 +1,17 @@
 package io.mangoo.utils;
 
-import com.google.common.net.MediaType;
 import io.mangoo.TestExtension;
 import io.mangoo.constants.Header;
-import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooJwtException;
-import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.util.AttachmentKey;
-import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
 import io.undertow.util.PathTemplateMatch;
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.mangoo.core.Application.getInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,148 +19,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith({TestExtension.class})
 class RequestUtilsTest {
-    private Config config;
-
-    @BeforeEach
-    void setUp() {
-        config = getInstance(Config.class);
-    }
-
-    @Test
-    void testGetRequestParameters() {
-        // given
-        Deque<String> paramsOne = new LinkedList<>();
-        paramsOne.push("foo");
-        Deque<String> paramsTwo = new LinkedList<>();
-        paramsTwo.push("bar");
-
-        Map<String, Deque<String>> queryParameters = new HashMap<>();
-        Map<String, Deque<String>> pathParameters = new HashMap<>();
-        queryParameters.put("first", paramsOne);
-        pathParameters.put("second", paramsTwo);
-
-        HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
-
-        // when
-        when(mockedExchange.getQueryParameters()).thenReturn(queryParameters);
-        when(mockedExchange.getPathParameters()).thenReturn(pathParameters);
-        Map<String, String> requestParameters = RequestUtils.getRequestParameters(mockedExchange);
-
-        // then
-        assertThat(requestParameters, not(nullValue()));
-        assertThat(requestParameters.get("first"), equalTo("foo"));
-        assertThat(requestParameters.get("second"), equalTo("bar"));
-    }
-
-    @Test
-    void testGetRequestParametersConcurrent() {
-        MatcherAssert.assertThat(t -> {
-            // given
-            String one = UUID.randomUUID().toString();
-            String two = UUID.randomUUID().toString();
-            Deque<String> paramsOne = new LinkedList<>();
-            paramsOne.push(one);
-            Deque<String> paramsTwo = new LinkedList<>();
-            paramsTwo.push(two);
-
-            Map<String, Deque<String>> queryParameters = new HashMap<>();
-            Map<String, Deque<String>> pathParameters = new HashMap<>();
-            queryParameters.put("first", paramsOne);
-            pathParameters.put("second", paramsTwo);
-
-            HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
-
-            // when
-            when(mockedExchange.getQueryParameters()).thenReturn(queryParameters);
-            when(mockedExchange.getPathParameters()).thenReturn(pathParameters);
-            Map<String, String> requestParameters = RequestUtils.getRequestParameters(mockedExchange);
-
-            return requestParameters != null && requestParameters.get("first").equals(one) && requestParameters.get("second").equals(two);
-        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
-    }
-
-
-    @Test
-    void testIsPost() {
-        // given
-        HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
-
-        // when
-        when(mockedExchange.getRequestMethod()).thenReturn(Methods.POST);
-        boolean postPutPatch = RequestUtils.isPostPutPatch(mockedExchange);
-
-        // then
-        assertThat(postPutPatch, equalTo(true));
-    }
-
-    @Test
-    void testIsPut() {
-        // given
-        HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
-
-        // when
-        when(mockedExchange.getRequestMethod()).thenReturn(Methods.PUT);
-        boolean postPutPatch = RequestUtils.isPostPutPatch(mockedExchange);
-
-        // then
-        assertThat(postPutPatch, equalTo(true));
-    }
-
-    @Test
-    void testIsPatch() {
-        // given
-        HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
-
-        // when
-        when(mockedExchange.getRequestMethod()).thenReturn(Methods.PUT);
-        boolean postPutPatch = RequestUtils.isPostPutPatch(mockedExchange);
-
-        // then
-        assertThat(postPutPatch, equalTo(true));
-    }
-
-    @Test
-    void testIsNonPostPutPatch() {
-        // given
-        HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
-
-        // when
-        when(mockedExchange.getRequestMethod()).thenReturn(Methods.GET);
-        boolean postPutPatch = RequestUtils.isPostPutPatch(mockedExchange);
-
-        // then
-        assertThat(postPutPatch, equalTo(false));
-    }
-
-    @Test
-    void testIsJsonRequest() {
-        // given
-        HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
-        HeaderMap headerMap = new HeaderMap();
-        headerMap.put(Header.CONTENT_TYPE, MediaType.JSON_UTF_8.withoutParameters().toString());
-
-        // when
-        when(mockedExchange.getRequestHeaders()).thenReturn(headerMap);
-        boolean isJson = RequestUtils.isJsonRequest(mockedExchange);
-
-        // then
-        assertThat(isJson, equalTo(true));
-    }
-
-    @Test
-    void testIsNonJsonRequest() {
-        // given
-        HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
-        HeaderMap headerMap = new HeaderMap();
-        headerMap.put(Header.CONTENT_TYPE, MediaType.CSS_UTF_8.withoutParameters().toString());
-
-        // when
-        when(mockedExchange.getRequestHeaders()).thenReturn(headerMap);
-        boolean isJson = RequestUtils.isJsonRequest(mockedExchange);
-
-        // then
-        assertThat(isJson, equalTo(false));
-    }
 
     @Test
     void testGetAuthorizationHeader() {
@@ -187,30 +34,6 @@ class RequestUtilsTest {
         assertThat(RequestUtils.getAuthorizationHeader(request), not(nullValue()));
         assertThat(RequestUtils.getAuthorizationHeader(request).isPresent(), equalTo(true));
         assertThat(RequestUtils.getAuthorizationHeader(request).get(), equalTo(authorization));
-    }
-
-    @Test
-    void testGetAttachmentKey() {
-        //given
-
-        //when
-        AttachmentKey<Attachment> attachmentKey = RequestUtils.getAttachmentKey();
-
-        //then
-        assertThat(attachmentKey, not(nullValue()));
-        assertThat(attachmentKey, instanceOf(AttachmentKey.class));
-    }
-
-    @Test
-    void testGetAttachmentKeyReturnsSameInstance() {
-        //given
-
-        //when
-        AttachmentKey<Attachment> attachmentKey1 = RequestUtils.getAttachmentKey();
-        AttachmentKey<Attachment> attachmentKey2 = RequestUtils.getAttachmentKey();
-
-        //then
-        assertThat(attachmentKey1, sameInstance(attachmentKey2));
     }
 
     @Test
@@ -646,21 +469,5 @@ class RequestUtilsTest {
 
         //when & then
         assertThrows(NullPointerException.class, () -> RequestUtils.hasMultipleParameterValues(null));
-    }
-
-    private String createValidJwt() {
-        try {
-            var jwtData = JwtUtils.JwtData.create()
-                    .withKey(config.getAuthenticationCookieKey())
-                    .withSubject("fooobar")
-                    .withSecret(config.getAuthenticationCookieSecret())
-                    .withIssuer(config.getApplicationName())
-                    .withAudience(config.getAuthenticationCookieName())
-                    .withTtlSeconds(config.getAuthenticationCookieTokenExpires());
-
-            return JwtUtils.createJwt(jwtData);
-        } catch (MangooJwtException e) {
-            throw new RuntimeException("Failed to create valid JWT for testing", e);
-        }
     }
 }

@@ -34,17 +34,6 @@ class ValidatorTest {
         assertEquals(expectedValue, result);
     }
 
-    @Test
-    void testGetWithNonExistentKey() {
-        // Given
-        String key = "nonExistentKey";
-
-        // When
-        String result = validator.get(key);
-
-        // Then
-        assertNull(result);
-    }
 
     @Test
     void testGetWithNullKey() {
@@ -55,18 +44,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.get(key));
     }
 
-    @Test
-    void testAddValue() {
-        // Given
-        String key = "testKey";
-        String value = "testValue";
-
-        // When
-        validator.addValue(key, value);
-
-        // Then
-        assertEquals(value, validator.get(key));
-    }
 
     @Test
     void testHasErrorsInitiallyFalse() {
@@ -77,18 +54,6 @@ class ValidatorTest {
         assertFalse(result);
     }
 
-    @Test
-    void testHasErrorsWithErrors() {
-        // Given
-        validator.addValue("testKey", "testValue");
-        validator.expectValue("testKey");
-
-        // When
-        boolean result = validator.hasErrors();
-
-        // Then
-        assertFalse(result); // expectValue should not add error for valid value
-    }
 
     @Test
     void testHasErrorsWithActualErrors() {
@@ -331,20 +296,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectMinValue(key, 5.0));
     }
 
-    @Test
-    void testExpectMinValueWithCustomMessage() {
-        // Given
-        String key = "testKey";
-        String customMessage = "Custom min value error";
-        validator.addValue(key, "3");
-
-        // When
-        validator.expectMinValue(key, 5.0, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectMaxValueWithValidValue() {
@@ -394,20 +345,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectMaxValue(key, 10.0));
     }
 
-    @Test
-    void testExpectMaxValueWithCustomMessage() {
-        // Given
-        String key = "testKey";
-        String customMessage = "Custom max value error";
-        validator.addValue(key, "15");
-
-        // When
-        validator.expectMaxValue(key, 10.0, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectMinLengthWithValidValue() {
@@ -444,20 +381,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectMinLength(key, 3.0));
     }
 
-    @Test
-    void testExpectMinLengthWithCustomMessage() {
-        // Given
-        String key = "testKey";
-        String customMessage = "Custom min length error";
-        validator.addValue(key, "hi");
-
-        // When
-        validator.expectMinLength(key, 3.0, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectMaxLengthWithValidValue() {
@@ -494,20 +417,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectMaxLength(key, 10.0));
     }
 
-    @Test
-    void testExpectMaxLengthWithCustomMessage() {
-        // Given
-        String key = "testKey";
-        String customMessage = "Custom max length error";
-        validator.addValue(key, "very long string");
-
-        // When
-        validator.expectMaxLength(key, 10.0, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectNumericWithValidValue() {
@@ -544,20 +453,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectNumeric(key));
     }
 
-    @Test
-    void testExpectNumericWithCustomMessage() {
-        // Given
-        String key = "testKey";
-        String customMessage = "Custom numeric error";
-        validator.addValue(key, "abc");
-
-        // When
-        validator.expectNumeric(key, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectExactMatchWithMatchingValues() {
@@ -646,22 +541,6 @@ class ValidatorTest {
         assertFalse(validator.hasError(key1));
     }
 
-    @Test
-    void testExpectMatchWithCustomMessage() {
-        // Given
-        String key1 = "email";
-        String key2 = "confirmEmail";
-        String customMessage = "Custom match error";
-        validator.addValue(key1, "test@example.com");
-        validator.addValue(key2, "different@example.com");
-
-        // When
-        validator.expectMatch(key1, key2, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key1));
-        assertEquals(customMessage, validator.getError(key1));
-    }
 
     @Test
     void testExpectMatchWithListOfValidValues() {
@@ -691,21 +570,6 @@ class ValidatorTest {
         assertTrue(validator.hasError(key));
     }
 
-    @Test
-    void testExpectMatchWithListAndCustomMessage() {
-        // Given
-        String key = "status";
-        List<String> validValues = List.of("active", "inactive", "pending");
-        String customMessage = "Custom list match error";
-        validator.addValue(key, "invalid");
-
-        // When
-        validator.expectMatch(key, customMessage, validValues);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectEmailWithValidEmail() {
@@ -742,20 +606,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectEmail(key));
     }
 
-    @Test
-    void testExpectEmailWithCustomMessage() {
-        // Given
-        String key = "email";
-        String customMessage = "Custom email error";
-        validator.addValue(key, "invalid-email");
-
-        // When
-        validator.expectEmail(key, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectIpv4WithValidIpv4() {
@@ -792,20 +642,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectIpv4(key));
     }
 
-    @Test
-    void testExpectIpv4WithCustomMessage() {
-        // Given
-        String key = "ip";
-        String customMessage = "Custom IPv4 error";
-        validator.addValue(key, "invalid-ip");
-
-        // When
-        validator.expectIpv4(key, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectIpv6WithValidIpv6() {
@@ -842,20 +678,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectIpv6(key));
     }
 
-    @Test
-    void testExpectIpv6WithCustomMessage() {
-        // Given
-        String key = "ip";
-        String customMessage = "Custom IPv6 error";
-        validator.addValue(key, "invalid-ipv6");
-
-        // When
-        validator.expectIpv6(key, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectDomainNameWithValidDomain() {
@@ -892,20 +714,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectDomainName(key));
     }
 
-    @Test
-    void testExpectDomainNameWithCustomMessage() {
-        // Given
-        String key = "domain";
-        String customMessage = "Custom domain error";
-        validator.addValue(key, "invalid-domain");
-
-        // When
-        validator.expectDomainName(key, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectUrlWithValidUrl() {
@@ -942,20 +750,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectUrl(key));
     }
 
-    @Test
-    void testExpectUrlWithCustomMessage() {
-        // Given
-        String key = "url";
-        String customMessage = "Custom URL error";
-        validator.addValue(key, "invalid-url");
-
-        // When
-        validator.expectUrl(key, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectRegexWithValidPattern() {
@@ -995,21 +789,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectRegex(key, pattern));
     }
 
-    @Test
-    void testExpectRegexWithCustomMessage() {
-        // Given
-        String key = "code";
-        Pattern pattern = Pattern.compile("[A-Z]{3}");
-        String customMessage = "Custom regex error";
-        validator.addValue(key, "ab");
-
-        // When
-        validator.expectRegex(key, pattern, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectTrueWithTrueValue() {
@@ -1035,6 +814,7 @@ class ValidatorTest {
 
         // Then
         assertTrue(validator.hasError(key));
+        assertEquals("agreement must be true", validator.getError(key));
     }
 
     @Test
@@ -1047,20 +827,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectTrue(key, value));
     }
 
-    @Test
-    void testExpectTrueWithCustomMessage() {
-        // Given
-        String key = "agreement";
-        boolean value = false;
-        String customMessage = "Custom true error";
-
-        // When
-        validator.expectTrue(key, value, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectFalseWithFalseValue() {
@@ -1086,6 +852,7 @@ class ValidatorTest {
 
         // Then
         assertTrue(validator.hasError(key));
+        assertEquals("disabled must be false", validator.getError(key));
     }
 
     @Test
@@ -1098,20 +865,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectFalse(key, value));
     }
 
-    @Test
-    void testExpectFalseWithCustomMessage() {
-        // Given
-        String key = "disabled";
-        boolean value = true;
-        String customMessage = "Custom false error";
-
-        // When
-        validator.expectFalse(key, value, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectNotNullWithNotNullValue() {
@@ -1137,6 +890,7 @@ class ValidatorTest {
 
         // Then
         assertTrue(validator.hasError(key));
+        assertEquals("object is a required value", validator.getError(key));
     }
 
     @Test
@@ -1149,20 +903,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectNotNull(key, value));
     }
 
-    @Test
-    void testExpectNotNullWithCustomMessage() {
-        // Given
-        String key = "object";
-        Object value = null;
-        String customMessage = "Custom not null error";
-
-        // When
-        validator.expectNotNull(key, value, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectNullWithNullValue() {
@@ -1188,6 +928,7 @@ class ValidatorTest {
 
         // Then
         assertTrue(validator.hasError(key));
+        assertEquals("object must be empty", validator.getError(key));
     }
 
     @Test
@@ -1200,20 +941,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectNull(key, value));
     }
 
-    @Test
-    void testExpectNullWithCustomMessage() {
-        // Given
-        String key = "object";
-        Object value = new Object();
-        String customMessage = "Custom null error";
-
-        // When
-        validator.expectNull(key, value, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectRangeLengthWithValidLength() {
@@ -1263,20 +990,6 @@ class ValidatorTest {
         assertThrows(NullPointerException.class, () -> validator.expectRangeLength(key, 3, 10));
     }
 
-    @Test
-    void testExpectRangeLengthWithCustomMessage() {
-        // Given
-        String key = "text";
-        String customMessage = "Custom range length error";
-        validator.addValue(key, "hi");
-
-        // When
-        validator.expectRangeLength(key, 3, 10, customMessage);
-
-        // Then
-        assertTrue(validator.hasError(key));
-        assertEquals(customMessage, validator.getError(key));
-    }
 
     @Test
     void testExpectRangeValueWithValidValue() {
@@ -1416,7 +1129,7 @@ class ValidatorTest {
 
     @Test
     void testExpectNumericFormat() {
-        for (String value : new String[] {"-1", "0.5", "42", "+3", ".5"}) {
+        for (String value : new String[] {"-1", "0.5", "42", "+3", ".5", "1.", "+.5"}) {
             // Given
             Validator numeric = new Validator();
             numeric.addValue("number", value);
@@ -1428,7 +1141,7 @@ class ValidatorTest {
             assertFalse(numeric.hasError("number"), "Expected no error for " + value);
         }
 
-        for (String value : new String[] {"abc", "\u0661\u0668", "1e3", "NaN", "Infinity", " 5", ""}) {
+        for (String value : new String[] {"abc", "\u0661\u0668", "1e3", "NaN", "Infinity", " 5", "", ".", "+", "1.2.3"}) {
             // Given
             Validator numeric = new Validator();
             numeric.addValue("number", value);

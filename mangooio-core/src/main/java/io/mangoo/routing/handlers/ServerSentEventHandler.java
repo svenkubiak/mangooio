@@ -17,14 +17,23 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
 
     /** Disables proxy buffering and caching and sends a heartbeat comment, so proxies like nginx neither buffer events nor close the connection. */
     public static HttpHandler wrap(ServerSentEventConnectionCallback callback) {
+        return withHeaders(serverSentEvents(callback));
+    }
+
+    /** The Undertow handler holds every open connection of its route, registered in the ServerSentEventManager or not. */
+    public static io.undertow.server.handlers.sse.ServerSentEventHandler serverSentEvents(ServerSentEventConnectionCallback callback) {
         Objects.requireNonNull(callback, "callback can not be null");
 
-        HttpHandler serverSentEvents = Handlers.serverSentEvents((connection, lastEventId) -> {
+        return Handlers.serverSentEvents((connection, lastEventId) -> {
             connection.setKeepAliveTime(Default.SERVER_SENT_EVENT_KEEP_ALIVE);
             callback.connected(connection, lastEventId);
         });
+    }
 
-        // Undertow flushes the response headers before the callback runs, so they have to be set here
+    // Undertow flushes the response headers before the callback runs, so they have to be set here
+    public static HttpHandler withHeaders(io.undertow.server.handlers.sse.ServerSentEventHandler serverSentEvents) {
+        Objects.requireNonNull(serverSentEvents, "serverSentEvents can not be null");
+
         return exchange -> {
             exchange.getResponseHeaders().put(Header.CACHE_CONTROL, "no-cache");
             exchange.getResponseHeaders().put(Header.X_ACCEL_BUFFERING, "no");

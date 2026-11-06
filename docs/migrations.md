@@ -1,3 +1,60 @@
+## From 10.16.0 to 11.0.0
+
+With persistence enabled, MongoDB 4.2 or later is required.
+
+1. Export the values of the vault. Start `jshell` with the vault password in `VAULT_SECRET` (`application.vault.secret`, or `application.secret` if none was set) and paste:
+
+    ```java
+    var keyStore = java.security.KeyStore.getInstance("PKCS12");
+    var password = System.getenv("VAULT_SECRET").toCharArray();
+    keyStore.load(new java.io.FileInputStream("vault.p12"), password);
+    for (var alias : java.util.Collections.list(keyStore.aliases())) {
+        if (keyStore.entryInstanceOf(alias, java.security.KeyStore.SecretKeyEntry.class)) {
+            var entry = (java.security.KeyStore.SecretKeyEntry) keyStore.getEntry(alias, new java.security.KeyStore.PasswordProtection(password));
+            System.out.println(alias + "=" + new String(entry.getSecretKey().getEncoded(), java.nio.charset.StandardCharsets.UTF_8));
+        }
+    }
+    ```
+
+    Cookie secrets are listed as `<mode>.<key>`, e.g. `prod.session.cookie.secret`. Without them all users are logged out once.
+2. Provide the `prod.*` values as environment variables or secret files and replace every `vault{}` with `env{}` or `file{}`, see [Secrets](secrets.md).
+3. HTTPS only: extract the certificate and set `connector.https.keystore` and `connector.https.password` (the destination password entered for keytool):
+
+    ```shell
+    keytool -importkeystore -srckeystore vault.p12 -srcstoretype PKCS12 -srcalias certificate -destkeystore https.p12 -deststoretype PKCS12
+    ```
+
+    The connector accepts TLS 1.3 only; clients that need TLS 1.2 have to connect through a proxy that terminates TLS.
+
+4. Remove `application.vault.enable`, `application.vault.path`, `application.vault.secret`, `APPLICATION_VAULT_PATH`, `APPLICATION_VAULT_SECRET` and the `vault.p12` volume.
+5. Give every `env{}`, `arg{}` or `file{}` that may be empty a fallback, e.g. `arg{false}`, or write it as `env{?}`. Without either, a missing value fails the startup.
+6. Move every framework secret that is still literal in the `config.yaml` of the classpath to `env{}` or `file{}`; prod mode refuses to start otherwise, see [Secrets](secrets.md#secrets-in-prod).
+7. Replace `application.admin.password` with an Argon2id PHC string, generated inside a started application, e.g. in a test with `TestRunner`, with `CommonUtils.hashArgon2(password, CommonUtils.uuidV4())`, and pass it from outside the artifact.
+8. Change imports of `com.fasterxml.jackson.databind` to `tools.jackson.databind`; annotations stay in `com.fasterxml.jackson.annotation`. `java.util.Date` is now written and read in `application.timezone`.
+9. Replace the removed API:
+
+    | 10.x | 11.0 |
+    |---|---|
+    | `Vault`, `new Config(vault)` | `Config`, `new Config()` |
+    | `CommonUtils.blacklist(id)` / `isBlacklisted(id)` | injected `TokenBlacklist`: `revoke(jwtId, expiresAt)` / `isRevoked(jwtId, subject, issuedAt)`, all tokens of an account with `revokeSubject(subject)` |
+    | `Authentication.isValidSecondFactor(secret, totp)` | `isValidSecondFactor(subject, secret, totp)` |
+    | `JwtUtils.extractSubject(jwt, secret)` | `JwtUtils.parseJwt(jwt, jwtData).getSubject()` |
+    | `AuthenticationLock`, `CacheName.AUTH` | `Authentication.userHasLock` / `userHasSecondFactorLock` |
+    | `Cache.getAndIncrementCounter(key)` | `Cache.increment(key)`, returns `long` |
+    | `Cache.getAndDecrementCounter(key)` | `Cache.decrement(key)`, returns `long` |
+    | `Cache.getCounter(key)`, `null` without counter | `0` without counter |
+    | `Cache.resetCounter(key)` returning `AtomicInteger` | returns nothing |
+
+    An own `Cache` implementation has to implement the new counter methods.
+10. Remove the `mangooio:minify` goal from the `pom.xml` and minify assets with your own build tooling.
+11. Tests that verify the same TOTP code twice with `isValidSecondFactor` get `false` the second time; use a new code or another identifier.
+12. Adapt dashboards and alerts that filter on the OpenTelemetry `service.name` `io.mangoo`; it is now `application.name`.
+13. Set `session.cookie.expires: true` if session cookies should survive a browser restart; by default they now end with the browser session.
+
+## From 10.15.1 to 10.16.0
+
+`freemarker-java8` is removed. `.format()` without a pattern prints `toString()`; format styles, `ISO_*` names, a zone argument, `toZonedDateTime`, `zoneId.format` and `clock.format` are no longer accepted, and `${zoneId}` prints the zone id.
+
 ## From 10.14.1 to 10.15.0
 
 This is a drop-in replacement.
@@ -26,7 +83,7 @@ if (authentication.isValid() && authentication.isValidSecondFactor(secret, totp)
 if (authentication.hasSubject() && authentication.isValidSecondFactor(subject, secret, totp)) {
 ```
 
-`isValid()` is false while a second factor is outstanding, so it no longer guards that page, and the two-argument `isValidSecondFactor` is deprecated because it verifies unthrottled.
+`isValid()` is false while a second factor is outstanding, so it no longer guards that page. The two-argument `isValidSecondFactor` verified the code unthrottled and has since been removed.
 
 Unchanged: lock handling stays inside the framework — `isValidLogin` and `isValidSecondFactor` check the lock and count the failed attempt on their own, `userHasLock` and `userHasSecondFactorLock` are read-only queries for the error message. `update()` is needed in the same place as before, and authorization checks stay as they are; they become stricter on their own.
 
@@ -47,7 +104,7 @@ Routes bound with `withAuthentication()` are unaffected and keep redirecting to 
 
 `isValidSecondFactor(secret, totp)` verified a TOTP without any attempt limit — six digits, no tolerance window, so one of a million codes is valid per 30-second window. A reverse proxy counting per source address does not bound the total, which an attacker sidesteps with more addresses.
 
-The method is deprecated. Pass the identifier the code is checked for and the same `authentication.lock` budget as for the password step applies:
+Pass the identifier the code is checked for and the same `authentication.lock` budget as for the password step applies:
 
 ```java
 // before
@@ -69,7 +126,7 @@ A lockout used to rely on the auth cache TTL, which every failed attempt reset �
 
 ### Argon2 hashing is now gated
 
-A single Argon2id computation held around 78 MB of heap with nothing limiting concurrency. Undertow starts eight worker threads per core, so on an eight core machine 64 requests can hash at once — roughly 5 GB, enough to take a small heap down with an OutOfMemoryError.
+A single Argon2id computation held around 78 MB of heap with nothing limiting concurrency. mangoo I/O does not set Undertow's worker count. Undertow's own default is eight worker threads per core, so on an eight core machine 64 requests could hash at once, roughly 5 GB, enough to take a small heap down with an OutOfMemoryError.
 
 Hashing now runs through the new `io.mangoo.crypto.PasswordHasher`, which caps concurrent computations. `CommonUtils.hashArgon2` and `CommonUtils.matchArgon2` keep their signature and delegate, but can now throw:
 
@@ -83,7 +140,7 @@ throw new MangooHashingException("No Argon2 hashing slot became available within
 ```yaml
 authentication:
   hashing:
-    concurrency: 0   # 0 derives the slots from memory cost and half the heap, clamped to 2..8
+    concurrency: 0   # 0 derives the slots from memory cost and half the heap, divided by 1.2, clamped to 2..8
     timeout: 5000
 ```
 
@@ -244,107 +301,3 @@ This is a drop-in replacement.
 ## From 10.0.0 to 10.1.0
 
 This is a drop-in replacement.
-
-## From 9.x to 10.0.0
-mangoo I/O 10.0.0 is a major release and contains changes that break API compatibility. These are the changes you need to consider when upgrading from 9.x:
-
-**Removed cryptex{}**
-
-`cryptex{}` in `config.yaml` is replaced by a vault based on a Java KeyStore. On first start the application creates `vault.p12` with predefined cookie keys. See [Secrets](secrets.md) for `vault{}`, vault location, and HTTPS certificates.
-
-**Switched Paseto to JWT**
-
-Cookie tokens now use Nimbus JOSE+JWT instead of Paseto. If you called the Paseto library yourself, either keep using that library directly or switch to [JwtUtils](utils.md).
-
-## From 9.9.0 to 9.10.0
-This is a drop-in replacement.
-
-## From 9.8.0 to 9.9.0
-This is a drop-in replacement.
-
-## From 9.7.0 to 9.8.0
-This is a drop-in replacement.
-
-## From 9.6.0 to 9.7.0
-This is a drop-in replacement.
-
-## From 9.5.0 to 9.6.0
-This is a drop-in replacement.
-
-## From 9.4.0 to 9.5.0
-This is a drop-in replacement.
-
-## From 9.3.0 to 9.4.0
-This is a drop-in replacement.
-
-## From 9.2.0 to 9.3.0
-This is a drop-in replacement.
-
-## From 9.1.0 to 9.2.0
-This is a drop-in replacement.
-
-## From 9.0.0 to 9.1.0
-This is a drop-in replacement.
-
-## From 8.11.0 to 9.0.0
-mangoo I/O 9.0.0 is a major release and contains code that will break API compatibility. These are the changes you need to consider when upgrading from 8.x:
-
-**Removed Basic HTTP authentication**
-
-The basic HTTP authentication that came with mangoo I/O has been removed. This should be done in an HTTP proxy in front of your application instead.
-
-**Refactored Response class**
-
-The Response class and the handling of a response in a controller has been changed. Previously, when a Response was returned in a controller, mangoo I/O automatically looked up the corresponding .ftl template and rendered it. Now, returning `Response.ok()` returns an empty response. Rendering only takes place when calling `Response.ok().render()` or when passing a variable to the template via `Response.ok().render("foo", "bar")`.
-
-**Removed @admin/health endpoint**
-
-The @admin/health endpoint is not available anymore.
-
-**Switched from props based configuration to yaml based configuration**
-
-Please check the [updated documentation](configuration.md) for further details.
-
-## From 8.10.0 to 8.11.0
-This is a drop-in replacement.
-
-## From 8.9.0 to 8.10.0
-This is a drop-in replacement.
-
-## From 8.8.0 to 8.9.0
-This is a drop-in replacement.
-
-## From 8.7.0 to 8.8.0
-This is a drop-in replacement.
-
-## From 8.6.0 to 8.7.0
-This is a drop-in replacement.
-
-## From 8.5.0 to 8.6.0
-This is a drop-in replacement.
-
-## From 8.4.0 to 8.5.0
-This is a drop-in replacement.
-
-## From 8.3.0 to 8.4.0
-This is a drop-in replacement.
-
-## From 8.2.0 to 8.3.0
-This is a drop-in replacement.
-
-## From 8.1.0 to 8.2.0
-This is a drop-in replacement.
-
-## From 8.0.0 to 8.1.0
-This is a drop-in replacement.
-
-## From 7.19.0 to 8.0.0
-mangoo I/O 8.0.0 is a major release and contains code that will break API compatibility. These are the changes you need to consider when upgrading from 7.x:
-
-**Java 21**
-
-mangoo I/O now requires and uses Java 21.
-
-**Removed Morphia in favor of direct MongoDB integration**
-
-One of the major changes in 8.0.0 is the removal of Morphia in favor of a direct MongoDB integration. mangoo I/O now works with the native MongoDB Java driver. See [Persistence](persistence.md).

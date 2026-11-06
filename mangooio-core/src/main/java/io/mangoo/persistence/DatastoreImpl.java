@@ -14,11 +14,12 @@ import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import io.mangoo.constants.Default;
+import io.mangoo.constants.Key;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.persistence.interfaces.BaseEntity;
-import io.mangoo.persistence.interfaces.Datastore;
+import io.mangoo.interfaces.persistence.BaseEntity;
+import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.utils.PersistenceUtils;
 import io.mangoo.utils.internal.Trace;
 import io.opentelemetry.instrumentation.mongo.v3_1.MongoTelemetry;
@@ -33,6 +34,8 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -81,13 +84,18 @@ public class DatastoreImpl implements Datastore {
                     pojoRegistry
             );
 
+            var url = StringUtils.trimToNull(config.getMongoUrl(prefix));
             var settings = settings(
+                    prefix,
                     config.getMongoHost(prefix),
                     config.getMongoPort(prefix),
+                    url,
+                    Boolean.TRUE.equals(config.isMongoEmbedded(prefix)),
                     Boolean.TRUE.equals(config.isMongoAuth(prefix)),
                     config.getMongoUsername(prefix),
                     config.getMongoPassword(prefix),
-                    config.getMongoAuthDB(prefix))
+                    config.getMongoAuthDB(prefix),
+                    config.getMongoDbName(prefix))
                     .codecRegistry(combinedRegistry);
 
             // Command spans are only useful when the OTLP exporter is running
@@ -100,12 +108,20 @@ public class DatastoreImpl implements Datastore {
             mongoClient = MongoClients.create(settings.build());
             mongoDatabase = mongoClient.getDatabase(config.getMongoDbName(prefix));
 
-            LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
-                    config.getMongoHost(prefix),
-                    config.getMongoPort(prefix),
-                    config.isMongoAuth(prefix),
-                    config.getMongoDbName(prefix)
-            );
+            if (url == null) {
+                LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
+                        config.getMongoHost(prefix),
+                        config.getMongoPort(prefix),
+                        config.isMongoAuth(prefix),
+                        config.getMongoDbName(prefix)
+                );
+            } else {
+                LOG.info("Created MongoClient connected to {} with credentials = {} on database '{}'",
+                        url,
+                        config.isMongoAuth(prefix),
+                        config.getMongoDbName(prefix)
+                );
+            }
         }
     }
 
@@ -118,7 +134,8 @@ public class DatastoreImpl implements Datastore {
                     .getDatabase(config.getMongoDbName(prefix))
                     .runCommand(new BsonDocument("ping", new BsonInt64(1)));
             return true;
-        } catch (MongoException e) {
+        } catch (MongoException | IllegalStateException e) {
+            // IllegalStateException is thrown by a closed client
             return false;
         }
     }
@@ -128,10 +145,21 @@ public class DatastoreImpl implements Datastore {
         return mongoClient;
     }
 
+    public void close() {
+        if (mongoClient != null) {
+            mongoClient.close();
+        }
+    }
+
     // Credentials are passed separately instead of in the connection string, so special characters need no URL encoding
     static MongoClientSettings.Builder settings(String host, int port, boolean auth, String username, String password, String authDb) {
+        return settings(Default.PERSISTENCE_PREFIX, host, port, null, false, auth, username, password, authDb, null);
+    }
+
+    static MongoClientSettings.Builder settings(String prefix, String host, int port, String url, boolean embedded,
+                                                boolean auth, String username, String password, String authDb, String dbName) {
         var builder = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString("mongodb://" + host + ":" + port));
+                .applyConnectionString(connectionString(prefix, host, port, url, embedded, authDb, dbName));
 
         if (auth) {
             builder.credential(MongoCredential.createCredential(
@@ -143,12 +171,72 @@ public class DatastoreImpl implements Datastore {
         return builder;
     }
 
+    private static ConnectionString connectionString(String prefix, String host, int port, String url, boolean embedded,
+                                                     String authDb, String dbName) {
+        if (StringUtils.isBlank(url)) {
+            return new ConnectionString("mongodb://" + host + ":" + port);
+        }
+        if (embedded) {
+            throw new IllegalArgumentException(prefix + Key.PERSISTENCE_MONGO_URL
+                    + " cannot be combined with " + prefix + Key.PERSISTENCE_MONGO_EMBEDDED);
+        }
+
+        var trimmed = url.trim();
+        ConnectionString connectionString;
+        try {
+            connectionString = new ConnectionString(trimmed);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(prefix + Key.PERSISTENCE_MONGO_URL + " is not a valid MongoDB connection string", e);
+        }
+        if (connectionString.getUsername() != null || connectionString.getPassword() != null) {
+            throw new IllegalArgumentException(prefix + Key.PERSISTENCE_MONGO_URL
+                    + " must not contain credentials. Set "
+                    + prefix + Key.PERSISTENCE_MONGO_USERNAME + ", "
+                    + prefix + Key.PERSISTENCE_MONGO_PASSWORD + " and "
+                    + prefix + Key.PERSISTENCE_MONGO_AUTHDB + " instead.");
+        }
+
+        var urlDatabase = connectionString.getDatabase();
+        if (StringUtils.isNotBlank(urlDatabase) && !urlDatabase.equals(dbName)) {
+            throw new IllegalArgumentException(prefix + Key.PERSISTENCE_MONGO_URL
+                    + " database '" + urlDatabase + "' does not match "
+                    + prefix + Key.PERSISTENCE_MONGO_DBNAME + " '" + dbName + "'");
+        }
+
+        var authSource = authSource(trimmed);
+        var effectiveAuthDb = StringUtils.defaultIfBlank(authDb, "admin");
+        if (authSource != null && !authSource.equals(effectiveAuthDb)) {
+            throw new IllegalArgumentException(prefix + Key.PERSISTENCE_MONGO_URL
+                    + " authSource '" + authSource + "' does not match "
+                    + prefix + Key.PERSISTENCE_MONGO_AUTHDB + " '" + effectiveAuthDb + "'");
+        }
+        return connectionString;
+    }
+
+    private static String authSource(String url) {
+        var queryStart = url.indexOf('?');
+        if (queryStart < 0 || queryStart == url.length() - 1) {
+            return null;
+        }
+
+        String found = null;
+        for (String part : url.substring(queryStart + 1).split("&", -1)) {
+            var separator = part.indexOf('=');
+            var key = separator < 0 ? part : part.substring(0, separator);
+            if (!("authsource").equalsIgnoreCase(URLDecoder.decode(key, StandardCharsets.UTF_8))) {
+                continue;
+            }
+            found = separator < 0 ? "" : URLDecoder.decode(part.substring(separator + 1), StandardCharsets.UTF_8);
+        }
+        return found;
+    }
+
     @Override
     public <T> T find(Class<T> clazz, Bson query) {
         Objects.requireNonNull(clazz, Required.CLASS);
         Objects.requireNonNull(query, Required.KEY);
 
-        return (T) query(clazz)
+        return query(clazz)
                 .find(query)
                 .first();
     }
@@ -158,7 +246,7 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(clazz, Required.CLASS);
         Objects.requireNonNull(sort, Required.SORT);
 
-        return (T) query(clazz)
+        return query(clazz)
                 .find()
                 .sort(sort)
                 .limit(1)

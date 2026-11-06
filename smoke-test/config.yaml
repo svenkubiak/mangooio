@@ -1,0 +1,46 @@
+# External configuration of both instances; literal secrets are allowed outside the JAR
+default:
+  application:
+    name: smoke
+    secret: Eh1ic1yjzRxOb63yumhokHbOZYCcYC9YD0aXNGuN0N9xyEnSdgFardNsnnVqsCSo
+    shutdown:
+      timeout: 10
+    admin:
+      enable: true
+      username: admin
+      password: "$argon2id$v=19$m=32768,t=3,p=1$OWE0Y2VjMTAtYzMzMi00NjdhLTkzZjEtMzY1NTk2ZTZkNTU0$iXrYbrubsyGZukmWOmR6Luu+rcRD/QxFWJzGio04XhU"
+      secret: ZYXWVUTSRQPONMLKJIHGFEDCBA765432ZYXWVUTSRQPONMLKJIHGFEDCBA765432
+  connector:
+    http:
+      host: localhost
+      port: arg{9101}
+    proxy: true
+  session:
+    cookie:
+      name: smoke-session
+      secret: ViM289yC2cQIvVYhRRIRWCQzBDRa0l4CsxUvcWN6CYgWFJtevQvEwsvnpKeCyCIM
+      key: alJzUhFakKaltwqLjoBTN7J8B3WdLvbq3zH23Y07llLcHjVZ00dDkpGaLIORfo1S
+      secure: false
+  authentication:
+    blacklist: true
+    cookie:
+      name: smoke-authentication
+      secret: cd9GYkgPDScebPNlwv9rPSYTvvuTCrJEuj4xEeqpvWtLfuVDAm5yQPCfdMi9VjQO
+      key: iOB1NTnrYvnwbWlaUdF7gVEDp8uwGHDX3xxlvnc2KvC80VGWsHYafPybFDD4BZqK
+      secure: false
+  flash:
+    cookie:
+      name: smoke-flash
+      secret: sVzYkKUiy7epiXvk8T1e9cbdmyej7Pw4YHNuAtd38DdVAW2kMtKeUd1E0I0l6phj
+      key: PFOJv98vmiNTr1itLDXPh8GUIUPpOYXs5eB3Utv0cvPkEOsearBxE917wBLUMaq4
+      secure: false
+  persistence:
+    enable: true
+    mongo:
+      url: mongodb://localhost:27117,localhost:27118,localhost:27119/?replicaSet=rs0
+      dbname: smoke
+
+environments:
+  prod:
+    application:
+      language: en

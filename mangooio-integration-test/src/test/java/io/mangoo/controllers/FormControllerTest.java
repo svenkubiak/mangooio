@@ -50,7 +50,6 @@ class FormControllerTest {
 				.execute();
 
 		// then
-		assertThat(response, not(nullValue()));
 		assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 		assertThat(response.getContent(), equalTo("vip;secret"));
 	}
@@ -72,7 +71,7 @@ class FormControllerTest {
                     .execute();
             
             // then
-            return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(username + ";" + password);
+            return response.getStatusCode() == StatusCodes.OK && response.getContent().equals(username + ";" + password);
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
@@ -102,8 +101,6 @@ class FormControllerTest {
         }
 
 		// then
-		assertThat(httpResponse, not(nullValue()));
-		assertThat(response, not(nullValue()));
 		assertThat(httpResponse.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
 		assertThat(response, equalTo("This is an attachment"));
 	}
@@ -138,8 +135,6 @@ class FormControllerTest {
         }
 
         // then
-        assertThat(httpResponse, not(nullValue()));
-        assertThat(response, not(nullValue()));
         assertThat(httpResponse.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response, equalTo("This is an attachmentThis is an attachment2"));
 	}
@@ -158,7 +153,6 @@ class FormControllerTest {
 				.execute();
 
 		// then
-		assertThat(response, not(nullValue()));
 		assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 		assertThat(response.getContent(), equalTo("süpöä;#+ß§"));
 	}
@@ -177,7 +171,6 @@ class FormControllerTest {
 				.execute();
 
 		// then
-		assertThat(response, not(nullValue()));
 		assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
 		String[] lines = response.getContent().split(System.getProperty("line.separator"));
@@ -215,7 +208,6 @@ class FormControllerTest {
 				.execute();
 
 		// then
-		assertThat(response, not(nullValue()));
 		assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 		assertThat(response.getContent(), equalTo("Fancy that!"));
 	}
@@ -235,7 +227,6 @@ class FormControllerTest {
                 .execute();
 
         // then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo(data));
     }

@@ -18,7 +18,6 @@ class FlashControllerTest {
         TestResponse response = TestRequest.get("/flash").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("simpleerrorwarningsuccess"));
     }

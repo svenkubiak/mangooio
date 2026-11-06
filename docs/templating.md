@@ -1,8 +1,10 @@
 # Templating 🖼️
 
-Server-rendered HTML uses [Freemarker](https://freemarker.apache.org/). Templates are plain `.ftl` files under `src/main/resources/templates/`. When a controller returns `Response.ok().render()`, the framework resolves `templates/<ControllerSimpleName>/<methodName>.ftl` unless you override the path with `template(...)`. The convention exists so that finding the template for a given endpoint never requires digging through routing code: the controller class and method name tell you exactly where to look.
+Server-rendered HTML uses [Freemarker](https://freemarker.apache.org/). Templates are `.ftl` files under `src/main/resources/templates/`. `Response.ok().render()` resolves `templates/<ControllerSimpleName>/<methodName>.ftl` unless you pass `template(...)`.
 
-Beyond simple `${variable}` substitution, mangoo I/O registers **built-in objects and methods** on every render: the current `form`, `session`, and `flash`; an `i18n(...)` helper; reverse routing via `route(...)`; and CSRF directives. These exist because almost every page needs at least one of them, and requiring every controller to pass them in manually would mean repeating the same few lines of code in every single method that renders a template.
+The engine uses HTML output format, so `${...}` is escaped. Raw markup needs `?no_esc`. `?api` is enabled. The number format is `0.######`. In dev mode templates are checked about once a second. A `.ftl` change does not restart `mangooio:run`. Outside dev mode the template cache does not expire.
+
+Every render gets `form`, `session`, `flash`, `i18n(...)`, `route(...)`, `location(...)`, `prettytime(...)`, and the CSRF directives. Do not pass a model value with one of those names. The built-in replaces it.
 
 See [Controllers](controllers.md) for how to pass model data with `.render("key", value)`. For forms and CSRF, combine templating with [Forms](forms.md) and [CSRF](csrf.md).
 
@@ -20,7 +22,7 @@ location
 prettytime
 ```
 
-Do not pass a controller value with the same name; it overwrites the built-in silently, and rendering can then fail in confusing ways further down the template, usually somewhere that has nothing to do with the actual name collision.
+A model value with one of these names is replaced by the built-in. The failure usually shows up later in the template, not on the `render` call.
 
 CSRF helpers (see [CSRF](csrf.md)):
 
@@ -41,7 +43,7 @@ ${prettytime(date)}
 
 ## Location
 
-`location(...)` is true when the current request is mapped to that controller method (matched case-insensitively). It is mainly useful for things like highlighting the active tab in a navigation partial that gets included on every page:
+`location(...)` is true when the current request is mapped to that controller method. The match is case-insensitive. `location("ApplicationController")` with no method is true for every method on that controller:
 
 ```ftl
 <#if location("ApplicationController:index")>current</#if>
@@ -54,7 +56,7 @@ ${prettytime(date)}
 <a href="${route("ApplicationController:show", "42")}">Show 42</a>
 ```
 
-If `show` is mapped to `/users/{id}`, the second example becomes `/users/42`. Building the URL this way, instead of writing `/users/42` directly in the template, means renaming a route in `Bootstrap.java` does not turn into a hunt through every template that happens to link to it.
+If `show` is mapped to `/users/{id}`, the second example becomes `/users/42`. Pass one argument per placeholder. A missing argument fails the render. The key is `simpleName:method`, case-insensitive. Two controllers with the same simple name share one reverse route.
 
 ## Internationalization
 

@@ -30,7 +30,9 @@ String value = cache.get("foo", key -> loadFromDatabase(key));
 String timed = cache.get("foo", 5, ChronoUnit.MINUTES, key -> loadFromDatabase(key));
 ```
 
-The fallback is a `Function<String, Object>`, and its result is stored under the same key so the next `get` hits the cache instead of the fallback. If the fallback returns `null`, for example because the record does not exist, `get` returns `null` and nothing is cached, so the next call asks the fallback again. Putting `null` removes a cached value.
+The fallback is a `Function<String, Object>`. A non-null result is stored, so the next `get` skips the function. A `null` result is not stored.
+
+`get(key)` and `get(key, amount, unit, fallback)` honour a per-entry expiry from `put(key, value, amount, unit)`. `get(key, fallback)` does not. It reads Caffeine directly and can return a value past that timestamp, until the cache-wide 30-day expiry. Use the timed overload when the fallback must respect the short TTL. Putting `null` removes a cached value.
 
 ```java
 cache.putAll(Map.of("a", 1, "b", 2));
@@ -40,26 +42,25 @@ Map<String, Object> batch = cache.getAll("a", "b");
 ## Counters
 
 ```java
-cache.getAndIncrementCounter("logins");
-cache.getAndDecrementCounter("logins");
-cache.getCounter("logins");
+long logins = cache.increment("logins");   // new value, a missing counter starts at 0
+cache.decrement("logins");
+cache.getCounter("logins");                // 0 if the counter does not exist
 cache.resetCounter("logins");
 ```
 
+`increment` and `decrement` are atomic. A missing counter starts from the delta, so the first `increment` stores `1` and the first `decrement` stores `-1`. A key that holds something other than a `Long` throws `IllegalStateException`. A counter expires with the cache, or earlier if it was put with an expiry.
+
 ## Named caches
 
-The application cache is the default, but one more cache exists out of the box:
+The application cache (`CacheName.APPLICATION`) is the default `Cache` injection; it evicts 30 days after write and holds 50 000 keys. Failed login attempts, one-time claims and token revocations are not kept in a cache but in the `AttemptStore`, `OneTimeStore` and `TokenBlacklist`, which are shared through MongoDB when persistence is enabled, see [Operating](operating.md#running-several-instances).
 
-| Name (`CacheName`) | Use | Eviction |
-|---|---|---|
-| `APPLICATION` | Default `Cache` injection | 30 days after write, 50 000 keys |
-| `AUTH` | Failed attempt budgets for login and second factor | 60 minutes after write, or `authentication.lock.duration` if longer |
+The cache is local to each instance. Bind your own `Cache` in `app.Module` when entries have to be shared. `getCache(name)` returns `null` for a name that was never added. `addCache` refuses the application cache name, ignoring case. `CacheImpl.getStats()` exists for the dashboard. The `Cache` interface does not expose it.
 
 ```java
 @Inject
 public MyService(CacheProvider cacheProvider) {
-    Cache auth = cacheProvider.getCache(CacheName.AUTH);
+    Cache cache = cacheProvider.getCache(CacheName.APPLICATION);
 }
 ```
 
-Register extra caches with `cacheProvider.addCache(name, cache)`, and they show up on the [admin](administration.md) dashboard alongside the built-in ones.
+Register extra caches with `cacheProvider.addCache(name, cache)`; caches of type `CacheImpl` show up on the [admin](administration.md) dashboard alongside the application cache.

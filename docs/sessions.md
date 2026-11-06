@@ -1,8 +1,8 @@
 # Sessions 🍪
 
-HTTP is stateless; **sessions** carry server-side state across requests without a database lookup on every hit. mangoo I/O stores session data in a **signed, encrypted JWT cookie**, meaning the state lives entirely on the client and the server never has to remember anything between requests (a share-nothing model). That fits horizontal scaling well: any node can verify and decode the cookie with the vault key, so there is no shared session store to keep in sync and no risk of a user's session vanishing because a load balancer sent their next request to a different instance.
+mangoo I/O stores session data in an encrypted and signed JWT cookie. Any instance that has the same cookie key, the same cookie secret, and the same `application.name` can read it. There is no server-side session store.
 
-Capacity is limited to roughly **4 KB** per cookie, which is a practical limit browsers themselves enforce, not a number mangoo I/O picked arbitrarily. Store identifiers and small flags, not large blobs; if you find yourself needing more than that, the data probably belongs in your database with just an id in the session pointing at it. Configure cookie name, signing key, and SameSite in [Configuration](configuration.md). Session lifetime is controlled by the JWT's own token TTL and `session.cookie.expires`, not an arbitrary day count set somewhere else, so the actual expiry behavior lives in exactly one place.
+Browsers cap a cookie at about **4 KB**. Store an id and a few flags, and keep the rest in the database. Cookie name, signing key, and SameSite are in [Configuration](configuration.md). Lifetime is `session.cookie.token.expires` together with `session.cookie.expires`. There is no sliding expiry: a rewrite keeps the original `exp`.
 
 Pass `Session` into the controller method:
 
@@ -26,16 +26,18 @@ public class SessionController {
 session.put("key", "value");
 session.get("key");
 session.remove("key");
-session.clear();       // empties values and invalidates the cookie
-session.invalidate();  // expires the cookie
-session.keep();        // keep the session even if it would otherwise be dropped
+session.clear();       // empties values and expires the cookie
+session.invalidate();  // expires the cookie, values stay readable
+session.keep();        // persist a session that was created on this request
 session.getCsrf();
 session.hasContent();
 ```
 
-`clear()` and `invalidate()` both end up removing the session cookie, but `clear()` also wipes the in-memory values for the rest of the current request, which matters if your code checks `session.get(...)` again later in the same method after calling it.
+A new cookie is written when `put`, `remove`, or `clear` changed the values, or when `keep()` was called on a session that was not restored from a cookie. `keep()` is what `<@csrfform/>` and `<@csrftoken/>` call so a freshly created CSRF token is actually stored. It does not refresh `exp`, and it does nothing useful for a session that was already restored.
 
-Keys and values must not contain spaces, `|`, `:`, or `&`. Those characters are used internally to encode the session as claims inside the JWT, so allowing them in your own values would make the encoding ambiguous to decode again.
+`clear()` and `invalidate()` both send the cookie with `Max-Age: 0`. `clear()` replaces the value map. `getCsrf()` still returns the token for the rest of this request. `invalidate()` only marks the cookie for expiry.
+
+The keys `iss`, `aud`, `sub`, `iat`, `nbf`, `exp`, `jti` and `x-csrf-token` are reserved, since the session is stored as claims inside the JWT; `put()` rejects them with an `IllegalArgumentException`.
 
 ## Cookie settings
 
@@ -48,12 +50,13 @@ session:
       expires: 3600
     secure: true
     samesitemode: Strict
-    secret: vault{}
-    key: vault{}
+    secret: env{}
+    key: env{}
 ```
 
 - `session.cookie.expires`: `false` (the default) keeps a browser-session cookie that disappears when the browser closes. `true` instead sets an actual expiry taken from `session.cookie.token.expires`, useful if you want a session to survive a browser restart.
 - `session.cookie.token.expires`: JWT lifetime in **seconds** (default `3600`). Once this passes, the cookie decodes as expired regardless of what `session.cookie.expires` says about the cookie itself.
-- Signing (`key`) and encryption (`secret`) fall back to `application.secret` if unset, which is fine for local development but not something to rely on in production. Use the [vault](secrets.md) instead, so each mode gets its own generated keys.
+- The cookie is always `HttpOnly` and `Path=/`. `samesitemode` must be `Strict` or `Lax`. Anything else fails startup. The default is `Strict`.
+- `session.cookie.secret` is exactly 64 bytes. `session.cookie.key` is at least 64 bytes. Both fall back to `application.secret`. JWT checks allow 30 seconds of clock skew. Set dedicated values with `env{}`, `arg{}`, or `file{}`. See [Secrets](secrets.md).
 
 See [CSRF](csrf.md) for how the session holds the CSRF token used to protect form submissions.

@@ -17,6 +17,7 @@ public class Session {
     private boolean changed;
     private boolean invalid;
     private boolean keep;
+    private boolean restored;
 
     public static Session create() {
         return new Session();
@@ -40,6 +41,14 @@ public class Session {
         Objects.requireNonNull(csrf, Required.CSRF);
 
         this.csrf = csrf;
+        return this;
+    }
+
+    /**
+     * Marks the session as read from a valid session cookie of the request.
+     */
+    public Session withRestored() {
+        this.restored = true;
         return this;
     }
 
@@ -103,5 +112,9 @@ public class Session {
 
     public boolean isKept() {
         return keep;
+    }
+
+    public boolean isRestored() {
+        return restored;
     }
 }

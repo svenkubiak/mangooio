@@ -1,3 +1,75 @@
+## Version 11.0.0
+
+Unreleased
+
+* **Behaviour change** smtp.protocol smtptls requires STARTTLS, smtp is cleartext and refused in prod, and an SMTP connection or read that exceeds smtp.connection.timeout or smtp.read.timeout (10 seconds and 30 seconds by default) is aborted and logged (svenkubiak)
+* **Behaviour change** Graceful shutdown: readiness goes down, SSE and WebSocket connections are closed, open requests and running @Run tasks get application.shutdown.timeout, then applicationStopped() is called (svenkubiak)
+* **Behaviour change** A binding in app.Module replaces the core binding of the same type instead of failing (svenkubiak)
+* **Behaviour change** Removed the vault and vault{}, secrets come from env{}, arg{} or file{} (svenkubiak)
+* **Behaviour change** An env{}, arg{} or file{} without value and fallback fails the startup (svenkubiak)
+* **Behaviour change** Framework secrets must not be literal in the config.yaml of the classpath in prod mode (svenkubiak)
+* **Behaviour change** The HTTPS connector reads its certificate from connector.https.keystore, no self-signed certificate is generated (svenkubiak)
+* **Behaviour change** The HTTPS connector accepts TLS 1.3 only, TLS 1.2 is refused (svenkubiak)
+* **Behaviour change** Failed login budgets, admin pre-authentication and token revocations are kept in MongoDB and shared by all instances when persistence is enabled; MongoDB 4.2 is required (svenkubiak)
+* **Behaviour change** isValidSecondFactor and the admin login accept each TOTP code once (svenkubiak)
+* **Behaviour change** Removed AuthenticationLock and CacheName.AUTH (svenkubiak)
+* **Behaviour change** Cache counters are atomic and return long: increment, decrement, getCounter, resetCounter replace getAndIncrementCounter and getAndDecrementCounter (svenkubiak)
+* **Behaviour change** OpenTelemetry uses application.name as service.name instead of io.mangoo (svenkubiak)
+* **Behaviour change** The session cookie ends with the browser session unless session.cookie.expires is true (svenkubiak)
+* **Behaviour change** Removed the unused application.controller (svenkubiak)
+* Removed all deprecated methods (svenkubiak)
+* Migrated from Jackson 2 to Jackson 3 (svenkubiak)
+* Added support for MongoDB connection strings - replica sets, sharded clusters, SRV (svenkubiak)
+* Removed asset minification (svenkubiak)
+* Changed Admin-Password handling (svenkubiak)
+* Redesigned the admin dashboard with Blades CSS instead of Bulma, with dark mode and mobile layout (svenkubiak)
+* Added responses by status code, Java version and heap, cache clearing and metrics reset to the admin dashboard; with persistence cache clearing and metrics reset run on all instances (svenkubiak)
+* Added a routes page, open connections, event queues, failed events and active features to the admin dashboard (svenkubiak)
+* Added application.name to the brand and page title of the admin dashboard (svenkubiak)
+* Grouped the features of the admin dashboard into security, persistence, connectivity and operations with their values, risky settings are marked in prod mode (svenkubiak)
+* Added EventBus.getFailedEvents, EventBus.getSubscribers, Application.getServerSentEventConnections and Application.getWebSocketConnections (svenkubiak)
+* Added a list of all instances with heartbeat, version and the requests and errors of the last five minutes to the admin dashboard, shared through mangooio_instances with persistence (svenkubiak)
+* Added live updates of the admin dashboard every five seconds through the server sent event stream /@admin/stream, which requires the admin cookie (svenkubiak)
+* Added the failed requests per route and the last 50 server errors to the admin dashboard (svenkubiak)
+* Added the request metrics of the last five minutes with Metrics.getWindow (svenkubiak)
+* Added health endpoints /@health/live and /@health/ready (svenkubiak)
+* Added connector.proxy to take client address and scheme from X-Forwarded-* headers (svenkubiak)
+* Added an instance id to the startup log, the admin dashboard and the OpenTelemetry resource (svenkubiak)
+* Added a startup warning for embedded MongoDB in prod mode (svenkubiak)
+* Added file{} to read secrets from mounted files in /run/secrets (svenkubiak)
+* Added generated dev and test secrets to the archetype (svenkubiak)
+* Added AttemptStore, OneTimeStore and TotpUtils.verifyTotp(identifier, secret, totp) (svenkubiak)
+* Added MessageBroker, server sent events reach the clients of every instance when persistence is enabled (svenkubiak)
+* Added the OpenTelemetry metric http.server.request.duration when otlp.enable is true (svenkubiak)
+* Added the instance id as system property mangooio.instance.id for log patterns (svenkubiak)
+* Added env{?}, arg{?} and file{?} for optional values, which leave the key unset if the source is empty (svenkubiak)
+* Added persistence.mongo.schema: validate to check collections and indexes at startup instead of creating them (svenkubiak)
+* Fixed a revoked authentication cookie being accepted again within the JWT clock skew after its expiry (svenkubiak)
+* Fixed MongoDB clients not being closed and embedded MongoDB being stopped before Undertow on shutdown (svenkubiak)
+* Fixed the admin login with a second factor failing when the two steps reached different instances (svenkubiak)
+* Fixed a hashing overload failing the admin login with an error instead of refusing it without counting the attempt (svenkubiak)
+* Fixed the shutdown losing its log output, as Log4j stopped in its own shutdown hook (svenkubiak)
+* Fixed concurrent first calls of DatastoreProvider.getDatastore for a prefix creating a second MongoClient that was never closed (svenkubiak)
+* Fixed an empty secret such as smtp.password: "" failing the startup in prod as a literal secret (svenkubiak)
+* Fixed server sent event connections not registered in the ServerSentEventManager holding the shutdown until application.shutdown.timeout (svenkubiak)
+* Fixed Crypto.encrypt and Crypto.decrypt with a public or private key not rejecting a null key (svenkubiak)
+* Fixed Router.reset not clearing the registered URLs (svenkubiak)
+* Fixed TotpUtils.getOtpAuthURL not encoding name and issuer, which broke the URL for values with spaces or & (svenkubiak)
+* Fixed JwtUtils.parseJwt failing with a NullPointerException instead of a MangooJwtException when exp, iat or nbf is missing (svenkubiak)
+* Fixed MangooUtils.flattenMapHelper not rejecting a null target map (svenkubiak)
+* Fixed Mail.from(name, address) reporting a missing name as missing address and vice versa (svenkubiak)
+* Fixed Mail.textMessage and Mail.htmlMessage with a template not rejecting null content with a clear message (svenkubiak)
+* Fixed TemplateContext writing into the content map of the caller, which failed for immutable maps such as Map.of (svenkubiak)
+* Fixed Authentication.login not writing a cookie while the browser still sent a stale or revoked one (svenkubiak)
+* Fixed the admin security page proposing a TOTP secret that is not Base32 (svenkubiak)
+* Fixed expectTrue, expectFalse, expectNull and expectNotNull having no default error message (svenkubiak)
+* Fixed a missing application.secret failing the startup with a NullPointerException instead of an error message (svenkubiak)
+* Fixed the instance id system property being application.instance.id instead of mangooio.instance.id (svenkubiak)
+* Fixed TestRequest.withBasicAuthentication not sending the credentials (svenkubiak)
+* Fixed the archetype importing Datastore from its old package and setting authentication.redirect instead of authentication.redirect.login (svenkubiak)
+* Fixed the MessageBroker preparing its collection again after a stop and logging a failed instance removal on shutdown as error (svenkubiak)
+* Fixed an unreadable or expired session cookie never being replaced, which failed every CSRF check until the cookie was deleted (svenkubiak)
+
 ## Version 10.16.1
 
 Released at 06.11.2026
@@ -21,6 +93,8 @@ Released at 02.11.2026
   * tika-core 5.0.1 -&gt; 5.0.2
   * hibernate-validator 9.1.5.Final -&gt; 9.1.6.Final
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.15.1...10.16.0)
+
 ## Version 10.15.1
 
 Released at 24.10.2026
@@ -34,6 +108,8 @@ Released at 24.10.2026
   * caffeine 3.3.0 -&gt; 3.3.1
   * hibernate-validator 9.1.4.Final -&gt; 9.1.5.Final
   * jackson-core 2.22.3 -&gt; 2.22.4
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.15.0...10.15.1)
 
 ## Version 10.15.0
 
@@ -67,12 +143,16 @@ Released at 03.10.2026
 * Fixed Authentication#isValidLogin not checking the salt, a missing salt consumed a failed login attempt (svenkubiak)
 * Version bumps (svenkubiak)
   * undertow-core 2.4.3.Final -&gt; 2.4.4.Final
-  
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.14.1...10.15.0)
+
 ## Version 10.14.1
 
 Released at 01.10.2026
 
 * Fixed failed maven release (svenkubiak)
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.14.0...10.14.1)
 
 ## Version 10.14.0
 
@@ -97,6 +177,8 @@ Released at 01.10.2026
 * Fixed arg{default} and env{default} ignoring a set system property or environment variable (svenkubiak)
 * Fixed the maven archetype generating projects with mangoo I/O 10.11.0 (svenkubiak)
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.13.1...10.14.0)
+
 ## Version 10.13.1
 
 Released at 30.09.2026
@@ -110,6 +192,8 @@ Released at 30.09.2026
   * commons-lang3 3.20.0 -&gt; 3.21.0
   * cactoos 0.62.0 -&gt; 0.63.0
   * fory 1.7.5 -&gt; 1.7.5
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.13.0...10.13.1)
 
 ## Version 10.13.0
 
@@ -143,11 +227,15 @@ Released at 29.09.2026
   * mongo-driver-sync 5.12.0 -&gt; 5.13.0
   * archunit-junit5 1.5.0 -&gt; 1.5.1
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.12.2...10.13.0)
+
 ## Version 10.12.2
 
 Released at 12.09.2026
 
 * Fixed a potential race-condition when handing of AttachmentKey (svenkubiak)
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.12.1...10.12.2)
 
 ## Version 10.12.1
 
@@ -160,6 +248,8 @@ Released at 12.09.2026
 * Messages are now resolved per request and no longer leak the locale of one request into concurrent requests (svenkubiak)
 * Resolving a message bundle no longer modifies the JVM default locale (svenkubiak)
 * Fixed incorrect cookie handling in /@admin dashboard (svenkubiak)
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.12.0...10.12.1)
 
 ## Version 10.12.0
 
@@ -174,6 +264,8 @@ Released at 12.09.2026
 * Version bumps (svenkubiak)
   * fory-core 1.7.1 -&gt; 1.7.2
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.11.6...10.12.0)
+
 ## Version 10.11.6
 
 Released at 11.09.2026
@@ -186,6 +278,8 @@ Released at 11.09.2026
   * mongodb-driver-sync 5.11.0 -&gt; 5.11.1
   * bouncy-castle 1.85 -&gt; 1.86
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.11.5...10.11.6)
+
 ## Version 10.11.5
 
 Released at 08.09.2026
@@ -196,11 +290,15 @@ Released at 08.09.2026
 * Version bumps (svenkubiak)
   * classgraph 4.8.194 -&gt; 4.8.195
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.11.4...10.11.5)
+
 ## Version 10.11.4
 
 Released at 06.09.2026
 
 * Added additional documentation updates (svenkubiak)
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.11.3...10.11.4)
 
 ## Version 10.11.3
 
@@ -212,11 +310,15 @@ Released at 06.09.2026
 * Version bumps (svenkubiak)
   * fory-core 1.7.0 -&gt; 1.7.1
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.11.2...10.11.3)
+
 ## Version 10.11.2
 
 Released at 01.09.2026
 
 * Added additional documentation updates (svenkubiak)
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.11.1...10.11.2)
 
 ## Version 10.11.1
 
@@ -241,7 +343,9 @@ Released at 01.09.2026
   * freemarker 2.3.34 -&gt; 2.3.35
   * mongo-driver-sync 5.9.2 -&gt; 5.11.0 
   * snakeyaml 2.6 -&gt; 2.7
- 
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.10.0...10.11.1)
+
 ## Version 10.10.0
 
 Released at 03.08.2026
@@ -262,6 +366,8 @@ Released at 03.08.2026
   * commons-codec 1.22.0 -&gt; 1.22.1
   * commons-validator 1.10.1 -&gt; 1.11.0
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.9.0...10.10.0)
+
 ## Version 10.9.0
 
 Released at 14.07.2026
@@ -275,11 +381,15 @@ Released at 14.07.2026
   * jackson 2.22.0 -&gt; 2.22.1
   * undertow 2.4.0.RC4 -&gt; 2.4.1.Final
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.8.6...10.9.0)
+
 ## Version 10.8.6
 
 Released at 12.06.2026
 
 * Updated release script to avoid release issues (svenkubiak)
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.8.5...10.8.6)
 
 ## Version 10.8.5
 
@@ -287,11 +397,15 @@ Released at 12.06.2026
 
 * Fixed build issue (svenkubiak)
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.8.4...10.8.5)
+
 ## Version 10.8.4
 
 Released at 12.06.2026
 
 * Fixed build issue (svenkubiak)
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.8.3...10.8.4)
 
 ## Version 10.8.3
 
@@ -304,18 +418,24 @@ Released at 12.06.2026
   * nimbus-jose-jwt 10.9 -&gt; 10.9.1
   * open-telemetry 1.62.0 -&gt; 1.63.0
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.8.2...10.8.3)
+
 ## Version 10.8.2
 
 Released at 17.05.2026
 
 * Fixed dependency issue (svenkubiak)
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.8.1...10.8.2)
+
 ## Version 10.8.1
 
 Released at 17.05.2026
 
 * Fixed dependency issue (svenkubiak)
-  
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.8.0...10.8.1)
+
 ## Version 10.8.0
 
 Released at 17.05.2026
@@ -328,6 +448,8 @@ Released at 17.05.2026
   * mongo-driver-sync 5.6.5 -&gt; 5.7.0
   * caffeine 3.2.3 -&gt; 3.2.4
   * log4j 2.25.4 -&gt; 2.26.0
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/10.7.0...10.8.0)
 
 ## Version 10.7.0
 
@@ -488,389 +610,3 @@ Released at 03.11.2025
 * Upgraded to Java 25 (svenkubiak)
 * Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
-
-## Version 9.10.1
-
-Released at 23.09.2025
-
-* Version bumps (svenkubiak)
-    * log4j 2.25.1 -&gt; 2.25.2
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.10.0...10.10.0)
-
-## Version 9.10.0
-
-Released at 23.09.2025
-
-* Reduced unnecessary cache size (svenkubiak)
-* Version bumps (svenkubiak)
-    * guava 33.4.8-jre -&gt; 33.5.0-jre
-    * tika-core 3.2.2 -&gt; 3.2.3
-    * bouncy-castle 1.81 -&gt; 1.82
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.9.0...9.10.0)
-
-## Version 9.9.0
-
-Released at 18.08.2025
-
-* Version bumps (svenkubiak)
-    * mockito-core 3.2.1 -&gt; 3.2.2
-    * undertow-core 2.3.18.Final -&gt; 2.3.19.Final
-    * guava 33.4.8-jre -&gt; 33.5.0-jre
-    * tika-core 3.2.2 -&gt; 3.2.3
-    * bouncy-castle 1.81 -&gt; 1.82
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.8.0...9.9.0)
-
-## Version 9.8.0
-
-Released at 15.08.2025
-
-* Paseto token and cookie have now the same expire date (svenkubiak)
-* Added OriginFilter for checking the Origin-Header (svenkubiak)
-* Added CsrfFilter and corresponding methods for CSRF checks (svenkubiak)
-* Version bumps (svenkubiak)
-  * tika-core 3.2.1 -&gt; 3.2.2
-  * greenmail-standalone 2.1.4 -&gt; 2.1.5
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.7.0...9.8.0)
-
-## Version 9.7.0
-
-Released at 05.08.2025
-
-* LocalDateTime/LocalDate is now serialized as ISO-8601 string (svenkubiak)
-* Version bumps (svenkubiak)
-  * tika-core 3.2.0 -&gt; 3.2.1
-  * commons-lang3 3.17.0 -&gt; 3.18.0
-  * commons-validator 1.9.0 -&gt; 1.10.0
-  * log4j 2.25.0 -&gt; 2.25.1
-  * jackson 2.19.1 -&gt; 2.19.2
-  * commons-codec 1.18.0 -&gt; 1.19.0
-  * greenmail 2.1.3 -&gt; 2.1.4
-  * classgraph 4.8.180 -&gt; 4.8.181
-  * commons-io 2.19.0 -&gt; 2.20.0
-  * caffeine 3.2.1 -&gt; 3.2.2
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.6.0...9.7.0)
-
-## Version 9.6.0
-
-Released at 27.06.2025
-
-* Sonar refactorings (svenkubiak)
-* Version bumps (svenkubiak)
-  * caffeine 3.2.0 -&gt; 3.2.1
-  * mongo-driver-sync 5.5.0 -&gt; 5.5.1
-  * freemarker-java8 3.0.1 -&gt; 3.0.3
-  * log4j 2.24.3 -&gt; 2.25.0
-  * classgraph 4.8.179 -&gt; 4.8.180
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.5.0...9.6.0)
-
-* Added new response method to return a binary stream (svenkubiak)
-* Added option to directly access the mongodatabase (svenkubiak)
-* Refactored uuid generation methods (svenkubiak)
-* Sonar refactorings (svenkubiak)
-* Version bumps (svenkubiak)
-  * fury-core 0.10.2 -&gt; 0.10.3
-  * bouncy-castle 1.80 -&gt; 1.81
-
-## Version 9.5.0
-
-Released at 20.05.2025
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.4.0...9.5.0)
-
-* Sonar refactorings (svenkubiak)
-* Version bumps (svenkubiak)
-  * guava 33.4.7-jre -&gt; 33.4.8-jre
-  * fury-core 0.10.0 -&gt; 0.10.2
-  * mongo-driver-sync 5.4.0 -&gt; 5.5.0
-
-## Version 9.4.0
-
-Released at 14.04.2025
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.3.0...9.4.0)
-
-* Sonar refactorings (svenkubiak)
-* Version bumps (svenkubiak)
-    * junit 5.12.0 -&gt; 5.12.1
-    * mockito-core 5.16.0 -&gt; 5.17.0
-    * cactoos 0.56.1 -&gt; 0.57.0
-    * guava 33.4.0-jre -&gt; 33.4.7-jre
-    * mongo-driver-sync 5.3.1 -&gt; 5.4.0
-    * commons-io 2.18.0 -&gt; 2.19.0
-
-## Version 9.3.0
-
-Released at 06.03.2025
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.2.0...9.3.0)
-
-* Added utility method to retrieve all configured translations / resource bundles (svenkubiak)
-* All new and optimized documentation based on MkDocs Material (svenkubiak)
-* Version bumps (svenkubiak)
-    * snakeyaml 2.3 -&gt; 2.4
-    * fury-core 0.9.0 -&gt; 0.10.0
-    * jackson 2.18.2 -&gt; 2.18.3
-    * mockito-core 5.15.2 -&gt; 5.16.0
-
-## Version 9.2.0
-
-Released at 11.02.2025
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.1.0...9.2.0)
-
-* Added parsing of a default value from an arg{} config value (svenkubiak)
-* Added cleaner handling of authentication when using mfa (svenkubiak)
-* Added .notModified() to Response class (svenkubiak)
-* Fixed an issue where the default messages.properties was not loaded (svenkubiak)
-* Version bumps (svenkubiak)
-    * bouncy-castle 1.79 -&gt; 1.80
-    * caffeine 3.1.8 -&gt; 3.2.0
-    * mongo-driver-sync 5.3.0 -&gt; 5.3.1
-    * commons-codec 1.17.2 -&gt; 1.18.0
-
-## Version 9.1.0
-
-Released at 13.01.2025
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.0.0...9.1.0)
-
-* Added handling of boolean request and URL parameter (svenkubiak)
-* Fixed bug in CodecUtils that generated the same uuid (svenkubiak)
-* Fixed bug that did not send the correct cookie when rememberMe was 'true' (svenkubiak)
-* Fixed bug that send the authentication cookie on every request after valid authentication (svenkubiak)
-* Fixed potential NPE in LocaleHandler (svenkubiak)
-* Version bumps (svenkubiak)
-    * log4j 2.24.2 -&gt; 2.24.3
-    * freemarker-java8 3.0.0 -&gt; 3.0.1
-    * freemarker 2.3.33 -&gt; 2.3.34
-    * junit 5.11.3 -&gt; 5.11.4
-    * guava 33.3.1-jre -&gt; 33.4.0-jre
-    * commons-codec 1.17.1 -&gt; 1.17.2
-    * re2j 1.7 -&gt; 1.8
-    * mongo-driver-sync 5.2.1 -&gt; 5.3.0
-
-## Version 9.0.0
-
-Released at 10.12.2024
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.11.0...9.0.0)
-
-* [#601](https://github.com/svenkubiak/mangooio/issues/601) Removed Basic HTTP authentication (svenkubiak)
-* [#591](https://github.com/svenkubiak/mangooio/issues/591) Refactored Response class (svenkubiak)
-* [#588](https://github.com/svenkubiak/mangooio/issues/588) Removed @admin/health endpoint (svenkubiak)
-* [#576](https://github.com/svenkubiak/mangooio/issues/588) Removed all deprecated classes and methods (svenkubiak)
-* Switched from props based configuration yaml based configuration (svenkubiak)
-* Added copy-to-clipboard function to @admin dashboard (svenkubiak)
-* Upgraded SHA hashing to SHA3-512 (svenkubiak)
-* Increase iterations, memory, and parallelism of Argon2 hashing (svenkubiak)
-* Switched to new Paseto library and upgraded to Paseto v4 (svenkubiak)
-* Removed searchbar and table sorter from @admin dashboard (svenkubiak)
-* Added new PasetoFilter and APIFilter to handle easy API authentication (svenkubiak)
-* Version bumps (svenkubiak)
-    * mongodb-driver-sync 5.2.0 -&gt; 5.2.1
-    * fury-core 0.8.0 -&gt; 0.9.0
-    * classgraph 4.8.177 -&gt; 4.8.179
-    * greenmail 2.1.0 -&gt; 2.1.2
-    * commons-io 2.17.0 -&gt; 2.18.0
-    * log4j 2.24.1 -&gt; 2.24.2
-
-## Version 8.11.0
-
-Released at 04.11.2024
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.10.0...8.11.0)
-
-* Added option to make an index unique via @Indexed annotation (svenkubiak)
-* Version bumps (svenkubiak)
-    * undertow-core 2.3.17.Final -&gt; 2.3.18.Final
-    * junit 5.11.1 -&gt; 5.11.3
-    * fury-core 0.7.1 -&gt; 0.8.0
-    * jackson-databind 2.18.0 -&gt; 2.18.1
-    * cactoos 0.56.0 -&gt; 0.56.1
-    * bouncy-castle 1.78.1 -&gt; 1.79
-
-## Version 8.10.0
-
-Released at 04.10.2024
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.9.0...8.10.0)
-
-* Fixed issue with multiple ServerSentEvent connections (svenkubiak)
-* Removed external (web) dependency for generating 2FA QR code in @admin (svenkubiak)
-* Version bumps (svenkubiak)
-    * log4j 2.23.1 -&gt; 2.24.0
-    * fury-core 0.7.0 -&gt; 0.7.1
-    * classgraph 4.8.175 -&gt; 4.8.177
-    * commons-io 2.16.1 -&gt; 2.17.0
-    * guava 33.3.0-jre -&gt; 33.3.1-jre
-    * mongodb-driver-sync 5.1.4 -&gt; 5.2.0
-    * junit 5.11.0 -&gt; 5.11.1
-
-## Version 8.9.0
-
-Released at 02.09.2024
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.8.0...8.9.0)
-
-* Added sanity checks on application startup for multiple mappings with the same URL (svenkubiak)
-* Added new JSON error response method (svenkubiak)
-* Added additional response methods for default templates without rendering (svenkubiak)
-* Added an option to pass an auth origin parameter to the default /login redirect (svenkubiak)
-* Added a method for dropping all indexes of all collections in the connected database (svenkubiak)
-* Version bumps (svenkubiak)
-    * fury-core 0.6.0 -&gt; 0.7.0
-    * guava 33.2.1-jre -&gt; 33.3.0-jre
-    * commons-compress 1.26.2 -&gt; 1.27.0
-    * commons-lang 3.15.0 -&gt; 3.17.0
-    * mongodb-driver-sync 5.1.2 -&gt; 5.1.3
-    * awaitility 4.2.1 -&gt; 4.2.2
-    * commons-compress 1.27.0 -&gt; 1.27.1
-    * classgraph 4.8.174 -&gt; 4.8.175
-    * undertow-core 2.3.15.Final -&gt; 2.3.17.Final
-    * freemarker-java8 2.1.0 -&gt; 3.0.0
-
-## Version 8.8.0
-
-Released at 29.07.2024
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.7.0...8.8.0)
-
-* Added utils method to generate a UUIDv5 in CodecUtils (svenkubiak)
-* Version bumps (svenkubiak)
-    * pretty-time 5.0.8.Final -&gt; 5.0.9.Final
-    * jackson 2.17.1 -&gt; 2.17.2
-    * commons-codec 1.17.0 -&gt; 1.17.1
-    * undertow-core 2.3.14.Final -&gt; 2.3.15.Final
-    * commons-lang3 3.14.0 -&gt; 3.15.0
-    * fury-core 0.4.1 -&gt; 0.6.0
-
-## Version 8.7.0
-
-Released at 21.06.2024
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.6.0...8.7.0)
-
-* Updated design of default error pages (svenkubiak)
-* Version bumps (svenkubiak)
-    * commons-validator 1.8.0 -&gt; 1.9.0
-    * guava 33.2.0-jre -&gt; 33.2.1-jre
-    * freemarker 2.3.32 -&gt; 2.3.33
-    * mongodb-driver-sync 5.1.0 -&gt; 5.1.1
-    * classgraph 4.8.173 -&gt; 4.8.174
-    * undertow-core 2.3.13.Final -&gt; 2.3.14.Final
-
-## Version 8.6.0
-
-Released at 27.05.2024
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.5.0...8.6.0)
-
-* Added scheduler overview page in @admin area (svenkubiak)
-* Removed logger overview page in @admin area (svenkubiak)
-* Refactored Response Entity for a more convenience usage (svenkubiak)
-* Sonar refactorings (svenkubiak)
-* Version bumps (svenkubiak)
-    * mongodb-driver-sync 5.0.1 -&gt; 5.1.0
-    * guava-jre 33.1.0-jre -&gt; 33.2.0-jre
-    * jackson 2.17.0 -&gt; 2.17.1
-    * pretty-time 5.0.7.Final -&gt; 5.0.8.Final
-    * mockito-core 5.11.0 -&gt; 5.12.0
-    * common-logging 1.3.1 -&gt; 1.3.2
-
-## Version 8.5.0
-
-Released at 28.04.2024
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.4.0...8.5.0)
-
-* Reduced start-up time by around 50% (svenkubiak)
-* Added additional methods for database quering (svenkubiak)
-* Added additional failsafe when task is scheduled (svenkubiak)
-* Added @Indexed annotation for field indexing (svenkubiak)
-* Updated admin dashboard to latest version of bulma (svenkubiak)
-* Fix bug that set the wrong cache value when using expiry (svenkubiak)
-* Sonar refactorings (svenkubiak)
-* Version bumps (svenkubiak)
-    * mongodb-driver-sync 5.0.0 -&gt; 5.0.1
-    * classgraph 4.8.168 -&gt; 4.8.172
-    * bouncycastle 1.77 -&gt; 1.78.1
-    * undertow-core 2.3.12.Final -&gt; 2.3.13.Final
-
-## Version 8.4.0
-
-Released at 02.04.2024
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.3.0...8.4.0)
-
-* Sonar refactorings (svenkubiak)
-* Added config option to disable persistence (svenkubiak)
-* Version bumps (svenkubiak)
-    * mongodb-driver-sync 4.11.1 -&gt; 5.0.0
-    * commons-compress 1.26.0 -&gt; 1.26.1
-    * log4j 2.23.0 -&gt; 2.23.1
-    * guava 33.0.0-jre -&gt; 33.1.0-jre
-    * commons-io 2.15.1 -&gt; 2.16.0
-
-## Version 8.3.0
-
-Released at 25.02.2024
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.2.0...8.3.0)
-
-* Sonar refactorings (svenkubiak)
-* Version bumps (svenkubiak)
-    * mockito-core 5.9.0 -&gt; 5.10.0
-    * junit 5.10.1 -&gt; 5.10.2
-    * commons-codec 1.16.0 -&gt; 1.16.1
-    * undertow-core 2.3.10.Final -&gt; 2.3.12.Final
-    * log4j 2.22.1 -&gt; 2.23.0
-
-## Version 8.2.0
-
-Released at 22.01.2024
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.1.0...8.2.0)
-
-* Sonar refactorings (svenkubiak)
-* Replaced Guava event bus with new event bus based on reactive streams (svenkubiak)
-* Version bumps (svenkubiak)
-    * log4j 2.22.0 -&gt; 2.22.1
-    * jackson 2.16.0 -&gt; 2.16.1
-    * mockito-core 5.8.0 -&gt; 5.9.0
-
-## Version 8.1.0
-
-Released at 19.12.2023
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/8.0.0...8.1.0)
-
-* Added additional cache statistics to /@admin (svenkubiak)
-* Added additional cache retrieval method with fallback option (svenkubiak)
-* Switched scheduler execution to virtual threads (svenkubiak)
-* Switched cache handling from Guava to Caffeine (svenkubiak)
-* Version bumps (svenkubiak)
-    * commons-io 2.15.0 -&gt; 2.16.0
-    * fury-core 0.3.1 -&gt; 0.4.1
-    * mockito-core 5.7.0 -&gt; 5.8.0
-    * commons-validator 1.7 -&gt; 1.8
-    * guava 32.1.3-jre -&gt; 33.0.0-jre
-
-## Version 8.0.0
-
-Released at 28.11.2023
-
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/7.19.0...8.0.0)
-
-* Removed Morphia in favour of a direct MongoDB integration (svenkubiak)
-* Removed all deprecated methods and classes (svenkubiak)
-* Updated to Java 21
-* Sonar refactorings (svenkubiak)
-* Version bumps (svenkubiak)
-    * commons-lang3 3.13.0 -&gt; 3.14.0
-    * fury-core 0.3.0 -&gt; 0.3.1

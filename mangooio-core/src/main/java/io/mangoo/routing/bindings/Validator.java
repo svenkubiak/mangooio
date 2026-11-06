@@ -23,8 +23,6 @@ import java.util.regex.Pattern;
 public class Validator implements Serializable {
     @Serial
     private static final long serialVersionUID = -714400230978999709L;
-    // ASCII digits only, optional sign and decimal point; rejects Unicode digits, exponents, hex, NaN and Infinity
-    private static final Pattern NUMBER = Pattern.compile("[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)");
     private final Map<String, String> errors = new HashMap<>();
     private transient Messages messages; // NOSONAR Transient by design, see messages()
     protected Map<String, String> values = new HashMap<>(); // NOSONAR Intentionally not transient
@@ -58,8 +56,32 @@ public class Validator implements Serializable {
         return messages;
     }
 
+    // ASCII digits only, optional sign and decimal point; rejects Unicode digits, exponents, hex, NaN and Infinity
+    private static boolean isNumber(String value) {
+        int length = value.length();
+        var index = 0;
+        if (length > 0 && (value.charAt(0) == '+' || value.charAt(0) == '-')) {
+            index++;
+        }
+
+        var digit = false;
+        var dot = false;
+        for (; index < length; index++) {
+            var current = value.charAt(index);
+            if (current >= '0' && current <= '9') {
+                digit = true;
+            } else if (current == '.' && !dot) {
+                dot = true;
+            } else {
+                return false;
+            }
+        }
+
+        return digit;
+    }
+
     private static OptionalDouble toNumber(String value) {
-        return value != null && NUMBER.matcher(value).matches()
+        return value != null && isNumber(value)
                 ? OptionalDouble.of(Double.parseDouble(value))
                 : OptionalDouble.empty();
     }

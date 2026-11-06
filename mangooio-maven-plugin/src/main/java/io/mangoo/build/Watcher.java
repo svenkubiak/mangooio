@@ -39,7 +39,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -195,26 +194,13 @@ public class Watcher implements Runnable {
         }
     }
 
-    @SuppressWarnings("all")
     public void handleNewOrModifiedFile(Path path) {
         String absolutePath = path.toFile().getAbsolutePath();
-        
-        if (isAsset(absolutePath)) {
-            Minification.minify(absolutePath);
-        }
-        
+
         RuleMatch match = matchRule(includes, excludes, absolutePath);
         if (match.proceed) {
             this.trigger.trigger();
         }
-    }
-
-    private boolean isAsset(String absolutePath) {
-        if (StringUtils.isBlank(absolutePath)) {
-            return false;
-        }
-
-        return !absolutePath.contains("min") && ( absolutePath.endsWith("css") || absolutePath.endsWith("js") );
     }
 
     public enum RuleType {

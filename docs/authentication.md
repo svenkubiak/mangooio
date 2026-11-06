@@ -79,14 +79,16 @@ The lockout is an **absolute** point in time, set once when the budget is used u
 
 The same budget applies to the second factor, see [Two-factor authentication](#two-factor-authentication). Both steps are counted separately per identifier, so a failed password attempt never consumes the budget of the second factor and vice versa.
 
-The counter lives in the auth cache and is therefore per process. An application running several instances behind a load balancer gets one budget per instance; if you need a shared or restart-safe budget, keep it in your own data store instead.
+With persistence enabled the budget is kept in MongoDB (`mangooio_attempts`), so several instances behind a load balancer share one budget per identifier and a restart does not reset it. The lock time is computed by the database, clock differences between the instances do not shift it. If MongoDB is unavailable, the attempt is refused and the identifier counts as locked. Without persistence the budget is kept in memory per process. Bind your own `io.mangoo.interfaces.AttemptStore` in `app.Module` to keep it elsewhere. See [Framework collections](persistence.md#framework-collections) for all collections the framework creates.
 
-Then, once logged in, you can adjust the cookie further:
+`rememberMe()` and `twoFactorAuthentication(boolean)` only set fields. The cookie is written when `login()` or `update()` has marked it for this response. Call them in the same request, before the method returns:
 
 ```java
-authentication.rememberMe();                 // longer cookie lifetime
-authentication.twoFactorAuthentication(true); // require TOTP next
+authentication.login(username);
+authentication.rememberMe();
 ```
+
+`twoFactorAuthentication(true)` is the same kind of flag. Set it in that same request, before the method returns. On a later request, either call alone does not rewrite a cookie that is already valid. Call `update()` as well.
 
 ## Methods
 
@@ -95,7 +97,7 @@ authentication.getSubject();   // logged-in subject, or null
 authentication.isValid();      // authentication is complete, use this for authorization
 authentication.hasSubject();   // a subject is present, second factor may still be pending
 authentication.logout();       // expire the cookie
-authentication.invalidate();   // drop the cookie immediately
+authentication.invalidate();   // expire the cookie
 authentication.update();       // refresh the cookie on this response
 authentication.rememberMe(true);
 authentication.twoFactorAuthentication(true);
@@ -110,7 +112,7 @@ This matters because an `Authentication` object is bound on every request, not o
 
 `userHasLock()` and `userHasSecondFactorLock()` are queries, not a step you have to perform. `isValidLogin()` and `isValidSecondFactor()` check the lock before doing any work and count the failed attempt afterwards, both on their own. Query the lock only where you want to show "this account is locked" instead of the same "login failed" that a wrong password produces.
 
-`logout()` and `invalidate()` sound similar but differ in timing: `logout()` marks the cookie to expire through the normal response cycle, while `invalidate()` drops it immediately, which matters if you need the effect to be visible before the method returns, for example before redirecting.
+`logout()` and `invalidate()` behave identically: both expire the authentication cookie with the current response and, with `authentication.blacklist`, revoke its token.
 
 ## Protecting routes
 
@@ -120,13 +122,13 @@ Bind.controller(AccountController.class).withRoutes(
 );
 ```
 
-You can also call `withAuthentication()` on the controller binder so every route on it requires a cookie, see [Routing](routing.md). Missing authentication redirects to `authentication.redirect.login`, or returns HTTP 403 if that key is unset, so an API-only application without a login page still fails safely instead of redirecting somewhere that does not exist. When two-factor is enabled on the cookie, the user is sent to `authentication.redirect.mfa` instead (or the login redirect if `mfa` is not configured). Set `authentication.origin` to append `?origin=<request-uri>` on those redirects, which is what lets a login page send the user back to whatever page they originally asked for. The value contains the request URI including its query string, is URL encoded, and always begins with exactly one slash, so it can neither inject extra parameters into the redirect nor arrive as a protocol-relative URL such as `//evil.com` pointing at a foreign host.
+You can also call `withAuthentication()` on the controller binder so every route on it requires a cookie, see [Routing](routing.md). Missing authentication redirects to `authentication.redirect.login` (the archetype sets `/login`), or returns HTTP 403 if that key is unset. When two-factor is still pending, the user is sent to `authentication.redirect.mfa`, or to the login redirect if `mfa` is not set. Set `authentication.origin` to append the request URI. The separator is `?` when the redirect has no query string and `&` when it already has one. The value is URL-encoded and always starts with one slash, which encoding turns into `%2F`, so it cannot arrive as `//evil.com`.
 
 That last point still leaves the final decision to you: `origin` is a value a visitor chose, and it is only guaranteed to be a path on your own host, not a path that visitor is allowed to reach. Before redirecting to it after a successful login, check it against the routes your application actually serves rather than passing it straight to a redirect.
 
 Route protection covers controller routes only. SSE and WebSocket routes are registered straight on Undertow's path handler and never reach the authentication check, so `withAuthentication()` does not exist on them and no cookie is verified when a client connects. See [Routing](routing.md) for what that means in practice.
 
-Cookie names, SameSite, Secure, signing keys, and lifetimes are described in [Configuration](configuration.md). Prefer `vault{}` for `authentication.cookie.key` and `authentication.cookie.secret` rather than writing them out in `config.yaml`. See [Secrets](secrets.md).
+Cookie names, SameSite, Secure, signing keys, and lifetimes are described in [Configuration](configuration.md). Set `authentication.cookie.key` and `authentication.cookie.secret` with `env{}`, `arg{}` or `file{}` rather than writing them out in `config.yaml`; in prod mode literal values fail the startup. See [Secrets](secrets.md).
 
 ## Two-factor authentication
 
@@ -147,9 +149,9 @@ A typical flow: after the password check succeeds, call `login(subject)` with `t
 
 While the flag is set, `isValid()` returns false, so the TOTP entry page itself has to use `hasSubject()` to find the subject the code is being checked for.
 
-Pass the identifier as the first argument. A TOTP has six digits and is verified without a tolerance window, so exactly one of a million codes is valid per 30-second window — that is only a second factor as long as something limits how often it may be guessed. With the identifier, the same `authentication.lock` budget as for the password step applies, counted under its own key, and a successful check clears it.
+Pass the identifier as the first argument. A TOTP has six digits and is verified without a tolerance window, so exactly one of a million codes is valid per 30-second window — that is only a second factor as long as something limits how often it may be guessed. With the identifier, the same `authentication.lock` budget as for the password step applies, counted under its own key, and a successful check clears it. An upstream reverse proxy only counts requests per source address and does not bound the total number of guesses; a budget per identity does.
 
-The two-argument `isValidSecondFactor(secret, totp)` is **deprecated**: it verifies the code unthrottled, which makes guessing it feasible. An upstream reverse proxy only counts requests per source address and does not bound the total number of guesses; a budget per identity does.
+Each code is accepted **once** per identifier: the used 30-second step is stored in the `OneTimeStore` (MongoDB with persistence, shared by all instances), so a code that was observed on its way cannot be replayed within its window; the collection is `mangooio_claims`, see [Framework collections](persistence.md#framework-collections). `TotpUtils.verifyTotp(identifier, secret, totp)` does the same outside of `Authentication`; `TotpUtils.verifyTotp(secret, totp)` without an identifier accepts a valid code any number of times.
 
 ## Complete login flow
 
@@ -176,7 +178,7 @@ public Response doLogin(Form form, Authentication authentication, Flash flash) {
 }
 ```
 
-No `update()` here: no authentication cookie exists yet, so the response writes a fresh one on its own.
+No `update()` here: `login()` writes a fresh cookie on its own, even if the browser still sends a stale one.
 
 ### With two-factor
 
@@ -265,7 +267,7 @@ For machine clients that have no browser and therefore nowhere to keep a cookie,
 ```yaml
 application:
   api:
-    key: super-secret
+    key: env{}
 ```
 
 ```java
@@ -275,7 +277,9 @@ public Response export() {
 }
 ```
 
-The filter accepts `Authorization: Bearer super-secret`. This is a single shared key rather than per-client credentials, so treat it the way you would any other shared secret: rotate it if it leaks, and avoid handing the same key to more clients than you can comfortably revoke access from later.
+The filter reads `Authorization`, strips the literal substring `Bearer` (case-sensitive), and compares the remainder to `application.api.key`. `Authorization: Bearer <key>` and `Authorization: <key>` both match. A missing or wrong key is HTTP 401 with an empty body. If the key is set, startup requires at least 64 bytes.
+
+This is one shared key, not a credential per client. Rotate it if it leaks. There is no per-caller revocation.
 
 ## Blacklist
 
@@ -296,14 +300,11 @@ public Response changePassword(Authentication authentication) {
 }
 ```
 
-Every revocation is kept exactly as long as the revoked token could still be valid, that is until its expiry or, for a subject, for the longest token lifetime (`authentication.cookie.remember.expires` or `authentication.cookie.token.expires`).
+Every revocation is kept exactly as long as the revoked token could still be accepted, that is until its expiry or, for a subject, for the longest token lifetime (`authentication.cookie.remember.expires` or `authentication.cookie.token.expires`), plus the 30 second clock tolerance of the JWT validation.
 
-The default implementation keeps revocations **in memory**. That has two consequences you should be aware of:
+With persistence enabled, revocations are kept in MongoDB (`mangooio_revocations`): they survive a restart and apply to every instance behind a load balancer. Each authenticated request costs one lookup on the primary key; if MongoDB is unavailable, the cookie counts as revoked. Without persistence, revocations are kept in memory, only apply to the instance that received them and are lost on a restart.
 
-* Revocations do not survive a restart or a deployment.
-* With more than one instance behind a load balancer, a revocation only applies to the instance that received it.
-
-If either matters for you, bind your own implementation backed by a shared store such as Redis or MongoDB in your `Module`. The framework picks it up instead of the default one:
+To keep revocations elsewhere, bind your own implementation in your `Module`. It replaces the one of the framework:
 
 ```java
 public class Module extends AbstractModule {
@@ -315,5 +316,3 @@ public class Module extends AbstractModule {
 ```
 
 To invalidate every issued authentication cookie at once, independent of the blacklist, rotate `authentication.cookie.secret`.
-
-`CommonUtils.blacklist(id)` and `CommonUtils.isBlacklisted(id)` are deprecated and delegate to the `TokenBlacklist`. Note that they only ever worked on a token ID; to revoke all tokens of an account use `revokeSubject`.

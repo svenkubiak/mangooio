@@ -2,9 +2,9 @@
 
 Almost all runtime behavior is controlled through one YAML file: `src/main/resources/config.yaml`. mangoo I/O loads it with [SnakeYAML](https://bitbucket.org/snakeyaml/snakeyaml/src/master/), flattens the nested keys into dot notation, and exposes them through the `Config` class and Guice `@Named` bindings. There is deliberately no second configuration mechanism (no properties files, no XML, no `@ConfigurationProperties` classes to keep in sync); if a setting exists, it lives in this one file, which makes it realistic to actually read the whole configuration of an application in one sitting.
 
-Typical uses include connector host and port, cookie names, MongoDB connection details, SMTP settings, feature toggles (admin UI, metrics, scheduler), and security options (CORS, authentication redirects). Sensitive values should reference the [vault](secrets.md), environment variables, or JVM properties rather than plain text in the repository, since `config.yaml` normally ends up committed to source control.
+Typical uses include connector host and port, cookie names, MongoDB connection details, SMTP settings, feature toggles (admin UI, metrics, scheduler), and security options (CORS, authentication redirects). Sensitive values should reference environment variables, JVM properties or [secret files](secrets.md) rather than plain text in the repository, since `config.yaml` normally ends up committed to source control.
 
-The file is split into a **`default`** block (shared by all modes) and an **`environments`** block with overrides for `dev`, `test`, and `prod`. When the application starts, it merges `default` with the section for the active mode, key by key, so a key you only set in `default` still applies everywhere, and a key you also set under `environments.prod` overrides it just for production. Missing an environment section for the active mode causes startup to fail on purpose. That may feel strict the first time it happens, but it exists to catch the case where someone adds a `staging` environment, forgets to add matching config, and the app would otherwise silently fall back to defaults in a place where nobody is watching.
+The file is split into a **`default`** block (shared by all modes) and an **`environments`** block with overrides for `dev`, `test`, and `prod`. When the application starts, it merges `default` with the section for the active mode, key by key, so a key you only set in `default` still applies everywhere, and a key you also set under `environments.prod` overrides it just for production. Missing an environment section for the active mode causes startup to fail on purpose. That may feel strict the first time it happens, but it exists to catch an environment block that was renamed or forgotten, where the app would otherwise silently fall back to defaults in a place where nobody is watching. Only `dev`, `test` and `prod` exist; any other value of `application.mode` selects `prod`.
 
 Values are addressed with dot notation that mirrors the YAML hierarchy:
 
@@ -101,13 +101,13 @@ The active environment block is required, even if it only overrides a single key
 
 ## Secrets, environment variables, and JVM arguments
 
-Configuration values can also come from the application vault, environment variables, or JVM arguments instead of being written out in plain text. See [Secrets](secrets.md) for how `vault{}`, `env{}`, and `arg{}` placeholders are resolved.
+Configuration values can also come from environment variables, JVM arguments or secret files instead of being written out in plain text. See [Secrets](secrets.md) for how `env{}`, `arg{}` and `file{}` placeholders are resolved. A placeholder without a value and without a fallback fails the startup, unless it is optional (`env{?}`), and in prod mode the framework secrets must not be literal.
 
-As a rule of thumb: cookie signing keys, the vault password, and SMTP credentials should never sit in source control as clear text, since `config.yaml` is versioned right alongside your application code and gets the same read access as everything else in the repository.
+As a rule of thumb: cookie secrets and keys, database and SMTP credentials should never sit in source control as clear text, since `config.yaml` is versioned right alongside your application code and gets the same read access as everything else in the repository.
 
 ## Connectors
 
-At least one HTTP or HTTPS connector must be configured, otherwise the application refuses to start. There is no implicit default port, on purpose: a web framework that silently picks a port for you is more surprising than one that asks you to say so once.
+At least one HTTP or HTTPS connector must be configured, otherwise the application refuses to start. There is no implicit port. A connector starts only when both `host` and `port` are set. HTTPS accepts TLS 1.3 only.
 
 ```yaml
 default:
@@ -118,36 +118,33 @@ default:
     https:
       host: localhost
       port: 8443
-      certificate:
-        alias: certificate
+      keystore: /etc/myapp/https.p12
+      password: file{}
 ```
 
-HTTPS uses an SSL context built from the [vault](secrets.md). The certificate alias defaults to `certificate`, which only matters if you store more than one certificate in the same keystore.
+HTTPS reads key and certificate chain from the PKCS12 file in `connector.https.keystore`, see [Secrets](secrets.md#https-certificates). `connector.https.certificate.alias` is only needed if the file holds more than one key entry.
 
 ## Default values
 
-Keys that you omit fall back to the defaults below. Cells marked *(none)* have no built-in default, meaning the feature stays off or the value stays empty until you set it yourself. MongoDB keys are nested under `persistence` in YAML (`persistence.mongo.host`, and `persistence.<prefix>.mongo.host` for additional named datastores, see [Persistence](persistence.md)).
+Keys that you omit fall back to the defaults below. Cells marked *(none)* have no built-in default, meaning the feature stays off or the value stays empty until you set it yourself. MongoDB keys are nested under `persistence` in YAML (`persistence.mongo.host` or `persistence.mongo.url`, and `persistence.<prefix>.mongo.host` for additional named datastores, see [Persistence](persistence.md)).
 
 | Key | Description | Default |
 |---|---|---|
 | `application.admin.enable` | Enables the admin dashboard | `false` |
 | `application.admin.locale` | Locale for the admin dashboard | `en_EN` |
-| `application.admin.password` | Admin dashboard password | *(none)* |
+| `application.admin.password` | Argon2id PHC hash of the admin dashboard password | *(none)* |
 | `application.admin.secret` | Admin TOTP secret; if set, MFA is required | *(none)* |
 | `application.admin.username` | Admin dashboard username | *(none)* |
 | `application.allowedOrigins` | Comma-separated origins for `OriginFilter` | *(none)* |
-| `application.api.key` | Shared secret for `ApiKeyFilter` | *(none)* |
-| `application.controller` | Controller package prefix | `controllers.` |
+| `application.api.key` | Shared secret for `ApiKeyFilter` (at least 64 bytes) | *(none)* |
 | `application.language` | Default application language | `en` |
 | `application.name` | Application name (JWT issuer, logs) | `mangooio-application` |
 | `application.named` | Example named Guice binding | *(none)* |
 | `application.parameter.strict` | Reject requests whose query parameter collides with a route parameter with a `400` | `false` |
-| `application.secret` | Application secret; fallback for cookie secrets and keys (exactly 64 bytes) | *(none)* |
+| `application.secret` | Application secret, **required**; fallback for cookie secrets and keys (exactly 64 bytes) | *(none)* |
+| `application.shutdown.timeout` | Seconds from the start of shutdown, including the heartbeat stop and closing SSE and WebSocket connections, see [Graceful shutdown](operating.md#graceful-shutdown) | `20` |
 | `application.timezone` | Application timezone | `UTC` |
 | `application.validation.passthrough` | Return Bean Validation errors as JSON instead of a rendered form | `false` |
-| `application.vault.enable` | Enable the PKCS12 vault | *(none)* |
-| `application.vault.path` | Directory of `vault.p12` in prod | *(none)* |
-| `application.vault.secret` | Vault password (min. 64 characters) | *(none)* |
 | `authentication.blacklist` | Enable revocation of authentication cookies, see [Blacklist](authentication.md#blacklist) | `false` |
 | `authentication.cookie.name` | Authentication cookie name | `mangooio-auth` |
 | `authentication.cookie.key` | JWT signing key (min. 64 bytes); falls back to `application.secret` | *(none)* |
@@ -170,7 +167,10 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `connector.http.port` | HTTP port | *(none)* |
 | `connector.https.host` | HTTPS bind address | *(none)* |
 | `connector.https.port` | HTTPS port | *(none)* |
-| `connector.https.certificate.alias` | Vault certificate alias | `certificate` |
+| `connector.https.certificate.alias` | Alias of the key entry in the keystore; only needed if it holds more than one | *(none)* |
+| `connector.https.keystore` | PKCS12 file with key and certificate chain of the HTTPS connector | *(none)* |
+| `connector.https.password` | Password of the keystore and its key entry | *(none)* |
+| `connector.proxy` | Take client address and scheme from the `X-Forwarded-*` headers; only enable behind a trusted proxy that overwrites them | `false` |
 | `cors.alloworigin` | Regex for `Access-Control-Allow-Origin` | `^http(s)?://(www\.)?example\.(com\|org)$` |
 | `cors.enable` | Send CORS headers | `false` |
 | `cors.headers.allowcredentials` | `Access-Control-Allow-Credentials` | `true` |
@@ -195,7 +195,9 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `persistence.mongo.host` | MongoDB host | `localhost` |
 | `persistence.mongo.password` | MongoDB password, passed to the driver as is, so special characters need no encoding | *(none)* |
 | `persistence.mongo.port` | MongoDB port | `27017` |
+| `persistence.mongo.schema` | `create` creates missing collections and indexes at startup, `validate` only checks them, see [Schema](persistence.md#schema) | `create` |
 | `persistence.mongo.username` | MongoDB username | *(none)* |
+| `persistence.mongo.url` | `mongodb://` or `mongodb+srv://` connection string that replaces host and port. Credentials in the URL are rejected | *(none)* |
 | `scheduler.enable` | Enable `@Run` scheduling | `true` |
 | `session.cookie.expires` | Persist the session cookie beyond the browser session | `false` |
 | `session.cookie.name` | Session cookie name | `mangooio-session` |
@@ -205,24 +207,34 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `session.cookie.secure` | Secure cookie flag (also used for flash) | `false` |
 | `session.cookie.token.expires` | Session token lifetime in **seconds** | `3600` |
 | `smtp.authentication` | Enable SMTP authentication | `false` |
+| `smtp.connection.timeout` | Time in **milliseconds** to wait for the SMTP connection. `0` waits forever and is rejected | `10000` |
 | `smtp.debug` | Enable SMTP debug output | `false` |
 | `smtp.from` | Default From address | `mangoo <noreply@mangoo.local>` |
 | `smtp.host` | SMTP host | `localhost` |
 | `smtp.password` | SMTP password | *(none)* |
 | `smtp.port` | SMTP port | `25` |
-| `smtp.protocol` | SMTP protocol | `smtps` |
+| `smtp.protocol` | `smtps` opens TLS immediately, `smtptls` requires STARTTLS, `smtp` is cleartext and only allowed in dev and test | `smtps` |
+| `smtp.read.timeout` | Time in **milliseconds** to wait for an SMTP read. `0` waits forever and is rejected | `30000` |
 | `smtp.username` | SMTP username | *(none)* |
 | `undertow.maxentitysize` | Maximum HTTP entity size in bytes | `4194304` |
 
-A couple of these are worth calling out by name. `authentication.cookie.samesitemode` and `session.cookie.samesitemode` both default to `Strict`, which is the safest choice against CSRF but also means the cookie will not be sent on cross-site navigations at all (a link from another domain, for instance); loosen it to `Lax` if your login flow depends on that. `undertow.maxentitysize` caps request body size at 4 MiB by default, mostly to stop an accidental (or malicious) huge upload from eating memory before your controller even gets a chance to reject it; raise it deliberately if your application genuinely needs larger uploads. That raise alone is only half the story, though: `form.maxfilesize` caps every single uploaded file at 5 MiB on top of it, for the same reason. The two limits sit behind each other, and an upload has to pass both — plus whatever a reverse proxy in front of the application allows, such as nginx's `client_max_body_size`. Raising only one of them moves the failure to another layer instead of removing it. A form that trips `form.maxfilesize` is rejected before any controller runs; the `FormHandler` logs the reason on WARN and the request is answered with a `400`.
+`smtps` and `smtptls` are the two encrypted ways to reach a mail server, and they are not interchangeable: `smtps` starts the TLS handshake before any SMTP command, which is what port 465 expects, while `smtptls` connects in cleartext and then requires STARTTLS, which is what port 587 expects. If the server does not upgrade the connection, the delivery is aborted before authentication or the message is sent. `smtp` leaves the connection in cleartext and the application refuses to start with it in prod mode; dev and test accept it because the local test server speaks plain SMTP. Every delivery gives up after `smtp.connection.timeout` milliseconds without a connection and after `smtp.read.timeout` milliseconds without a read. The defaults are 10 seconds and 30 seconds. Both configured values are written to the log when the mail session is created, and a delivery that hits either limit is logged again with the same values. A value of `0` or below is rejected at startup.
+
+`authentication.cookie.samesitemode` and `session.cookie.samesitemode` default to `Strict`. `Lax` is the only other accepted value. Anything else, including `None`, fails startup. Flash and the locale cookie are always `Strict`. `Strict` is not sent on a cross-site navigation, such as a link from another domain. Use `Lax` when a login flow depends on that.
+
+`undertow.maxentitysize` caps the body at 4 MiB. `form.maxfilesize` caps each uploaded file at 5 MiB, and the body limit is checked first, so a 5 MiB file needs a larger `maxentitysize` and a matching limit on the reverse proxy (`client_max_body_size` in nginx). A form that trips `form.maxfilesize` is rejected before the controller runs, logged at WARN, and answered with HTTP 400. Undertow's parameter limit (1000) and header size (8192 bytes) are not configurable. Worker and I/O thread counts are Undertow's defaults. The framework does not set them.
+
+`application.mode` and `application.config` are JVM system properties, not YAML keys. `application.secrets.path` defaults to `/run/secrets` and is a system property or the environment variable `APPLICATION_SECRETS_PATH`. It cannot be set inside `config.yaml`. See [Secrets](secrets.md).
+
+`authentication.cookie.token.expires` has to stay at or below `authentication.cookie.remember.expires`. Inbound cookies are accepted only up to the remember-me lifetime. A normal login cookie whose TTL is longer than that fails to parse. The defaults, 3600 and 2592000, do not hit this.
 
 ### Argon2 hashing
 
-`CommonUtils.hashArgon2` and `CommonUtils.matchArgon2` compute Argon2id, and a single computation holds `authentication.hashing.memory` KiB of heap for its entire duration — 32 MB with the default of 32768 KiB. Undertow starts with eight worker threads per core, so without a limit a few dozen concurrent logins can request several gigabytes at once and take the JVM down with an OutOfMemoryError.
+`CommonUtils.hashArgon2` and `CommonUtils.matchArgon2` compute Argon2id, and a single computation holds `authentication.hashing.memory` KiB of heap for its entire duration, 32 MiB with the default of 32768 KiB. Concurrent logins multiply that. The framework does not set Undertow's worker count, so the cap below is what keeps a burst of logins from allocating that memory without a bound.
 
 The framework therefore caps how many hashes run at the same time. A call that finds every slot taken waits up to `authentication.hashing.timeout` milliseconds and is then rejected with a `MangooHashingException`, which is unchecked and does not change any signature. `Authentication#isValidLogin` catches it, logs it and returns `false` without counting a failed attempt, so an overload situation cannot lock a user out. Every other caller sees the exception and ends up in the `ExceptionHandler`, which answers it with a `503` rather than a silent "wrong password".
 
-The default `authentication.hashing.concurrency: 0` derives the number of slots from the configured memory cost and half of the heap the JVM may use, clamped to a range of 2 to 8. The effective value is logged on INFO at startup. Set an explicit value to override the heuristic; a high value effectively switches the gate off.
+The default `authentication.hashing.concurrency: 0` derives the slot count as `floor((0.5 * maxMemory) / (memoryKiB * 1024 * 1.2))`, clamped to 2..8. A configured value greater than 0 is used as is. The effective value is logged at INFO during startup. A high explicit value is close to having no gate.
 
 The defaults `m=32768`, `t=3`, `p=1` sit above the OWASP minimum of 19 MiB and two iterations and below RFC 9106's low-memory profile. `p=1` is deliberate: BouncyCastle's `Argon2BytesGenerator` computes the lanes sequentially, so a higher parallelism does not shorten a single hash, it only spreads the same memory over more lanes. A server gets its parallelism from concurrent requests, not from lanes inside one hash.
 

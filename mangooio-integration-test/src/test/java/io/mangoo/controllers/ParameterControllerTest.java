@@ -27,7 +27,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/boolean?foo=true").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("true"));
 
@@ -35,7 +34,6 @@ class ParameterControllerTest {
         response = TestRequest.get("/boolean?foo=false").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("false"));
 
@@ -43,7 +41,6 @@ class ParameterControllerTest {
         response = TestRequest.get("/boolean?foo=bar").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNPROCESSABLE_ENTITY));
         assertThat(response.getContent(), equalTo(""));
     }
@@ -54,7 +51,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/string/bar").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("bar"));
     }
@@ -69,7 +65,7 @@ class ParameterControllerTest {
             TestResponse response = TestRequest.get("/string/" + uuid).execute();
             
             //then
-            return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid);
+            return response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid);
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
@@ -79,7 +75,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/optional/bar").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("Optional[bar]"));
     }
@@ -94,7 +89,7 @@ class ParameterControllerTest {
             TestResponse response = TestRequest.get("/optional/" + uuid).execute();
 
             //then
-            return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Optional[" + uuid + "]");
+            return response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Optional[" + uuid + "]");
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
@@ -104,7 +99,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/optionalquery?foo=bar").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("Optional[bar]"));
     }
@@ -119,7 +113,7 @@ class ParameterControllerTest {
             TestResponse response = TestRequest.get("/optionalquery?foo=" + uuid).execute();
 
             //then
-            return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Optional[" + uuid + "]");
+            return response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Optional[" + uuid + "]");
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
@@ -129,7 +123,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/optional/?foo=bar").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("Optional.empty"));
     }
@@ -140,7 +133,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/string").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("isNull"));
     }
@@ -152,7 +144,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/string/" + arg).execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo(arg));
     }
@@ -163,7 +154,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/doublePrimitive/1.42").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("1.42"));
     }
@@ -174,7 +164,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/double/1.42").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("1.42"));
     }
@@ -185,7 +174,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/int/42").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("42"));
     }
@@ -196,7 +184,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/integer/42").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("42"));
     }
@@ -207,7 +194,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/floatPrimitive/1.24").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("1.24"));
     }
@@ -218,7 +204,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/float/1.24").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("1.24"));
     }
@@ -229,7 +214,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/longPrimitive/6000").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("6000"));
     }
@@ -240,7 +224,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/long/60000").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("60000"));
     }
@@ -251,7 +234,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/multiple/bar/1").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("bar:1"));
     }
@@ -262,7 +244,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/path?foo=bar").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("bar"));
     }
@@ -273,7 +254,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/localdate/2007-12-03").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("2007-12-03"));
@@ -285,7 +265,6 @@ class ParameterControllerTest {
         TestResponse response = TestRequest.get("/localdatetime/2007-12-03T10:15:30").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("2007-12-03T10:15:30"));

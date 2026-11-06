@@ -19,7 +19,6 @@ class ResourcesHandlerTest {
         TestResponse response = TestRequest.get("/robots.txt").execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo("text/plain"));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
@@ -30,7 +29,6 @@ class ResourcesHandlerTest {
         TestResponse response = TestRequest.get("/assets/javascript/jquery.min.js").execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo("application/javascript"));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
@@ -41,7 +39,6 @@ class ResourcesHandlerTest {
         TestResponse response = TestRequest.get("/assets/stylesheet/css.css").execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo("text/css"));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }

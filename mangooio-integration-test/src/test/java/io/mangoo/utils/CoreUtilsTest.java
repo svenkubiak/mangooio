@@ -1,24 +1,29 @@
 package io.mangoo.utils;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.nimbusds.jwt.JWTClaimsSet;
 import io.mangoo.TestExtension;
-import io.mangoo.cache.Cache;
+import io.mangoo.TestUtils;
+import io.mangoo.constants.ClaimKey;
+import io.mangoo.constants.Key;
+import io.mangoo.constants.Required;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtException;
-import io.mangoo.exceptions.MangooTranslationException;
+import io.mangoo.interfaces.persistence.Datastore;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.internal.MangooUtils;
 import io.undertow.server.handlers.Cookie;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.bson.Document;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.time.LocalDateTime;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.mangoo.core.Application.getInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,15 +33,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith({TestExtension.class})
 @TestMethodOrder(MethodOrderer.MethodName.class)
 class CoreUtilsTest {
-    private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
-    private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
+    /** Cleartext of the Argon2id hash stored as application.admin.password. */
+    private static final String ADMIN_PASSWORD = "admin";
     private Config config;
-    private Cache cache;
 
     @BeforeEach
     void setUp() {
         config = getInstance(Config.class);
-        cache = getInstance(Cache.class);
+        resetAdmin();
+    }
+
+    // A locked admin step would make the admin controller tests fail, which run in the same JVM
+    @AfterEach
+    void resetAdmin() {
+        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_PASSWORD);
+        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_SECOND_FACTOR);
     }
 
     @Test
@@ -52,34 +63,11 @@ class CoreUtilsTest {
     }
 
     @Test
-    void testGetLanguages() throws MangooTranslationException {
-        //given
-
-        //when
-        Set<String> languages = MangooUtils.getLanguages();
-
-        //then
-        assertThat(languages, not(nullValue()));
-        assertThat(languages, instanceOf(Set.class));
-    }
-
-    @Test
-    void testGetRootFolder() {
-        //given
-
-        //when
-        String rootFolder = MangooUtils.getRootFolder();
-
-        //then
-        assertThat(rootFolder, not(nullValue()));
-    }
-
-    @Test
     void testIsValidAuthenticationWithValidCredentials() {
         //given
         Form form = new Form();
         form.addValue("username", config.getApplicationAdminUsername());
-        form.addValue("password", config.getApplicationAdminPassword());
+        form.addValue("password", ADMIN_PASSWORD);
 
         //when
         boolean isValid = MangooUtils.isValidAuthentication(form);
@@ -93,7 +81,7 @@ class CoreUtilsTest {
         //given
         Form form = new Form();
         form.addValue("username", "invalid");
-        form.addValue("password", config.getApplicationAdminPassword());
+        form.addValue("password", ADMIN_PASSWORD);
 
         //when
         boolean isValid = MangooUtils.isValidAuthentication(form);
@@ -145,37 +133,47 @@ class CoreUtilsTest {
     }
 
     @Test
-    void testGetAdminCookieWithoutTwoFactor() throws MangooJwtException {
+    void testGetAdminCookieWithoutTwoFactor() throws Exception {
         //given
+        try (var _ = TestUtils.withConfigValue(Key.APPLICATION_ADMIN_SECRET, TotpUtils.createSecret())) {
+            //when
+            Cookie cookie = MangooUtils.getAdminCookie(false);
 
-        //when
-        Cookie cookie = MangooUtils.getAdminCookie(false);
+            //then
+            assertThat(cookie.getName(), equalTo(MangooUtils.getAdminCookieName()));
+            assertThat(cookie.isHttpOnly(), is(true));
+            assertThat(cookie.getPath(), equalTo("/"));
+            assertThat(cookie.getSameSiteMode(), equalTo("Strict"));
 
-        //then
-        assertThat(cookie, not(nullValue()));
-        assertThat(cookie.getName(), equalTo(MangooUtils.getAdminCookieName()));
-        assertThat(cookie.isHttpOnly(), is(true));
-        assertThat(cookie.getPath(), equalTo("/"));
-        assertThat(cookie.getSameSiteMode(), equalTo("Strict"));
-        assertThat(cookie.getValue(), not(nullValue()));
-        assertThat(cookie.getValue(), not(emptyString()));
+            JWTClaimsSet claims = parseAdminCookie(cookie);
+            assertThat(MangooUtils.isTwoFactorPending(claims), is(false));
+            assertThat(lifetime(claims), equalTo(1800L));
+        }
     }
 
     @Test
-    void testGetAdminCookieWithTwoFactor() throws MangooJwtException {
+    void testGetAdminCookieWithTwoFactor() throws Exception {
         //given
+        try (var _ = TestUtils.withConfigValue(Key.APPLICATION_ADMIN_SECRET, TotpUtils.createSecret())) {
+            //when
+            Cookie cookie = MangooUtils.getAdminCookie(true);
 
+            //then
+            JWTClaimsSet claims = parseAdminCookie(cookie);
+            assertThat(MangooUtils.isTwoFactorPending(claims), is(true));
+            assertThat(lifetime(claims), equalTo(120L));
+        }
+    }
+
+    @Test
+    void testGetAdminCookieWithTwoFactorWithoutAdminSecret() throws Exception {
         //when
         Cookie cookie = MangooUtils.getAdminCookie(true);
 
         //then
-        assertThat(cookie, not(nullValue()));
-        assertThat(cookie.getName(), equalTo(MangooUtils.getAdminCookieName()));
-        assertThat(cookie.isHttpOnly(), is(true));
-        assertThat(cookie.getPath(), equalTo("/"));
-        assertThat(cookie.getSameSiteMode(), equalTo("Strict"));
-        assertThat(cookie.getValue(), not(nullValue()));
-        assertThat(cookie.getValue(), not(emptyString()));
+        JWTClaimsSet claims = parseAdminCookie(cookie);
+        assertThat(MangooUtils.isTwoFactorPending(claims), is(false));
+        assertThat(lifetime(claims), equalTo(1800L));
     }
 
     @Test
@@ -191,86 +189,88 @@ class CoreUtilsTest {
     }
 
     @Test
-    void testInvalidAuthentication() {
-        //given
-        MangooUtils.resetLockCounter();
-
-        //when
-        MangooUtils.invalidAuthentication();
-
-        //then
-        AtomicInteger counter = cache.get(MANGOOIO_ADMIN_LOCK_COUNT);
-        assertThat(counter, not(nullValue()));
-        assertThat(counter.intValue(), equalTo(1));
-    }
-
-    @Test
-    void testInvalidAuthenticationMaxRetries() {
-        //given
-        MangooUtils.resetLockCounter();
-
+    void testAdminAttemptMaxRetries() {
         //when
         for (int i = 0; i < 10; i++) {
-            MangooUtils.invalidAuthentication();
+            assertThat(MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD), is(true));
         }
 
-        //then
-        assertThat(MangooUtils.isNotLocked(), is(false));
-        LocalDateTime lockedUntil = cache.get(MANGOOIO_ADMIN_LOCKED_UNTIL);
-        assertThat(lockedUntil, not(nullValue()));
-        assertThat(lockedUntil.isAfter(LocalDateTime.now()), is(true));
+        //then the attempt that used up the budget was granted and set the lock
+        assertThat(MangooUtils.isAdminLocked(MangooUtils.ADMIN_PASSWORD), is(true));
+        assertThat(MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD), is(false));
+        Date lockedUntil = adminAttempts().getDate("lockedUntil");
+        assertThat(lockedUntil.toInstant().isAfter(Instant.now().plus(Duration.ofMinutes(59))), is(true));
     }
 
     @Test
-    void testIsNotLockedWhenNotLocked() {
+    void testResetAdminAttempts() {
         //given
-        cache.remove(MANGOOIO_ADMIN_LOCKED_UNTIL);
+        for (int i = 0; i < 5; i++) {
+            MangooUtils.acquireAdminAttempt(MangooUtils.ADMIN_PASSWORD);
+        }
 
         //when
-        boolean notLocked = MangooUtils.isNotLocked();
+        MangooUtils.resetAdminAttempts(MangooUtils.ADMIN_PASSWORD);
 
         //then
-        assertThat(notLocked, is(true));
+        assertThat(adminAttempts(), nullValue());
     }
 
     @Test
-    void testIsNotLockedWhenLocked() {
+    void testPreAuthenticationIsConsumedOnce() {
         //given
-        LocalDateTime futureTime = LocalDateTime.now().plusMinutes(30);
-        cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, futureTime);
+        JWTClaimsSet claims = preAuthClaims(CommonUtils.uuidV6());
 
         //when
-        boolean notLocked = MangooUtils.isNotLocked();
+        boolean first = MangooUtils.consumePreAuthentication(claims);
+        boolean replay = MangooUtils.consumePreAuthentication(claims);
 
         //then
-        assertThat(notLocked, is(false));
+        assertThat(first, is(true));
+        assertThat(replay, is(false));
+    }
+
+    private static Document adminAttempts() {
+        return attemptsCollection().find(Filters.eq("_id", MangooUtils.ADMIN_PASSWORD)).first();
+    }
+
+    private static MongoCollection<Document> attemptsCollection() {
+        return getInstance(Datastore.class).getMongoDatabase().getCollection("mangooio_attempts");
+    }
+
+    private static JWTClaimsSet preAuthClaims(String jwtId) {
+        return new JWTClaimsSet.Builder()
+                .jwtID(jwtId)
+                .claim(ClaimKey.TWO_FACTOR, "true")
+                .expirationTime(Date.from(Instant.now().plusSeconds(120)))
+                .build();
     }
 
     @Test
-    void testIsNotLockedWhenLockExpired() {
+    void testPreAuthenticationWithoutPendingSecondFactorIsRefused() {
         //given
-        LocalDateTime pastTime = LocalDateTime.now().minusMinutes(30);
-        cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, pastTime);
-
-        //when
-        boolean notLocked = MangooUtils.isNotLocked();
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .jwtID(CommonUtils.uuidV6())
+                .expirationTime(Date.from(Instant.now().plusSeconds(120)))
+                .build();
 
         //then
-        assertThat(notLocked, is(true));
+        assertThat(MangooUtils.consumePreAuthentication(claims), is(false));
     }
 
     @Test
-    void testResetLockCounter() {
+    void testPreAuthenticationClaimOutlivesTheCookieByTheClockSkew() {
         //given
-        cache.put(MANGOOIO_ADMIN_LOCK_COUNT, new AtomicInteger(5));
+        String jwtId = CommonUtils.uuidV6();
+        JWTClaimsSet claims = preAuthClaims(jwtId);
 
         //when
-        MangooUtils.resetLockCounter();
+        MangooUtils.consumePreAuthentication(claims);
 
         //then
-        AtomicInteger counter = cache.get(MANGOOIO_ADMIN_LOCK_COUNT);
-        assertThat(counter, not(nullValue()));
-        assertThat(counter.intValue(), equalTo(0));
+        Document claim = getInstance(Datastore.class).getMongoDatabase().getCollection("mangooio_claims")
+                .find(Filters.eq("_id", "admin-pre-auth:" + jwtId)).first();
+        assertThat(claim.getDate("expireAt").toInstant(), equalTo(claims.getExpirationTime().toInstant().plusSeconds(30)));
     }
 
     @Test
@@ -445,24 +445,6 @@ class CoreUtilsTest {
     }
 
     @Test
-    void testFlattenMapHelperWithSimpleValues() {
-        //given
-        Map<String, Object> map = new HashMap<>();
-        map.put("key1", "value1");
-        map.put("key2", "value2");
-        
-        Map<String, String> flatMap = new HashMap<>();
-
-        //when
-        MangooUtils.flattenMapHelper(map, "", flatMap);
-
-        //then
-        assertThat(flatMap.get("key1"), equalTo("value1"));
-        assertThat(flatMap.get("key2"), equalTo("value2"));
-        assertThat(flatMap.size(), equalTo(2));
-    }
-
-    @Test
     void testFlattenMapHelperWithPrefix() {
         //given
         Map<String, Object> map = new HashMap<>();
@@ -479,56 +461,6 @@ class CoreUtilsTest {
     }
 
     @Test
-    void testFlattenMapHelperWithNestedMaps() {
-        //given
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> nested = new HashMap<>();
-        nested.put("nested1", "value1");
-        map.put("parent", nested);
-        
-        Map<String, String> flatMap = new HashMap<>();
-
-        //when
-        MangooUtils.flattenMapHelper(map, "", flatMap);
-
-        //then
-        assertThat(flatMap.get("parent.nested1"), equalTo("value1"));
-        assertThat(flatMap.size(), equalTo(1));
-    }
-
-    @Test
-    void testFlattenMapHelperWithNullValues() {
-        //given
-        Map<String, Object> map = new HashMap<>();
-        map.put("key1", "value1");
-        map.put("key2", null);
-        
-        Map<String, String> flatMap = new HashMap<>();
-
-        //when
-        MangooUtils.flattenMapHelper(map, "", flatMap);
-
-        //then
-        assertThat(flatMap.get("key1"), equalTo("value1"));
-        assertThat(flatMap.get("key2"), equalTo(""));
-        assertThat(flatMap.size(), equalTo(2));
-    }
-
-    @Test
-    void testFlattenMapHelperWithEmptyMap() {
-        //given
-        Map<String, Object> map = new HashMap<>();
-        
-        Map<String, String> flatMap = new HashMap<>();
-
-        //when
-        MangooUtils.flattenMapHelper(map, "", flatMap);
-
-        //then
-        assertThat(flatMap.isEmpty(), is(true));
-    }
-
-    @Test
     void testFlattenMapHelperWithNullMap() {
         //given
         Map<String, String> flatMap = new HashMap<>();
@@ -537,5 +469,36 @@ class CoreUtilsTest {
         NullPointerException exception = assertThrows(NullPointerException.class,
                 () -> MangooUtils.flattenMapHelper(null, "", flatMap));
         assertThat(exception.getMessage(), containsString("map can not be null or blank"));
+    }
+
+    @Test
+    void testFlattenMapHelperWithNullPrefix() {
+        //when & then
+        NullPointerException exception = assertThrows(NullPointerException.class,
+                () -> MangooUtils.flattenMapHelper(Map.of("key", "value"), null, new HashMap<>()));
+        assertThat(exception.getMessage(), equalTo(Required.PREFIX));
+    }
+
+    @Test
+    void testFlattenMapHelperWithNullFlatMap() {
+        //when & then
+        NullPointerException exception = assertThrows(NullPointerException.class,
+                () -> MangooUtils.flattenMapHelper(Map.of("key", "value"), "", null));
+        assertThat(exception.getMessage(), equalTo(Required.FLAT_MAP));
+    }
+
+    private JWTClaimsSet parseAdminCookie(Cookie cookie) throws MangooJwtException {
+        var jwtData = JwtUtils.JwtData.create()
+                .withKey(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
+                .withSecret(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
+                .withIssuer(config.getApplicationName())
+                .withAudience(MangooUtils.getAdminCookieName())
+                .withTtlSeconds(1800);
+
+        return JwtUtils.parseJwt(cookie.getValue(), jwtData);
+    }
+
+    private static long lifetime(JWTClaimsSet claims) {
+        return Duration.between(claims.getIssueTime().toInstant(), claims.getExpirationTime().toInstant()).toSeconds();
     }
 }

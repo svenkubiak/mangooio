@@ -20,13 +20,9 @@ public class Messages implements Serializable {
     private static final long serialVersionUID = -1713264225655435037L;
     private static final Logger LOG = LogManager.getLogger(Messages.class);
     private static final int MAX_REPORTED_KEYS = 1000;
-    // Each missing key is reported once, the size limit keeps dynamically built keys from growing the set without bound
     private static final Set<String> REPORTED_KEYS = ConcurrentHashMap.newKeySet();
-
-    // Never fall back to the JVM default locale, as that would mix an unrelated language into the lookup.
     private static final ResourceBundle.Control NO_FALLBACK_CONTROL =
             ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT);
-
     private final Map<String, String> defaults = Default.getMessages();
     private final Locale locale;
     private transient ResourceBundle bundle;

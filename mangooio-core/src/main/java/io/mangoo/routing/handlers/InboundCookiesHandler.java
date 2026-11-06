@@ -75,13 +75,14 @@ public class InboundCookiesHandler implements HttpHandler {
 
                 LocalDateTime expires = LocalDateTime.ofInstant(
                         jwtClaimsSet.getExpirationTime().toInstant(),
-                        config.getApplicationTimeZone()
+                        config.getApplicationTimeZoneId()
                 ).withNano(0);
 
                 session = Session.create()
                         .withContent(CommonUtils.toStringMap(JwtUtils.extractCustomClaims(jwtClaimsSet).getClaims()))
                         .withCsrf(jwtClaimsSet.getClaimAsString(Const.CSRF_TOKEN))
-                        .withExpires(expires);
+                        .withExpires(expires)
+                        .withRestored();
             } catch (ParseException | MangooJwtException e) {
                 LOG.warn("Failed to parse session cookie", e);
             }
@@ -117,7 +118,7 @@ public class InboundCookiesHandler implements HttpHandler {
                             .twoFactorAuthentication(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.TWO_FACTOR)))
                             .withExpires(LocalDateTime.ofInstant(
                                     jwtClaimsSet.getExpirationTime().toInstant(),
-                                    config.getApplicationTimeZone()
+                                    config.getApplicationTimeZoneId()
                             ));
                 }
             } catch (ParseException | MangooJwtException e) {

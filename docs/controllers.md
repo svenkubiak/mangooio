@@ -1,6 +1,6 @@
 # Controllers 🎮
 
-Controllers are the entry point for application logic. Each public method that handles HTTP traffic returns an `io.mangoo.routing.Response` and lives in the package configured by `application.controller` (default `controllers.`). There is no framework base class to extend: your classes are plain Java types that Guice instantiates and injects, which means you can unit test a controller by just calling `new MyController(...)` with mocked dependencies, no servlet container or test harness required.
+Controllers are the entry point for application logic. Each public method that handles HTTP traffic returns an `io.mangoo.routing.Response`. There is no framework base class to extend: your classes are plain Java types that Guice instantiates and injects, which means you can unit test a controller by just calling `new MyController(...)` with mocked dependencies, no servlet container or test harness required.
 
 A controller method can declare only what it actually needs in its parameter list: path variables, query strings, JSON bodies, the raw `Request`, session data, forms, authentication state, or translation helpers. Anything you do not list simply is not there, which keeps method signatures honest about what a given endpoint actually reads from the request.
 
@@ -40,9 +40,17 @@ public Response greet() {
 
 The first example looks up `templates/ApplicationController/index.ftl`. The mapping is case-sensitive, so a controller named `ApplicationController` will not find a template directory named `applicationcontroller`.
 
-`bodyDefault()` sends a built-in HTML page for the status code, which is what the framework itself falls back to for error pages when you have not supplied a custom one.
+`bodyDefault()` sends a built-in HTML page for the status code. That is what the framework uses when you have not supplied your own error page.
 
-Override the template path with `template("/path/to/file.ftl")` when the convention does not fit, for example several methods sharing one confirmation page.
+`Response.ok()` with no body is HTTP 200 and `text/plain; charset=UTF-8`. Text responses get that charset appended.
+
+Override the template when several methods share one page. The path is resolved under `src/main/resources/templates/`, and `.ftl` is optional. A leading slash is accepted:
+
+```java
+return Response.ok().render("title", "Saved").template("shared/confirm.ftl");
+```
+
+`${...}` in a template is HTML-escaped. See [Templating](templating.md).
 
 ## Response helpers
 
@@ -71,7 +79,11 @@ return Response.ok().bodyBinary(bytes);
 return Response.ok().bodyFile(Path.of("/var/lib/app/archive.zip"));
 ```
 
-`bodyBinary` holds the whole response in the heap, so the memory an answer costs is always its own size. `bodyFile` streams the file straight from the file system to the client, which keeps that cost constant no matter how large the file is. Reach for it whenever the size of what you are sending is decided by data or by a user rather than by you, because with `bodyBinary` such a response is an unbounded allocation.
+`bodyJson(Object)` calls `JsonUtils.toJson`, which is compact and omits nulls. A failed conversion sends an empty JSON body and the status you set. It does not throw. `bodyJsonError(String)` sends `io.mangoo.models.Error`: `timestamp` (a `LocalDateTime` with no zone), `status`, and `message`.
+
+`bodyBinary` holds the whole response in the heap. `bodyFile` streams from disk. The file is checked when the response is sent, and a missing or unreadable file becomes HTTP 500. Both detect `Content-Type` when you have not set one.
+
+`redirect` sends 302. `disposeCookie(name)` clears a cookie with `Secure`. Pass `false` as the second argument when the cookie was not secure. `end()` stops the rest of the filter chain.
 
 Add headers and cookies with `header(...)`, `headers(...)`, and `cookie(...)`. Call `end()` when a [filter](filters.md) further down the chain should not run, for example after a filter has already produced the response it wants to send.
 
@@ -133,7 +145,7 @@ Supported parameter types:
 - `Boolean` / `boolean`
 - `LocalDate` (`ISO_LOCAL_DATE`, `yyyy-MM-dd`)
 - `LocalDateTime` (`ISO_LOCAL_DATE_TIME`)
-- `Optional` of the types above
+- `Optional<String>` (the value is always a `String`, other type arguments are not converted)
 
 Parameter names are case-sensitive and must match the path placeholder exactly. Decimal values are parsed with `.` as the separator even if the client's locale sends a `,`, since the framework parses numbers the same way regardless of where the request came from.
 
@@ -148,7 +160,17 @@ These types are bound from the request itself, not from the URL, and should not 
 
 A JSON POJO is bound from the request body on `POST`, `PUT`, and `PATCH` when the request sends `Content-Type: application/json`. See [Working with JSON](working-with-json.md).
 
-If conversion fails (someone requests `/users/abc` where `abc` cannot become an `int`), the framework returns **HTTP 422 Unprocessable Entity** unless you handle it yourself, since the request was syntactically fine, it is the value itself that could not be turned into what the method expected.
+If conversion fails, for example `/users/abc` where `id` is an `int`, the framework returns **HTTP 422** with an empty body and does not call the method. There is no callback for that case.
+
+A missing value is not a conversion failure. A missing `int`, `long`, `float`, or `double` becomes `0`. A missing `boolean` becomes `false`. A missing `String`, boxed number, `Boolean`, `LocalDate`, or `LocalDateTime` is `null`.
+
+A `boolean` parameter accepts only `true` and `false`, ignoring case. `1` is a 422. `Form.getBoolean` is a different parser: `"1"` and `"true"` are true, `"0"` and `"false"` are false, and the match is case-sensitive.
+
+`Optional` is always `Optional<String>`. The type argument is erased, so `Optional<Integer>` is not converted.
+
+A type outside that list is a JSON body only on `POST`, `PUT`, and `PATCH` when `Content-Type` starts with `application/json` or contains `+json`. Otherwise the argument is `null`. A blank JSON body is HTTP 400. Invalid JSON uses a no-arg constructor when the class has one, and is a 422 when it does not.
+
+A repeated query key, or a key that fails URL decoding, is HTTP 400 with the built-in bad-request page, before the controller runs. The same happens for a query key that equals a path key when `application.parameter.strict` is true. That default is false, and then the path value wins.
 
 ## Bean Validation
 
@@ -160,7 +182,7 @@ public Response show(@NotBlank String id) {
 }
 ```
 
-If you are building a JSON API instead, set `application.validation.passthrough` to `true` to get the same validation but as a JSON error body rather than an HTML page:
+For a JSON API, set `application.validation.passthrough` to `true`. The status is still 400. The messages are the English Bean Validation text, not the request locale:
 
 ```json
 { "errors": { "id": "must not be blank" } }
@@ -181,7 +203,14 @@ public Response index(Request request) {
 }
 ```
 
-Other useful methods include `getURI()`, `getURL()`, `getPath()`, `getScheme()`, `getCookie(name)`, `getBodyAsJsonMap()`, and `hasValidCsrf()`.
+Other useful methods: `getURI()` (not decoded, no query), `getURL()` (absolute, no query), `getPath()` (decoded, no query), `getScheme()`, `getContentLength()` (`-1` when absent), `getBodyAsJsonMap()` (an empty map for a blank body, `null` for invalid JSON), and `hasValidCsrf()`.
+
+`getCookie(name)` returns an Undertow `Cookie`, not a `String`:
+
+```java
+Cookie cookie = request.getCookie("myapp-session");
+String value = cookie == null ? null : cookie.getValue();
+```
 
 ## Custom handlers
 

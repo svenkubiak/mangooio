@@ -9,6 +9,7 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.mangoo.constants.ClaimKey;
+import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.exceptions.MangooJwtException;
 import org.apache.commons.lang3.StringUtils;
@@ -106,9 +107,9 @@ public final class JwtUtils {
             var claims = signedJWT.getJWTClaimsSet();
             var now = Instant.now();
 
-            var exp = Objects.requireNonNull(claims.getExpirationTime(), "exp is required");
-            var iat = Objects.requireNonNull(claims.getIssueTime(), "iat is required");
-            var nbf = Objects.requireNonNull(claims.getNotBeforeTime(), "nbf is required");
+            var exp = requireClaim(claims.getExpirationTime(), "exp");
+            var iat = requireClaim(claims.getIssueTime(), "iat");
+            var nbf = requireClaim(claims.getNotBeforeTime(), "nbf");
 
             if (!Objects.equals(jwtData.issuer(), claims.getIssuer())) {
                 throw new JOSEException("Issuer mismatch");
@@ -119,7 +120,7 @@ public final class JwtUtils {
                 throw new JOSEException("Audience mismatch");
             }
 
-            long skew = 30;
+            long skew = Default.JWT_CLOCK_SKEW;
 
             if (exp.toInstant().isBefore(now.minusSeconds(skew))) {
                 throw new JOSEException("Token expired");
@@ -142,36 +143,6 @@ public final class JwtUtils {
         }
     }
 
-    @Deprecated(forRemoval = true, since = "10.12.0")
-    public static String extractSubject(String jwt, byte[] secret) throws MangooJwtException {
-        Argument.requireNonBlank(jwt, Required.JWT);
-        Objects.requireNonNull(secret, Required.SECRET);
-        Preconditions.checkArgument(secret.length > 0, Required.SECRET);
-
-        try {
-            var jweObject = JWEObject.parse(jwt);
-
-            if (!JWEAlgorithm.DIR.equals(jweObject.getHeader().getAlgorithm())) {
-                throw new JOSEException("Unexpected JWE algorithm: " + jweObject.getHeader().getAlgorithm());
-            }
-            if (!EncryptionMethod.A256CBC_HS512.equals(jweObject.getHeader().getEncryptionMethod())) {
-                throw new JOSEException("Unexpected JWE encryption method: " + jweObject.getHeader().getEncryptionMethod());
-            }
-
-            var decrypter = new DirectDecrypter(secret);
-            jweObject.decrypt(decrypter);
-
-            var signedJWT = SignedJWT.parse(jweObject.getPayload().toString());
-
-            // The signature is NOT verified here
-            var claims = signedJWT.getJWTClaimsSet();
-
-            return claims.getSubject();
-        } catch (Exception e) {
-            throw new MangooJwtException(e);
-        }
-    }
-
     public static JWTClaimsSet extractCustomClaims(JWTClaimsSet claims) {
         var builder = new JWTClaimsSet.Builder();
         claims.getClaims().forEach((key, value) -> {
@@ -180,6 +151,13 @@ public final class JwtUtils {
             }
         });
         return builder.build();
+    }
+
+    private static Date requireClaim(Date value, String name) throws JOSEException {
+        if (value == null) {
+            throw new JOSEException("Missing claim: " + name);
+        }
+        return value;
     }
 
     private static void validate(JwtData jwtData) {

@@ -19,13 +19,20 @@ byte[] encoded = CommonUtils.encodeToBase64("payload");
 byte[] decoded = CommonUtils.decodeFromBase64(new String(encoded, StandardCharsets.UTF_8));
 ```
 
-`hashArgon2(cleartext)` hashes without an explicit salt. The number of Argon2 computations running at the same time is capped, see [Argon2 hashing](configuration.md#argon2-hashing); both `hashArgon2` and `matchArgon2` throw an unchecked `MangooHashingException` when no slot becomes available within `authentication.hashing.timeout`. `matchArgon2` deliberately does not report this as a mismatch, so that "wrong password" and "system overloaded" stay distinguishable. `bitLength` checks key material length. `registerSerializable` / `serializeToBase64` use Apache Fory under the hood; register your classes at startup, and only ever deserialize trusted data.
+`hashArgon2(cleartext)` uses `application.secret` as salt and embeds it in the stored hash. Use the two-argument form with a random salt per user. Both `hashArgon2` and `matchArgon2` throw an unchecked `MangooHashingException` when no hashing slot becomes free within `authentication.hashing.timeout`. `matchArgon2` does not report that as a mismatch. See [Argon2 hashing](configuration.md#argon2-hashing).
+
+`hexSHA512` is SHA3-512 and returns `null` on failure. `randomString(int)` requires a length from 22 to 512 and uses URL-safe Base64. `serializeToBase64` and `deserializeFromBase64` need `registerSerializable(Class)` first, and only for data you trust. `bitLength` checks key material.
 
 ## JwtUtils
 
 Sessions, authentication, and the admin cookie all use Nimbus JOSE+JWT (HS512 + JWE) under the hood. You can also issue tokens yourself for your own use cases:
 
+`withKey` and `withSecret` take `byte[]`. `createJwt` and `parseJwt` throw the checked `MangooJwtException`. The key is HMAC-SHA-512 and must be at least 64 bytes. The secret is the direct `A256CBC-HS512` key and must be exactly 64 bytes. `JwtUtils` does not check those lengths itself. Nimbus fails later. Clock skew is fixed at 30 seconds, and `nbf` is set to now minus 30 seconds. Reserved claim names are rejected. `withClaims(Map<String, String>)` and `withJwtID(String)` add claims. `extractCustomClaims(JWTClaimsSet)` reads the ones that are not reserved.
+
 ```java
+byte[] signingKey = ...;       // at least 64 bytes
+byte[] encryptionSecret = ...; // exactly 64 bytes
+
 var data = JwtUtils.JwtData.create()
     .withKey(signingKey)
     .withSecret(encryptionSecret)
@@ -38,7 +45,7 @@ String jwt = JwtUtils.createJwt(data);
 JWTClaimsSet claims = JwtUtils.parseJwt(jwt, data);
 ```
 
-Signing and encryption keys must be long enough for HS512 / AES respectively; prefer pulling those values from the [vault](secrets.md) rather than hardcoding them.
+Pull the key material from `env{}` or `file{}`. See [Secrets](secrets.md#secret-and-key-length).
 
 ## TotpUtils
 
@@ -50,12 +57,14 @@ boolean valid = TotpUtils.verifyTotp(secret, code);
 String qr = TotpUtils.getQRCode("user@example.com", "My App", secret);
 ```
 
+`verifyTotp(secret, code)` accepts a valid code any number of times. `verifyTotp(identifier, secret, code)` accepts each step once and keeps it until `(counter + 2) * 30` seconds. `createSecret()` is 64 Base32 characters. `getQRCode` returns a Base64 PNG, not a data URI. `getTotp(secret)` returns the current code. There is no adjacent-step window. Only the current 30-second step matches.
+
 ## DateUtils
 
 ```java
-Date date = DateUtils.localDateTimeToDate(LocalDateTime.now());
+Date date = DateUtils.localDateTimeToDate(LocalDateTime.now()); // application.timezone
 Date day = DateUtils.localDateToDate(LocalDate.now());
-String relative = DateUtils.getPrettyTime(LocalDateTime.now());
+String relative = DateUtils.getPrettyTime(LocalDateTime.now()); // fixed locale en-EN
 String de = DateUtils.getPrettyTime(Locale.GERMAN, LocalDateTime.now());
 ```
 
@@ -91,4 +100,4 @@ Argument.requireNonBlank(value, "value");
 
 ## Crypto
 
-`io.mangoo.crypto.Crypto` encrypts with AES and can also wrap values with RSA (3072-bit, OAEP SHA-512). Inject it whenever you need application-level encryption that goes beyond what the vault already covers.
+`io.mangoo.crypto.Crypto` encrypts strings with AES-256-GCM. The key is SHA-256 of the secret after non-ASCII characters are stripped, and at least 32 characters have to remain. `encrypt(String, String)` and `decrypt(String, String)` return `null` on failure. They do not throw. RSA is 3072-bit `RSA/None/OAEPWITHSHA-512ANDMGF1PADDING` and throws the checked `MangooEncryptionException`. `generateKeyPair()`, `getKeyAsString(Key)`, `getPrivateKeyFromString` (PKCS#8 Base64), and `getPublicKeyFromString` (X.509 Base64) are the key helpers.

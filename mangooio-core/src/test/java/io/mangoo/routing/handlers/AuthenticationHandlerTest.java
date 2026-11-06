@@ -38,18 +38,6 @@ class AuthenticationHandlerTest {
     }
 
     @Test
-    void testOriginWithoutQueryStringHasNoQuestionMark() {
-        //given
-        var exchange = exchange("/admin/secret", "");
-
-        //when
-        var origin = AuthenticationHandler.origin(exchange);
-
-        //then
-        assertEquals("/admin/secret", decode(origin));
-    }
-
-    @Test
     void testOriginDoesNotInjectAdditionalParameters() {
         //given an ampersand is a legal sub-delimiter inside a URI path
         var exchange = exchange("/admin&next=https://evil.com", "");

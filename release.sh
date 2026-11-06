@@ -16,7 +16,9 @@ export PATH="$HOME/Library/Python/3.13/bin:$PATH"
 
 TOTAL_STEPS=6
 CURRENT_STEP=0
-RELEASE_BRANCH="main"
+MAIN_BRANCH="main"
+RELEASE_BRANCH=""
+DOCS_LATEST=true
 DEPLOYED=false
 VERSION=""
 
@@ -231,9 +233,25 @@ if [[ -n $(git status --porcelain) ]]; then
 fi
 success "Git working directory is clean."
 
-CURRENT_BRANCH=$(git symbolic-ref --short -q HEAD || true)
-if [[ "$CURRENT_BRANCH" != "$RELEASE_BRANCH" ]]; then
-  error "Releases must be created from '${RELEASE_BRANCH}' (current: '${CURRENT_BRANCH:-detached HEAD}')."
+# The release commit is pushed to the branch it was created from, so a detached HEAD is not supported.
+RELEASE_BRANCH=$(git symbolic-ref --short -q HEAD || true)
+if [[ -z "$RELEASE_BRANCH" ]]; then
+  error "Releases must be created from a branch (current: detached HEAD)."
+  exit 1
+fi
+
+if [[ "$RELEASE_BRANCH" != "$MAIN_BRANCH" ]]; then
+  warn "Releasing from '${RELEASE_BRANCH}' instead of '${MAIN_BRANCH}'."
+  read -rp "  ❓  Continue with a release from '${RELEASE_BRANCH}'? [y/N]: " CONFIRM_BRANCH
+  if [[ ! "$CONFIRM_BRANCH" =~ ^[yY]$ ]]; then
+    warn "Release aborted."
+    exit 1
+  fi
+  echo
+fi
+
+if ! git ls-remote --exit-code --heads origin "$RELEASE_BRANCH" > /dev/null 2>&1; then
+  error "Branch '${RELEASE_BRANCH}' does not exist on origin. Please push it first."
   exit 1
 fi
 
@@ -293,13 +311,26 @@ echo
 
 if ! is_prerelease_version "$NEW_VERSION"; then
   check_docs_toolchain
+
+  # A release from another branch, e.g. a maintenance branch, must not replace the docs of a newer version.
+  if [[ "$RELEASE_BRANCH" != "$MAIN_BRANCH" ]]; then
+    read -rp "  ❓  Mark the docs of ${NEW_VERSION} as 'latest' and default? [y/N]: " CONFIRM_LATEST
+    if [[ ! "$CONFIRM_LATEST" =~ ^[yY]$ ]]; then
+      DOCS_LATEST=false
+    fi
+    echo
+  fi
 else
   warn "Skipping documentation preflight — version ${BOLD}${NEW_VERSION}${RESET} contains 'beta', 'alpha', or 'rc'."
 fi
 
 echo
+info "Release branch   :  ${BOLD}${RELEASE_BRANCH}${RESET}"
 info "Release version  :  ${BOLD}${NEW_VERSION}${RESET}"
 info "Next dev version :  ${BOLD}${NEXT_SNAPSHOT_VERSION}${RESET}"
+if ! is_prerelease_version "$NEW_VERSION"; then
+  info "Docs as latest   :  ${BOLD}${DOCS_LATEST}${RESET}"
+fi
 echo
 read -rp "  ❓  Deploy ${NEW_VERSION} to Maven Central? This cannot be undone [y/N]: " CONFIRM
 if [[ ! "$CONFIRM" =~ ^[yY]$ ]]; then
@@ -343,8 +374,12 @@ if ! is_prerelease_version "$VERSION"; then
   run_zensical "Building docs with Zensical for ${BOLD}${VERSION}${RESET}" build --strict
 
   run_silent "Updating local gh-pages from origin" git fetch origin gh-pages:gh-pages
-  run_silent "Deploying docs for ${BOLD}${VERSION}${RESET}" mike deploy --update-aliases "$VERSION" latest
-  run_silent "Setting default docs version to ${BOLD}${VERSION}${RESET}" mike set-default "$VERSION"
+  if [[ "$DOCS_LATEST" == true ]]; then
+    run_silent "Deploying docs for ${BOLD}${VERSION}${RESET}" mike deploy --update-aliases "$VERSION" latest
+    run_silent "Setting default docs version to ${BOLD}${VERSION}${RESET}" mike set-default "$VERSION"
+  else
+    run_silent "Deploying docs for ${BOLD}${VERSION}${RESET} without 'latest'" mike deploy "$VERSION"
+  fi
   run_silent "Pushing gh-pages" git push origin gh-pages
 
   echo

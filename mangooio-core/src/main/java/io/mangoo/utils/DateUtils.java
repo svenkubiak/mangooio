@@ -23,7 +23,7 @@ public final class DateUtils {
         Objects.requireNonNull(localDateTime, Required.LOCAL_DATE_TIME);
         var config = Application.getInstance(Config.class);
 
-        return Date.from(localDateTime.atZone(config.getApplicationTimeZone()).toInstant());
+        return Date.from(localDateTime.atZone(config.getApplicationTimeZoneId()).toInstant());
     }
     
     /**
@@ -34,7 +34,7 @@ public final class DateUtils {
         var config = Application.getInstance(Config.class);
 
         return Date.from(localDate.atStartOfDay()
-                .atZone(config.getApplicationTimeZone())
+                .atZone(config.getApplicationTimeZoneId())
                 .toInstant());
     }
 

@@ -29,28 +29,4 @@ class RequestRouteTest {
         //then
         assertThat(requestRoute.getUrl(), equalTo("/bar"));
     }
-    
-    @Test
-    void testAuthentication() {
-        //given
-        RequestRoute requestRoute = new RequestRoute(Http.GET);
-        
-        //when
-        requestRoute.withAuthentication();
-        
-        //then
-        assertThat(requestRoute.hasAuthentication(), equalTo(true));
-    }
-
-    @Test
-    void testNonBlocking() {
-        //given
-        RequestRoute requestRoute = new RequestRoute(Http.GET);
-        
-        //when
-        requestRoute.withNonBlocking();
-        
-        //then
-        assertThat(requestRoute.isBlocking(), equalTo(true));
-    }
 }

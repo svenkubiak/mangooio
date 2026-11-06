@@ -13,9 +13,9 @@ Bind.serverSentEvent().to("/sse");
 !!! warning "SSE endpoints are not authenticated"
     SSE routes are registered directly on Undertow's path handler and therefore bypass the framework's handler chain entirely, including the authentication check that `withAuthentication()` provides for controller routes. There is no `withAuthentication()` on an SSE route, and none of the framework's access control applies to one.
 
-    Every SSE endpoint you bind is reachable by anyone who knows its URL, and that URL is usually visible in your client-side JavaScript. On top of that, the default handler groups connections by request URI rather than by user, so a single event sent to a path reaches *every* client connected to it. Treat an SSE stream bound this way as a public broadcast channel and do not push anything over it that is specific to one user or that you would not serve from an unauthenticated endpoint.
+    Every SSE endpoint is reachable by anyone who knows the URL. The default handler groups connections by request URI, so `send(path, data)` reaches every client on that path. Do not push anything you would not serve from a public controller.
 
-    A [custom connection handler](#custom-connection-handler) is the way out of both halves of this: it sees the connection while it is being established and can check a token off the query string or a header, reject the connection, and key the ones it accepts per user instead of per path. The framework still does not authenticate for you, but it no longer stands in the way of doing it yourself.
+    A [custom connection handler](#custom-connection-handler) can check a token, reject the connection, and key the ones it accepts per user. The framework still does not authenticate the route for you.
 
 ## Sending
 
@@ -37,7 +37,11 @@ public class NotifyService {
 }
 ```
 
-The first argument is the key the connections are held under, which for the default handler is the route URL, and the payload is a plain string. Delivery runs on a virtual thread, so `sendData()` returns immediately without blocking on connected clients.
+The first argument is the key the connections are held under. For the default handler that is the request URI. The payload is a plain string.
+
+Client writes run on virtual threads. With persistence enabled, `send` also inserts into `mangooio_messages` on the calling thread before it returns, so a slow MongoDB stalls the caller. Other instances tail that capped collection and skip documents they published themselves. There is no replay. An instance that is restarting, or a tail that is disconnected, misses those events. Without persistence the broker is in-memory and `send` reaches only the connections on this JVM.
+
+`removeConnection(key, connection)` drops one connection. `closeAll()` closes every connection this instance holds. Shutdown does that before it drains in-flight controller requests.
 
 ## Custom connection handler
 
@@ -94,5 +98,7 @@ location /sse {
     proxy_set_header Connection "";
 }
 ```
+
+On shutdown every SSE connection is closed before open requests are drained, as an open connection would otherwise hold the shutdown until its timeout. Browsers reconnect automatically and reach another instance through the load balancer.
 
 Client setup: [MDN Server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).

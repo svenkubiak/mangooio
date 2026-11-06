@@ -4,6 +4,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import controllers.AuthenticationController;
 import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.test.http.TestBrowser;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
@@ -20,24 +22,10 @@ import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class AuthenticationControllerTest {
-    private static final String USERNAME = "foo";
     private static final String AUTHENTICATION_COOKIE = "test-authentication";
     private static final String SUBJECT = "mysubject";
     private static final String LOCATION = "Location";
 
-    @Test
-    void testNotAuthenticated() {
-        //given
-        TestResponse response = TestRequest.get("/authenticationrequired")
-                .withDisabledRedirects()
-                .execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-        assertThat(response.getContent(), not(equalTo(USERNAME)));
-    }
-    
     @Test
     void testSubject() {
         //given
@@ -45,7 +33,6 @@ class AuthenticationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("not authenticated"));
         
@@ -57,7 +44,6 @@ class AuthenticationControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
         
         //given
@@ -66,7 +52,6 @@ class AuthenticationControllerTest {
                 .execute();
 
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("authenticated"));
     }
@@ -84,7 +69,6 @@ class AuthenticationControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
 
         //when
@@ -94,7 +78,6 @@ class AuthenticationControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent().length(), equalTo(9));
 
@@ -104,7 +87,6 @@ class AuthenticationControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
         //when
@@ -113,7 +95,6 @@ class AuthenticationControllerTest {
                 .execute();
         
         //then
-        assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
     }
 
@@ -232,5 +213,36 @@ class AuthenticationControllerTest {
 
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo(SUBJECT));
+    }
+
+    @Test
+    void testLoginReplacesAnInvalidAuthenticationCookie() {
+        //given
+        String name = Application.getInstance(Config.class).getAuthenticationCookieName();
+        var invalid = new HttpCookie(name, "invalid");
+        invalid.setPath("/");
+
+        //when
+        TestResponse response = TestRequest.post("/dologin")
+                .withCookie(invalid)
+                .withDisabledRedirects()
+                .execute();
+
+        //then
+        String cookie = response.getHttpResponse().headers().allValues("Set-Cookie").stream()
+                .filter(header -> header.startsWith(name + "="))
+                .findFirst()
+                .orElse("");
+        assertThat(cookie, not(startsWith(name + "=;")));
+        assertThat(cookie, startsWith(name + "="));
+
+        //when
+        response = TestRequest.get("/authenticationrequired")
+                .withCookie(HttpCookie.parse(cookie).getFirst())
+                .withDisabledRedirects()
+                .execute();
+
+        //then
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
 }

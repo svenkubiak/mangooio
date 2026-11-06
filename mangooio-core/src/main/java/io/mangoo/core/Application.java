@@ -6,6 +6,7 @@ import com.cronutils.parser.CronParser;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.*;
 import com.google.inject.Module;
+import com.google.inject.util.Modules;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.CollationStrength;
@@ -16,20 +17,23 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.MethodInfo;
 import io.github.classgraph.ScanResult;
+import io.mangoo.admin.AdminActions;
 import io.mangoo.admin.AdminController;
+import io.mangoo.admin.AdminStream;
+import io.mangoo.admin.InstanceHeartbeat;
 import io.mangoo.async.EventBus;
 import io.mangoo.async.Subscriber;
 import io.mangoo.cache.CacheProvider;
-import io.mangoo.constants.CacheName;
-import io.mangoo.constants.Default;
+import io.mangoo.constants.*;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.Required;
 import io.mangoo.crypto.PasswordHasher;
-import io.mangoo.crypto.Vault;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Sort;
-import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.persistence.interfaces.Datastore;
+import io.mangoo.interfaces.*;
+import io.mangoo.interfaces.persistence.Datastore;
+import io.mangoo.persistence.MongoMessageBroker;
+import io.mangoo.persistence.MongoSchema;
+import io.mangoo.persistence.MongoStore;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
@@ -48,61 +52,76 @@ import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
+import io.undertow.server.handlers.GracefulShutdownHandler;
 import io.undertow.server.handlers.PathHandler;
+import io.undertow.server.handlers.ProxyPeerAddressHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
+import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 import io.undertow.util.Methods;
 import io.undertow.websockets.WebSocketConnectionCallback;
+import io.undertow.websockets.WebSocketProtocolHandshakeHandler;
+import io.undertow.websockets.core.CloseMessage;
+import io.undertow.websockets.core.WebSocketChannel;
+import io.undertow.websockets.core.WebSockets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.logging.log4j.util.Strings;
+import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.xnio.Options;
+import org.xnio.Sequence;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class Application {
+    static {
+        // Also set in log4j2.system.properties, so a logger created before this class still sees it
+        System.setProperty("log4j2.shutdownHookEnabled", "false");
+    }
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final String INSTANCE_ID = instanceId(hostname());
+    static {
+        System.setProperty(Key.INSTANCE_ID, INSTANCE_ID);
+    }
     private static final Log4jListener LOG4J_LISTENER = new Log4jListener();
     static {
         StatusLogger.getLogger().registerListener(LOG4J_LISTENER);
     }
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final long START = System.currentTimeMillis();
+    private static final Map<String, WebSocketProtocolHandshakeHandler> WEB_SOCKET_HANDLERS = new ConcurrentHashMap<>();
+    private static final Map<String, io.undertow.server.handlers.sse.ServerSentEventHandler> SERVER_SENT_EVENT_HANDLERS = new ConcurrentHashMap<>();
     private static final int SECRET_BIT_LENGTH = 512;
+    private static final String TLS_PROTOCOL = "TLSv1.3";
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
     private static final String SCHEDULER = "io.mangoo.annotations.Run";
     private static final String MODULE_CLASS = "app.Module";
     private static final String ALL_PACKAGES = "*";
-    // Only unambiguous third-party prefixes, as application classes must still be found in any other package
-    static final String[] SCAN_REJECTED_PACKAGES = {
-            "com.bastiaanjansen", "com.cronutils", "com.fasterxml", "com.github.benmanes", "com.google", "com.icegreen",
-            "com.launchdarkly", "com.mongodb", "com.nimbusds", "com.sun", "de.flapdoodle",
-            "de.svenkubiak.embeddedmongodb", "edu.umd", "freemarker", "io.github.classgraph", "io.micrometer",
-            "io.netty", "io.opentelemetry", "io.smallrye", "io.undertow", "jakarta", "javassist", "javax",
-            "jersey.repackaged", "kotlin", "net.bytebuddy", "net.glxn", "net.jawr", "net.jcip",
-            "okhttp3", "okio", "org.aopalliance", "org.apache", "org.apiguardian",
-            "org.awaitility", "org.bouncycastle", "org.bson", "org.cactoos", "org.codehaus", "org.commonmark",
-            "org.eclipse", "org.exparity", "org.glassfish", "org.hamcrest", "org.hibernate", "org.jboss", "org.jgrapht",
-            "org.jheaps", "org.jspecify", "org.junit", "org.jvnet", "org.llorllale", "org.mockito", "org.objenesis",
-            "org.ocpsoft", "org.opentest4j", "org.reactivestreams", "org.reflections", "org.slf4j", "org.wildfly",
-            "org.xnio", "org.yaml"
-    };
     private static final String LOGO = """
                                                         ___     __  ___ \s
          _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \\\s
@@ -119,7 +138,9 @@ public final class Application {
     private static Mode mode;
     private static Injector injector;
     private static PathHandler pathHandler;
+    private static GracefulShutdownHandler gracefulShutdownHandler;
     private static boolean started;
+    private static volatile boolean ready;
     private static int httpPort;
     private static int httpsPort;
 
@@ -155,6 +176,8 @@ public final class Application {
             createRoutes();
             validateUrls();
             awaitScan(scan);
+            startMessageBroker();
+            prepareAdmin();
             prepareUndertow();
             prepareShutdown();
             sanityChecks();
@@ -163,10 +186,10 @@ public final class Application {
             showTimezone();
             showLogo();
             started = true;
+            ready = true;
         }
     }
 
-    // Instantiated eagerly so the effective Argon2 concurrency is logged at startup, not on the first hash.
     private static void preparePasswordHasher() {
         getInstance(PasswordHasher.class);
     }
@@ -174,8 +197,8 @@ public final class Application {
     private static void logCheck() {
         LOG4J_LISTENER.validateAndCollect();
         if (!LOG4J_LISTENER.getEvents().isEmpty()) {
-            System.out.println("Log4j configuration failed with errors:");
-            System.out.println("\t" + LOG4J_LISTENER.getEvents().toString());
+            System.out.println("Log4j configuration failed with errors:"); //NOSONAR
+            System.out.println("\t" + LOG4J_LISTENER.getEvents().toString()); //NOSONAR
             failsafe();
         }
     }
@@ -188,6 +211,34 @@ public final class Application {
             Thread.currentThread().interrupt();
             LOG.error("Interrupted while waiting for the classpath scan", e);
             failsafe();
+        }
+    }
+
+    // Started after the classpath scan prepared its collection and before the first request may publish
+    private static void startMessageBroker() {
+        if (getInstance(MessageBroker.class) instanceof MongoMessageBroker broker) {
+            broker.start();
+        }
+    }
+
+    // Created at startup, so every instance subscribes to the admin actions and not only the one that served the dashboard
+    private static void prepareAdmin() {
+        if (getInstance(Config.class).isApplicationAdminEnable()) {
+            getInstance(AdminActions.class);
+            getInstance(InstanceHeartbeat.class).start();
+            getInstance(AdminStream.class).start();
+        }
+    }
+
+    static void stopHeartbeat() {
+        if (getInstance(Config.class).isApplicationAdminEnable()) {
+            getInstance(InstanceHeartbeat.class).stop();
+        }
+    }
+
+    static void stopMessageBroker() {
+        if (getInstance(MessageBroker.class) instanceof MongoMessageBroker broker) {
+            broker.stop();
         }
     }
 
@@ -298,8 +349,7 @@ public final class Application {
         }
     }
 
-    record IndexDefinition(String field, Bson keys, IndexOptions options) {
-    }
+    record IndexDefinition(String field, Bson keys, IndexOptions options) { }
 
     // One index per @Indexed field; other annotations on the field and their order are irrelevant.
     static List<IndexDefinition> getIndexDefinitions(Class<?> clazz) {
@@ -339,21 +389,87 @@ public final class Application {
             });
 
             Datastore datastore = getInstance(Datastore.class);
-            scanResult.getClassesWithFieldAnnotation(INDEXED).forEach(classInfo -> {
-                var clazz = loadClass(classInfo);
-                for (IndexDefinition index : getIndexDefinitions(clazz)) {
-                    try {
-                        datastore.addIndex(clazz, index.keys(), index.options());
-                    } catch (MongoCommandException e) {
-                        LOG.error("Failed to add mongodb index for class {} and index name {}", clazz, index.field(), e);
-                        throw e;
-                    }
-                }
-            });
+            checkMongoVersion(datastore);
 
+            String schema = config.getMongoSchema();
+            if (!MongoSchema.CREATE.equals(schema) && !MongoSchema.VALIDATE.equals(schema)) {
+                throw new IllegalArgumentException(Key.PERSISTENCE_MONGO_SCHEMA + " must be " + MongoSchema.CREATE + " or " + MongoSchema.VALIDATE + ", but is " + schema);
+            }
+
+            List<Class<?>> indexed = scanResult.getClassesWithFieldAnnotation(INDEXED).stream()
+                    .<Class<?>>map(Application::loadClass)
+                    .toList();
+            List<MongoStore> stores = Stream.of(AttemptStore.class, OneTimeStore.class, TokenBlacklist.class, MessageBroker.class, InstanceRegistry.class)
+                    .map(Application::getInstance)
+                    .filter(MongoStore.class::isInstance)
+                    .map(MongoStore.class::cast)
+                    .toList();
+
+            if (MongoSchema.CREATE.equals(schema)) {
+                createSchema(datastore, indexed, stores);
+            } else {
+                validateSchema(datastore, indexed, stores);
+            }
         }
     }
 
+    private static void createSchema(Datastore datastore, List<Class<?>> indexed, List<MongoStore> stores) {
+        for (Class<?> clazz : indexed) {
+            for (IndexDefinition index : getIndexDefinitions(clazz)) {
+                try {
+                    datastore.addIndex(clazz, index.keys(), index.options());
+                } catch (MongoCommandException e) {
+                    LOG.error("Failed to add mongodb index for class {} and index name {}", clazz, index.field(), e);
+                    throw e;
+                }
+            }
+        }
+
+        stores.forEach(MongoStore::prepare);
+    }
+
+    // Creates nothing, so a database user without the right to create collections and indexes can run the application
+    static void validateSchema(Datastore datastore, List<Class<?>> indexed, List<MongoStore> stores) {
+        List<String> missing = new ArrayList<>();
+        for (Class<?> clazz : indexed) {
+            String name = PersistenceUtils.getCollectionName(clazz);
+            if (name == null) {
+                continue;
+            }
+
+            var collection = datastore.getMongoDatabase().getCollection(name);
+            for (IndexDefinition index : getIndexDefinitions(clazz)) {
+                if (!MongoSchema.hasIndex(collection, index.keys(), index.options())) {
+                    missing.add(MongoSchema.createIndexCommand(name, index.keys(), index.options()));
+                }
+            }
+        }
+        stores.forEach(store -> missing.addAll(store.validate()));
+
+        if (!missing.isEmpty()) {
+            throw new IllegalStateException(Key.PERSISTENCE_MONGO_SCHEMA + " is " + MongoSchema.VALIDATE
+                    + ", but the database lacks the following, create it with mongosh:\n  " + String.join("\n  ", missing));
+        }
+    }
+
+    // Pipeline updates and $$NOW of the shared stores require MongoDB 4.2
+    private static void checkMongoVersion(Datastore datastore) {
+        var buildInfo = datastore.getMongoDatabase().runCommand(new Document("buildInfo", 1));
+        List<Integer> version = buildInfo.getList("versionArray", Integer.class);
+        if (!isSupportedMongoVersion(version)) {
+            throw new IllegalStateException("MongoDB " + buildInfo.getString("version") + " is not supported, mangoo I/O requires MongoDB 4.2 or later");
+        }
+    }
+
+    static boolean isSupportedMongoVersion(List<Integer> version) {
+        if (version == null || version.size() < 2) {
+            return false;
+        }
+
+        return version.get(0) > 4 || (version.get(0) == 4 && version.get(1) >= 2);
+    }
+
+    @SuppressWarnings("unchecked")
     private static void prepareSubscriber(ScanResult scanResult) {
         scanResult.getAllClassesImplementing(Subscriber.class).forEach(classInfo -> {
             if (classInfo.isAbstract() || classInfo.isInterface()) {
@@ -410,8 +526,12 @@ public final class Application {
         }
     }
 
+    static boolean isEmbeddedInProd(Mode mode, boolean persistence, Boolean embedded) {
+        return mode == Mode.PROD && persistence && Boolean.TRUE.equals(embedded);
+    }
+
     static boolean isRootForbidden(String uid, Mode mode) {
-        return "0".equals(StringUtils.trim(uid)) && mode == Mode.PROD;
+        return mode == Mode.PROD && "0".equals(StringUtils.trim(uid));
     }
 
     public static boolean inProdMode() {
@@ -447,7 +567,7 @@ public final class Application {
 
         return LocalDateTime.ofInstant(
                 Instant.ofEpochMilli(START),
-                config.getApplicationTimeZone()
+                config.getApplicationTimeZoneId()
         );
     }
 
@@ -462,7 +582,9 @@ public final class Application {
     }
 
     public static void stopUndertow() {
-        undertow.stop();
+        if (undertow != null) {
+            undertow.stop();
+        }
     }
 
     private static void prepareMode(Mode providedMode) {
@@ -493,6 +615,13 @@ public final class Application {
         if (!config.isValid()) {
             LOG.error("Application configuration is invalid");
             failsafe();
+        }
+
+        // The cookie secrets and keys fall back to it, and the admin and hashing code use it directly
+        if (StringUtils.isBlank(config.getApplicationSecret())) {
+            LOG.error("{} is required, also if every cookie has dedicated secrets and keys", Key.APPLICATION_SECRET);
+            failsafe();
+            return;
         }
 
         checkSecret(Key.APPLICATION_SECRET, config.getApplicationSecret().getBytes(StandardCharsets.UTF_8));
@@ -598,6 +727,12 @@ public final class Application {
             LOG.warn(warning);
         }
 
+        if (isEmbeddedInProd(mode, config.isPersistenceEnabled(), config.isMongoEmbedded(Default.PERSISTENCE_PREFIX))) {
+            var warning = "Embedded MongoDB is enabled in prod mode. Every instance starts its own database and shares no state with other instances. It is highly recommended to use an external MongoDB in a production environment.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
         getInstance(CacheProvider.class)
                 .getCache(CacheName.APPLICATION)
                 .put(Key.MANGOOIO_WARNINGS, warnings);
@@ -630,13 +765,17 @@ public final class Application {
                             ? getInstance(ServerSentEventHandler.class)
                             : getInstance(clazz);
 
-                    pathHandler.addExactPath(serverSentEventRoute.getUrl(), ServerSentEventHandler.wrap(callback));
+                    var serverSentEventHandler = ServerSentEventHandler.serverSentEvents(callback);
+                    SERVER_SENT_EVENT_HANDLERS.put(serverSentEventRoute.getUrl(), serverSentEventHandler);
+                    pathHandler.addExactPath(serverSentEventRoute.getUrl(), ServerSentEventHandler.withHeaders(serverSentEventHandler));
                 }
         );
 
         Router.getWebSocketRoutes().forEach((WebSocketRoute webSocketRoute) -> {
                     Class<? extends WebSocketConnectionCallback> clazz = webSocketRoute.getHandler();
-                    pathHandler.addExactPath(webSocketRoute.getUrl(), Handlers.websocket(getInstance(clazz)));
+                    WebSocketProtocolHandshakeHandler webSocketHandler = Handlers.websocket(getInstance(clazz));
+                    WEB_SOCKET_HANDLERS.put(webSocketRoute.getUrl(), webSocketHandler);
+                    pathHandler.addExactPath(webSocketRoute.getUrl(), webSocketHandler);
                 }
         );
 
@@ -644,6 +783,10 @@ public final class Application {
                 pathHandler.addPrefixPath(pathRoute.getUrl(),
                         new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER + pathRoute.getUrl())))
         );
+
+        if (getInstance(Config.class).isApplicationAdminEnable()) {
+            pathHandler.addExactPath("/@admin/stream", getInstance(AdminStream.class).handler());
+        }
 
         pathHandler.addPrefixPath("/@admin/assets/",
                 new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "templates/@admin/assets/")));
@@ -663,10 +806,13 @@ public final class Application {
                             On.get().to("/@admin/login").respondeWith("login"),
                             On.get().to("/@admin/twofactor").respondeWith("twofactor"),
                             On.get().to("/@admin/scheduler").respondeWith("scheduler"),
+                            On.get().to("/@admin/routes").respondeWith("routes"),
                             On.get().to("/@admin/security").respondeWith("security"),
                             On.get().to("/@admin/logout").respondeWith("logout"),
                             On.post().to("/@admin/authenticate").respondeWith("authenticate"),
-                            On.post().to("/@admin/verify").respondeWith("verify")
+                            On.post().to("/@admin/verify").respondeWith("verify"),
+                            On.post().to("/@admin/cache/clear").respondeWith("clearCache"),
+                            On.post().to("/@admin/metrics/reset").respondeWith("resetMetrics")
                     );
         }
 
@@ -692,7 +838,6 @@ public final class Application {
 
     private static void prepareUndertow() {
         var config = getInstance(Config.class);
-        var vault = getInstance(Vault.class);
 
         HttpHandler httpHandler;
         if (config.isMetricsEnable()) {
@@ -701,11 +846,17 @@ public final class Application {
             httpHandler = ExceptionHandler.wrap(pathHandler);
         }
 
+        if (config.isOtlpEnable()) {
+            httpHandler = new TelemetryHandler(httpHandler);
+        }
+
+        gracefulShutdownHandler = new GracefulShutdownHandler(proxy(httpHandler, config.isConnectorProxy()));
+
         var builder = Undertow.builder()
                 .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getUndertowMaxEntitySize())
                 .setServerOption(UndertowOptions.MAX_PARAMETERS, Default.UNDERTOW_MAX_PARAMETERS)
                 .setServerOption(UndertowOptions.MAX_HEADER_SIZE, Default.UNDERTOW_MAX_HEADER_SIZE)
-                .setHandler(httpHandler);
+                .setHandler(new HealthHandler(gracefulShutdownHandler, Application::isReady));
 
         httpHost = config.getConnectorHttpHost();
         httpPort = config.getConnectorHttpPort();
@@ -719,8 +870,21 @@ public final class Application {
         }
 
         if (httpsPort > 0 && StringUtils.isNotBlank(httpsHost)) {
-            builder.addHttpsListener(httpsPort, httpsHost, vault.getSSLContext(config.getConnectorHttpsCertificateAlias()));
-            hasConnector = true;
+            if (StringUtils.isBlank(config.getConnectorHttpsKeystore())) {
+                LOG.error("The HTTPS connector requires a PKCS12 file with key and certificate in {}", Key.CONNECTOR_HTTPS_KEYSTORE);
+                failsafe();
+            }
+
+            try {
+                addHttpsListener(builder, httpsPort, httpsHost, sslContext(
+                        Path.of(config.getConnectorHttpsKeystore()),
+                        StringUtils.defaultString(config.getConnectorHttpsPassword()).toCharArray(),
+                        config.getConnectorHttpsCertificateAlias()));
+                hasConnector = true;
+            } catch (IllegalStateException e) {
+                LOG.error("Failed to create the HTTPS connector", e);
+                failsafe();
+            }
         }
 
         if (hasConnector) {
@@ -754,7 +918,7 @@ public final class Application {
             LOG.info("HTTPS connector listening @{}:{}", httpsHost, httpsPort);
         }
 
-        LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", System.currentTimeMillis() - START, mode);
+        LOG.info("mangoo I/O application started in {} ms in {} mode as instance '{}'. Enjoy.", System.currentTimeMillis() - START, mode, INSTANCE_ID);
     }
 
     // Secrets are used as dir/A256CBC_HS512 key, which requires exactly 512 bit; any other length fails at runtime.
@@ -784,8 +948,7 @@ public final class Application {
         final List<Module> modules = new ArrayList<>();
         try {
             module = new io.mangoo.core.Module();
-            modules.add(module);
-            modules.add((AbstractModule) Class.forName(MODULE_CLASS).getConstructor().newInstance());
+            modules.add(override(module, (AbstractModule) Class.forName(MODULE_CLASS).getConstructor().newInstance()));
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                  | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             LOG.error("Failed to load modules. Check that app/Module.java exists in your application", e);
@@ -793,6 +956,163 @@ public final class Application {
         }
 
         return modules;
+    }
+
+    // SSLContext.getInstance("TLSv1.3") still enables TLS 1.2 on the server side, so the protocols are restricted explicitly
+    static Undertow.Builder addHttpsListener(Undertow.Builder builder, int port, String host, SSLContext sslContext) {
+        return builder
+                .setSocketOption(Options.SSL_ENABLED_PROTOCOLS, Sequence.of(TLS_PROTOCOL))
+                .addHttpsListener(port, host, sslContext);
+    }
+
+    static SSLContext sslContext(Path keystore, char[] password, String alias) {
+        Objects.requireNonNull(keystore, "keystore can not be null");
+        Objects.requireNonNull(password, Required.PASSWORD);
+
+        try (var inputStream = Files.newInputStream(keystore)) {
+            var keyStore = KeyStore.getInstance("PKCS12");
+            keyStore.load(inputStream, password);
+
+            String keyAlias = StringUtils.isNotBlank(alias) ? alias : singleKeyAlias(keyStore, keystore);
+            if (!keyStore.isKeyEntry(keyAlias) || keyStore.getCertificateChain(keyAlias) == null) {
+                throw new IllegalStateException(keystore + " has no key entry with a certificate under the alias '" + keyAlias + "'");
+            }
+
+            // Only the selected entry is handed to the key manager, so other entries of the file can not be picked
+            var selected = KeyStore.getInstance("PKCS12");
+            selected.load(null, null);
+            selected.setKeyEntry(keyAlias, keyStore.getKey(keyAlias, password), password, keyStore.getCertificateChain(keyAlias));
+
+            var keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            keyManagerFactory.init(selected, password);
+
+            var sslContext = SSLContext.getInstance(TLS_PROTOCOL);
+            sslContext.init(keyManagerFactory.getKeyManagers(), null, SECURE_RANDOM);
+
+            return sslContext;
+        } catch (IOException | GeneralSecurityException e) {
+            throw new IllegalStateException("Failed to load the HTTPS keystore " + keystore, e);
+        }
+    }
+
+    private static String singleKeyAlias(KeyStore keyStore, Path keystore) throws KeyStoreException {
+        List<String> aliases = new ArrayList<>();
+        for (String alias : Collections.list(keyStore.aliases())) {
+            if (keyStore.isKeyEntry(alias)) {
+                aliases.add(alias);
+            }
+        }
+
+        if (aliases.size() != 1) {
+            throw new IllegalStateException(keystore + " holds " + aliases.size() + " key entries, set " + Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
+        }
+
+        return aliases.getFirst();
+    }
+
+    // A binding of the application replaces the core binding of the same key instead of failing as a duplicate
+    static Module override(Module core, Module application) {
+        Objects.requireNonNull(core, "core module can not be null");
+        Objects.requireNonNull(application, "application module can not be null");
+
+        return Modules.override(core).with(application);
+    }
+
+    static HttpHandler proxy(HttpHandler next, boolean enabled) {
+        return enabled ? new ProxyPeerAddressHandler(next) : next;
+    }
+
+    static String instanceId(String hostname) {
+        var bytes = new byte[3];
+        SECURE_RANDOM.nextBytes(bytes);
+
+        return StringUtils.defaultIfBlank(StringUtils.trim(hostname), "mangooio") + "-" + HexFormat.of().formatHex(bytes);
+    }
+
+    // HOSTNAME is set in containers. Otherwise the JVM name is pid@hostname from gethostname.
+    // InetAddress.getLocalHost() would resolve that name through DNS and can hang while the class initializes.
+    private static String hostname() {
+        var hostname = System.getenv("HOSTNAME");
+        if (StringUtils.isNotBlank(hostname)) {
+            return hostname;
+        }
+
+        return hostnameFromRuntimeName(ManagementFactory.getRuntimeMXBean().getName());
+    }
+
+    static String hostnameFromRuntimeName(String runtimeName) {
+        if (runtimeName == null) {
+            return null;
+        }
+
+        int separator = runtimeName.indexOf('@');
+        if (separator < 0 || separator == runtimeName.length() - 1) {
+            return null;
+        }
+
+        return runtimeName.substring(separator + 1);
+    }
+
+    public static String getInstanceId() {
+        return INSTANCE_ID;
+    }
+
+    public static boolean isReady() {
+        return ready;
+    }
+
+    static void markShuttingDown() {
+        ready = false;
+    }
+
+    /** Open server-sent event connections of this instance by route URL. */
+    public static Map<String, Integer> getServerSentEventConnections() {
+        Map<String, Integer> connections = new TreeMap<>();
+        SERVER_SENT_EVENT_HANDLERS.forEach((url, handler) -> connections.put(url, handler.getConnections().size()));
+
+        return connections;
+    }
+
+    /** Open WebSocket connections of this instance by route URL. */
+    public static Map<String, Integer> getWebSocketConnections() {
+        Map<String, Integer> connections = new TreeMap<>();
+        WEB_SOCKET_HANDLERS.forEach((url, handler) -> connections.put(url, handler.getPeerConnections().size()));
+
+        return connections;
+    }
+
+    static void closeServerSentEvents() {
+        closeServerSentEvents(List.copyOf(SERVER_SENT_EVENT_HANDLERS.values()));
+        if (getInstance(Config.class).isApplicationAdminEnable()) {
+            getInstance(AdminStream.class).stop();
+        }
+    }
+
+    static void closeServerSentEvents(List<io.undertow.server.handlers.sse.ServerSentEventHandler> handlers) {
+        for (io.undertow.server.handlers.sse.ServerSentEventHandler handler : handlers) {
+            handler.getConnections().forEach(ServerSentEventConnection::shutdown);
+        }
+    }
+
+    static void closeWebSockets() {
+        closeWebSockets(List.copyOf(WEB_SOCKET_HANDLERS.values()));
+    }
+
+    static void closeWebSockets(List<WebSocketProtocolHandshakeHandler> handlers) {
+        for (WebSocketProtocolHandshakeHandler handler : handlers) {
+            for (WebSocketChannel channel : handler.getPeerConnections()) {
+                WebSockets.sendClose(CloseMessage.GOING_AWAY, "Server shutdown", channel, null);
+            }
+        }
+    }
+
+    static boolean drain(long timeoutMillis) throws InterruptedException {
+        if (gracefulShutdownHandler == null) {
+            return true;
+        }
+
+        gracefulShutdownHandler.shutdown();
+        return gracefulShutdownHandler.awaitShutdown(Math.max(0, timeoutMillis));
     }
 
     private static void applicationStarted() {
@@ -823,16 +1143,15 @@ public final class Application {
                 .ignoreMethodVisibility()
                 .ignoreFieldVisibility()
                 .acceptPackages(ALL_PACKAGES)
-                .rejectPackages(SCAN_REJECTED_PACKAGES)
+                .rejectPackages(Const.SCAN_REJECTED_PACKAGES.toArray(String[]::new))
                 .scan();
 
         LOG.info("Scanned {} classes in {} ms, known library packages are excluded", scanResult.getAllClasses().size(), System.currentTimeMillis() - start);
-        LOG.debug("Excluded packages from classpath scan: {}", String.join(", ", SCAN_REJECTED_PACKAGES));
+        LOG.debug("Excluded packages from classpath scan: {}", String.join(", ", Const.SCAN_REJECTED_PACKAGES));
 
         return scanResult;
     }
 
-    // ClassGraph no longer loads classes, loading without initialization matches the former ClassInfo#loadClass
     private static Class<?> loadClass(ClassInfo classInfo) {
         var classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {

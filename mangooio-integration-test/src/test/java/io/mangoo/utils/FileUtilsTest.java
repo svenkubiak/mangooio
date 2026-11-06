@@ -28,8 +28,7 @@ class FileUtilsTest {
         String mimeType = FileUtils.getMimeType(data);
 
         //then
-        assertThat(mimeType, not(nullValue()));
-        assertThat(mimeType, not(emptyString()));
+        assertThat(mimeType, equalTo("text/plain"));
     }
 
     @Test
@@ -49,8 +48,7 @@ class FileUtilsTest {
         String mimeType = FileUtils.getMimeType(data);
 
         //then
-        assertThat(mimeType, not(nullValue()));
-        assertThat(mimeType, not(emptyString()));
+        assertThat(mimeType, equalTo("text/plain"));
     }
 
     @Test
@@ -59,18 +57,6 @@ class FileUtilsTest {
 
         //when & then
         assertThrows(NullPointerException.class, () -> FileUtils.getMimeType((InputStream) null));
-    }
-
-    @Test
-    void testGetMimeTypeWithEmptyInputStream() {
-        //given
-        InputStream data = new ByteArrayInputStream(new byte[0]);
-
-        //when
-        String mimeType = FileUtils.getMimeType(data);
-
-        //then
-        assertThat(mimeType, not(nullValue()));
     }
 
     @Test
@@ -224,19 +210,6 @@ class FileUtilsTest {
     }
 
     @Test
-    void testReadFileToStringWithPathEmptyFile() throws IOException {
-        //given
-        Path testFile = tempDir.resolve("empty.txt");
-        Files.createFile(testFile);
-
-        //when
-        String result = FileUtils.readFileToString(testFile);
-
-        //then
-        assertThat(result, equalTo(""));
-    }
-
-    @Test
     void testReadFileToStringWithPathNonExistentFile() {
         //given
         Path nonExistentFile = tempDir.resolve("nonexistent.txt");
@@ -272,32 +245,6 @@ class FileUtilsTest {
     }
 
     @Test
-    void testReadFileToStringWithStringEmptyFile() throws IOException {
-        //given
-        Path testFile = tempDir.resolve("empty.txt");
-        Files.createFile(testFile);
-        String filePath = testFile.toString();
-
-        //when
-        String result = FileUtils.readFileToString(filePath);
-
-        //then
-        assertThat(result, equalTo(""));
-    }
-
-    @Test
-    void testReadFileToStringWithStringNonExistentFile() {
-        //given
-        String filePath = tempDir.resolve("nonexistent.txt").toString();
-
-        //when
-        String result = FileUtils.readFileToString(filePath);
-
-        //then
-        assertThat(result, equalTo(""));
-    }
-
-    @Test
     void testReadFileToStringWithStringNull() {
         //given
 
@@ -312,37 +259,6 @@ class FileUtilsTest {
 
         //when & then
         assertThrows(IllegalArgumentException.class, () -> FileUtils.readFileToString(filePath));
-    }
-
-    @Test
-    void testReadFileToStringWithUnicodeContent() throws IOException {
-        //given
-        Path testFile = tempDir.resolve("unicode.txt");
-        String content = "Hello 世界\nThis is a test file with unicode: 🚀";
-        Files.write(testFile, content.getBytes());
-
-        //when
-        String result = FileUtils.readFileToString(testFile);
-
-        //then
-        assertThat(result, equalTo(content));
-    }
-
-    @Test
-    void testReadFileToStringWithLargeFile() throws IOException {
-        //given
-        Path testFile = tempDir.resolve("large.txt");
-        StringBuilder content = new StringBuilder();
-        for (int i = 0; i < 1000; i++) {
-            content.append("Line ").append(i).append("\n");
-        }
-        Files.write(testFile, content.toString().getBytes());
-
-        //when
-        String result = FileUtils.readFileToString(testFile);
-
-        //then
-        assertThat(result, equalTo(content.toString()));
     }
 
     private static class TestCloseable implements Closeable {

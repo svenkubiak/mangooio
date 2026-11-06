@@ -75,22 +75,6 @@ class FlashTest {
     }
 
     @Test
-    void testFormerSeparatorCharactersAreStored() {
-        //given
-        final Flash flash = new Flash();
-
-        //when
-        flash.put("|", "foo");
-        flash.put("foo", " ");
-        flash.setSuccess("Gespeichert, vielen Dank");
-
-        //then
-        assertThat(flash.get("|"), equalTo("foo"));
-        assertThat(flash.get("foo"), equalTo(" "));
-        assertThat(flash.get("success"), equalTo("Gespeichert, vielen Dank"));
-    }
-
-    @Test
     void testReservedKeysAreRejected() {
         //given
         final Flash flash = new Flash();
@@ -100,35 +84,5 @@ class FlashTest {
             assertThrows(IllegalArgumentException.class, () -> flash.put(key, "foo"));
         }
         assertThat(flash.hasContent(), equalTo(false));
-    }
-
-    @Test
-    void testNoDiscard() {
-        //given
-        final Flash flash = new Flash();
-
-        //then
-        assertThat(flash.isDiscard(), equalTo(false));
-    }
-
-    @Test
-    void testValues() {
-        //given
-        final Flash flash = new Flash();
-
-        //then
-        assertThat(flash.getValues(), not(nullValue()));
-    }
-
-    @Test
-    void testDiscard() {
-        //given
-        final Flash flash = new Flash();
-
-        //when
-        flash.setDiscard(true);
-
-        //then
-        assertThat(flash.isDiscard(), equalTo(true));
     }
 }

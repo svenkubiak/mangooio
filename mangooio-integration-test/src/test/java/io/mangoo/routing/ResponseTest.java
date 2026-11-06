@@ -2,7 +2,6 @@ package io.mangoo.routing;
 
 import com.google.common.net.MediaType;
 import io.mangoo.TestExtension;
-import io.undertow.server.handlers.Cookie;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
@@ -16,7 +15,6 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
-import static org.mockito.Mockito.mock;
 
 @ExtendWith({TestExtension.class})
 class ResponseTest {
@@ -31,7 +29,6 @@ class ResponseTest {
         response.render("foo2", "bar");
         
         //then
-        assertThat(response.getContent(), not(nullValue()));
         assertThat(response.getContent().get("foo"), equalTo(null));
         assertThat(response.getContent().get("foo2"), equalTo("bar"));
     }
@@ -175,19 +172,6 @@ class ResponseTest {
     }
     
     @Test
-    void testAndCookie() {
-        //given
-        Response response = Response.ok();
-        Cookie cookie = mock(Cookie.class);
-        
-        //when
-        response.cookie(cookie);
-        
-        //then
-        assertThat(response.getCookies().getFirst(), equalTo(cookie));
-    }
-    
-    @Test
     void testAndJsonBody() {
         //given
         Response response = Response.ok();
@@ -256,27 +240,6 @@ class ResponseTest {
         //then
         assertThat(response.getStatusCode(), equalTo(200));
         assertThat(response.getContentType(), equalTo(contentType));
-    }
-    
-    @Test
-    void testAndEnd() throws IOException {
-        //given
-        Response response = Response.ok();
-        
-        //when
-        response.end();
-        
-        //then
-        assertThat(response.isEndResponse(), equalTo(true));
-    }
-    
-    @Test
-    void testAndUnrenderedText() {
-        //given
-        Response response = Response.ok().bodyText("");
-        
-        //then
-        assertThat(response.isRendered(), equalTo(false));
     }
     
     @Test

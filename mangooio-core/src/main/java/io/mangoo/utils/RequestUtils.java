@@ -9,15 +9,12 @@ import io.undertow.util.AttachmentKey;
 import io.undertow.util.Methods;
 import io.undertow.util.PathTemplateMatch;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public final class RequestUtils {
-    private static final Logger LOG = LogManager.getLogger(RequestUtils.class);
     private static final AttachmentKey<Attachment> ATTACHMENT_KEY = AttachmentKey.create(Attachment.class);
 
     private RequestUtils() {
@@ -89,7 +86,7 @@ public final class RequestUtils {
     public static boolean hasMultipleParameterValues(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
-        String queryString = exchange.getQueryString();
+        var queryString = exchange.getQueryString();
         if (StringUtils.isBlank(queryString)) {
             return false;
         }
