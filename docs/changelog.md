@@ -1,10 +1,11 @@
 ## Version 10.16.1
 
-Unreleased
+Released at 06.11.2026
 
 * Version bumps (svenkubiak)
   * guava 33.7.2-jre -&gt; 33.8.0-jre
   * opentelemetry-semconv 1.44.0 -&gt; 1.45.0
+  * classgraph 6.0.1 -&gt; 6.0.2
 
 ## Version 10.16.0
 
