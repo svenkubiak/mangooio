@@ -92,7 +92,9 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100dvh;
-    background: var(--admin-bg);
+    background:
+        radial-gradient(60rem 30rem at 50% -10%, var(--admin-nav-active), transparent 70%),
+        var(--admin-bg);
 }
 
 body > main {
@@ -206,16 +208,51 @@ body > header.topbar {
 
 .topbar a.logout {
     padding: .4375rem .875rem;
-    border: 1px solid var(--admin-border);
-    color: var(--pico-muted-color);
+    border: 1px solid var(--admin-danger);
+    background: var(--admin-danger-bg);
+    color: var(--admin-danger);
     font-size: .875rem;
     font-weight: 500;
 }
 
 .topbar a.logout:hover {
     border-color: var(--admin-danger);
-    background: var(--admin-danger-bg);
-    color: var(--admin-danger);
+    background: var(--admin-danger);
+    color: var(--admin-bg);
+}
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    margin: 0;
+    padding: .4375rem;
+    border: 1px solid var(--admin-border);
+    background: transparent;
+    color: var(--pico-muted-color);
+    line-height: 1;
+}
+
+.theme-toggle:hover {
+    border-color: var(--pico-primary);
+    background: var(--admin-nav-active);
+    color: var(--pico-primary);
+}
+
+.theme-icon {
+    display: inline-flex;
+}
+
+[data-theme=dark] .theme-icon-to-dark,
+[data-theme=light] .theme-icon-to-light {
+    display: none;
+}
+
+.auth-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
 }
 
 @media (max-width: 767px) {
@@ -526,12 +563,6 @@ td.empty {
 }
 
 /* Authentication */
-body.auth {
-    background:
-        radial-gradient(60rem 30rem at 50% -10%, var(--admin-nav-active), transparent 70%),
-        var(--admin-bg);
-}
-
 body.auth > main {
     display: grid;
     place-items: center;
@@ -582,6 +613,8 @@ body.auth > main {
 }
 
 .auth-card .otp {
+    width: 100%;
+    min-width: 0;
     margin-bottom: 0;
     border: 0;
     padding: 0;
@@ -593,20 +626,32 @@ body.auth > main {
     font-weight: 500;
 }
 
+/* width: 100% on these inputs makes mobile Safari size every box to the fieldset, so the six boxes wrap. */
 .otp-digits {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
     gap: .5rem;
+    width: 100%;
+    min-width: 0;
 }
 
 .auth-card .otp-digit {
-    width: 100%;
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+    max-width: 3rem;
     height: 3rem;
     margin: 0;
     padding: 0;
     font-family: var(--pico-font-family-monospace);
     font-size: 1.25rem;
     text-align: center;
+}
+
+.auth-card .otp-digit:focus {
+    position: relative;
+    z-index: 1;
 }
 
 .auth-card .otp-digit[aria-invalid] {
@@ -758,6 +803,19 @@ article.meter {
 }
 
 @media (max-width: 575px) {
+    .auth-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .otp-digits {
+        gap: .375rem;
+    }
+
+    .auth-card .otp-digit {
+        height: 2.75rem;
+        font-size: 1.125rem;
+    }
+
     .status-row {
         grid-template-columns: 2.5rem 1fr 4rem;
     }

@@ -1,10 +1,26 @@
 <#macro document title class>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="dark">
+    <script>
+        (function () {
+            var theme = 'dark';
+            try {
+                var stored = localStorage.getItem('mangoo-admin-theme');
+                if (stored === 'light' || stored === 'dark') {
+                    theme = stored;
+                }
+            } catch (ignore) {}
+            document.documentElement.setAttribute('data-theme', theme);
+            var meta = document.querySelector('meta[name="color-scheme"]');
+            if (meta) {
+                meta.setAttribute('content', theme);
+            }
+        })();
+    </script>
     <meta name="robots" content="noindex, nofollow">
     <title>${title} · ${mangooioAdminName!"mangoo I/O"} Admin</title>
     <link rel="apple-touch-icon" sizes="180x180" href="/@admin/assets/favicons/apple-touch-icon.png">
@@ -22,12 +38,16 @@
 </#macro>
 
 <#macro icon name>
-<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><#switch name><#case "dashboard"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/><#break><#case "routes"><path d="M9 6h11"/><path d="M9 12h11"/><path d="M9 18h11"/><path d="M4 6h.01"/><path d="M4 12h.01"/><path d="M4 18h.01"/><#break><#case "scheduler"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/><#break><#case "cache"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/><#break><#case "security"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><#break><#case "verified"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="m9 12 2 2 4-4"/><#break><#case "logout"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><#break><#case "copy"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/><#break><#case "warning"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/><#break><#case "info"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/><#break></#switch></svg>
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><#switch name><#case "dashboard"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/><#break><#case "routes"><path d="M9 6h11"/><path d="M9 12h11"/><path d="M9 18h11"/><path d="M4 6h.01"/><path d="M4 12h.01"/><path d="M4 18h.01"/><#break><#case "scheduler"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/><#break><#case "cache"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/><#break><#case "security"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><#break><#case "verified"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="m9 12 2 2 4-4"/><#break><#case "logout"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><#break><#case "copy"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/><#break><#case "warning"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/><#break><#case "info"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/><#break><#case "sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.9 19.1 1.4-1.4"/><path d="m17.7 6.3 1.4-1.4"/><#break><#case "moon"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/><#break></#switch></svg>
 </#macro>
 
 <#macro brand>
 <#assign name = mangooioAdminName!"mangoo I/O">
 <span class="brand"><span class="brand-mark" aria-hidden="true">${name[0]}</span><span class="brand-name" title="${name}">${name}</span></span>
+</#macro>
+
+<#macro themeToggle>
+<button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to light mode"><span class="theme-icon theme-icon-to-light"><@icon "sun"/></span><span class="theme-icon theme-icon-to-dark"><@icon "moon"/></span></button>
 </#macro>
 
 <#macro item label href key active>
@@ -52,6 +72,7 @@
             <@item "Security" "/@admin/security" "security" active/>
         </ul>
         <ul class="topbar-actions">
+            <li><@themeToggle/></li>
             <li><a class="logout" href="/@admin/logout"><@icon "logout"/>Logout</a></li>
         </ul>
     </nav>
@@ -75,6 +96,7 @@
 <@document title=title class="auth">
 <main>
     <div class="auth-wrapper">
+        <div class="auth-toolbar"><@themeToggle/></div>
         <article class="auth-card">
             <hgroup>
                 <h1>${title}</h1>

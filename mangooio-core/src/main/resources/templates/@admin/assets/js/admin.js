@@ -5,9 +5,21 @@ if (form) {
 
     if (digits.length > 0 && code) {
         let submitting = false;
+        let focusTimer = 0;
+        let backspaceHandled = false;
+        const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
         const sync = () => {
             code.value = digits.map(digit => digit.value).join('');
+        };
+
+        const scheduleFocus = index => {
+            const next = Math.max(0, Math.min(index, digits.length - 1));
+            window.clearTimeout(focusTimer);
+            // A phone keyboard ignores focus() inside the input event and then types into the same box.
+            focusTimer = window.setTimeout(() => {
+                digits[next].focus({preventScroll: true});
+            });
         };
 
         const submitCode = () => {
@@ -29,54 +41,139 @@ if (form) {
             chars.forEach((char, offset) => {
                 digits[start + offset].value = char;
             });
-            const focusAt = Math.min(start + chars.length, digits.length - 1);
-            digits[focusAt].focus();
-            digits[focusAt].select();
             sync();
-            submitCode();
+            const next = start + chars.length;
+            if (next >= digits.length) {
+                scheduleFocus(digits.length - 1);
+                submitCode();
+            } else {
+                scheduleFocus(next);
+            }
         };
 
-        let pasted = false;
+        const stepBack = index => {
+            if (index === 0) {
+                return;
+            }
+            digits[index - 1].value = '';
+            sync();
+            scheduleFocus(index - 1);
+        };
+
         digits.forEach((input, index) => {
-            input.addEventListener('input', () => {
-                if (pasted) {
-                    pasted = false;
+            input.addEventListener('beforeinput', event => {
+                if (backspaceHandled || event.inputType !== 'deleteContentBackward' || input.value !== '' || index === 0) {
+                    return;
+                }
+                if (event.cancelable) {
+                    event.preventDefault();
+                }
+                stepBack(index);
+            });
+
+            input.addEventListener('input', event => {
+                if (event.inputType && event.inputType.indexOf('delete') === 0) {
+                    sync();
                     return;
                 }
                 write(index, input.value);
             });
 
             input.addEventListener('keydown', event => {
-                if (event.key === 'Backspace' && input.value === '' && index > 0) {
-                    digits[index - 1].value = '';
-                    digits[index - 1].focus();
-                    sync();
-                    event.preventDefault();
+                if (event.key === 'Backspace') {
+                    backspaceHandled = true;
+                    window.queueMicrotask(() => {
+                        backspaceHandled = false;
+                    });
+                    if (input.value === '') {
+                        event.preventDefault();
+                        stepBack(index);
+                    }
                 } else if (event.key === 'ArrowLeft' && index > 0) {
-                    digits[index - 1].focus();
+                    scheduleFocus(index - 1);
                     event.preventDefault();
                 } else if (event.key === 'ArrowRight' && index < digits.length - 1) {
-                    digits[index + 1].focus();
+                    scheduleFocus(index + 1);
                     event.preventDefault();
                 }
             });
 
             input.addEventListener('paste', event => {
+                const text = event.clipboardData ? event.clipboardData.getData('text') : '';
+                if (text === '') {
+                    return;
+                }
                 event.preventDefault();
-                pasted = true;
-                write(index, event.clipboardData.getData('text'));
+                write(index, text);
             });
 
-            input.addEventListener('focus', () => input.select());
+            input.addEventListener('focus', () => {
+                if (finePointer) {
+                    input.select();
+                }
+            });
         });
 
-        form.addEventListener('submit', sync, true);
+        form.addEventListener('invalid', () => {
+            submitting = false;
+        }, true);
+
+        form.addEventListener('submit', event => {
+            const combined = digits.map(digit => digit.value).join('').replace(/\D/g, '').slice(0, digits.length);
+            digits.forEach((digit, index) => {
+                digit.value = combined.charAt(index);
+            });
+            sync();
+            if (combined.length !== digits.length) {
+                event.preventDefault();
+                submitting = false;
+                scheduleFocus(combined.length);
+            }
+        }, true);
+
+        form.addEventListener('submit', event => {
+            window.setTimeout(() => {
+                if (event.defaultPrevented) {
+                    submitting = false;
+                }
+            });
+        });
     }
 
-    form.addEventListener('submit', () => {
+    form.addEventListener('submit', event => {
+        if (event.defaultPrevented) {
+            return;
+        }
         const button = document.getElementById('login');
+        if (!button) {
+            return;
+        }
         button.setAttribute('aria-busy', 'true');
-        button.disabled = true;
+        // Safari drops the submission when the submit button is disabled inside this event.
+        window.setTimeout(() => {
+            button.disabled = true;
+        });
+    });
+}
+
+const themeToggle = document.querySelector('[data-theme-toggle]');
+if (themeToggle) {
+    const themeMeta = document.querySelector('meta[name="color-scheme"]');
+
+    const applyTheme = theme => {
+        document.documentElement.setAttribute('data-theme', theme);
+        if (themeMeta) {
+            themeMeta.setAttribute('content', theme);
+        }
+        themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        try {
+            localStorage.setItem('mangoo-admin-theme', theme);
+        } catch (ignore) {}
+    };
+
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+    themeToggle.addEventListener('click', () => {
+        applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
     });
 }
 
