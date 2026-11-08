@@ -45,9 +45,10 @@ class MetricsListenerTest {
     }
 
     @Test
-    void testRequestWithoutRouteIsCountedTogether() {
-        requestUntil("/does-not-exist-" + System.nanoTime(), () -> {
-            Map<Integer, LongAdder> codes = Application.getInstance(Metrics.class).getRouteResponses().get("GET (no route)");
+    void testRequestWithoutRouteKeepsThePath() {
+        String path = "/does-not-exist-" + System.nanoTime();
+        requestUntil(path, () -> {
+            Map<Integer, LongAdder> codes = Application.getInstance(Metrics.class).getRouteResponses().get("GET " + path);
             assertThat(codes, hasKey(404));
         });
     }

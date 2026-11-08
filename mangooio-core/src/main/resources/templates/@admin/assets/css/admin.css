@@ -863,6 +863,12 @@ article.meter {
     list-style: none;
 }
 
+.features .feature-switches + .feature-settings {
+    margin-top: .75rem;
+    padding-top: .25rem;
+    border-top: 1px solid var(--admin-border);
+}
+
 /* A long value wraps below its label instead of being cut off */
 .features li {
     display: flex;

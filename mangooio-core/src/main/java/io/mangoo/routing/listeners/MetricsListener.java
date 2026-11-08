@@ -12,7 +12,6 @@ import java.util.Locale;
 import java.util.Optional;
 
 public class MetricsListener implements ExchangeCompletionListener {
-    private static final String NO_ROUTE = "(no route)";
     private static final int SERVER_ERROR = 500;
     private long start;
     
@@ -26,9 +25,8 @@ public class MetricsListener implements ExchangeCompletionListener {
 
     @Override
     public void exchangeEvent(HttpServerExchange exchange, NextListener nextListener) {
-        String uri = Optional.ofNullable(exchange.getRequestURI())
-                .orElse("")
-                .toLowerCase(Locale.ENGLISH);
+        String path = Optional.ofNullable(exchange.getRequestURI()).orElse("");
+        String uri = path.toLowerCase(Locale.ENGLISH);
         
         if (StringUtils.isNotBlank(uri) && !uri.contains("@admin")) {
             int processTime = (int) (System.currentTimeMillis() - this.start);
@@ -39,9 +37,9 @@ public class MetricsListener implements ExchangeCompletionListener {
             metrics.update(processTime);
             metrics.addStatusCode(status);
 
-            // The route template instead of the path, so the number of entries does not grow with the ids in the paths
+            // A matched route keeps its template, so ids in the path are not stored. An unmatched request has no template, so the path is its name.
             PathTemplateMatch match = exchange.getAttachment(PathTemplateMatch.ATTACHMENT_KEY);
-            String route = match == null ? NO_ROUTE : match.getMatchedTemplate();
+            String route = match == null ? path : match.getMatchedTemplate();
             metrics.addRouteResponse(method + " " + route, status);
 
             if (status >= SERVER_ERROR) {

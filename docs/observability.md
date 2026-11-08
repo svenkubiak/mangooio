@@ -13,7 +13,7 @@ metrics:
   enable: true
 ```
 
-Requests whose URI contains `@admin` are excluded. Health probes never reach the counter, because they are handled before it. User SSE and WebSocket routes have no route template and are stored as `(no route)` for the whole connection lifetime. At most 1000 route templates are kept. The rest are `Other routes`. Errors are status codes of 500 and above. Times on the dashboard are milliseconds.
+Requests whose URI contains `@admin` are excluded. Health probes never reach the counter, because they are handled before it. User SSE and WebSocket routes have no route template and are stored under their request path for the whole connection lifetime. At most 1000 route templates are kept. The rest are `Other routes`. Errors are status codes of 500 and above. Times on the dashboard are milliseconds.
 
 ## OpenTelemetry
 

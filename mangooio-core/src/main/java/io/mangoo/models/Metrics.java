@@ -38,7 +38,7 @@ public class Metrics {
     private final Deque<Failure> failures = new ConcurrentLinkedDeque<>();
     private final Clock clock;
 
-    /** A response with a server error; neither path nor exception is kept, as both may contain data of the request. */
+    /** A response with a server error. A matched route keeps its template. An unmatched request keeps its path, without the query string. The exception is not kept. */
     public record Failure(Instant time, String method, String route, int status) {
     }
 

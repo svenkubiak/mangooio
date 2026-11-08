@@ -1,5 +1,8 @@
 <#import "layout.ftl" as layout>
 <#import "sections.ftl" as sections>
+<#macro featureItem feature>
+<li class="tone-${feature.tone}"><span class="dot" aria-hidden="true"></span><span class="feature-label">${feature.label}</span><span class="feature-value" title="${feature.value}">${feature.value}</span><#if feature.tone == "warn"><span class="visually-hidden"> (warning)</span></#if></li>
+</#macro>
 <@layout.page title="Dashboard" active="dashboard" subtitle="Overview of the running application" live=true>
 <#setting locale="${mangooioAdminLocale}">
 <#if warnings?has_content>
@@ -90,13 +93,27 @@
     <h2 class="section-title">Features</h2>
     <div class="feature-groups">
         <#list features as group, entries>
+        <#assign switches = []>
+        <#assign settings = []>
+        <#list entries as feature>
+            <#if feature.tone == "on" || feature.tone == "off" || (feature.tone == "warn" && (feature.value == "On" || feature.value == "Off"))>
+                <#assign switches = switches + [feature]>
+            <#else>
+                <#assign settings = settings + [feature]>
+            </#if>
+        </#list>
         <article class="features">
             <h3>${group}</h3>
-            <ul>
-                <#list entries as feature>
-                <li class="tone-${feature.tone}"><span class="dot" aria-hidden="true"></span><span class="feature-label">${feature.label}</span><span class="feature-value" title="${feature.value}">${feature.value}</span><#if feature.tone == "warn"><span class="visually-hidden"> (warning)</span></#if></li>
-                </#list>
+            <#if switches?has_content>
+            <ul class="feature-switches">
+                <#list switches as feature><@featureItem feature/></#list>
             </ul>
+            </#if>
+            <#if settings?has_content>
+            <ul class="feature-settings">
+                <#list settings as feature><@featureItem feature/></#list>
+            </ul>
+            </#if>
         </article>
         </#list>
     </div>
