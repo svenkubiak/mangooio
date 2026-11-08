@@ -28,6 +28,8 @@ import java.util.Locale;
  */
 @Mojo(name = "hash", requiresProject = true, threadSafe = true)
 public class HashMojo extends AbstractMojo {
+    private static final String INDENT = "  ";
+
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
@@ -39,12 +41,13 @@ public class HashMojo extends AbstractMojo {
             throw new MojoExecutionException("Run mvn mangooio:hash from a terminal so the password is not echoed");
         }
 
-        char[] password = console.readPassword("Password: ");
-        char[] repeated = console.readPassword("Repeat password: ");
+        console.printf("%n%sAdmin password%n%n", INDENT);
+        char[] password = console.readPassword("%s%-18s", INDENT, "Password:");
+        char[] repeated = console.readPassword("%s%-18s", INDENT, "Repeat password:");
         try {
             String cleartext = HashingSettings.cleartext(password, repeated);
-            // The hash is the whole result of this goal, so it goes to standard output without a log prefix
-            System.out.println(CommonUtils.hashArgon2(cleartext, CommonUtils.uuidV4(), settings)); //NOSONAR
+            String hash = CommonUtils.hashArgon2(cleartext, CommonUtils.uuidV4(), settings);
+            console.printf("%n%s%s%n%n", INDENT, hash);
         } catch (IllegalArgumentException | MangooHashingException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         } finally {
