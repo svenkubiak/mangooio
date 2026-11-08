@@ -294,7 +294,7 @@ public class AdminController {
         if (StringUtils.isBlank(secret)) {
             secret = TotpUtils.createSecret();
             qrCode = TotpUtils.getQRCode(
-                    "mangoo_IO_Admin",
+                    "admin",
                     Const.NAME_PATTERN.matcher(config.getApplicationName()).replaceAll(""),
                     secret);
         }
