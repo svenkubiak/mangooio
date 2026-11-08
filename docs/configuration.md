@@ -238,6 +238,6 @@ The default `authentication.hashing.concurrency: 0` derives the slot count as `f
 
 The defaults `m=32768`, `t=3`, `p=1` sit above the OWASP minimum of 19 MiB and two iterations and below RFC 9106's low-memory profile. `p=1` is deliberate: BouncyCastle's `Argon2BytesGenerator` computes the lanes sequentially, so a higher parallelism does not shorten a single hash, it only spreads the same memory over more lanes. A server gets its parallelism from concurrent requests, not from lanes inside one hash.
 
-Values below `authentication.hashing.memory: 8192`, `authentication.hashing.iterations: 2` or `authentication.hashing.parallelism: 1` are rejected with an `IllegalArgumentException` at startup. The application refuses to start rather than hashing weaker than intended.
+Values below `authentication.hashing.memory: 8192`, `authentication.hashing.iterations: 2` or `authentication.hashing.parallelism: 1` are rejected with an `IllegalArgumentException` at startup. The application refuses to start rather than hashing weaker than intended. `mvn -q mangooio:hash` creates the admin password hash with these three values, see [Administration](administration.md).
 
 Changing the parameters is safe: a hash carries the parameters it was created with, see [Password hashing](authentication.md#password-hashing), and is always verified with those. `CommonUtils.needsRehash` reports hashes that were created with anything else than the current configuration.

@@ -37,6 +37,18 @@ public class PasswordHasher {
     @Inject
     public PasswordHasher(Config config) {
         this(concurrency(config), timeout(config), settings(config));
+
+        LOG.info("Argon2 hashing is limited to {} concurrent computations with a timeout of {} ms (memory {} KB, iterations {}, parallelism {})",
+                concurrency, timeoutMillis, settings.memoryKb(), settings.iterations(), settings.parallelism());
+    }
+
+    /**
+     * A hasher for one computation. It does not read the application configuration.
+     * Settings below the accepted minimum are rejected.
+     */
+    public static PasswordHasher with(Argon2Settings settings) {
+        Objects.requireNonNull(settings, Required.SETTINGS);
+        return new PasswordHasher(1, TimeUnit.SECONDS.toMillis(60), settings.requireNotWeakerThanMinimum());
     }
 
     // Bypasses the configuration and the concurrency heuristic; intended for tests.
@@ -48,9 +60,6 @@ public class PasswordHasher {
         this.timeoutMillis = timeoutMillis;
         this.settings = settings;
         this.semaphore = new Semaphore(concurrency, true);
-
-        LOG.info("Argon2 hashing is limited to {} concurrent computations with a timeout of {} ms (memory {} KB, iterations {}, parallelism {})",
-                concurrency, timeoutMillis, settings.memoryKb(), settings.iterations(), settings.parallelism());
     }
 
     /** Throws {@link MangooHashingException} if no hashing slot becomes available within the configured timeout. */

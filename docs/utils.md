@@ -19,7 +19,7 @@ byte[] encoded = CommonUtils.encodeToBase64("payload");
 byte[] decoded = CommonUtils.decodeFromBase64(new String(encoded, StandardCharsets.UTF_8));
 ```
 
-`hashArgon2(cleartext)` uses `application.secret` as salt and embeds it in the stored hash. Use the two-argument form with a random salt per user. Both `hashArgon2` and `matchArgon2` throw an unchecked `MangooHashingException` when no hashing slot becomes free within `authentication.hashing.timeout`. `matchArgon2` does not report that as a mismatch. See [Argon2 hashing](configuration.md#argon2-hashing).
+`hashArgon2(cleartext)` uses `application.secret` as salt and embeds it in the stored hash. Use the two-argument form with a random salt per user. Both need a started application. `hashArgon2(cleartext, salt, settings)` hashes with the given `Argon2Settings` and does not. `mvn mangooio:hash` uses that form. Both `hashArgon2` and `matchArgon2` throw an unchecked `MangooHashingException` when no hashing slot becomes free within `authentication.hashing.timeout`. `matchArgon2` does not report that as a mismatch. See [Argon2 hashing](configuration.md#argon2-hashing).
 
 `hexSHA512` is SHA3-512 and returns `null` on failure. `randomString(int)` requires a length from 22 to 512 and uses URL-safe Base64. `serializeToBase64` and `deserializeFromBase64` need `registerSerializable(Class)` first, and only for data you trust. `bitLength` checks key material.
 

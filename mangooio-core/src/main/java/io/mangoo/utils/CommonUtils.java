@@ -7,6 +7,7 @@ import io.mangoo.constants.Key;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.crypto.Argon2Settings;
 import io.mangoo.crypto.PasswordHasher;
 import io.mangoo.exceptions.MangooHashingException;
 import org.apache.commons.codec.binary.Base32;
@@ -63,6 +64,18 @@ public final class CommonUtils {
         Argument.requireNonBlank(salt, Required.SALT);
 
         return Application.getInstance(PasswordHasher.class).hash(cleartext, salt);
+    }
+
+    /**
+     * Returns an Argon2id hash in the PHC string format for the given settings.
+     * Does not need a started application. Settings below the accepted minimum are rejected.
+     */
+    public static String hashArgon2(String cleartext, String salt, Argon2Settings settings) {
+        Argument.requireNonBlank(cleartext, Required.CLEARTEXT);
+        Argument.requireNonBlank(salt, Required.SALT);
+        Objects.requireNonNull(settings, Required.SETTINGS);
+
+        return PasswordHasher.with(settings).hash(cleartext, salt);
     }
 
     /**

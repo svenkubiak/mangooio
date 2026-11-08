@@ -2,6 +2,8 @@
 
 Unreleased
 
+* Added mvn mangooio:hash to print an Argon2id hash for application.admin.password from the project's config.yaml without starting the application (svenkubiak)
+* Added CommonUtils.hashArgon2(cleartext, salt, settings) to hash with explicit Argon2 settings without a started application (svenkubiak)
 * **Behaviour change** smtp.protocol smtptls requires STARTTLS, smtp is cleartext and refused in prod, and an SMTP connection or read that exceeds smtp.connection.timeout or smtp.read.timeout (10 seconds and 30 seconds by default) is aborted and logged (svenkubiak)
 * **Behaviour change** Graceful shutdown: readiness goes down, SSE and WebSocket connections are closed, open requests and running @Run tasks get application.shutdown.timeout, then applicationStopped() is called (svenkubiak)
 * **Behaviour change** A binding in app.Module replaces the core binding of the same type instead of failing (svenkubiak)

@@ -126,7 +126,7 @@ Keep the files in a directory next to `compose.yaml`, e.g. `./secrets`, and add 
 | `session.cookie.key`, `authentication.cookie.key`, `flash.cookie.key` | at least 64 bytes | `tr` command below |
 | `application.api.key` | at least 64 bytes | `tr` command below |
 | `application.admin.secret` | TOTP secret, Base32 | `tr -dc 'A-Z2-7'` or `TotpUtils.createSecret()` |
-| `application.admin.password` | Argon2id hash | `CommonUtils.hashArgon2`, see [Administration](administration.md) |
+| `application.admin.password` | Argon2id hash | `mvn -q mangooio:hash`, see [Administration](administration.md) |
 | `persistence.mongo.password`, `smtp.password` | password of the service | set in MongoDB or given by the SMTP provider |
 
 Use a separate random value for every key. The cookie secrets and keys fall back to `application.secret`, but dedicated values per cookie are recommended. Create the random values in one go:

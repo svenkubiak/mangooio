@@ -29,7 +29,7 @@ With persistence enabled, MongoDB 4.2 or later is required.
 4. Remove `application.vault.enable`, `application.vault.path`, `application.vault.secret`, `APPLICATION_VAULT_PATH`, `APPLICATION_VAULT_SECRET` and the `vault.p12` volume.
 5. Give every `env{}`, `arg{}` or `file{}` that may be empty a fallback, e.g. `arg{false}`, or write it as `env{?}`. Without either, a missing value fails the startup.
 6. Move every framework secret that is still literal in the `config.yaml` of the classpath to `env{}` or `file{}`; prod mode refuses to start otherwise, see [Secrets](secrets.md#secrets-in-prod).
-7. Replace `application.admin.password` with an Argon2id PHC string, generated inside a started application, e.g. in a test with `TestRunner`, with `CommonUtils.hashArgon2(password, CommonUtils.uuidV4())`, and pass it from outside the artifact.
+7. Replace `application.admin.password` with an Argon2id PHC string from `mvn -q mangooio:hash`, and pass it from outside the artifact. See [Administration](administration.md).
 8. Change imports of `com.fasterxml.jackson.databind` to `tools.jackson.databind`; annotations stay in `com.fasterxml.jackson.annotation`. `java.util.Date` is now written and read in `application.timezone`.
 9. Replace the removed API:
 

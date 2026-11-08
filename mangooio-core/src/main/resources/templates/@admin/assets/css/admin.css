@@ -208,17 +208,28 @@ body > header.topbar {
 
 .topbar a.logout {
     padding: .4375rem .875rem;
-    border: 1px solid var(--admin-danger);
+    border: 1px solid #b42318;
     background: var(--admin-danger-bg);
-    color: var(--admin-danger);
+    color: #b42318;
     font-size: .875rem;
     font-weight: 500;
 }
 
+[data-theme=dark] .topbar a.logout {
+    border-color: #f04438;
+    color: #f97066;
+}
+
 .topbar a.logout:hover {
-    border-color: var(--admin-danger);
-    background: var(--admin-danger);
-    color: var(--admin-bg);
+    border-color: #b42318;
+    background: #b42318;
+    color: #fff;
+}
+
+[data-theme=dark] .topbar a.logout:hover {
+    border-color: #f04438;
+    background: #f04438;
+    color: #fff;
 }
 
 .theme-toggle {

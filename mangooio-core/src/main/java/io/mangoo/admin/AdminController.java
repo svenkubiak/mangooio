@@ -293,10 +293,8 @@ public class AdminController {
 
         if (StringUtils.isBlank(secret)) {
             secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode(
-                    "admin",
-                    Const.NAME_PATTERN.matcher(config.getApplicationName()).replaceAll(""),
-                    secret);
+            String issuer = Const.NAME_PATTERN.matcher(config.getApplicationName()).replaceAll("");
+            qrCode = TotpUtils.getQRCode(issuer + ":admin", issuer, secret);
         }
 
         return Response.ok()
