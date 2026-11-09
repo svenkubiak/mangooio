@@ -1,9 +1,7 @@
 ## Version 11.0.0
 
-Unreleased
+Released at 09.11.2026
 
-* Added mvn mangooio:hash to print an Argon2id hash for application.admin.password from the project's config.yaml without starting the application (svenkubiak)
-* Added CommonUtils.hashArgon2(cleartext, salt, settings) to hash with explicit Argon2 settings without a started application (svenkubiak)
 * **Behaviour change** smtp.protocol smtptls requires STARTTLS, smtp is cleartext and refused in prod, and an SMTP connection or read that exceeds smtp.connection.timeout or smtp.read.timeout (10 seconds and 30 seconds by default) is aborted and logged (svenkubiak)
 * **Behaviour change** Graceful shutdown: readiness goes down, SSE and WebSocket connections are closed, open requests and running @Run tasks get application.shutdown.timeout, then applicationStopped() is called (svenkubiak)
 * **Behaviour change** A binding in app.Module replaces the core binding of the same type instead of failing (svenkubiak)
@@ -20,15 +18,17 @@ Unreleased
 * **Behaviour change** The session cookie ends with the browser session unless session.cookie.expires is true (svenkubiak)
 * **Behaviour change** Removed the unused application.controller (svenkubiak)
 * Removed all deprecated methods (svenkubiak)
-* Migrated from Jackson 2 to Jackson 3 (svenkubiak)
-* Added support for MongoDB connection strings - replica sets, sharded clusters, SRV (svenkubiak)
 * Removed asset minification (svenkubiak)
+* Migrated from Jackson 2 to Jackson 3 (svenkubiak)
+* Grouped the features of the admin dashboard into security, persistence, connectivity and operations with their values, risky settings are marked in prod mode (svenkubiak)
 * Changed Admin-Password handling (svenkubiak)
 * Redesigned the admin dashboard with Blades CSS instead of Bulma, with dark mode and mobile layout (svenkubiak)
+* Added support for MongoDB connection strings - replica sets, sharded clusters, SRV (svenkubiak)
 * Added responses by status code, Java version and heap, cache clearing and metrics reset to the admin dashboard; with persistence cache clearing and metrics reset run on all instances (svenkubiak)
 * Added a routes page, open connections, event queues, failed events and active features to the admin dashboard (svenkubiak)
 * Added application.name to the brand and page title of the admin dashboard (svenkubiak)
-* Grouped the features of the admin dashboard into security, persistence, connectivity and operations with their values, risky settings are marked in prod mode (svenkubiak)
+* Added mvn mangooio:hash to print an Argon2id hash for application.admin.password from the project's config.yaml without starting the application (svenkubiak)
+* Added CommonUtils.hashArgon2(cleartext, salt, settings) to hash with explicit Argon2 settings without a started application (svenkubiak)
 * Added EventBus.getFailedEvents, EventBus.getSubscribers, Application.getServerSentEventConnections and Application.getWebSocketConnections (svenkubiak)
 * Added a list of all instances with heartbeat, version and the requests and errors of the last five minutes to the admin dashboard, shared through mangooio_instances with persistence (svenkubiak)
 * Added live updates of the admin dashboard every five seconds through the server sent event stream /@admin/stream, which requires the admin cookie (svenkubiak)
