@@ -44,7 +44,7 @@ public class InboundCookiesHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
         attachment.setSession(getSessionCookie(exchange));
-        attachment.setAuthentication(getAuthenticationCookie(exchange));
+        attachment.setAuthentication(getAuthenticationCookie(exchange, attachment.readsAuthenticationCookie()));
         attachment.setFlash(getFlashCookie(exchange));
         attachment.setForm(form);
 
@@ -91,44 +91,52 @@ public class InboundCookiesHandler implements HttpHandler {
         return session;
     }
 
-    protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
+    protected Authentication getAuthenticationCookie(HttpServerExchange exchange, boolean readCookie) {
         var authentication = Authentication.create()
                 .withSubject(null)
                 .withExpires(LocalDateTime.now().plusSeconds(config.getAuthenticationCookieTokenExpires()));
-        
+
+        // A route that cannot observe the subject leaves the cookie untouched. Outbound writes a new one only after login or update.
+        if (!readCookie) {
+            return authentication;
+        }
+
         String cookieValue = getCookieValue(exchange, config.getAuthenticationCookieName());
-        if (StringUtils.isNotBlank(cookieValue)) {
-            try {
-                var jwtData = JwtUtils.jwtData()
-                        .withKey(config.getAuthenticationCookieKey())
-                        .withSecret(config.getAuthenticationCookieSecret())
-                        .withIssuer(config.getApplicationName())
-                        .withAudience(config.getAuthenticationCookieName())
-                        .withTtlSeconds(config.getAuthenticationCookieRememberExpires());
+        if (StringUtils.isBlank(cookieValue)) {
+            return authentication;
+        }
 
-                var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
+        try {
+            var jwtData = JwtUtils.jwtData()
+                    .withKey(config.getAuthenticationCookieKey())
+                    .withSecret(config.getAuthenticationCookieSecret())
+                    .withIssuer(config.getApplicationName())
+                    .withAudience(config.getAuthenticationCookieName())
+                    .withTtlSeconds(config.getAuthenticationCookieRememberExpires());
 
-                if (!(config.isAuthenticationBlacklist()
-                        && tokenBlacklist.isRevoked(jwtClaimsSet.getJWTID(), jwtClaimsSet.getSubject(), jwtClaimsSet.getIssueTime().toInstant()))) {
+            var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
 
-                    authentication = Authentication.create()
-                            .rememberMe(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.REMEMBER_ME)))
-                            .withSubject(jwtClaimsSet.getSubject())
-                            .withId(jwtClaimsSet.getJWTID())
-                            .twoFactorAuthentication(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.TWO_FACTOR)))
-                            .withExpires(LocalDateTime.ofInstant(
-                                    jwtClaimsSet.getExpirationTime().toInstant(),
-                                    config.getApplicationTimeZoneId()
-                            ));
-                }
-            } catch (ParseException | MangooJwtException e) {
-                LOG.warn("Failed to parse authentication cookie", e);
+            if (!(config.isAuthenticationBlacklist()
+                    && tokenBlacklist.isRevoked(jwtClaimsSet.getJWTID(), jwtClaimsSet.getSubject(), jwtClaimsSet.getIssueTime().toInstant()))) {
+
+                authentication = Authentication.create()
+                        .rememberMe(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.REMEMBER_ME)))
+                        .withSubject(jwtClaimsSet.getSubject())
+                        .withId(jwtClaimsSet.getJWTID())
+                        .twoFactorAuthentication(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.TWO_FACTOR)))
+                        .withExpires(LocalDateTime.ofInstant(
+                                jwtClaimsSet.getExpirationTime().toInstant(),
+                                config.getApplicationTimeZoneId()
+                        ));
             }
+        } catch (ParseException | MangooJwtException e) {
+            LOG.warn("Failed to parse authentication cookie", e);
         }
 
         return authentication;
     }
 
+    // Opened whenever the cookie is present: it restores a kept form and is consumed before the next request.
     protected Flash getFlashCookie(HttpServerExchange exchange) {
         var flash = Flash.create();
         

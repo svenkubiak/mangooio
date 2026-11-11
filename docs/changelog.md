@@ -1,3 +1,8 @@
+## Version 11.0.1
+
+* Reused the AES cipher and HMAC per request thread when creating and reading cookies (svenkubiak)
+* Opened the authentication cookie only for routes that require authentication, take Authentication or Request, or run a request filter (svenkubiak)
+
 ## Version 11.0.0
 
 Released at 09.11.2026

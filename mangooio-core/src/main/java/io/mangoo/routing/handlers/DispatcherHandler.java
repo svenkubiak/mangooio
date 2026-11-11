@@ -8,6 +8,8 @@ import io.mangoo.core.Config;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
+import io.mangoo.routing.bindings.Authentication;
+import io.mangoo.routing.bindings.Request;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.internal.Trace;
@@ -125,6 +127,11 @@ public final class DispatcherHandler implements HttpHandler {
                 .withQueryParameter(RequestUtils.getQueryParameters(exchange))
                 .withMessages(messages)
                 .withAuthentication(authentication)
+                .withReadsAuthenticationCookie(readsAuthenticationCookie(
+                        authentication,
+                        requestFilter,
+                        !classAnnotations.isEmpty() || !methodAnnotations.isEmpty(),
+                        methodParameters.values()))
                 .withTemplateEngine(templateEngine);
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
@@ -133,6 +140,21 @@ public final class DispatcherHandler implements HttpHandler {
 
     private void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(LocaleHandler.class).handleRequest(exchange);
+    }
+
+    // Request.getAuthentication() is available on every route that receives Request, Authentication, or a filter.
+    static boolean readsAuthenticationCookie(boolean routeAuthentication, boolean requestFilter, boolean hasFilter, Collection<Class<?>> parameterTypes) {
+        if (routeAuthentication || requestFilter || hasFilter) {
+            return true;
+        }
+
+        for (Class<?> type : parameterTypes) {
+            if (type == Authentication.class || type == Request.class) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Rejects requests with ambiguous multi-valued parameters (HTTP parameter pollution).

@@ -1,11 +1,15 @@
 package io.mangoo.utils;
 
 import com.google.common.base.Preconditions;
-import com.nimbusds.jose.*;
-import com.nimbusds.jose.crypto.DirectDecrypter;
-import com.nimbusds.jose.crypto.DirectEncrypter;
-import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.JWEObject;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.Payload;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.mangoo.constants.ClaimKey;
@@ -56,8 +60,7 @@ public final class JwtUtils {
                     .build();
 
             var signedJWT = new SignedJWT(jwsHeader, claimsSet);
-            var signer = new MACSigner(jwtData.key());
-            signedJWT.sign(signer);
+            JwtCrypto.sign(signedJWT, jwtData.key());
 
             var jweHeader = new JWEHeader.Builder(
                     JWEAlgorithm.DIR,
@@ -66,9 +69,7 @@ public final class JwtUtils {
                     .build();
 
             var jweObject = new JWEObject(jweHeader, new Payload(signedJWT.serialize()));
-
-            var encrypter = new DirectEncrypter(jwtData.secret());
-            jweObject.encrypt(encrypter);
+            JwtCrypto.encrypt(jweObject, jwtData.secret());
 
             return jweObject.serialize();
         } catch (JOSEException e) {
@@ -90,8 +91,7 @@ public final class JwtUtils {
                 throw new JOSEException("Unexpected JWE encryption method: " + jweObject.getHeader().getEncryptionMethod());
             }
 
-            var decrypter = new DirectDecrypter(jwtData.secret());
-            jweObject.decrypt(decrypter);
+            JwtCrypto.decrypt(jweObject, jwtData.secret());
 
             var signedJWT = SignedJWT.parse(jweObject.getPayload().toString());
 
@@ -99,8 +99,7 @@ public final class JwtUtils {
                 throw new JOSEException("Unexpected JWS algorithm: " + signedJWT.getHeader().getAlgorithm());
             }
 
-            var verifier = new MACVerifier(jwtData.key());
-            if (!signedJWT.verify(verifier)) {
+            if (!JwtCrypto.verify(signedJWT, jwtData.key())) {
                 throw new JOSEException("JWT signature verification failed");
             }
 

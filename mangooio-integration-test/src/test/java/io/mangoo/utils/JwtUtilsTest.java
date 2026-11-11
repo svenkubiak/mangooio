@@ -12,8 +12,10 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.AESEncrypter;
+import com.nimbusds.jose.crypto.DirectDecrypter;
 import com.nimbusds.jose.crypto.DirectEncrypter;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.mangoo.constants.Default;
@@ -157,6 +159,21 @@ class JwtUtilsTest {
         MangooJwtException exception = assertThrows(MangooJwtException.class,
                 () -> JwtUtils.createJwt(jwtData));
         assertThat(exception.getMessage(), containsString("Extra claim 'iss' conflicts with a reserved claim"));
+    }
+
+    @Test
+    void testCreateJwtDecryptsWithNimbus() throws Exception {
+        //given
+        String jwt = JwtUtils.createJwt(validJwtData);
+
+        //when
+        var jweObject = JWEObject.parse(jwt);
+        jweObject.decrypt(new DirectDecrypter(SECRET));
+        var signedJwt = SignedJWT.parse(jweObject.getPayload().toString());
+
+        //then
+        assertThat(signedJwt.verify(new MACVerifier(KEY)), equalTo(true));
+        assertThat(signedJwt.getJWTClaimsSet().getSubject(), equalTo(SUBJECT));
     }
 
     @Test

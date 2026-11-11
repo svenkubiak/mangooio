@@ -34,6 +34,7 @@ public class Attachment {
     private int methodParametersCount;
     private boolean requestFilter;
     private boolean requiresAuthentication;
+    private boolean readsAuthenticationCookie = true;
 
     public static Attachment build() {
         return new Attachment();
@@ -163,6 +164,11 @@ public class Attachment {
         return this.requiresAuthentication;
     }
 
+    /** False only when this route cannot observe the authentication cookie, so it is left unopened. */
+    public boolean readsAuthenticationCookie() {
+        return this.readsAuthenticationCookie;
+    }
+
     public boolean hasRequestFilter() {
         return this.requestFilter;
     }
@@ -249,6 +255,11 @@ public class Attachment {
 
     public Attachment withAuthentication(boolean authentication) {
         this.requiresAuthentication = authentication;
+        return this;
+    }
+
+    public Attachment withReadsAuthenticationCookie(boolean readsAuthenticationCookie) {
+        this.readsAuthenticationCookie = readsAuthenticationCookie;
         return this;
     }
 }
