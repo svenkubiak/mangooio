@@ -3,6 +3,7 @@
 * Reused the AES cipher and HMAC per request thread when creating and reading cookies (svenkubiak)
 * Opened the authentication cookie only for routes that require authentication, take Authentication or Request, or run a request filter (svenkubiak)
 * Created the CSRF token when it is first read instead of on every request without a session cookie (svenkubiak)
+* Rendered HTML into a small buffer and sent those UTF-8 bytes without a second string copy (svenkubiak)
 
 ## Version 11.0.0
 

@@ -13,6 +13,7 @@ import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
 import org.apache.logging.log4j.util.Strings;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -24,6 +25,7 @@ public class Response {
     private String redirectTo;
     private String contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
     private String body = Strings.EMPTY;
+    private byte[] htmlBytes;
     private String template;
     private byte[] binaryBody;
     private Path fileBody;
@@ -119,7 +121,14 @@ public class Response {
     }
 
     public String getBody() {
+        if (body == null && htmlBytes != null) {
+            body = new String(htmlBytes, StandardCharsets.UTF_8);
+        }
         return body;
+    }
+
+    public byte[] getHtmlBytes() {
+        return htmlBytes;
     }
 
     public byte[] getBinaryBody() {
@@ -204,7 +213,19 @@ public class Response {
     public Response bodyHtml(String html) {
         this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
         rendered = false;
+        this.htmlBytes = null;
         this.body = html;
+
+        return this;
+    }
+
+    /** HTML already encoded as UTF-8. Sent from these bytes; {@link #getBody()} decodes them on first read. */
+    public Response bodyHtml(byte[] html) {
+        Objects.requireNonNull(html, Required.DATA);
+        this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
+        rendered = false;
+        this.body = null;
+        this.htmlBytes = html;
 
         return this;
     }
@@ -235,25 +256,25 @@ public class Response {
         rendered = false;
         switch (statusCode) {
             case StatusCodes.OK:
-                this.body = Template.ok();
+                assignBody(Template.ok());
                 break;
             case StatusCodes.UNAUTHORIZED:
-                this.body = Template.unauthorized();
+                assignBody(Template.unauthorized());
                 break;
             case StatusCodes.NOT_FOUND:
-                this.body = Template.notFound();
+                assignBody(Template.notFound());
                 break;
             case StatusCodes.FORBIDDEN:
-                this.body = Template.forbidden();
+                assignBody(Template.forbidden());
                 break;
             case StatusCodes.INTERNAL_SERVER_ERROR:
-                this.body = Template.internalServerError();
+                assignBody(Template.internalServerError());
                 break;
             case StatusCodes.BAD_REQUEST:
-                this.body = Template.badRequest();
+                assignBody(Template.badRequest());
                 break;
             default:
-                this.body = Template.xxx().replace("###xxx###", String.valueOf(statusCode));
+                assignBody(Template.xxx().replace("###xxx###", String.valueOf(statusCode)));
         }
 
         return this;
@@ -269,7 +290,7 @@ public class Response {
     public Response bodyJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT);
 
-        this.body = JsonUtils.toJson(object);
+        assignBody(JsonUtils.toJson(object));
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
         rendered = false;
 
@@ -279,7 +300,7 @@ public class Response {
     public Response bodyJsonError(String message) {
         Objects.requireNonNull(message, Required.MESSAGE);
 
-        this.body = JsonUtils.toJson(Error.of(message, statusCode));
+        assignBody(JsonUtils.toJson(Error.of(message, statusCode)));
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
         rendered = false;
 
@@ -289,7 +310,7 @@ public class Response {
     public Response bodyJson(String json) {
         Objects.requireNonNull(json, Required.JSON);
 
-        this.body = json;
+        assignBody(json);
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
         rendered = false;
 
@@ -297,7 +318,7 @@ public class Response {
     }
 
     public Response bodyText(String text) {
-        this.body = text;
+        assignBody(text);
         contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
         rendered = false;
 
@@ -353,6 +374,11 @@ public class Response {
         disposeCookie(cookieName, true);
 
         return this;
+    }
+
+    private void assignBody(String value) {
+        this.htmlBytes = null;
+        this.body = value;
     }
 
     /** Only used within a filter: stops executing further filters and sends the current response to the client. */

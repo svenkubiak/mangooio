@@ -16,8 +16,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +35,8 @@ public class TemplateEngine {
     private static final String REGEX = "\n";
     private static final int MIN_LINES = 6;
     private static final int MAX_LINES = 8;
-    private static final int MAX_CHARS = 65_536;
+    // Initial size only. The buffer grows with the page instead of reserving 64K characters up front.
+    private static final int INITIAL_CAPACITY = 4_096;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
     private static final Version VERSION = new Version(2, 3, 35);
@@ -58,8 +61,26 @@ public class TemplateEngine {
         }
     }
 
-    @SuppressFBWarnings(value = "TEMPLATE_INJECTION_FREEMARKER")
     public String renderTemplate(TemplateContext context) throws MangooTemplateEngineException {
+        var buffer = new StringWriter(INITIAL_CAPACITY);
+        process(context, buffer);
+        return buffer.toString();
+    }
+
+    /** UTF-8 bytes of the template, written without an intermediate String. */
+    public byte[] renderTemplateUtf8(TemplateContext context) throws MangooTemplateEngineException {
+        var out = new ByteArrayOutputStream(INITIAL_CAPACITY);
+        try (var writer = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
+            process(context, writer);
+        } catch (IOException e) {
+            throw new MangooTemplateEngineException("Failed to process template", e);
+        }
+
+        return out.toByteArray();
+    }
+
+    @SuppressFBWarnings(value = "TEMPLATE_INJECTION_FREEMARKER")
+    private void process(TemplateContext context, Writer writer) throws MangooTemplateEngineException {
         Template template;
         try {
             template = configuration.getTemplate(context.getTemplatePath());
@@ -67,14 +88,11 @@ public class TemplateEngine {
             throw new MangooTemplateEngineException("Template not found on path: " + context.getTemplatePath(), e);
         }
 
-        var buffer = new StringWriter(MAX_CHARS);
         try {
-            template.process(context.getContent(), buffer);
+            template.process(context.getContent(), writer);
         } catch (TemplateException | IOException e) {
             throw new MangooTemplateEngineException("Failed to process template", e);
         }
-
-        return buffer.toString();
     }
 
     @SuppressFBWarnings({"PATH_TRAVERSAL_IN","TEMPLATE_INJECTION_FREEMARKER"})

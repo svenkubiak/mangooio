@@ -168,7 +168,7 @@ public class RequestHandler implements HttpHandler {
                     .withCsrfToken(attachment.getSession())
                     .withTemplatePath(getTemplatePath(invokedResponse));
             
-            invokedResponse.bodyHtml(attachment.getTemplateEngine().renderTemplate(templateContext));
+            invokedResponse.bodyHtml(attachment.getTemplateEngine().renderTemplateUtf8(templateContext));
         }
 
         for (Cookie cookie : response.getCookies()) {

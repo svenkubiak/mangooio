@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -127,6 +128,12 @@ public class ResponseHandler implements HttpHandler {
         
         exchange.getResponseHeaders().put(Header.CONTENT_TYPE, response.getContentType() + "; charset=" + StandardCharsets.UTF_8.name());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().put(key, value));
-        exchange.getResponseSender().send(response.getBody());
+
+        byte[] html = response.getHtmlBytes();
+        if (html != null) {
+            exchange.getResponseSender().send(ByteBuffer.wrap(html));
+        } else {
+            exchange.getResponseSender().send(response.getBody());
+        }
     }
 }

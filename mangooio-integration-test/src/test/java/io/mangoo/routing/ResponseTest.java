@@ -9,11 +9,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 @ExtendWith({TestExtension.class})
@@ -249,6 +251,30 @@ class ResponseTest {
 
         //then
         assertThat(response.isRendered(), equalTo(false));
+    }
+
+    @Test
+    void testHtmlBytesRoundTrip() {
+        //given
+        byte[] html = "Größe".getBytes(StandardCharsets.UTF_8);
+
+        //when
+        Response response = Response.ok().bodyHtml(html);
+
+        //then
+        assertThat(response.getBody(), equalTo("Größe"));
+        assertArrayEquals(html, response.getHtmlBytes());
+        assertThat(response.getContentType(), equalTo(MediaType.HTML_UTF_8.withoutParameters().toString()));
+    }
+
+    @Test
+    void testTextBodyClearsHtmlBytes() {
+        //when
+        Response response = Response.ok().bodyHtml("ä".getBytes(StandardCharsets.UTF_8)).bodyText("plain");
+
+        //then
+        assertThat(response.getBody(), equalTo("plain"));
+        assertThat(response.getHtmlBytes(), nullValue());
     }
 
     @Test
