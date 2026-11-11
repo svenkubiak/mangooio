@@ -26,6 +26,7 @@ public class Response {
     private String contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
     private String body = Strings.EMPTY;
     private byte[] htmlBytes;
+    private byte[] jsonBytes;
     private String template;
     private byte[] binaryBody;
     private Path fileBody;
@@ -121,14 +122,21 @@ public class Response {
     }
 
     public String getBody() {
-        if (body == null && htmlBytes != null) {
-            body = new String(htmlBytes, StandardCharsets.UTF_8);
+        if (body == null) {
+            byte[] encoded = htmlBytes != null ? htmlBytes : jsonBytes;
+            if (encoded != null) {
+                body = new String(encoded, StandardCharsets.UTF_8);
+            }
         }
         return body;
     }
 
     public byte[] getHtmlBytes() {
         return htmlBytes;
+    }
+
+    public byte[] getJsonBytes() {
+        return jsonBytes;
     }
 
     public byte[] getBinaryBody() {
@@ -213,8 +221,7 @@ public class Response {
     public Response bodyHtml(String html) {
         this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
         rendered = false;
-        this.htmlBytes = null;
-        this.body = html;
+        assignBody(html);
 
         return this;
     }
@@ -225,6 +232,7 @@ public class Response {
         this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
         rendered = false;
         this.body = null;
+        this.jsonBytes = null;
         this.htmlBytes = html;
 
         return this;
@@ -290,30 +298,21 @@ public class Response {
     public Response bodyJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT);
 
-        assignBody(JsonUtils.toJson(object));
-        contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
-        rendered = false;
-
+        assignJson(JsonUtils.toJsonBytes(object));
         return this;
     }
 
     public Response bodyJsonError(String message) {
         Objects.requireNonNull(message, Required.MESSAGE);
 
-        assignBody(JsonUtils.toJson(Error.of(message, statusCode)));
-        contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
-        rendered = false;
-
+        assignJson(JsonUtils.toJsonBytes(Error.of(message, statusCode)));
         return this;
     }
 
     public Response bodyJson(String json) {
         Objects.requireNonNull(json, Required.JSON);
 
-        assignBody(json);
-        contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
-        rendered = false;
-
+        assignJson(json.getBytes(StandardCharsets.UTF_8));
         return this;
     }
 
@@ -378,7 +377,16 @@ public class Response {
 
     private void assignBody(String value) {
         this.htmlBytes = null;
+        this.jsonBytes = null;
         this.body = value;
+    }
+
+    private void assignJson(byte[] json) {
+        this.body = null;
+        this.htmlBytes = null;
+        this.jsonBytes = json;
+        contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
+        rendered = false;
     }
 
     /** Only used within a filter: stops executing further filters and sends the current response to the client. */

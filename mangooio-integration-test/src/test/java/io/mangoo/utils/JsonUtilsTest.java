@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Execution(ExecutionMode.CONCURRENT)
@@ -131,6 +133,40 @@ class JsonUtilsTest {
         assertThat(object.getName(), equalTo("John"));
         assertThat(object.getAge(), equalTo(30));
         assertThat(object.isActive(), equalTo(true));
+    }
+
+    @Test
+    void testToJsonBytesMatchesTheString() {
+        //given
+        TestObject object = new TestObject("Jöhn", 30, true);
+
+        //when
+        byte[] json = JsonUtils.toJsonBytes(object);
+
+        //then
+        assertArrayEquals(JsonUtils.toJson(object).getBytes(StandardCharsets.UTF_8), json);
+    }
+
+    @Test
+    void testToObjectFromBytes() {
+        //given
+        byte[] json = "{\"name\":\"Jöhn\",\"age\":30,\"active\":true}".getBytes(StandardCharsets.UTF_8);
+
+        //when
+        TestObject object = JsonUtils.toObject(json, TestObject.class);
+
+        //then
+        assertThat(object, not(nullValue()));
+        assertThat(object.getName(), equalTo("Jöhn"));
+        assertThat(object.getAge(), equalTo(30));
+        assertThat(object.isActive(), equalTo(true));
+    }
+
+    @Test
+    void testToObjectBlankBytes() {
+        //when & then
+        assertThrows(IllegalArgumentException.class, () -> JsonUtils.toObject(new byte[0], TestObject.class));
+        assertThrows(IllegalArgumentException.class, () -> JsonUtils.toObject(" \n".getBytes(StandardCharsets.UTF_8), TestObject.class));
     }
 
     @Test

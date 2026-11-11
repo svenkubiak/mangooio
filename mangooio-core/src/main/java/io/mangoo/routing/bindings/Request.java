@@ -25,6 +25,7 @@ public class Request {
     private transient Map<String, Cookie> cookies = new HashMap<>();
     private transient Map<String, Object> attributes = new HashMap<>();
     private String body = Strings.EMPTY;
+    private byte[] bodyBytes;
     private String csrf = Strings.EMPTY;
     private Map<String, String> parameter;
     private Map<String, String> pathParameter = Map.of();
@@ -73,6 +74,13 @@ public class Request {
     
     public Request withBody(String body) {
         this.body = (body != null) ? body : Strings.EMPTY;
+        this.bodyBytes = null;
+        return this;
+    }
+
+    public Request withBody(byte[] body) {
+        this.bodyBytes = body;
+        this.body = null;
         return this;
     }
     
@@ -81,16 +89,38 @@ public class Request {
     }
 
     public String getBody() {
-        return body;
+        if (body == null && bodyBytes != null) {
+            body = new String(bodyBytes, StandardCharsets.UTF_8);
+        }
+        return body == null ? Strings.EMPTY : body;
+    }
+
+    public byte[] getBodyBytes() {
+        return bodyBytes;
     }
 
     @SuppressWarnings("unchecked")
     public Map<String, Object> getBodyAsJsonMap() {
+        if (bodyBytes != null) {
+            if (isBlank(bodyBytes)) {
+                return new HashMap<>();
+            }
+            return JsonUtils.toObject(bodyBytes, Map.class);
+        }
         if (StringUtils.isNotBlank(body)) {
             return JsonUtils.toObject(body, Map.class);
         }
         
         return new HashMap<>();
+    }
+
+    private static boolean isBlank(byte[] json) {
+        for (byte value : json) {
+            if (value != ' ' && value != '\n' && value != '\r' && value != '\t') {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean hasValidCsrf() {

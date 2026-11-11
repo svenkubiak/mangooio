@@ -185,6 +185,17 @@ class ResponseTest {
         assertThat(response.getContentType(), equalTo(MediaType.JSON_UTF_8.withoutParameters().toString()));
         assertThat(response.isRendered(), equalTo(false));
         assertThat(response.getBody(), equalTo("[\"foo\",\"bar\"]"));
+        assertArrayEquals("[\"foo\",\"bar\"]".getBytes(StandardCharsets.UTF_8), response.getJsonBytes());
+    }
+
+    @Test
+    void testTextBodyClearsJsonBytes() {
+        //when
+        Response response = Response.ok().bodyJson(List.of("a")).bodyText("plain");
+
+        //then
+        assertThat(response.getBody(), equalTo("plain"));
+        assertThat(response.getJsonBytes(), nullValue());
     }
 
     @Test

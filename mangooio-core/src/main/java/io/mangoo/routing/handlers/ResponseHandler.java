@@ -129,9 +129,12 @@ public class ResponseHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Header.CONTENT_TYPE, response.getContentType() + "; charset=" + StandardCharsets.UTF_8.name());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().put(key, value));
 
-        byte[] html = response.getHtmlBytes();
-        if (html != null) {
-            exchange.getResponseSender().send(ByteBuffer.wrap(html));
+        byte[] encoded = response.getHtmlBytes();
+        if (encoded == null) {
+            encoded = response.getJsonBytes();
+        }
+        if (encoded != null) {
+            exchange.getResponseSender().send(ByteBuffer.wrap(encoded));
         } else {
             exchange.getResponseSender().send(response.getBody());
         }

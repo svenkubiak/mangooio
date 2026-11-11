@@ -7,6 +7,7 @@ import io.mangoo.templating.TemplateEngine;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Attachment {
@@ -14,6 +15,7 @@ public class Attachment {
     private String controllerClassName;
     private String controllerMethodName;
     private String body;
+    private byte[] rawBody;
     private List<Annotation> classAnnotations;
     private Class<?> controllerClass;
     private Object controllerInstance;
@@ -49,11 +51,24 @@ public class Attachment {
     }
 
     public String getBody() {
-        return this.body;
+        if (body == null && rawBody != null) {
+            body = new String(rawBody, StandardCharsets.UTF_8);
+        }
+        return body;
     }
 
     public void setBody(String body) {
         this.body = body;
+        this.rawBody = null;
+    }
+
+    public byte[] getRawBody() {
+        return rawBody;
+    }
+
+    public void setRawBody(byte[] rawBody) {
+        this.rawBody = rawBody;
+        this.body = null;
     }
 
     public List<Annotation> getClassAnnotations() {

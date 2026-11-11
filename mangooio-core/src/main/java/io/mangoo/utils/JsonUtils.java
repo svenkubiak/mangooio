@@ -39,6 +39,19 @@ public final class JsonUtils {
         
         return json;
     }
+
+    /**
+     * Returns an empty array if the conversion fails.
+     */
+    public static byte[] toJsonBytes(Object object) {
+        Objects.requireNonNull(object, Required.OBJECT);
+
+        try {
+            return mapper().writeValueAsBytes(object);
+        } catch (JacksonException e) {
+            return new byte[0];
+        }
+    }
     
     /**
      * Returns an empty string if the conversion fails.
@@ -74,11 +87,49 @@ public final class JsonUtils {
     }
 
     /**
+     * Returns null if the conversion fails.
+     */
+    public static <T> T toObject(byte[] json, Class<T> clazz) {
+        requireJsonBytes(json);
+        Objects.requireNonNull(clazz, Required.CLASS);
+
+        try {
+            return mapper().readValue(json, clazz);
+        } catch (JacksonException e) {
+            return null;
+        }
+    }
+
+    /**
      * Falls back to a new instance of the class, or to UnprocessableContent if that fails too.
      */
     @SuppressWarnings("unchecked")
     public static <T> T toObjectWithFallback(String json, Class<T> clazz) {
         Argument.requireNonBlank(json, Required.JSON);
+        Objects.requireNonNull(clazz, Required.CLASS);
+
+        T object = null;
+        try {
+            object = mapper().readValue(json, clazz);
+        } catch (JacksonException e) {
+            // Fall back to a new instance below
+        }
+
+        try {
+            return (object != null) ? object : clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // Fall back to UnprocessableContent below
+        }
+
+        return (T) new UnprocessableContent();
+    }
+
+    /**
+     * Falls back to a new instance of the class, or to UnprocessableContent if that fails too.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T toObjectWithFallback(byte[] json, Class<T> clazz) {
+        requireJsonBytes(json);
         Objects.requireNonNull(clazz, Required.CLASS);
 
         T object = null;
@@ -150,6 +201,22 @@ public final class JsonUtils {
             return TimeZone.getTimeZone(injector.getInstance(Config.class).getApplicationTimeZoneId());
         }
         return TimeZone.getDefault();
+    }
+
+    private static void requireJsonBytes(byte[] json) {
+        Objects.requireNonNull(json, Required.JSON);
+        if (isBlank(json)) {
+            throw new IllegalArgumentException(Required.JSON);
+        }
+    }
+
+    private static boolean isBlank(byte[] json) {
+        for (byte value : json) {
+            if (value != ' ' && value != '\n' && value != '\r' && value != '\t') {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map) {

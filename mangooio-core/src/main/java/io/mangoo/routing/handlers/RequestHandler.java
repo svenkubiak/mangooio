@@ -31,7 +31,6 @@ import org.apache.logging.log4j.util.Strings;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -49,7 +48,12 @@ public class RequestHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
-        attachment.setBody(getRequestBody(exchange));
+        byte[] rawBody = readRawBody(exchange);
+        if (rawBody != null) {
+            attachment.setRawBody(rawBody);
+        } else {
+            attachment.setBody(Strings.EMPTY);
+        }
         attachment.setRequest(getRequest(exchange));
 
         Trace.startChild(exchange, Const.INVOKE_CONTROLLER);
@@ -68,14 +72,19 @@ public class RequestHandler implements HttpHandler {
                 .ofNullable(exchange.getRequestHeaders().getFirst(Const.CSRF_TOKEN))
                 .orElseGet(() -> attachment.getForm().get(Const.CSRF_TOKEN));
 
-        return new Request(exchange)
+        var request = new Request(exchange)
                 .withSession(attachment.getSession())
                 .withAuthentication(attachment.getAuthentication())
                 .withParameter(attachment.getRequestParameter())
                 .withPathParameter(attachment.getPathParameter())
                 .withQueryParameter(attachment.getQueryParameter())
-                .withCsrf(csrf)
-                .withBody(attachment.getBody());
+                .withCsrf(csrf);
+        if (attachment.getRawBody() != null) {
+            request.withBody(attachment.getRawBody());
+        } else {
+            request.withBody(Strings.EMPTY);
+        }
+        return request;
     }
 
     protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, MangooTemplateEngineException {
@@ -353,10 +362,15 @@ public class RequestHandler implements HttpHandler {
                     yield Boolean.valueOf(value);
                 }
 
-                case UNDEFINED ->
-                        RequestUtils.isJsonRequest(exchange)
-                                ? JsonUtils.toObjectWithFallback(attachment.getBody(), clazz)
-                                : null;
+                case UNDEFINED -> {
+                    if (!RequestUtils.isJsonRequest(exchange)) {
+                        yield null;
+                    }
+                    byte[] raw = attachment.getRawBody();
+                    yield raw != null
+                            ? JsonUtils.toObjectWithFallback(raw, clazz)
+                            : JsonUtils.toObjectWithFallback(attachment.getBody(), clazz);
+                }
 
                 default -> null;
             };
@@ -383,25 +397,26 @@ public class RequestHandler implements HttpHandler {
         return response;
     }
 
-    protected String getRequestBody(HttpServerExchange exchange) throws IOException {
+    /** Null when this request has no raw body. An empty array is a body that was present and empty. */
+    protected byte[] readRawBody(HttpServerExchange exchange) throws IOException {
         if (!RequestUtils.isPostPutPatch(exchange)) {
-            return Strings.EMPTY;
+            return null;
         }
 
         String contentType = exchange.getRequestHeaders().getFirst(Header.CONTENT_TYPE);
         if (RequestUtils.isJsonRequest(exchange)) {
             exchange.startBlocking();
-            return new String(exchange.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            return exchange.getInputStream().readAllBytes();
         }
 
         if (contentType != null &&
                 (contentType.startsWith("multipart/") ||
                  contentType.startsWith("application/x-www-form-urlencoded"))) {
-            return Strings.EMPTY;
+            return null;
         }
 
         exchange.startBlocking();
-        return new String(exchange.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        return exchange.getInputStream().readAllBytes();
     }
 
     protected void nextHandler(HttpServerExchange exchange) throws Exception {

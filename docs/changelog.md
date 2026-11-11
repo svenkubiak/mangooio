@@ -4,6 +4,7 @@
 * Opened the authentication cookie only for routes that require authentication, take Authentication or Request, or run a request filter (svenkubiak)
 * Created the CSRF token when it is first read instead of on every request without a session cookie (svenkubiak)
 * Rendered HTML into a small buffer and sent those UTF-8 bytes without a second string copy (svenkubiak)
+* Read a JSON request body once as bytes and sent the JSON response from those bytes (svenkubiak)
 
 ## Version 11.0.0
 
