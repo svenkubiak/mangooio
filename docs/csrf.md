@@ -41,7 +41,7 @@ Emit the token in Freemarker:
 <@csrftoken/>
 ```
 
-`<@csrfform/>` writes a hidden input. `<@csrftoken/>` writes the raw token, for a script that sends it as a header. The token itself is created earlier, for every request that does not restore a valid session cookie: 32 random characters. The directives call `session.keep()`, which writes that cookie when the session was not restored from an existing one.
+`<@csrfform/>` writes a hidden input. `<@csrftoken/>` writes the raw token, for a script that sends it as a header. The token is 32 random characters, created the first time it is read on a session that was not restored from a cookie. The directives call `session.keep()` and then read the token, which writes that cookie when the session was not restored from an existing one.
 
 Clear the session on logout so a stale token cannot be reused after the user has signed out:
 

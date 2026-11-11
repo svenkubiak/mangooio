@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.Const;
 import io.mangoo.constants.Required;
+import io.mangoo.utils.CommonUtils;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -79,7 +80,11 @@ public class Session {
         return expires;
     }
 
+    /** A session restored from a cookie keeps its token. A new session creates one on the first read. */
     public String getCsrf() {
+        if ((csrf == null || csrf.isBlank()) && !restored) {
+            csrf = CommonUtils.randomString(32);
+        }
         return csrf;
     }
 

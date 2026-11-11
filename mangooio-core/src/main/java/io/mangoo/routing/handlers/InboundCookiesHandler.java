@@ -55,7 +55,6 @@ public class InboundCookiesHandler implements HttpHandler {
     protected Session getSessionCookie(HttpServerExchange exchange) {
         var session = Session.create()
                 .withContent(new HashMap<>())
-                .withCsrf(CommonUtils.randomString(32))
                 .withExpires(LocalDateTime.now()
                         .plusSeconds(config.getSessionCookieTokenExpires())
                         .withNano(0));
