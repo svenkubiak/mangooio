@@ -23,6 +23,7 @@ import java.util.Objects;
 
 public class FormHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(FormHandler.class);
+    private static final FormParserFactory FORM_PARSERS = formParsers();
     private final long maxFileSize;
 
     @Inject
@@ -51,16 +52,13 @@ public class FormHandler implements HttpHandler {
 
     protected Form getForm(HttpServerExchange exchange) throws IOException {
         final Form form = Application.getInstance(Form.class);
-        if (!RequestUtils.isPostPutPatch(exchange)) {
+        if (!RequestUtils.isPostPutPatch(exchange) || !RequestUtils.isFormRequest(exchange)) {
             return form;
         }
 
         exchange.startBlocking();
 
-        var formParserBuilder = FormParserFactory.builder();
-        formParserBuilder.setDefaultCharset(StandardCharsets.UTF_8.name());
-
-        try (FormDataParser parser = formParserBuilder.build().createParser(exchange)) {
+        try (FormDataParser parser = FORM_PARSERS.createParser(exchange)) {
             if (parser == null) {
                 return form;
             }
@@ -127,6 +125,12 @@ public class FormHandler implements HttpHandler {
                 exchange.getRequestMethod(), exchange.getRequestURI(), reason);
 
         return new IOException(reason);
+    }
+
+    private static FormParserFactory formParsers() {
+        var builder = FormParserFactory.builder();
+        builder.setDefaultCharset(StandardCharsets.UTF_8.name());
+        return builder.build();
     }
 
     protected void nextHandler(HttpServerExchange exchange) throws Exception {

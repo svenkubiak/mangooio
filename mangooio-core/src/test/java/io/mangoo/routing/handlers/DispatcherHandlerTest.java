@@ -47,4 +47,49 @@ class DispatcherHandlerTest {
     void testFilterAnnotationOpensAuthenticationCookie() {
         assertTrue(DispatcherHandler.readsAuthenticationCookie(false, false, true, List.of()));
     }
+
+    @Test
+    void testGetStaysOnTheIoThread() {
+        assertFalse(DispatcherHandler.leavesIoThread(false, false, false, false));
+    }
+
+    @Test
+    void testGetMarkedNonBlockingLeavesTheIoThread() {
+        assertTrue(DispatcherHandler.leavesIoThread(true, false, false, false));
+    }
+
+    @Test
+    void testDeleteStaysOnTheIoThread() {
+        assertFalse(DispatcherHandler.leavesIoThread(false, false, false, false));
+    }
+
+    @Test
+    void testFormPostLeavesTheIoThread() {
+        assertTrue(DispatcherHandler.leavesIoThread(false, true, true, false));
+    }
+
+    @Test
+    void testPlainPostLeavesTheIoThread() {
+        assertTrue(DispatcherHandler.leavesIoThread(false, true, false, false));
+    }
+
+    @Test
+    void testJsonWithoutContentLengthLeavesTheIoThread() {
+        assertTrue(DispatcherHandler.leavesIoThread(false, true, false, false));
+    }
+
+    @Test
+    void testSmallJsonPostStaysOnTheIoThread() {
+        assertFalse(DispatcherHandler.leavesIoThread(false, true, false, true));
+    }
+
+    @Test
+    void testSmallJsonMarkedNonBlockingLeavesTheIoThread() {
+        assertTrue(DispatcherHandler.leavesIoThread(true, true, false, true));
+    }
+
+    @Test
+    void testFormWinsOverSmallJson() {
+        assertTrue(DispatcherHandler.leavesIoThread(false, true, true, true));
+    }
 }

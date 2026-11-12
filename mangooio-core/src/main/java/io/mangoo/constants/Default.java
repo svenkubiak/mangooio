@@ -45,6 +45,8 @@ public final class Default {
     public static final long FORM_MAX_FILE_SIZE = 5L * 1024 * 1024;
     public static final int FORM_MAX_PARAMETERS = 1000;
     public static final int FORM_MAX_VALUE_LENGTH = 10_000;
+    // A JSON body of this size stays on the I/O thread. One Undertow buffer is 16 KiB.
+    public static final int SMALL_JSON_MAX_BYTES = 16 * 1024;
     public static final String HEALTH_LIVE = "/@health/live";
     public static final String HEALTH_READY = "/@health/ready";
     public static final String I18N_COOKIE_NAME = "mangooio-i18n";

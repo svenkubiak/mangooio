@@ -3,7 +3,6 @@ package io.mangoo.routing.handlers;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.constants.Const;
-import io.mangoo.constants.Header;
 import io.mangoo.constants.Required;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -399,19 +398,21 @@ public class RequestHandler implements HttpHandler {
 
     /** Null when this request has no raw body. An empty array is a body that was present and empty. */
     protected byte[] readRawBody(HttpServerExchange exchange) throws IOException {
+        byte[] received = exchange.getAttachment(DispatcherHandler.RAW_BODY);
+        if (received != null) {
+            return received;
+        }
+
         if (!RequestUtils.isPostPutPatch(exchange)) {
             return null;
         }
 
-        String contentType = exchange.getRequestHeaders().getFirst(Header.CONTENT_TYPE);
         if (RequestUtils.isJsonRequest(exchange)) {
             exchange.startBlocking();
             return exchange.getInputStream().readAllBytes();
         }
 
-        if (contentType != null &&
-                (contentType.startsWith("multipart/") ||
-                 contentType.startsWith("application/x-www-form-urlencoded"))) {
+        if (RequestUtils.isFormRequest(exchange)) {
             return null;
         }
 

@@ -1,5 +1,6 @@
 package io.mangoo.utils;
 
+import io.mangoo.constants.Default;
 import io.mangoo.constants.Header;
 import io.mangoo.constants.Required;
 import io.mangoo.routing.Attachment;
@@ -122,14 +123,28 @@ public final class RequestUtils {
     public static boolean isJsonRequest(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
 
+        String contentType = contentType(exchange);
+        return contentType != null && (contentType.startsWith("application/json") || contentType.contains("+json"));
+    }
+
+    public static boolean isFormRequest(HttpServerExchange exchange) {
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
+
+        String contentType = contentType(exchange);
+        return contentType != null && (contentType.startsWith("multipart/form-data") || contentType.startsWith("application/x-www-form-urlencoded"));
+    }
+
+    /** JSON whose Content-Length is known and fits in one 16 KiB buffer. */
+    public static boolean isSmallJsonRequest(HttpServerExchange exchange) {
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE);
+
+        long contentLength = exchange.getRequestContentLength();
+        return isJsonRequest(exchange) && contentLength >= 0 && contentLength <= Default.SMALL_JSON_MAX_BYTES;
+    }
+
+    private static String contentType(HttpServerExchange exchange) {
         String contentType = exchange.getRequestHeaders().getFirst(Header.CONTENT_TYPE);
-        if (contentType == null) {
-            return false;
-        }
-
-        contentType = contentType.toLowerCase(Locale.ENGLISH);
-
-        return contentType.startsWith("application/json") || contentType.contains("+json");
+        return contentType == null ? null : contentType.toLowerCase(Locale.ENGLISH);
     }
 
     public static Optional<String> getAuthorizationHeader(Request request) {

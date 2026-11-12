@@ -1,11 +1,15 @@
-## Version 11.0.1
+## Version 11.1.0
 
+* A JSON POST, PUT or PATCH of at most 16 KiB stays on the I/O thread. Forms, larger bodies, bodies without Content-Length and withNonBlocking() still run on a worker. The form parser is created once and only for form requests (svenkubiak)
 * Reused the AES cipher and HMAC per request thread when creating and reading cookies (svenkubiak)
 * Opened the authentication cookie only for routes that require authentication, take Authentication or Request, or run a request filter (svenkubiak)
 * Created the CSRF token when it is first read instead of on every request without a session cookie (svenkubiak)
 * Rendered HTML into a small buffer and sent those UTF-8 bytes without a second string copy (svenkubiak)
 * Read a JSON request body once as bytes and sent the JSON response from those bytes (svenkubiak)
-
+* Version bumps (svenkubiak)
+  * commons-lang3 3.21.0 -&gt; 3.22.0
+  * bouncy-castle 1.86 -&gt; 1.87
+  
 ## Version 11.0.0
 
 Released at 09.11.2026

@@ -51,6 +51,17 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/flashed").respondeWith("flashed")
         );
         
+        Bind.controller(ThreadController.class).withRoutes(
+                On.get().to("/thread").respondeWith("name"),
+                On.get().to("/thread/worker").respondeWith("name").withNonBlocking(),
+                On.post().to("/thread/json").respondeWith("name"),
+                On.put().to("/thread/json").respondeWith("name"),
+                On.patch().to("/thread/json").respondeWith("name"),
+                On.post().to("/thread/json-worker").respondeWith("name").withNonBlocking(),
+                On.post().to("/thread/form").respondeWith("name"),
+                On.post().to("/thread/text").respondeWith("name")
+        );
+
         Bind.controller(JsonController.class).withRoutes(
                 On.get().to("/json-body").respondeWith("jsonBody"),
                 On.get().to("/render").respondeWith("render"),

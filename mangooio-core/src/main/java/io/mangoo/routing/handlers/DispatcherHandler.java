@@ -15,8 +15,11 @@ import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.internal.Trace;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.AttachmentKey;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -24,6 +27,8 @@ import java.lang.reflect.Parameter;
 import java.util.*;
 
 public final class DispatcherHandler implements HttpHandler {
+    private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
+    static final AttachmentKey<byte[]> RAW_BODY = AttachmentKey.create(byte[].class);
     private static final int INITIAL_CAPACITY = 50;
     private final Method method;
     private final List<Annotation> methodAnnotations;
@@ -95,8 +100,14 @@ public final class DispatcherHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if ((RequestUtils.isPostPutPatch(exchange) || blocking) && exchange.isInIoThread()) {
+        if (exchange.isInIoThread() && leavesIoThread(exchange, blocking)) {
             exchange.dispatch(dispatchHandler);
+            return;
+        }
+
+        // readAllBytes() is refused on an I/O thread. The bytes are delivered on this thread once they have arrived.
+        if (exchange.isInIoThread() && RequestUtils.isSmallJsonRequest(exchange) && exchange.getAttachment(RAW_BODY) == null) {
+            exchange.getRequestReceiver().receiveFullBytes(this::continueWithJson, this::rejectJson);
             return;
         }
 
@@ -140,6 +151,53 @@ public final class DispatcherHandler implements HttpHandler {
 
     private void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(LocaleHandler.class).handleRequest(exchange);
+    }
+
+    /**
+     * Forms and every other POST, PUT or PATCH still move to a worker.
+     * A JSON body of at most {@link io.mangoo.constants.Default#SMALL_JSON_MAX_BYTES} stays on the I/O thread,
+     * unless the route called {@code withNonBlocking()}.
+     */
+    static boolean leavesIoThread(boolean blocking, boolean postPutPatch, boolean form, boolean smallJson) {
+        if (blocking) {
+            return true;
+        }
+        if (!postPutPatch) {
+            return false;
+        }
+        if (form) {
+            return true;
+        }
+        return !smallJson;
+    }
+
+    private void continueWithJson(HttpServerExchange exchange, byte[] data) {
+        exchange.putAttachment(RAW_BODY, data == null ? new byte[0] : data);
+        try {
+            handleRequest(exchange);
+        } catch (Exception e) {
+            exchange.putAttachment(io.undertow.server.handlers.ExceptionHandler.THROWABLE, e);
+            try {
+                Application.getInstance(ExceptionHandler.class).handleRequest(exchange);
+            } catch (Exception handlerFailure) {
+                LOG.error("Failed to handle exception while reading JSON", handlerFailure);
+                exchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
+                exchange.endExchange();
+            }
+        }
+    }
+
+    private void rejectJson(HttpServerExchange exchange, Exception exception) {
+        LOG.warn("Failed to read JSON body of {} {}", exchange.getRequestMethod(), exchange.getRequestURI(), exception);
+        exchange.setStatusCode(StatusCodes.BAD_REQUEST);
+        exchange.endExchange();
+    }
+
+    private static boolean leavesIoThread(HttpServerExchange exchange, boolean blocking) {
+        boolean postPutPatch = RequestUtils.isPostPutPatch(exchange);
+        boolean form = postPutPatch && RequestUtils.isFormRequest(exchange);
+        boolean smallJson = postPutPatch && RequestUtils.isSmallJsonRequest(exchange);
+        return leavesIoThread(blocking, postPutPatch, form, smallJson);
     }
 
     // Request.getAuthentication() is available on every route that receives Request, Authentication, or a filter.

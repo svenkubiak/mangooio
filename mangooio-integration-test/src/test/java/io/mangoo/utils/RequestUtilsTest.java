@@ -1,9 +1,11 @@
 package io.mangoo.utils;
 
 import io.mangoo.TestExtension;
+import io.mangoo.constants.Default;
 import io.mangoo.constants.Header;
 import io.mangoo.routing.bindings.Request;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.Headers;
 import io.undertow.util.Methods;
 import io.undertow.util.PathTemplateMatch;
 import org.junit.jupiter.api.Test;
@@ -469,5 +471,42 @@ class RequestUtilsTest {
 
         //when & then
         assertThrows(NullPointerException.class, () -> RequestUtils.hasMultipleParameterValues(null));
+    }
+
+    @Test
+    void testFormContentTypes() {
+        assertThat(RequestUtils.isFormRequest(exchange("application/x-www-form-urlencoded")), is(true));
+        assertThat(RequestUtils.isFormRequest(exchange("application/x-www-form-urlencoded; charset=UTF-8")), is(true));
+        assertThat(RequestUtils.isFormRequest(exchange("multipart/form-data; boundary=abc")), is(true));
+        assertThat(RequestUtils.isFormRequest(exchange("application/json")), is(false));
+        assertThat(RequestUtils.isFormRequest(exchange("text/plain")), is(false));
+    }
+
+    @Test
+    void testSmallJsonStaysWithinOneBuffer() {
+        HttpServerExchange exchange = exchange("application/json; charset=UTF-8");
+        exchange.getRequestHeaders().put(Headers.CONTENT_LENGTH, Default.SMALL_JSON_MAX_BYTES);
+
+        assertThat(RequestUtils.isSmallJsonRequest(exchange), is(true));
+    }
+
+    @Test
+    void testJsonAboveOneBufferIsNotSmall() {
+        HttpServerExchange exchange = exchange("application/vnd.api+json");
+        exchange.getRequestHeaders().put(Headers.CONTENT_LENGTH, Default.SMALL_JSON_MAX_BYTES + 1);
+
+        assertThat(RequestUtils.isJsonRequest(exchange), is(true));
+        assertThat(RequestUtils.isSmallJsonRequest(exchange), is(false));
+    }
+
+    @Test
+    void testJsonWithoutContentLengthIsNotSmall() {
+        assertThat(RequestUtils.isSmallJsonRequest(exchange("application/json")), is(false));
+    }
+
+    private static HttpServerExchange exchange(String contentType) {
+        HttpServerExchange exchange = new HttpServerExchange(null);
+        exchange.getRequestHeaders().put(Headers.CONTENT_TYPE, contentType);
+        return exchange;
     }
 }

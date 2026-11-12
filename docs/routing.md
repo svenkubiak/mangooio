@@ -58,11 +58,14 @@ On.anyOf(Http.PUT, Http.PATCH, Http.DELETE)
 
 ## Long-running requests
 
-`POST`, `PUT`, and `PATCH` already leave Undertow's I/O thread before the controller runs, body and all. `GET`, `HEAD`, `DELETE`, and `OPTIONS` stay on the I/O thread unless you mark the route. A slow read on that thread holds up other requests on the same thread. `withNonBlocking()` dispatches those verbs onto Undertow's worker threads. The name describes the I/O threads you are keeping free, not the work inside the method:
+`GET`, `HEAD`, `DELETE`, and `OPTIONS` stay on Undertow's I/O thread unless you mark the route. A JSON `POST`, `PUT`, or `PATCH` whose `Content-Length` is known and at most 16 KiB stays there too. Forms, a larger body, a body without `Content-Length`, and any other content type still move to a worker before the controller runs. A slow read on an I/O thread holds up other requests on that thread.
+
+`withNonBlocking()` dispatches the route onto a worker. The name describes the I/O threads you are keeping free, not the work inside the method. Use it for a long `GET`, and for a small JSON request whose controller blocks, for example on a database call:
 
 ```java
 Bind.controller(ApplicationController.class).withRoutes(
-    On.get().to("/export").respondeWith("export").withNonBlocking()
+    On.get().to("/export").respondeWith("export").withNonBlocking(),
+    On.post().to("/orders").respondeWith("create").withNonBlocking()
 );
 ```
 
@@ -74,7 +77,7 @@ Bind.controller(ExportController.class).withNonBlocking().withRoutes(
 );
 ```
 
-Calling it on `On.post()`, `On.put()`, or `On.patch()` changes nothing. Those verbs are dispatched either way. A slow `GET` without it does not fail. Other requests on that I/O thread wait behind it.
+A slow request without it does not fail. Other requests on that I/O thread wait behind it.
 
 ## Authentication
 
