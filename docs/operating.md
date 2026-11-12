@@ -20,7 +20,7 @@ java -Dapplication.mode=prod -jar /opt/myapp/myapp.jar
 
 `java -jar` starts in prod mode. `-Dapplication.mode` accepts `dev` and `test`, case-insensitively. Any other value, including `staging`, is prod. `mvn mangooio:run` forces dev mode on the child process.
 
-Configure at least one HTTP or HTTPS connector. A connector starts only when both host and port are set. Zero connectors exits the process. HTTPS reads a PKCS12 file from `connector.https.keystore` and speaks TLS 1.3 only. The alias is required only when the file has more than one key entry.
+Configure at least one HTTP or HTTPS connector. A connector starts only when both host and port are set. Zero connectors exits the process. HTTPS reads a PKCS12 file from `connector.https.keystore`, speaks TLS 1.3 only, and offers HTTP/2. The plain HTTP connector stays HTTP/1.1. The alias is required only when the file has more than one key entry.
 
 On an operating system whose name does not start with `Windows`, prod mode runs `id -u` and exits when the uid is `0`. Run the process as an unprivileged user, and give that user read access to the secrets directory if you use `file{}`. If `id` is missing, the failure is logged and startup continues.
 

@@ -269,6 +269,6 @@ connector:
     password: file{}
 ```
 
-`connector.https.certificate.alias` selects the entry and may stay empty if the file holds exactly one key entry. The connector accepts TLS 1.3 only; clients that need TLS 1.2 have to connect through a proxy that terminates TLS. Behind a load balancer TLS usually ends at the proxy and the application runs plain HTTP, see [Operating](operating.md). For local HTTPS a tool like `mkcert` creates a trusted certificate.
+`connector.https.certificate.alias` selects the entry and may stay empty if the file holds exactly one key entry. The connector accepts TLS 1.3 only and offers HTTP/2; clients that need TLS 1.2 have to connect through a proxy that terminates TLS. Behind a load balancer TLS usually ends at the proxy and the application runs plain HTTP, see [Operating](operating.md). For local HTTPS a tool like `mkcert` creates a trusted certificate.
 
 See [Configuration](configuration.md) for all keys and [Migrations](migrations.md) for the move from the vault of 10.x.

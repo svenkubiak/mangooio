@@ -13,6 +13,11 @@ import io.mangoo.enums.Mode;
 import io.mangoo.interfaces.InstanceRegistry;
 import io.mangoo.models.InstanceStatus;
 import io.undertow.Undertow;
+import io.undertow.server.handlers.PathHandler;
+import io.undertow.util.Headers;
+import io.undertow.websockets.WebSocketConnectionCallback;
+import io.undertow.websockets.WebSocketProtocolHandshakeHandler;
+import io.undertow.websockets.core.WebSockets;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -22,12 +27,20 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.WebSocket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -347,6 +360,101 @@ public class ApplicationTest {
             socket.setEnabledProtocols(new String[] {protocol});
             socket.startHandshake();
             return socket.getSession().getProtocol();
+        }
+    }
+
+    @Test
+    void testHttpsListenerSpeaksHttp2AndPlainHttpStaysHttp1() throws Exception {
+        //given
+        var sslContext = Application.sslContext(keystore("certificate"), KEYSTORE_PASSWORD, "certificate");
+        int httpsPort = freePort();
+        int httpPort = freePort();
+        Undertow undertow = Application.addHttpsListener(Undertow.builder().addHttpListener(httpPort, "localhost"), httpsPort, "localhost", sslContext)
+                .setHandler(new PathHandler(exchange -> exchange.getResponseSender().send("ok"))
+                        .addExactPath("/ws", new WebSocketProtocolHandshakeHandler((WebSocketConnectionCallback) (exchange, channel) -> WebSockets.sendText("pong", channel, null)))
+                        .addExactPath("/sse", exchange -> {
+                            exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/event-stream");
+                            exchange.getResponseSender().send("data: ping\n\n");
+                        }))
+                .build();
+        undertow.start();
+
+        try {
+            var client = HttpClient.newBuilder()
+                    .sslContext(trustAll())
+                    .version(HttpClient.Version.HTTP_2)
+                    .connectTimeout(Duration.ofSeconds(5))
+                    .build();
+
+            //then
+            HttpResponse<String> page = client.send(HttpRequest.newBuilder(URI.create("https://localhost:" + httpsPort + "/")).build(), HttpResponse.BodyHandlers.ofString());
+            assertThat(page.version(), equalTo(HttpClient.Version.HTTP_2));
+            assertThat(page.body(), equalTo("ok"));
+
+            HttpResponse<String> sse = client.send(HttpRequest.newBuilder(URI.create("https://localhost:" + httpsPort + "/sse")).build(), HttpResponse.BodyHandlers.ofString());
+            assertThat(sse.version(), equalTo(HttpClient.Version.HTTP_2));
+            assertThat(sse.body(), containsString("data: ping"));
+
+            var received = new CompletableFuture<String>();
+            client.newWebSocketBuilder()
+                    .connectTimeout(Duration.ofSeconds(5))
+                    .buildAsync(URI.create("wss://localhost:" + httpsPort + "/ws"), new WebSocket.Listener() {
+                        @Override
+                        public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
+                            received.complete(data.toString());
+                            return WebSocket.Listener.super.onText(webSocket, data, last);
+                        }
+                    }).get(5, TimeUnit.SECONDS);
+            assertThat(received.get(5, TimeUnit.SECONDS), equalTo("pong"));
+
+            assertThat(httpStatus(httpPort), equalTo("HTTP/1.1 200"));
+        } finally {
+            undertow.stop();
+        }
+    }
+
+    private static int freePort() throws Exception {
+        try (var socket = new ServerSocket(0)) {
+            return socket.getLocalPort();
+        }
+    }
+
+    private static SSLContext trustAll() throws Exception {
+        var client = SSLContext.getInstance("TLS");
+        client.init(null, new TrustManager[] {new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) {
+                // trusts the self-signed test certificate
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                // trusts the self-signed test certificate
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        }}, null);
+        return client;
+    }
+
+    /** An h2c upgrade attempt. HTTP/2 on the plain listener would answer 101. */
+    private static String httpStatus(int port) throws Exception {
+        try (var socket = new Socket("localhost", port)) {
+            socket.setSoTimeout(2_000);
+            socket.getOutputStream().write("""
+                    GET / HTTP/1.1\r
+                    Host: localhost\r
+                    Connection: Upgrade, HTTP2-Settings\r
+                    Upgrade: h2c\r
+                    HTTP2-Settings: AAMAAABkAAQCAAAAAAIAAAAA\r
+                    \r
+                    """.getBytes(StandardCharsets.UTF_8));
+            socket.getOutputStream().flush();
+            String status = new String(socket.getInputStream().readNBytes(12), StandardCharsets.UTF_8);
+            return status;
         }
     }
 

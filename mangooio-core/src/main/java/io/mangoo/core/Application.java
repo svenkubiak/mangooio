@@ -958,11 +958,17 @@ public final class Application {
         return modules;
     }
 
-    // SSLContext.getInstance("TLSv1.3") still enables TLS 1.2 on the server side, so the protocols are restricted explicitly
+    // SSLContext.getInstance("TLSv1.3") still enables TLS 1.2 on the server side, so the protocols are restricted explicitly.
+    // HTTP/2 is enabled on this listener only. A plain HTTP listener on the same builder stays HTTP/1.1.
     static Undertow.Builder addHttpsListener(Undertow.Builder builder, int port, String host, SSLContext sslContext) {
         return builder
                 .setSocketOption(Options.SSL_ENABLED_PROTOCOLS, Sequence.of(TLS_PROTOCOL))
-                .addHttpsListener(port, host, sslContext);
+                .addListener(new Undertow.ListenerBuilder()
+                        .setType(Undertow.ListenerType.HTTPS)
+                        .setHost(host)
+                        .setPort(port)
+                        .setSslContext(sslContext)
+                        .setHttp2Enabled(true));
     }
 
     static SSLContext sslContext(Path keystore, char[] password, String alias) {

@@ -122,7 +122,7 @@ default:
       password: file{}
 ```
 
-HTTPS reads key and certificate chain from the PKCS12 file in `connector.https.keystore`, see [Secrets](secrets.md#https-certificates). `connector.https.certificate.alias` is only needed if the file holds more than one key entry.
+HTTPS reads key and certificate chain from the PKCS12 file in `connector.https.keystore`, see [Secrets](secrets.md#https-certificates). The connector speaks TLS 1.3 and HTTP/2. `connector.https.certificate.alias` is only needed if the file holds more than one key entry.
 
 ## Default values
 

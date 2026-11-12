@@ -1,5 +1,6 @@
 ## Version 11.1.0
 
+* The HTTPS connector offers HTTP/2. The plain HTTP connector stays HTTP/1.1 (svenkubiak)
 * A JSON POST, PUT or PATCH of at most 16 KiB stays on the I/O thread. Forms, larger bodies, bodies without Content-Length and withNonBlocking() still run on a worker. The form parser is created once and only for form requests (svenkubiak)
 * Reused the AES cipher and HMAC per request thread when creating and reading cookies (svenkubiak)
 * Opened the authentication cookie only for routes that require authentication, take Authentication or Request, or run a request filter (svenkubiak)
