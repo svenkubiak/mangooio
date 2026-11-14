@@ -10,7 +10,8 @@
 * Version bumps (svenkubiak)
   * commons-lang3 3.21.0 -&gt; 3.22.0
   * bouncy-castle 1.86 -&gt; 1.87
-  
+  * fory-core 1.7.7 -&gt; 1.7.8
+
 ## Version 11.0.0
 
 Released at 09.11.2026
