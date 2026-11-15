@@ -1,5 +1,7 @@
 ## Version 11.1.0
 
+Released at 15.11.2026
+
 * The HTTPS connector offers HTTP/2. The plain HTTP connector stays HTTP/1.1 (svenkubiak)
 * A JSON POST, PUT or PATCH of at most 16 KiB stays on the I/O thread. Forms, larger bodies, bodies without Content-Length and withNonBlocking() still run on a worker. The form parser is created once and only for form requests (svenkubiak)
 * Reused the AES cipher and HMAC per request thread when creating and reading cookies (svenkubiak)
@@ -11,6 +13,8 @@
   * commons-lang3 3.21.0 -&gt; 3.22.0
   * bouncy-castle 1.86 -&gt; 1.87
   * fory-core 1.7.7 -&gt; 1.7.8
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/11.0.0...11.11.0)
 
 ## Version 11.0.0
 

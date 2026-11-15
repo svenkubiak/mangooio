@@ -1,3 +1,7 @@
+## From 11.0.0 to 11.1.0
+
+This is a drop-in replacement.
+
 ## From 10.16.0 to 11.0.0
 
 With persistence enabled, MongoDB 4.2 or later is required.
