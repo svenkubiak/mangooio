@@ -216,7 +216,7 @@ public class AdminController {
                         "controllerName", route.getControllerClass().getName(),
                         "action", route.getControllerMethod(),
                         "authentication", route.hasAuthentication(),
-                        "nonBlocking", route.isBlocking()))
+                        "blocking", route.isBlocking()))
                 .toList();
 
         List<String> files = Stream.concat(

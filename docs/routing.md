@@ -60,19 +60,19 @@ On.anyOf(Http.PUT, Http.PATCH, Http.DELETE)
 
 `GET`, `HEAD`, `DELETE`, and `OPTIONS` stay on Undertow's I/O thread unless you mark the route. A JSON `POST`, `PUT`, or `PATCH` whose `Content-Length` is known and at most 16 KiB stays there too. Forms, a larger body, a body without `Content-Length`, and any other content type still move to a worker before the controller runs. A slow read on an I/O thread holds up other requests on that thread.
 
-`withNonBlocking()` dispatches the route onto a worker. The name describes the I/O threads you are keeping free, not the work inside the method. Use it for a long `GET`, and for a small JSON request whose controller blocks, for example on a database call:
+`withBlocking()` dispatches the route onto a worker. Use it when the controller blocks, for example on a database call: a long `GET`, or a small JSON request that would otherwise stay on the I/O thread.
 
 ```java
 Bind.controller(ApplicationController.class).withRoutes(
-    On.get().to("/export").respondeWith("export").withNonBlocking(),
-    On.post().to("/orders").respondeWith("create").withNonBlocking()
+    On.get().to("/export").respondeWith("export").withBlocking(),
+    On.post().to("/orders").respondeWith("create").withBlocking()
 );
 ```
 
 You can also apply that to every route of a controller at once:
 
 ```java
-Bind.controller(ExportController.class).withNonBlocking().withRoutes(
+Bind.controller(ExportController.class).withBlocking().withRoutes(
     On.get().to("/export").respondeWith("index")
 );
 ```

@@ -156,7 +156,7 @@ public final class DispatcherHandler implements HttpHandler {
     /**
      * Forms and every other POST, PUT or PATCH still move to a worker.
      * A JSON body of at most {@link io.mangoo.constants.Default#SMALL_JSON_MAX_BYTES} stays on the I/O thread,
-     * unless the route called {@code withNonBlocking()}.
+     * unless the route called {@code withBlocking()}.
      */
     static boolean leavesIoThread(boolean blocking, boolean postPutPatch, boolean form, boolean smallJson) {
         if (blocking) {

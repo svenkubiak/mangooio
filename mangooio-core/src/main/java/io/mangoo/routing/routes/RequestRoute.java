@@ -72,8 +72,19 @@ public class RequestRoute implements MangooRoute {
         return this;
     }
     
-    /** Executes the request in a worker thread pool, so that a long-running request does not block the I/O thread. */
+    /** Executes the request in a worker thread, so that a long-running request does not block the I/O thread.
+     *
+     * @deprecated Use {@link withBlocking()} instead
+     *
+     * */
+    @Deprecated(since = "11.1.1", forRemoval = true)
     public RequestRoute withNonBlocking() {
+        this.blocking = true;
+        return this;
+    }
+
+    /** Executes the request in a worker thread, so that a long-running request does not block the I/O thread. */
+    public RequestRoute withBlocking() {
         this.blocking = true;
         return this;
     }

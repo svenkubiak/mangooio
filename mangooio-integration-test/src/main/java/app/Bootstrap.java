@@ -53,11 +53,11 @@ public class Bootstrap implements MangooBootstrap {
         
         Bind.controller(ThreadController.class).withRoutes(
                 On.get().to("/thread").respondeWith("name"),
-                On.get().to("/thread/worker").respondeWith("name").withNonBlocking(),
+                On.get().to("/thread/worker").respondeWith("name").withBlocking(),
                 On.post().to("/thread/json").respondeWith("name"),
                 On.put().to("/thread/json").respondeWith("name"),
                 On.patch().to("/thread/json").respondeWith("name"),
-                On.post().to("/thread/json-worker").respondeWith("name").withNonBlocking(),
+                On.post().to("/thread/json-worker").respondeWith("name").withBlocking(),
                 On.post().to("/thread/form").respondeWith("name"),
                 On.post().to("/thread/text").respondeWith("name")
         );
@@ -122,8 +122,8 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/origin").respondeWith("origin"),
                 On.get().to("/person").respondeWith("person"),
                 On.get().to("/api-filter").respondeWith("apiFilter"),
-                On.get().to("/").respondeWith("index").withNonBlocking(),
-                On.anyOf(Http.DELETE, Http.PATCH).to("/anyof").respondeWith("index").withNonBlocking(),
+                On.get().to("/").respondeWith("index").withBlocking(),
+                On.anyOf(Http.DELETE, Http.PATCH).to("/anyof").respondeWith("index").withBlocking(),
                 On.get().to("/error").respondeWith("error"),
                 On.post().to("/error").respondeWith("error"),
                 On.post().to("/illegal-argument").respondeWith("illegalArgument"),
@@ -147,7 +147,7 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/badrequest").respondeWith("badrequest"),
                 On.get().to("/not-modified").respondeWith("notmodified"),
                 On.get().to("/unauthorized").respondeWith("unauthorized"),
-                On.get().to("/header").respondeWith("header").withNonBlocking(),
+                On.get().to("/header").respondeWith("header").withBlocking(),
                 On.get().to("/request").respondeWith("request"),
                 On.get().to("/basicauth").respondeWith("basicauth"),
                 On.post().to("/post").respondeWith("post"),

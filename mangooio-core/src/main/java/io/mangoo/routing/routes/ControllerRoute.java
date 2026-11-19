@@ -30,7 +30,7 @@ public class ControllerRoute {
             }
             
             if (hasBlocking()) {
-                requestRoute.withNonBlocking();
+                requestRoute.withBlocking();
             }
             
             if (requestRoute.hasMultipleMethods()) {
@@ -48,9 +48,20 @@ public class ControllerRoute {
         return this;
     }
 
-    /** Executes the requests in a worker thread pool, so that long-running requests do not block the I/O thread. */
+    /** Executes the request in a worker thread, so that a long-running request does not block the I/O thread.
+     *
+     * @deprecated Use {@link withBlocking()} instead
+     *
+     * */
+    @Deprecated
     public ControllerRoute withNonBlocking() {
         blocking = true;
+        return this;
+    }
+
+    /** Executes the request in a worker thread, so that a long-running request does not block the I/O thread. */
+    public ControllerRoute withBlocking() {
+        this.blocking = true;
         return this;
     }
 

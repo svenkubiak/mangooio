@@ -47,7 +47,7 @@
                         <td><#list route.methods?split(", ") as method><span class="badge method-${method?lower_case}">${method}</span><#sep> </#sep></#list></td>
                         <td><code>${route.url}</code></td>
                         <td><code title="${route.controllerName}">${route.controller}.${route.action}</code></td>
-                        <td><#if route.authentication><span class="badge">Authentication</span> </#if><#if route.nonBlocking><span class="badge">Non-blocking</span></#if></td>
+                        <td><#if route.authentication><span class="badge">Authentication</span> </#if><#if route.blocking><span class="badge">Blocking</span></#if></td>
                     </tr>
                 <#else>
                     <tr><td colspan="4" class="empty">No request routes</td></tr>

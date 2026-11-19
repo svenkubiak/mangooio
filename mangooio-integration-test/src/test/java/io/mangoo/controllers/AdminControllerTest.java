@@ -236,6 +236,8 @@ class AdminControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("ApplicationController.index"));
+        assertThat(response.getContent(), containsString(">Blocking</span>"));
+        assertThat(response.getContent(), not(containsString("Non-blocking")));
         assertThat(response.getContent(), containsString("/anyof"));
         assertThat(response.getContent(), containsString("/sse/client"));
         assertThat(response.getContent(), not(containsString("AdminController")));

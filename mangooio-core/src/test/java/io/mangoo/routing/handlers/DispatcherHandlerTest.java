@@ -54,7 +54,7 @@ class DispatcherHandlerTest {
     }
 
     @Test
-    void testGetMarkedNonBlockingLeavesTheIoThread() {
+    void testGetWithBlockingLeavesTheIoThread() {
         assertTrue(DispatcherHandler.leavesIoThread(true, false, false, false));
     }
 
@@ -84,7 +84,7 @@ class DispatcherHandlerTest {
     }
 
     @Test
-    void testSmallJsonMarkedNonBlockingLeavesTheIoThread() {
+    void testSmallJsonWithBlockingLeavesTheIoThread() {
         assertTrue(DispatcherHandler.leavesIoThread(true, true, false, true));
     }
 

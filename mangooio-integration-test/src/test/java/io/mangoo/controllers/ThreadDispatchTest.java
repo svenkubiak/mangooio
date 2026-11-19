@@ -24,7 +24,7 @@ class ThreadDispatchTest {
     }
 
     @Test
-    void testGetMarkedNonBlockingRunsOnAWorker() {
+    void testGetWithBlockingRunsOnAWorker() {
         assertWorker(TestRequest.get("/thread/worker").execute());
     }
 
@@ -54,7 +54,7 @@ class ThreadDispatchTest {
     }
 
     @Test
-    void testSmallJsonMarkedNonBlockingRunsOnAWorker() {
+    void testSmallJsonWithBlockingRunsOnAWorker() {
         assertWorker(TestRequest.post("/thread/json-worker").withContentType(JSON).withStringBody(body(128)).execute());
     }
 

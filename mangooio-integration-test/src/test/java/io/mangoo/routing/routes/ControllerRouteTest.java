@@ -60,13 +60,13 @@ class ControllerRouteTest {
     }
 
     @Test
-    void testWithNonBlocking() {
+    void testWithBlocking() {
         //given
         String route1 = UUID.randomUUID().toString();
         
         //when
         ControllerRoute route = new ControllerRoute(ApplicationController.class);
-        route.withNonBlocking().withRoutes(
+        route.withBlocking().withRoutes(
                 On.get().to("/route1").respondeWith(route1)
         );
         

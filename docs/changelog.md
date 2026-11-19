@@ -1,9 +1,15 @@
+## Version 11.1.1
+
+* **Deprecation** RequestRoute#withNonBlocking and ControllerRoute#withNonBlocking, use withBlocking() (svenkubiak)
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/11.1.0...11.11.1)
+
 ## Version 11.1.0
 
 Released at 15.11.2026
 
 * The HTTPS connector offers HTTP/2. The plain HTTP connector stays HTTP/1.1 (svenkubiak)
-* A JSON POST, PUT or PATCH of at most 16 KiB stays on the I/O thread. Forms, larger bodies, bodies without Content-Length and withNonBlocking() still run on a worker. The form parser is created once and only for form requests (svenkubiak)
+* A JSON POST, PUT or PATCH of at most 16 KiB stays on the I/O thread. Forms, larger bodies, bodies without Content-Length and withBlocking() still run on a worker. The form parser is created once and only for form requests (svenkubiak)
 * Reused the AES cipher and HMAC per request thread when creating and reading cookies (svenkubiak)
 * Opened the authentication cookie only for routes that require authentication, take Authentication or Request, or run a request filter (svenkubiak)
 * Created the CSRF token when it is first read instead of on every request without a session cookie (svenkubiak)
