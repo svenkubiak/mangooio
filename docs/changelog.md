@@ -1,7 +1,12 @@
 ## Version 11.1.1
 
-* **Deprecation** RequestRoute#withNonBlocking and ControllerRoute#withNonBlocking, use withBlocking() (svenkubiak)
+Released at 20.11.2026
 
+* **Deprecation** RequestRoute#withNonBlocking and ControllerRoute#withNonBlocking, use withBlocking() (svenkubiak)
+* Omitted detailed exception logging for rejected JWTs. `JwtUtils.logRejection` logs expiry and clock skew at debug and every other rejection as one warning, without a stack trace (svenkubiak)
+* Version bumps (svenkubiak)
+  * mongodb-driver-sync 5.14.0 -&gt; 5.15.0
+  
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/11.1.0...11.11.1)
 
 ## Version 11.1.0

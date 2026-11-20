@@ -282,7 +282,7 @@ public final class MangooUtils {
         try {
             return Optional.of(JwtUtils.parseJwt(value, jwtData));
         } catch (MangooJwtException e) {
-            LOG.error("Failed to parse admin cookie -> {}", e.getCause(), e);
+            JwtUtils.logRejection(LOG, "Admin cookie", e);
             return Optional.empty();
         }
     }

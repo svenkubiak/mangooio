@@ -17,6 +17,7 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.Required;
 import io.mangoo.exceptions.MangooJwtException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Logger;
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -24,6 +25,13 @@ import java.util.*;
 
 public final class JwtUtils {
     private static final String JWT = "JWT";
+    private static final String TOKEN_EXPIRED = "Token expired";
+    private static final String TOKEN_NOT_YET_VALID = "Token not yet valid";
+    private static final String TOKEN_ISSUED_IN_THE_FUTURE = "Token issued in the future";
+    private static final Set<String> EXPECTED_REJECTIONS = Set.of(
+            TOKEN_EXPIRED,
+            TOKEN_NOT_YET_VALID,
+            TOKEN_ISSUED_IN_THE_FUTURE);
 
     private JwtUtils() {
     }
@@ -122,13 +130,13 @@ public final class JwtUtils {
             long skew = Default.JWT_CLOCK_SKEW;
 
             if (exp.toInstant().isBefore(now.minusSeconds(skew))) {
-                throw new JOSEException("Token expired");
+                throw new JOSEException(TOKEN_EXPIRED);
             }
             if (nbf.toInstant().isAfter(now.plusSeconds(skew))) {
-                throw new JOSEException("Token not yet valid");
+                throw new JOSEException(TOKEN_NOT_YET_VALID);
             }
             if (iat.toInstant().isAfter(now.plusSeconds(skew))) {
-                throw new JOSEException("Token issued in the future");
+                throw new JOSEException(TOKEN_ISSUED_IN_THE_FUTURE);
             }
 
             long lifetime = (exp.getTime() - iat.getTime()) / 1000L;
@@ -142,6 +150,19 @@ public final class JwtUtils {
         }
     }
 
+    public static void logRejection(Logger logger, String name, Exception exception) {
+        Objects.requireNonNull(logger, "logger can not be null");
+        Argument.requireNonBlank(name, Required.NAME);
+        Objects.requireNonNull(exception, "exception can not be null");
+
+        var reason = rejectionReason(exception);
+        if (EXPECTED_REJECTIONS.contains(reason)) {
+            logger.debug("{} rejected: {}", name, reason);
+        } else {
+            logger.warn("Failed to parse {}: {}", name.toLowerCase(Locale.ENGLISH), reason);
+        }
+    }
+
     public static JWTClaimsSet extractCustomClaims(JWTClaimsSet claims) {
         var builder = new JWTClaimsSet.Builder();
         claims.getClaims().forEach((key, value) -> {
@@ -150,6 +171,17 @@ public final class JwtUtils {
             }
         });
         return builder.build();
+    }
+
+    private static String rejectionReason(Exception exception) {
+        var cause = exception.getCause();
+        if (cause != null && StringUtils.isNotBlank(cause.getMessage())) {
+            return cause.getMessage();
+        }
+        if (StringUtils.isNotBlank(exception.getMessage())) {
+            return exception.getMessage();
+        }
+        return exception.getClass().getSimpleName();
     }
 
     private static Date requireClaim(Date value, String name) throws JOSEException {

@@ -45,6 +45,18 @@ String jwt = JwtUtils.createJwt(data);
 JWTClaimsSet claims = JwtUtils.parseJwt(jwt, data);
 ```
 
+`logRejection` writes a rejected token as one line and omits the stack trace. Pass the logger of the calling class. `Token expired`, `Token not yet valid` and `Token issued in the future` are debug. Every other rejection is a warning. The name is a capitalized label and is lowercased in the warning:
+
+```java
+try {
+    claims = JwtUtils.parseJwt(token, data);
+} catch (MangooJwtException e) {
+    JwtUtils.logRejection(LOG, "Authorization", e);
+}
+```
+
+That logs `Authorization rejected: Token expired` or `Failed to parse authorization: Issuer mismatch`. Session, authentication, flash and the admin cookie use the same method.
+
 Pull the key material from `env{}` or `file{}`. See [Secrets](secrets.md#secret-and-key-length).
 
 ## TotpUtils
