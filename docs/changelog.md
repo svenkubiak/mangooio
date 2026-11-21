@@ -1,3 +1,10 @@
+## Version 11.1.2
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * hibernate-validator 9.1.6.Final -&gt; 9.2.0.Final
+
 ## Version 11.1.1
 
 Released at 20.11.2026
