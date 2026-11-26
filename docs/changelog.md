@@ -2,6 +2,7 @@
 
 Unreleased
 
+* **Behaviour change** A small JSON POST, PUT or PATCH runs its controller on a worker again, as before 11.1.0 (svenkubiak)
 * Version bumps (svenkubiak)
   * hibernate-validator 9.1.6.Final -&gt; 9.2.0.Final
 

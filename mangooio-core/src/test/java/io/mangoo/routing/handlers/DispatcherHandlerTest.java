@@ -79,7 +79,7 @@ class DispatcherHandlerTest {
     }
 
     @Test
-    void testSmallJsonPostStaysOnTheIoThread() {
+    void testSmallJsonPostIsReadOnTheIoThread() {
         assertFalse(DispatcherHandler.leavesIoThread(false, true, false, true));
     }
 

@@ -58,14 +58,14 @@ On.anyOf(Http.PUT, Http.PATCH, Http.DELETE)
 
 ## Long-running requests
 
-`GET`, `HEAD`, `DELETE`, and `OPTIONS` stay on Undertow's I/O thread unless you mark the route. A JSON `POST`, `PUT`, or `PATCH` whose `Content-Length` is known and at most 16 KiB stays there too. Forms, a larger body, a body without `Content-Length`, and any other content type still move to a worker before the controller runs. A slow read on an I/O thread holds up other requests on that thread.
+`GET`, `HEAD`, `DELETE`, and `OPTIONS` stay on Undertow's I/O thread unless you mark the route. A `POST`, `PUT`, or `PATCH` runs its controller on a worker. A JSON body whose `Content-Length` is known and at most 16 KiB is read on the I/O thread first and then handed to a worker; forms, a larger body, a body without `Content-Length`, and any other content type move to a worker before the body is read.
 
-`withBlocking()` dispatches the route onto a worker. Use it when the controller blocks, for example on a database call: a long `GET`, or a small JSON request that would otherwise stay on the I/O thread.
+`withBlocking()` dispatches the route onto a worker before anything else happens. Use it when the controller blocks, for example on a database call or an outgoing HTTP request, on a `GET` or `DELETE`.
 
 ```java
 Bind.controller(ApplicationController.class).withRoutes(
     On.get().to("/export").respondeWith("export").withBlocking(),
-    On.post().to("/orders").respondeWith("create").withBlocking()
+    On.delete().to("/orders/{id}").respondeWith("delete").withBlocking()
 );
 ```
 
@@ -77,8 +77,7 @@ Bind.controller(ExportController.class).withBlocking().withRoutes(
 );
 ```
 
-A slow request without it does not fail. Other requests on that I/O thread wait behind it.
-
+A slow request on an I/O thread holds up every other connection on that thread. If the controller waits for something that has to come back through this server - a webhook the called service sends here before it answers, for example - the request deadlocks until a timeout: the callback queues behind the request that waits for it.
 ## Authentication
 
 Require a valid authentication cookie on a controller or on a single route. See [Authentication](authentication.md) for how the cookie itself gets issued and verified.

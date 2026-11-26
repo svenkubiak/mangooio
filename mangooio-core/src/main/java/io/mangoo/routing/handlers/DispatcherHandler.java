@@ -154,9 +154,10 @@ public final class DispatcherHandler implements HttpHandler {
     }
 
     /**
-     * Forms and every other POST, PUT or PATCH still move to a worker.
-     * A JSON body of at most {@link io.mangoo.constants.Default#SMALL_JSON_MAX_BYTES} stays on the I/O thread,
-     * unless the route called {@code withBlocking()}.
+     * Whether the request moves to a worker before its body is read.
+     * Forms and every other POST, PUT or PATCH move right away.
+     * A JSON body of at most {@link io.mangoo.constants.Default#SMALL_JSON_MAX_BYTES} is read on the I/O thread first
+     * and then moves, unless the route called {@code withBlocking()}.
      */
     static boolean leavesIoThread(boolean blocking, boolean postPutPatch, boolean form, boolean smallJson) {
         if (blocking) {
@@ -173,18 +174,9 @@ public final class DispatcherHandler implements HttpHandler {
 
     private void continueWithJson(HttpServerExchange exchange, byte[] data) {
         exchange.putAttachment(RAW_BODY, data == null ? new byte[0] : data);
-        try {
-            handleRequest(exchange);
-        } catch (Exception e) {
-            exchange.putAttachment(io.undertow.server.handlers.ExceptionHandler.THROWABLE, e);
-            try {
-                Application.getInstance(ExceptionHandler.class).handleRequest(exchange);
-            } catch (Exception handlerFailure) {
-                LOG.error("Failed to handle exception while reading JSON", handlerFailure);
-                exchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
-                exchange.endExchange();
-            }
-        }
+        // A controller that blocks on a call needing a callback into this server deadlocks when the
+        // callback's connection is bound to this I/O thread.
+        exchange.dispatch(dispatchHandler);
     }
 
     private void rejectJson(HttpServerExchange exchange, Exception exception) {

@@ -29,23 +29,23 @@ class ThreadDispatchTest {
     }
 
     @Test
-    void testSmallJsonPostStaysOnTheIoThread() {
-        assertIoThread(TestRequest.post("/thread/json").withContentType(JSON).withStringBody(body(128)).execute());
+    void testSmallJsonPostRunsOnAWorker() {
+        assertWorker(TestRequest.post("/thread/json").withContentType(JSON).withStringBody(body(128)).execute());
     }
 
     @Test
-    void testSmallJsonPutStaysOnTheIoThread() {
-        assertIoThread(TestRequest.put("/thread/json").withContentType(JSON).withStringBody(body(128)).execute());
+    void testSmallJsonPutRunsOnAWorker() {
+        assertWorker(TestRequest.put("/thread/json").withContentType(JSON).withStringBody(body(128)).execute());
     }
 
     @Test
-    void testSmallJsonPatchStaysOnTheIoThread() {
-        assertIoThread(TestRequest.patch("/thread/json").withContentType(JSON).withStringBody(body(128)).execute());
+    void testSmallJsonPatchRunsOnAWorker() {
+        assertWorker(TestRequest.patch("/thread/json").withContentType(JSON).withStringBody(body(128)).execute());
     }
 
     @Test
-    void testJsonAtTheBufferLimitStaysOnTheIoThread() {
-        assertIoThread(TestRequest.post("/thread/json").withContentType(JSON).withStringBody(body(Default.SMALL_JSON_MAX_BYTES)).execute());
+    void testJsonAtTheBufferLimitRunsOnAWorker() {
+        assertWorker(TestRequest.post("/thread/json").withContentType(JSON).withStringBody(body(Default.SMALL_JSON_MAX_BYTES)).execute());
     }
 
     @Test
