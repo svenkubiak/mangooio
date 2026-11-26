@@ -1,6 +1,6 @@
 ## Version 11.1.2
 
-Unreleased
+Released at 26.11.2026
 
 * **Behaviour change** A small JSON POST, PUT or PATCH runs its controller on a worker again, as before 11.1.0 (svenkubiak)
 * Version bumps (svenkubiak)
