@@ -86,6 +86,18 @@ run_maven() {
   rm -f "$tmp_log"
 }
 
+# mvn deploy can install the release into the local repository as hard links to the working tree,
+# so the following versions:set would rewrite the installed poms in place.
+detach_local_release() {
+  local repo
+  repo=$(mvn help:evaluate -Dexpression=settings.localRepository -q -DforceStdout)
+  local dir
+  for dir in "$repo"/io/mangoo/*/"$VERSION"; do
+    [[ -d "$dir" ]] || continue
+    find "$dir" -type f -links +1 -exec sh -c 'cp -p "$1" "$1.tmp" && mv "$1.tmp" "$1"' _ {} \;
+  done
+}
+
 run_silent() {
   local description="$1"
   shift
@@ -351,6 +363,8 @@ echo
 success "Version ${BOLD}${VERSION}${RESET} deployed successfully."
 
 step "Tagging Git and updating versions"
+
+run_silent "Detaching local ${VERSION} artifacts from the working tree" detach_local_release
 
 run_silent "Creating Git tag ${VERSION}" git tag "$VERSION"
 run_maven "Setting next snapshot version ${NEXT_SNAPSHOT_VERSION}" versions:set -DnewVersion="${NEXT_SNAPSHOT_VERSION}" -DgenerateBackupPoms=false
