@@ -65,6 +65,8 @@ environments:
           token: tZEwV79iJMbcDI3Tf0QqcaP6USCIXBBUavXt1MgQkb546UwU9h5HPEpOSlVBZLMR
       test: arg{}
       named: injected
+      iothread:
+        warnafter: 100
     connector:
       http:
         host: localhost

@@ -7,6 +7,7 @@ public final class Default {
     public static final String APPLICATION_ADMIN_COOKIE_NAME = "mangooio-admin";
     public static final Boolean APPLICATION_ADMIN_ENABLE = Boolean.FALSE;
     public static final String APPLICATION_ADMIN_LOCALE = "en_EN";
+    public static final long APPLICATION_IOTHREAD_WARNAFTER = 1000;
     public static final String APPLICATION_LANGUAGE = "en";
     public static final String APPLICATION_NAME = "mangooio-application";
     public static final Boolean APPLICATION_PARAMETER_STRICT = Boolean.FALSE;

@@ -44,6 +44,7 @@ public final class DispatcherHandler implements HttpHandler {
     private final boolean blocking;
     private final boolean authentication;
     private final boolean parameterStrict;
+    private final long ioThreadWarnAfterMillis;
     private final HttpHandler dispatchHandler = ExceptionHandler.wrap(this);
 
     public DispatcherHandler(Class<?> controllerClass, String controllerMethodName, boolean blocking, boolean authentication) {
@@ -57,7 +58,9 @@ public final class DispatcherHandler implements HttpHandler {
         this.authentication = authentication;
         this.templateEngine = Application.getInstance(TemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
-        this.parameterStrict = Application.getInstance(Config.class).isParameterStrict();
+        var config = Application.getInstance(Config.class);
+        this.parameterStrict = config.isParameterStrict();
+        this.ioThreadWarnAfterMillis = config.getApplicationIoThreadWarnAfter();
         this.requestFilter =
                 Application.getInjector()
                         .getAllBindings()
@@ -146,7 +149,29 @@ public final class DispatcherHandler implements HttpHandler {
                 .withTemplateEngine(templateEngine);
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
-        nextHandler(exchange);
+
+        if (ioThreadWarnAfterMillis == 0 || !exchange.isInIoThread()) {
+            nextHandler(exchange);
+            return;
+        }
+
+        long start = System.nanoTime();
+        try {
+            nextHandler(exchange);
+        } finally {
+            warnIfSlowOnIoThread(LOG, System.nanoTime() - start, ioThreadWarnAfterMillis,
+                    exchange.getRequestMethod().toString(), controllerClassName + "." + controllerMethodName,
+                    Thread.currentThread().getName());
+        }
+    }
+
+    // Logs the controller, not the request path: a path can carry identifiers.
+    static void warnIfSlowOnIoThread(Logger log, long elapsedNanos, long warnAfterMillis, String method, String controller, String thread) {
+        long elapsedMillis = elapsedNanos / 1_000_000;
+        if (warnAfterMillis > 0 && elapsedMillis >= warnAfterMillis) {
+            log.warn("{} {} ran {} ms on I/O thread {}; mark the route withBlocking() if its controller waits on I/O",
+                    method, controller, elapsedMillis, thread);
+        }
     }
 
     private void nextHandler(HttpServerExchange exchange) throws Exception {

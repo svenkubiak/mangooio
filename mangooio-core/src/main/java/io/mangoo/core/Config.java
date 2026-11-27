@@ -436,6 +436,11 @@ public class Config {
         return getBoolean(Key.CONNECTOR_PROXY, Default.CONNECTOR_PROXY);
     }
 
+    /** Milliseconds a controller may run on an I/O thread before a warning is logged; 0 disables the warning. */
+    public long getApplicationIoThreadWarnAfter() {
+        return Math.max(0, getLong(Key.APPLICATION_IOTHREAD_WARNAFTER, Default.APPLICATION_IOTHREAD_WARNAFTER));
+    }
+
     /** Seconds the shutdown waits in total for open requests and running scheduled tasks. */
     public long getApplicationShutdownTimeout() {
         return Math.max(0, getLong(Key.APPLICATION_SHUTDOWN_TIMEOUT, Default.APPLICATION_SHUTDOWN_TIMEOUT));

@@ -6,4 +6,9 @@ public class ThreadController {
     public Response name() {
         return Response.ok().bodyText(Thread.currentThread().getName());
     }
+
+    public Response slow() throws InterruptedException {
+        Thread.sleep(150);
+        return Response.ok().bodyText(Thread.currentThread().getName());
+    }
 }

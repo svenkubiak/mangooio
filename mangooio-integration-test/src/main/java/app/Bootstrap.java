@@ -54,6 +54,8 @@ public class Bootstrap implements MangooBootstrap {
         Bind.controller(ThreadController.class).withRoutes(
                 On.get().to("/thread").respondeWith("name"),
                 On.get().to("/thread/worker").respondeWith("name").withBlocking(),
+                On.get().to("/thread/slow").respondeWith("slow"),
+                On.get().to("/thread/slow-worker").respondeWith("slow").withBlocking(),
                 On.post().to("/thread/json").respondeWith("name"),
                 On.put().to("/thread/json").respondeWith("name"),
                 On.patch().to("/thread/json").respondeWith("name"),

@@ -137,6 +137,7 @@ Keys that you omit fall back to the defaults below. Cells marked *(none)* have n
 | `application.admin.username` | Admin dashboard username | *(none)* |
 | `application.allowedOrigins` | Comma-separated origins for `OriginFilter` | *(none)* |
 | `application.api.key` | Shared secret for `ApiKeyFilter` (at least 64 bytes) | *(none)* |
+| `application.iothread.warnafter` | Milliseconds a controller may run on an I/O thread before a warning is logged; `0` disables the warning. See [Routing](routing.md#long-running-requests) | `1000` |
 | `application.language` | Default application language | `en` |
 | `application.name` | Application name (JWT issuer, logs) | `mangooio-application` |
 | `application.named` | Example named Guice binding | *(none)* |

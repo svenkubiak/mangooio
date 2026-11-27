@@ -78,6 +78,15 @@ Bind.controller(ExportController.class).withBlocking().withRoutes(
 ```
 
 A slow request on an I/O thread holds up every other connection on that thread. If the controller waits for something that has to come back through this server - a webhook the called service sends here before it answers, for example - the request deadlocks until a timeout: the callback queues behind the request that waits for it.
+
+To find such a route, mangoo logs a warning when a controller has run on an I/O thread for longer than `application.iothread.warnafter` (default `1000` ms, `0` disables it). The warning names the HTTP method, the controller method, the duration, and the thread, not the request path:
+
+```
+GET ExportController.export ran 5004 ms on I/O thread XNIO-1 I/O-3; mark the route withBlocking() if its controller waits on I/O
+```
+
+The warning is written once the controller has finished, so a request that never returns does not produce one.
+
 ## Authentication
 
 Require a valid authentication cookie on a controller or on a single route. See [Authentication](authentication.md) for how the cookie itself gets issued and verified.

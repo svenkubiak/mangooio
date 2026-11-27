@@ -1,3 +1,9 @@
+## Version 11.1.3
+
+Released at 27.11.2026
+
+* A controller that runs on an I/O thread for longer than `application.iothread.warnafter` (default 1000 ms, 0 disables it) logs a warning with HTTP method, controller method, duration and thread (svenkubiak)
+
 ## Version 11.1.2
 
 Released at 26.11.2026

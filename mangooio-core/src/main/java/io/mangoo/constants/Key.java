@@ -9,6 +9,7 @@ public final class Key {
     public static final String APPLICATION_ALLOWED_ORIGINS = "application.allowedOrigins";
     public static final String APPLICATION_API_KEY = "application.api.key";
     public static final String APPLICATION_CONFIG = "application.config";
+    public static final String APPLICATION_IOTHREAD_WARNAFTER = "application.iothread.warnafter";
     public static final String APPLICATION_LANGUAGE = "application.language";
     public static final String APPLICATION_MODE = "application.mode";
     public static final String APPLICATION_NAME = "application.name";
