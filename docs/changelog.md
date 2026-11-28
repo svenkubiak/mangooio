@@ -1,3 +1,11 @@
+## Version 11.1.4
+
+Unreleased
+
+* Version bumps (svenkubiak)
+  * jose-jwt 10.10 -&gt; 10.11
+  * awaitility 4.3.0 -&gt; 4.4.0
+
 ## Version 11.1.3
 
 Released at 27.11.2026
